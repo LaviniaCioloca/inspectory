@@ -1,0 +1,2 @@
+# inspectory
+Inspect your repository
