@@ -1,4 +1,4 @@
-package inspectory;
+package org.lavinia.inspect;
 
 import static org.junit.Assert.assertNull;
 

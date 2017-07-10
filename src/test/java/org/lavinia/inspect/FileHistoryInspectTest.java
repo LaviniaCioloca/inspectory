@@ -1,4 +1,4 @@
-package inspectory;
+package org.lavinia.inspect;
 
 import org.junit.Test;
 
