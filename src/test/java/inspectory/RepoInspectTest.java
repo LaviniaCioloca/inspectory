@@ -13,9 +13,4 @@ public class RepoInspectTest {
 		assertNull(RepoInspect.getProject());
 	}
 
-	@Test(expected = NullPointerException.class)
-	public void testGetFinalMap() {
-		RepoInspect.getFinalMap();
-	}
-
 }
