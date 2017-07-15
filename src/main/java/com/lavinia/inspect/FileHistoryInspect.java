@@ -11,12 +11,10 @@ import org.metanalysis.core.delta.ListEdit;
 import org.metanalysis.core.delta.NodeSetEdit;
 import org.metanalysis.core.delta.SourceFileTransaction;
 import org.metanalysis.core.delta.Transaction;
+import org.metanalysis.core.delta.TypeTransaction;
 import org.metanalysis.core.model.Node;
-import org.metanalysis.core.model.SourceFile;
 import org.metanalysis.core.project.PersistentProject;
 import org.metanalysis.core.project.Project.HistoryEntry;
-
-import com.lavinia.visitor.NodeVisitor;
 
 public class FileHistoryInspect {
 	private static PersistentProject project = null;
@@ -25,6 +23,7 @@ public class FileHistoryInspect {
 		FileHistoryInspect.project = project;
 	}
 
+	@SuppressWarnings("rawtypes")
 	public void getHistoryFunctionsAnalyze() {
 		try {
 			String logFolderName = "results";
@@ -34,6 +33,7 @@ public class FileHistoryInspect {
 				if (file.startsWith(".") || !file.endsWith(".java")) {
 					continue;
 				}
+				System.out.println("\n\nfile: " + file);
 				List<HistoryEntry> fileHistory = project.getFileHistory(file);
 
 				String logFilePath = "./" + logFolderName + "/" + file + ".history";
@@ -42,39 +42,81 @@ public class FileHistoryInspect {
 				appender.setFile(logFilePath);
 				appender.activateOptions();
 
-				NodeVisitor visitor = new NodeVisitor(logger);
-				SourceFile sf = project.getFileModel(file);
-				SourceFileTransaction sourceFileTransaction = null;
-				List<NodeSetEdit> nodeEditList = null;
+				for (HistoryEntry he : fileHistory) {
+					try {
+						logger.info("\n----------------------------------------------\nRevision: " + he.getRevision());
+						logger.info("Author: " + he.getAuthor());
+						logger.info("Date: " + he.getDate());
+						System.out.println("FileHistory size: " + fileHistory.size());
+						SourceFileTransaction sourceFileTransaction = he.getTransaction();
+						List<NodeSetEdit> nodeEditList = sourceFileTransaction.getNodeEdits();
 
-				try {
-					for (final NodeSetEdit edit : nodeEditList) {
-						if (edit instanceof NodeSetEdit.Change<?>) {
-							if (((NodeSetEdit.Change<?>) edit).getNodeType().equals(Node.Function.class)) {
-								Transaction t = ((NodeSetEdit.Change<?>) edit).getTransaction();
-								FunctionTransaction ft = (FunctionTransaction) t;
-								List<ListEdit<String>> bodyEdits = ft.getBodyEdits();
-								for(ListEdit<String> be : bodyEdits) {
-									System.out.println("Body edits: " + be);
+						for (final NodeSetEdit edit : nodeEditList) {
+
+							if (edit instanceof NodeSetEdit.Change<?>) {
+								System.out.println("\nNode type: " + ((NodeSetEdit.Change) edit).getNodeType());
+								Transaction t = ((NodeSetEdit.Change) edit).getTransaction();
+								List<NodeSetEdit> memberEdits = ((TypeTransaction) t).getMemberEdits();
+								for (NodeSetEdit me : memberEdits) {
+									if (me instanceof NodeSetEdit.Add) {
+										Node n = ((NodeSetEdit.Add) me).getNode();
+										logger.info(((NodeSetEdit.Add) me).getNode().getIdentifier());
+										List<String> body = ((Node.Function) n).getBody();
+										// System.out.println("Add -> body
+										// edits: " + ((NodeSetEdit.Add)
+										// me).getNode0());
+										/*
+										 * for (String str : body) {
+										 * System.out.print(str); }
+										 */
+										System.out.println("Add body: " + body);
+										logger.info("Add: +" + body.size() + ": " + body);
+									} else if (me instanceof NodeSetEdit.Change) {
+										logger.info(((NodeSetEdit.Change) me).getIdentifier());
+										Transaction t1 = ((NodeSetEdit.Change) me).getTransaction();
+										List<ListEdit<String>> bodyEdits = ((FunctionTransaction) t1).getBodyEdits();
+										for (ListEdit<String> le : bodyEdits) {
+											if (le instanceof ListEdit.Add<?>) {
+												logger.info("Change: +1: " + le);
+											} else if (le instanceof ListEdit.Remove<?>) {
+												logger.info("Change: -1: " + le);
+											}
+
+										}
+									} else {
+										logger.info("Remove: " + ((NodeSetEdit.Remove) me).getIdentifier());
+									}
+
+								}
+							} else if (edit instanceof NodeSetEdit.Add) {
+								Node node = ((NodeSetEdit.Add) edit).getNode();
+								if (node instanceof Node.Type) {
+									Set<Node> members = ((Node.Type) node).getMembers();
+									for (Node n : members) {
+										if (n instanceof Node.Function) {
+											logger.info("\nFunction: " + ((Node.Function) n).getSignature());
+											logger.info("Add: +" + ((Node.Function) n).getBody().size() + " "
+													+ ((Node.Function) n).getBody());
+										}
+									}
 								}
 							}
 						}
+					} catch (Exception e) {
+						continue;
 					}
-				} catch (Exception e) {
 
 				}
-				/*
-				for (HistoryEntry he : fileHistory) {
-					try {
-						sourceFileTransaction = he.getTransaction();
-						nodeEditList = sourceFileTransaction.getNodeEdits();
-						for (NodeSetEdit nse : nodeEditList) {
-							System.out.println("NodeSetEdit class: " + nse.getClass().getName());
-						}
-					} catch (Exception e) {
 
-					}
-				}*/
+				/*
+				 * for (HistoryEntry he : fileHistory) { try {
+				 * sourceFileTransaction = he.getTransaction(); nodeEditList =
+				 * sourceFileTransaction.getNodeEdits(); for (NodeSetEdit nse :
+				 * nodeEditList) { System.out.println("NodeSetEdit class: " +
+				 * nse.getClass().getName()); } } catch (Exception e) {
+				 * 
+				 * } }
+				 */
 			}
 
 		} catch (IOException e) {
