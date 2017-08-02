@@ -2,10 +2,13 @@ package com.lavinia.inspect;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.log4j.FileAppender;
@@ -37,11 +40,10 @@ public class FileHistoryInspect {
 			String logFolderName = "results";
 			Set<String> filesList = project.listFiles();
 			for (String file : filesList) {
-				// logger.info("file: " + file);
 				if (file.startsWith(".") || !file.endsWith(".java")) {
 					continue;
 				}
-				System.out.println("\n\nfile: " + file);
+				// System.out.println("\n\nfile: " + file);
 				List<HistoryEntry> fileHistory = project.getFileHistory(file);
 
 				String logFilePath = "./" + logFolderName + "/" + file + ".history";
@@ -56,17 +58,15 @@ public class FileHistoryInspect {
 						commit.setRevision(he.getRevision());
 						commit.setAuthor(he.getAuthor());
 						commit.setDate(he.getDate());
-						logger.info("\n----------------------------------------------------------\n");
+						logger.info("----------------------------------------------------------\n");
 						logger.info(commit.toString());
 						ArrayList<Integer> lineChanges = null;
-						System.out.println("FileHistory size: " + fileHistory.size());
 						SourceFileTransaction sourceFileTransaction = he.getTransaction();
 						List<NodeSetEdit> nodeEditList = sourceFileTransaction.getNodeEdits();
 
 						for (final NodeSetEdit edit : nodeEditList) {
 
 							if (edit instanceof NodeSetEdit.Change<?>) {
-								System.out.println("\nNode type: " + ((NodeSetEdit.Change) edit).getNodeType());
 								Transaction t = ((NodeSetEdit.Change) edit).getTransaction();
 								List<NodeSetEdit> memberEdits = ((TypeTransaction) t).getMemberEdits();
 								for (NodeSetEdit me : memberEdits) {
@@ -74,22 +74,14 @@ public class FileHistoryInspect {
 									String identifier = null;
 									if (me instanceof NodeSetEdit.Add) {
 										Node n = ((NodeSetEdit.Add) me).getNode();
-										identifier = file + "*" + ((NodeSetEdit.Add) me).getNode().getIdentifier();
+										identifier = file + ":\t" + ((NodeSetEdit.Add) me).getNode().getIdentifier();
 										logger.info("\n" + identifier);
 										List<String> body = ((Node.Function) n).getBody();
-										// System.out.println("Add -> body
-										// edits: " + ((NodeSetEdit.Add)
-										// me).getNode0());
-										/*
-										 * for (String str : body) {
-										 * System.out.print(str); }
-										 */
-										System.out.println("Add body: " + body);
 										logger.info("Add: +" + body.size() + ": " + body);
 										total += body.size();
 									} else if (me instanceof NodeSetEdit.Change) {
-										identifier = file + "*" + ((NodeSetEdit.Change) me).getIdentifier();
-										logger.info("\n" + identifier);
+										identifier = file + ":\t" + ((NodeSetEdit.Change) me).getIdentifier();
+										logger.info(identifier);
 										Transaction t1 = ((NodeSetEdit.Change) me).getTransaction();
 										List<ListEdit<String>> bodyEdits = ((FunctionTransaction) t1).getBodyEdits();
 										for (ListEdit<String> le : bodyEdits) {
@@ -100,10 +92,9 @@ public class FileHistoryInspect {
 												logger.info("Change: -1: " + le);
 												total -= 1;
 											}
-
 										}
 									} else {
-										identifier = file + "*" + ((NodeSetEdit.Remove) me).getIdentifier();
+										identifier = file + ":\t" + ((NodeSetEdit.Remove) me).getIdentifier();
 										logger.info("Remove: " + identifier);
 										total -= 1;
 									}
@@ -114,7 +105,7 @@ public class FileHistoryInspect {
 										lineChanges.add(total);
 										result.put(identifier, lineChanges);
 									}
-									logger.info("---> Total: " + (total > 0 ? "+" + total : total));
+									logger.info("---> Total: " + (total > 0 ? "+" + total : total) + "\n");
 								}
 							} else if (edit instanceof NodeSetEdit.Add) {
 								Node node = ((NodeSetEdit.Add) edit).getNode();
@@ -124,8 +115,8 @@ public class FileHistoryInspect {
 									for (Node n : members) {
 										int total = 0;
 										if (n instanceof Node.Function) {
-											identifier = file + "*" + ((Node.Function) n).getSignature();
-											logger.info("\nFunction: " + ((Node.Function) n).getSignature());
+											identifier = file + ":\t" + ((Node.Function) n).getSignature();
+											logger.info(identifier);
 											logger.info("Add: +" + ((Node.Function) n).getBody().size() + " "
 													+ ((Node.Function) n).getBody());
 											total += ((Node.Function) n).getBody().size();
@@ -136,7 +127,7 @@ public class FileHistoryInspect {
 												lineChanges.add(total);
 												result.put(identifier, lineChanges);
 											}
-											logger.info("---> Total: +" + total);
+											logger.info("---> Total: +" + total + "\n");
 										}
 									}
 								}
@@ -147,16 +138,6 @@ public class FileHistoryInspect {
 					}
 
 				}
-
-				/*
-				 * for (HistoryEntry he : fileHistory) { try {
-				 * sourceFileTransaction = he.getTransaction(); nodeEditList =
-				 * sourceFileTransaction.getNodeEdits(); for (NodeSetEdit nse :
-				 * nodeEditList) { System.out.println("NodeSetEdit class: " +
-				 * nse.getClass().getName()); } } catch (Exception e) {
-				 * 
-				 * } }
-				 */
 			}
 
 		} catch (IOException e) {
@@ -167,11 +148,32 @@ public class FileHistoryInspect {
 			 */
 			// e.printStackTrace();
 		}
-		System.out.println("\n\nFinal results:\n");
-		Iterator<String> it = result.keySet().iterator();
-		while (it.hasNext()) {
-			String identifier = it.next();
-			System.out.println("Function: " + identifier + " -> " + result.get(identifier) + "!Size is: " + result.get(identifier).size());
+		long startTime = System.nanoTime();
+
+		List<ArrayList<Integer>> l = new ArrayList<>(result.values());
+		Collections.sort(l, new Comparator<ArrayList<Integer>>() {
+			public int compare(ArrayList<Integer> s1, ArrayList<Integer> s2) {
+				return Integer.compare(s2.size(), s1.size());
+			}
+		});
+		long endTime = System.nanoTime();
+		long duration = (endTime - startTime) / 1000000;
+		System.out.println("Duration of sort is: " + duration + "ms");
+
+		startTime = System.nanoTime();
+		for (ArrayList<Integer> a : l) {
+			Iterator<Entry<String, ArrayList<Integer>>> iter = result.entrySet().iterator();
+			while (iter.hasNext()) {
+				Entry<String, ArrayList<Integer>> e = iter.next();
+				if (e.getValue().equals(a)) {
+
+					System.out.println(e.getKey() + "-" + a + "; size: " + a.size() + "\n");
+					iter.remove();
+				}
+			}
 		}
+		endTime = System.nanoTime();
+		duration = (endTime - startTime) / 1000000;
+		System.out.println("Duration of writing to file is: " + duration + "ms");
 	}
 }
