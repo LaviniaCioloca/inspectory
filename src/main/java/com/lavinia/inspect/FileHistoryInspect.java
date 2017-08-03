@@ -13,8 +13,6 @@ import java.util.Set;
 
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Logger;
-import org.metanalysis.core.delta.FunctionTransaction;
-import org.metanalysis.core.delta.ListEdit;
 import org.metanalysis.core.delta.NodeSetEdit;
 import org.metanalysis.core.delta.SourceFileTransaction;
 import org.metanalysis.core.delta.Transaction;
@@ -24,6 +22,9 @@ import org.metanalysis.core.project.PersistentProject;
 import org.metanalysis.core.project.Project.HistoryEntry;
 
 import com.lavinia.versioning.Commit;
+import com.lavinia.visitor.EditVisitor;
+import com.lavinia.visitor.GenericVisitor;
+import com.lavinia.visitor.NodeVisitor;
 
 public class FileHistoryInspect {
 	private static PersistentProject project = null;
@@ -34,19 +35,30 @@ public class FileHistoryInspect {
 		result = new HashMap<String, ArrayList<Integer>>();
 	}
 
+	public void addToResult(GenericVisitor visitor, ArrayList<Integer> lineChanges, Logger logger) {
+		if (result.get(visitor.getIdentifier()) != null) {
+			result.get(visitor.getIdentifier()).add(visitor.getTotal());
+		} else {
+			lineChanges = new ArrayList<Integer>();
+			lineChanges.add(visitor.getTotal());
+			result.put(visitor.getIdentifier(), lineChanges);
+		}
+		logger.info("---> Total: " + (visitor.getTotal() > 0 ? "+" + visitor.getTotal() : visitor.getTotal()) + "\n");
+	}
+
 	@SuppressWarnings("rawtypes")
 	public void getHistoryFunctionsAnalyze() {
 		try {
 			String logFolderName = "results";
 			Set<String> filesList = project.listFiles();
-			for (String file : filesList) {
-				if (file.startsWith(".") || !file.endsWith(".java")) {
+			for (String fileName : filesList) {
+				if (fileName.startsWith(".") || !fileName.endsWith(".java")) {
 					continue;
 				}
 				// System.out.println("\n\nfile: " + file);
-				List<HistoryEntry> fileHistory = project.getFileHistory(file);
+				List<HistoryEntry> fileHistory = project.getFileHistory(fileName);
 
-				String logFilePath = "./" + logFolderName + "/" + file + ".history";
+				String logFilePath = "./" + logFolderName + "/" + fileName + ".history";
 				Logger logger = Logger.getRootLogger();
 				FileAppender appender = (FileAppender) logger.getAppender("file");
 				appender.setFile(logFilePath);
@@ -63,72 +75,25 @@ public class FileHistoryInspect {
 						ArrayList<Integer> lineChanges = null;
 						SourceFileTransaction sourceFileTransaction = he.getTransaction();
 						List<NodeSetEdit> nodeEditList = sourceFileTransaction.getNodeEdits();
+						GenericVisitor visitor = null;
 
 						for (final NodeSetEdit edit : nodeEditList) {
-
 							if (edit instanceof NodeSetEdit.Change<?>) {
 								Transaction t = ((NodeSetEdit.Change) edit).getTransaction();
 								List<NodeSetEdit> memberEdits = ((TypeTransaction) t).getMemberEdits();
 								for (NodeSetEdit me : memberEdits) {
-									Integer total = 0;
-									String identifier = null;
-									if (me instanceof NodeSetEdit.Add) {
-										Node n = ((NodeSetEdit.Add) me).getNode();
-										identifier = file + ":\t" + ((NodeSetEdit.Add) me).getNode().getIdentifier();
-										logger.info("\n" + identifier);
-										List<String> body = ((Node.Function) n).getBody();
-										logger.info("Add: +" + body.size() + ": " + body);
-										total += body.size();
-									} else if (me instanceof NodeSetEdit.Change) {
-										identifier = file + ":\t" + ((NodeSetEdit.Change) me).getIdentifier();
-										logger.info(identifier);
-										Transaction t1 = ((NodeSetEdit.Change) me).getTransaction();
-										List<ListEdit<String>> bodyEdits = ((FunctionTransaction) t1).getBodyEdits();
-										for (ListEdit<String> le : bodyEdits) {
-											if (le instanceof ListEdit.Add<?>) {
-												logger.info("Change: +1: " + le);
-												total += 1;
-											} else if (le instanceof ListEdit.Remove<?>) {
-												logger.info("Change: -1: " + le);
-												total -= 1;
-											}
-										}
-									} else {
-										identifier = file + ":\t" + ((NodeSetEdit.Remove) me).getIdentifier();
-										logger.info("Remove: " + identifier);
-										total -= 1;
-									}
-									if (result.get(identifier) != null) {
-										result.get(identifier).add(total);
-									} else {
-										lineChanges = new ArrayList<Integer>();
-										lineChanges.add(total);
-										result.put(identifier, lineChanges);
-									}
-									logger.info("---> Total: " + (total > 0 ? "+" + total : total) + "\n");
+									visitor = new EditVisitor(logger, fileName);
+									((EditVisitor) visitor).visit(me);
+									addToResult(visitor, lineChanges, logger);
 								}
 							} else if (edit instanceof NodeSetEdit.Add) {
 								Node node = ((NodeSetEdit.Add) edit).getNode();
-								String identifier = null;
 								if (node instanceof Node.Type) {
+									visitor = new NodeVisitor(logger, fileName);
 									Set<Node> members = ((Node.Type) node).getMembers();
 									for (Node n : members) {
-										int total = 0;
-										if (n instanceof Node.Function) {
-											identifier = file + ":\t" + ((Node.Function) n).getSignature();
-											logger.info(identifier);
-											logger.info("Add: +" + ((Node.Function) n).getBody().size() + " "
-													+ ((Node.Function) n).getBody());
-											total += ((Node.Function) n).getBody().size();
-											if (result.get(identifier) != null) {
-												result.get(identifier).add(total);
-											} else {
-												lineChanges = new ArrayList<Integer>();
-												lineChanges.add(total);
-												result.put(identifier, lineChanges);
-											}
-											logger.info("---> Total: +" + total + "\n");
-										}
+										((NodeVisitor) visitor).visit(n);
+										//addToResult(visitor, lineChanges, logger);
 									}
 								}
 							}

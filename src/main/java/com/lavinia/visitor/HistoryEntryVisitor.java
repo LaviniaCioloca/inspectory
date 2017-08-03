@@ -6,7 +6,7 @@ import org.metanalysis.core.delta.TypeTransaction;
 import org.metanalysis.core.delta.VariableTransaction;
 import org.metanalysis.core.model.Node;
 
-public abstract class HistoryEntryVisitor {
+public abstract class HistoryEntryVisitor extends GenericVisitor {
 	public abstract void visit(Node.Type type, TypeTransaction transaction);
 
 	public abstract void visit(Node.Variable variable, VariableTransaction transaction);

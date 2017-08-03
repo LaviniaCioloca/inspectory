@@ -3,7 +3,7 @@ package com.lavinia.visitor;
 import org.metanalysis.core.model.Node;
 import org.metanalysis.core.model.SourceFile;
 
-abstract class CodeVisitor {
+abstract class CodeVisitor extends GenericVisitor {
     public abstract void visit(SourceFile sourceFile);
     public abstract void visit(Node.Type type);
     public abstract void visit(Node.Variable variable);

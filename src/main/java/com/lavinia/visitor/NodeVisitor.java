@@ -17,9 +17,17 @@ public class NodeVisitor extends CodeVisitor {
 	// public final static Logger logger = Logger.getLogger(NodeVisitor.class);
 	private Map<String, Integer> functionSize = new HashMap<String, Integer>();
 	public Logger logger = null;
+	private String fileName = null;
+	private String identifier = null;
+	private Integer total = 0;
 
 	public NodeVisitor(Logger logger) {
 		this.logger = logger;
+	}
+
+	public NodeVisitor(Logger logger, String fileName) {
+		this.logger = logger;
+		this.fileName = fileName;
 	}
 
 	@Override
@@ -56,6 +64,10 @@ public class NodeVisitor extends CodeVisitor {
 		/*
 		 * for (String b : body) { logger.info(b); } logger.info("\n");
 		 */
+		identifier = fileName + ":\t" + function.getSignature();
+		logger.info(identifier);
+		logger.info("Add: +" + function.getBody().size() + " " + function.getBody());
+		total += function.getBody().size();
 	}
 
 	public Map<String, Integer> getFunctionSize() {
@@ -64,6 +76,22 @@ public class NodeVisitor extends CodeVisitor {
 
 	public void setFunctionSize(Map<String, Integer> functionSize) {
 		this.functionSize = functionSize;
+	}
+
+	public String getIdentifier() {
+		return identifier;
+	}
+
+	public void setIdentifier(String identifier) {
+		this.identifier = identifier;
+	}
+
+	public Integer getTotal() {
+		return total;
+	}
+
+	public void setTotal(Integer total) {
+		this.total = total;
 	}
 
 }
