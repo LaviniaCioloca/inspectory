@@ -58,6 +58,7 @@ public class NodeVisitor extends CodeVisitor {
 		// logger.info("Visit Function");
 		// String signature = function.getSignature();
 		// logger.info("Function signature: " + signature);
+		total = 0;
 		List<String> body = function.getBody();
 		// logger.info("Body size: " + body.size());
 		functionSize.put(function.getIdentifier(), body.size());
@@ -65,8 +66,8 @@ public class NodeVisitor extends CodeVisitor {
 		 * for (String b : body) { logger.info(b); } logger.info("\n");
 		 */
 		identifier = fileName + ":\t" + function.getSignature();
-		logger.info(identifier);
-		logger.info("Add: +" + function.getBody().size() + " " + function.getBody());
+		//logger.info(identifier);
+		//logger.info("Add: +" + function.getBody().size() + " " + function.getBody());
 		total += function.getBody().size();
 	}
 
