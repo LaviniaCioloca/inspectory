@@ -43,7 +43,8 @@ public class FileHistoryInspect {
 			lineChanges.add(visitor.getTotal());
 			result.put(visitor.getIdentifier(), lineChanges);
 		}
-		//logger.info("---> Total: " + (visitor.getTotal() > 0 ? "+" + visitor.getTotal() : visitor.getTotal()) + "\n");
+		// logger.info("---> Total: " + (visitor.getTotal() > 0 ? "+" +
+		// visitor.getTotal() : visitor.getTotal()) + "\n");
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -70,8 +71,8 @@ public class FileHistoryInspect {
 						commit.setRevision(he.getRevision());
 						commit.setAuthor(he.getAuthor());
 						commit.setDate(he.getDate());
-						//logger.info("----------------------------------------------------------\n");
-						//logger.info(commit.toString());
+						// logger.info("----------------------------------------------------------\n");
+						// logger.info(commit.toString());
 						ArrayList<Integer> lineChanges = null;
 						SourceFileTransaction sourceFileTransaction = he.getTransaction();
 						List<NodeSetEdit> nodeEditList = sourceFileTransaction.getNodeEdits();

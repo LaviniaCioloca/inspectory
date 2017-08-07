@@ -20,9 +20,12 @@ public class RepoInspect {
 	}
 
 	public static void main(String[] args) {
-		/*FileModelInspect fileModelInspect = new FileModelInspect(getProject());
-		fileModelInspect.getModelFunctionsAnalyze();*/
-		
+		/*
+		 * FileModelInspect fileModelInspect = new
+		 * FileModelInspect(getProject());
+		 * fileModelInspect.getModelFunctionsAnalyze();
+		 */
+
 		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(getProject());
 		fileHistoryInspect.getHistoryFunctionsAnalyze();
 	}

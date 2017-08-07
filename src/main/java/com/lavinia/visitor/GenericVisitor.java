@@ -4,25 +4,9 @@ import org.apache.log4j.Logger;
 
 public abstract class GenericVisitor {
 	public Logger logger = null;
-	private String fileName = null;
-	private String identifier = null;
-	private Integer total = 0;
-
-	public Logger getLogger() {
-		return logger;
-	}
-
-	public void setLogger(Logger logger) {
-		this.logger = logger;
-	}
-
-	public String getFileName() {
-		return fileName;
-	}
-
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
-	}
+	protected String fileName = null;
+	protected String identifier = null;
+	protected Integer total = 0;
 
 	public String getIdentifier() {
 		return identifier;

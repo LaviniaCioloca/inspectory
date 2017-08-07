@@ -14,11 +14,6 @@ import org.metanalysis.core.delta.Transaction;
 
 public class EditVisitor extends NodeSetEditVisitor {
 
-	public Logger logger = null;
-	private String fileName = null;
-	private String identifier = null;
-	private Integer total = 0;
-
 	public EditVisitor(Logger logger, String fileName) {
 		this.logger = logger;
 		this.fileName = fileName;
@@ -28,9 +23,9 @@ public class EditVisitor extends NodeSetEditVisitor {
 	public void visit(Add add) {
 		Node n = ((NodeSetEdit.Add) add).getNode();
 		identifier = fileName + ":\t" + ((NodeSetEdit.Add) add).getNode().getIdentifier();
-		//logger.info("\n" + identifier);
+		// logger.info("\n" + identifier);
 		List<String> body = ((Node.Function) n).getBody();
-		//logger.info("Add: +" + body.size() + ": " + body);
+		// logger.info("Add: +" + body.size() + ": " + body);
 		total += body.size();
 
 	}
@@ -38,7 +33,7 @@ public class EditVisitor extends NodeSetEditVisitor {
 	@Override
 	public void visit(Remove remove) {
 		identifier = fileName + ":\t" + ((NodeSetEdit.Remove) remove).getIdentifier();
-		//logger.info("Remove: " + identifier);
+		// logger.info("Remove: " + identifier);
 		total -= 1;
 
 	}
@@ -46,35 +41,19 @@ public class EditVisitor extends NodeSetEditVisitor {
 	@Override
 	public void visit(Change<?> change) {
 		identifier = fileName + ":\t" + ((NodeSetEdit.Change<?>) change).getIdentifier();
-		//logger.info(identifier);
+		// logger.info(identifier);
 		Transaction<?> t1 = ((NodeSetEdit.Change<?>) change).getTransaction();
 		List<ListEdit<String>> bodyEdits = ((FunctionTransaction) t1).getBodyEdits();
 		for (ListEdit<String> le : bodyEdits) {
 			if (le instanceof ListEdit.Add<?>) {
-				//logger.info("Change: +1: " + le);
+				// logger.info("Change: +1: " + le);
 				total += 1;
 			} else if (le instanceof ListEdit.Remove<?>) {
-				//logger.info("Change: -1: " + le);
+				// logger.info("Change: -1: " + le);
 				total -= 1;
 			}
 		}
 
-	}
-
-	public String getIdentifier() {
-		return identifier;
-	}
-
-	public void setIdentifier(String identifier) {
-		this.identifier = identifier;
-	}
-
-	public Integer getTotal() {
-		return total;
-	}
-
-	public void setTotal(Integer total) {
-		this.total = total;
 	}
 
 }
