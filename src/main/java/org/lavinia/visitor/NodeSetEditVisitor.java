@@ -1,4 +1,4 @@
-package com.lavinia.visitor;
+package org.lavinia.visitor;
 
 import org.metanalysis.core.delta.NodeSetEdit;
 import org.metanalysis.core.delta.NodeSetEdit.Change;

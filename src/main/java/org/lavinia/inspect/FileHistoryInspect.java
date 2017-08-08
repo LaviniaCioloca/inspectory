@@ -1,4 +1,4 @@
-package com.lavinia.inspect;
+package org.lavinia.inspect;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -13,6 +13,10 @@ import java.util.Set;
 
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Logger;
+import org.lavinia.versioning.Commit;
+import org.lavinia.visitor.EditVisitor;
+import org.lavinia.visitor.GenericVisitor;
+import org.lavinia.visitor.NodeVisitor;
 import org.metanalysis.core.delta.NodeSetEdit;
 import org.metanalysis.core.delta.SourceFileTransaction;
 import org.metanalysis.core.delta.Transaction;
@@ -20,11 +24,6 @@ import org.metanalysis.core.delta.TypeTransaction;
 import org.metanalysis.core.model.Node;
 import org.metanalysis.core.project.PersistentProject;
 import org.metanalysis.core.project.Project.HistoryEntry;
-
-import com.lavinia.versioning.Commit;
-import com.lavinia.visitor.EditVisitor;
-import com.lavinia.visitor.GenericVisitor;
-import com.lavinia.visitor.NodeVisitor;
 
 public class FileHistoryInspect {
 	private static PersistentProject project = null;
@@ -47,8 +46,7 @@ public class FileHistoryInspect {
 		// visitor.getTotal() : visitor.getTotal()) + "\n");
 	}
 
-	@SuppressWarnings("rawtypes")
-	public void getHistoryFunctionsAnalyze() {
+	private void createResults() {
 		try {
 			String logFolderName = "results";
 			Set<String> filesList = project.listFiles();
@@ -80,7 +78,7 @@ public class FileHistoryInspect {
 
 						for (final NodeSetEdit edit : nodeEditList) {
 							if (edit instanceof NodeSetEdit.Change<?>) {
-								Transaction t = ((NodeSetEdit.Change) edit).getTransaction();
+								Transaction<?> t = ((NodeSetEdit.Change<?>) edit).getTransaction();
 								List<NodeSetEdit> memberEdits = ((TypeTransaction) t).getMemberEdits();
 								for (NodeSetEdit me : memberEdits) {
 									visitor = new EditVisitor(logger, fileName);
@@ -116,6 +114,9 @@ public class FileHistoryInspect {
 			 */
 			// e.printStackTrace();
 		}
+	}
+
+	public List<ArrayList<Integer>> sortResults() {
 		long startTime = System.nanoTime();
 
 		List<ArrayList<Integer>> changesValues = new ArrayList<>(result.values());
@@ -127,6 +128,13 @@ public class FileHistoryInspect {
 		long endTime = System.nanoTime();
 		long duration = (endTime - startTime) / 1000000;
 		System.out.println("Duration of sort is: " + duration + "ms");
+		return changesValues;
+	}
+
+	public void getHistoryFunctionsAnalyze() {
+		long startTime = System.nanoTime();
+		createResults();
+		List<ArrayList<Integer>> changesValues = sortResults();
 
 		startTime = System.nanoTime();
 		for (ArrayList<Integer> changeValues : changesValues) {
@@ -134,14 +142,13 @@ public class FileHistoryInspect {
 			while (iterator.hasNext()) {
 				Entry<String, ArrayList<Integer>> entry = iterator.next();
 				if (entry.getValue().equals(changeValues)) {
-
 					System.out.println(entry.getKey() + "-" + changeValues + "; size: " + changeValues.size() + "\n");
 					iterator.remove();
 				}
 			}
 		}
-		endTime = System.nanoTime();
-		duration = (endTime - startTime) / 1000000;
+		long endTime = System.nanoTime();
+		long duration = (endTime - startTime) / 1000000;
 		System.out.println("Duration of writing to file is: " + duration + "ms");
 	}
 

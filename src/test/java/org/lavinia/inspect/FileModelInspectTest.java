@@ -1,9 +1,8 @@
 package org.lavinia.inspect;
 
 import org.junit.Test;
-
-import com.lavinia.inspect.FileModelInspect;
-import com.lavinia.inspect.RepoInspect;
+import org.lavinia.inspect.FileModelInspect;
+import org.lavinia.inspect.RepoInspect;
 
 public class FileModelInspectTest {
 

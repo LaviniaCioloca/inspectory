@@ -1,4 +1,4 @@
-package com.lavinia.visitor;
+package org.lavinia.visitor;
 
 import org.metanalysis.core.model.Node;
 import org.metanalysis.core.model.SourceFile;

@@ -1,4 +1,4 @@
-package com.lavinia.visitor;
+package org.lavinia.visitor;
 
 import java.util.HashMap;
 import java.util.List;

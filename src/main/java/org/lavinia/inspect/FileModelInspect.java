@@ -1,4 +1,4 @@
-package com.lavinia.inspect;
+package org.lavinia.inspect;
 
 import java.io.IOException;
 import java.util.Map;
@@ -6,11 +6,10 @@ import java.util.Set;
 
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Logger;
+import org.lavinia.visitor.NodeVisitor;
 import org.metanalysis.core.model.Node;
 import org.metanalysis.core.model.SourceFile;
 import org.metanalysis.core.project.PersistentProject;
-
-import com.lavinia.visitor.NodeVisitor;
 
 public class FileModelInspect {
 	private static PersistentProject project = null;

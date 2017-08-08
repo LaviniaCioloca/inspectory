@@ -1,4 +1,4 @@
-package com.lavinia.visitor;
+package org.lavinia.visitor;
 
 import org.apache.log4j.Logger;
 

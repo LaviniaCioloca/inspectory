@@ -1,4 +1,4 @@
-package com.lavinia.visitor;
+package org.lavinia.visitor;
 
 import org.metanalysis.core.delta.FunctionTransaction;
 import org.metanalysis.core.delta.Transaction;

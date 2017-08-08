@@ -3,8 +3,7 @@ package org.lavinia.inspect;
 import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
-
-import com.lavinia.inspect.RepoInspect;
+import org.lavinia.inspect.RepoInspect;
 
 public class RepoInspectTest {
 

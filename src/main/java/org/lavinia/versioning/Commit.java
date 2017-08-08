@@ -1,4 +1,4 @@
-package com.lavinia.versioning;
+package org.lavinia.versioning;
 
 import java.util.Date;
 

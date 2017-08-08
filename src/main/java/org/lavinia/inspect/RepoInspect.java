@@ -1,4 +1,4 @@
-package com.lavinia.inspect;
+package org.lavinia.inspect;
 
 import java.io.IOException;
 
