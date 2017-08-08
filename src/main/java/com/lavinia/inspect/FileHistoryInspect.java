@@ -118,8 +118,8 @@ public class FileHistoryInspect {
 		}
 		long startTime = System.nanoTime();
 
-		List<ArrayList<Integer>> l = new ArrayList<>(result.values());
-		Collections.sort(l, new Comparator<ArrayList<Integer>>() {
+		List<ArrayList<Integer>> changesValues = new ArrayList<>(result.values());
+		Collections.sort(changesValues, new Comparator<ArrayList<Integer>>() {
 			public int compare(ArrayList<Integer> s1, ArrayList<Integer> s2) {
 				return Integer.compare(s2.size(), s1.size());
 			}
@@ -129,14 +129,14 @@ public class FileHistoryInspect {
 		System.out.println("Duration of sort is: " + duration + "ms");
 
 		startTime = System.nanoTime();
-		for (ArrayList<Integer> a : l) {
-			Iterator<Entry<String, ArrayList<Integer>>> iter = result.entrySet().iterator();
-			while (iter.hasNext()) {
-				Entry<String, ArrayList<Integer>> e = iter.next();
-				if (e.getValue().equals(a)) {
+		for (ArrayList<Integer> changeValues : changesValues) {
+			Iterator<Entry<String, ArrayList<Integer>>> iterator = result.entrySet().iterator();
+			while (iterator.hasNext()) {
+				Entry<String, ArrayList<Integer>> entry = iterator.next();
+				if (entry.getValue().equals(changeValues)) {
 
-					System.out.println(e.getKey() + "-" + a + "; size: " + a.size() + "\n");
-					iter.remove();
+					System.out.println(entry.getKey() + "-" + changeValues + "; size: " + changeValues.size() + "\n");
+					iterator.remove();
 				}
 			}
 		}
@@ -144,4 +144,13 @@ public class FileHistoryInspect {
 		duration = (endTime - startTime) / 1000000;
 		System.out.println("Duration of writing to file is: " + duration + "ms");
 	}
+
+	public Map<String, ArrayList<Integer>> getResult() {
+		return result;
+	}
+
+	public void setResult(Map<String, ArrayList<Integer>> result) {
+		this.result = result;
+	}
+
 }
