@@ -14,7 +14,7 @@
             <manifest>
               <addClasspath>true</addClasspath>
               <classpathPrefix>lib/</classpathPrefix>
-              <mainClass>com.lavinia.inspect.RepoInspect</mainClass>
+              <mainClass>org.lavinia.inspect.RepoInspect</mainClass>
             </manifest>
           </archive>
           <outputDirectory>/home/lavinia/Licenta/bootique</outputDirectory>

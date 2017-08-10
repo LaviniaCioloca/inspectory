@@ -97,6 +97,8 @@ public class FileHistoryInspect {
 										}
 									}
 								}
+							} else {
+								System.out.println("REMOVE! Edit: " + fileName + " " + edit.toString());
 							}
 						}
 					} catch (Exception e) {
