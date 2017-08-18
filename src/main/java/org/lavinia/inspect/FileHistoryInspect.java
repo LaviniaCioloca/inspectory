@@ -28,10 +28,12 @@ import org.metanalysis.core.project.Project.HistoryEntry;
 public class FileHistoryInspect {
 	private static PersistentProject project = null;
 	private Map<String, ArrayList<Integer>> result = null;
+	private ArrayList<String> deletedNodes = null;
 
 	public FileHistoryInspect(PersistentProject project) {
 		FileHistoryInspect.project = project;
 		result = new HashMap<String, ArrayList<Integer>>();
+		deletedNodes = new ArrayList<String>();
 	}
 
 	public void addToResult(GenericVisitor visitor, ArrayList<Integer> lineChanges, Logger logger) {
@@ -98,7 +100,7 @@ public class FileHistoryInspect {
 									}
 								}
 							} else {
-								System.out.println("REMOVE! Edit: " + fileName + " " + edit.toString());
+								deletedNodes.add(fileName);
 							}
 						}
 					} catch (Exception e) {
@@ -129,7 +131,7 @@ public class FileHistoryInspect {
 		});
 		long endTime = System.nanoTime();
 		long duration = (endTime - startTime) / 1000000;
-		System.out.println("Duration of sort is: " + duration + "ms");
+		System.out.println("Duration of sort is: " + duration + "ms\n");
 		return changesValues;
 	}
 
@@ -149,9 +151,13 @@ public class FileHistoryInspect {
 				}
 			}
 		}
+		System.out.println("\n\nDeleted nodes are:");
+		for (String deletedNode : deletedNodes) {
+			System.out.println(deletedNode);
+		}
 		long endTime = System.nanoTime();
 		long duration = (endTime - startTime) / 1000000;
-		System.out.println("Duration of writing to file is: " + duration + "ms");
+		System.out.println("\nDuration of writing to file is: " + duration + "ms");
 	}
 
 	public Map<String, ArrayList<Integer>> getResult() {
