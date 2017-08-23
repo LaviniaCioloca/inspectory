@@ -22,7 +22,7 @@ public class EditVisitor extends NodeSetEditVisitor {
 	@Override
 	public void visit(Add add) {
 		Node n = ((NodeSetEdit.Add) add).getNode();
-		identifier = fileName + ":\t" + ((NodeSetEdit.Add) add).getNode().getIdentifier();
+		identifier = fileName + ":\t" + n.getIdentifier();
 		// logger.info("\n" + identifier);
 		List<String> body = ((Node.Function) n).getBody();
 		// logger.info("Add: +" + body.size() + ": " + body);

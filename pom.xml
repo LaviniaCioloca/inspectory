@@ -50,7 +50,7 @@
 							<mainClass>org.lavinia.inspect.RepoInspect</mainClass>
 						</manifest>
 					</archive>
-					<outputDirectory>/home/lavinia/Licenta/bootique</outputDirectory>
+					<outputDirectory>/home/lavinia/Licenta/elasticsearch</outputDirectory>
 				</configuration>
 			</plugin>
 			<plugin>

@@ -1,7 +1,9 @@
 package org.lavinia.inspect;
 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -13,6 +15,7 @@ import java.util.Set;
 
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Logger;
+import org.lavinia.utils.CSVUtils;
 import org.lavinia.versioning.Commit;
 import org.lavinia.visitor.EditVisitor;
 import org.lavinia.visitor.GenericVisitor;
@@ -29,11 +32,19 @@ public class FileHistoryInspect {
 	private static PersistentProject project = null;
 	private Map<String, ArrayList<Integer>> result = null;
 	private ArrayList<String> deletedNodes = null;
+	private FileWriter csvWriter = null;
 
 	public FileHistoryInspect(PersistentProject project) {
 		FileHistoryInspect.project = project;
 		result = new HashMap<String, ArrayList<Integer>>();
 		deletedNodes = new ArrayList<String>();
+	}
+
+	public FileHistoryInspect(PersistentProject project, FileWriter csvWriter) {
+		FileHistoryInspect.project = project;
+		result = new HashMap<String, ArrayList<Integer>>();
+		deletedNodes = new ArrayList<String>();
+		this.csvWriter = csvWriter;
 	}
 
 	public void addToResult(GenericVisitor visitor, ArrayList<Integer> lineChanges, Logger logger) {
@@ -59,11 +70,14 @@ public class FileHistoryInspect {
 				// System.out.println("\n\nfile: " + file);
 				List<HistoryEntry> fileHistory = project.getFileHistory(fileName);
 
-				String logFilePath = "./" + logFolderName + "/" + fileName + ".history";
+				// String logFilePath = "./" + logFolderName + "/" + fileName +
+				// ".history";
 				Logger logger = Logger.getRootLogger();
-				FileAppender appender = (FileAppender) logger.getAppender("file");
-				appender.setFile(logFilePath);
-				appender.activateOptions();
+				/*
+				 * FileAppender appender = (FileAppender)
+				 * logger.getAppender("file"); appender.setFile(logFilePath);
+				 * appender.activateOptions();
+				 */
 
 				for (HistoryEntry he : fileHistory) {
 					try {
@@ -73,6 +87,8 @@ public class FileHistoryInspect {
 						commit.setDate(he.getDate());
 						// logger.info("----------------------------------------------------------\n");
 						// logger.info(commit.toString());
+						ArrayList<String> csvLine = new ArrayList<String>();
+						csvLine.add(fileName);
 						ArrayList<Integer> lineChanges = null;
 						SourceFileTransaction sourceFileTransaction = he.getTransaction();
 						List<NodeSetEdit> nodeEditList = sourceFileTransaction.getNodeEdits();
@@ -90,6 +106,9 @@ public class FileHistoryInspect {
 							} else if (edit instanceof NodeSetEdit.Add) {
 								Node node = ((NodeSetEdit.Add) edit).getNode();
 								if (node instanceof Node.Type) {
+									//String modifiers = String.join(" ", ((Node.Type) node).getModifiers());
+									//csvLine.add(modifiers + " " + ((Node.Type) node).getName());
+									csvLine.add(((Node.Type) node).getName());
 									visitor = new NodeVisitor(logger, fileName);
 									Set<Node> members = ((Node.Type) node).getMembers();
 									for (Node n : members) {
@@ -103,6 +122,7 @@ public class FileHistoryInspect {
 								deletedNodes.add(fileName);
 							}
 						}
+						CSVUtils.writeLine(csvWriter, csvLine);
 					} catch (Exception e) {
 						continue;
 					}
@@ -146,15 +166,15 @@ public class FileHistoryInspect {
 			while (iterator.hasNext()) {
 				Entry<String, ArrayList<Integer>> entry = iterator.next();
 				if (entry.getValue().equals(changeValues)) {
-					System.out.println(entry.getKey() + "-" + changeValues + "; size: " + changeValues.size() + "\n");
+					//System.out.println(entry.getKey() + "-" + changeValues + "; size: " + changeValues.size() + "\n");
 					iterator.remove();
 				}
 			}
 		}
-		System.out.println("\n\nDeleted nodes are:");
+		/*System.out.println("\n\nDeleted nodes are:");
 		for (String deletedNode : deletedNodes) {
 			System.out.println(deletedNode);
-		}
+		}*/
 		long endTime = System.nanoTime();
 		long duration = (endTime - startTime) / 1000000;
 		System.out.println("\nDuration of writing to file is: " + duration + "ms");
