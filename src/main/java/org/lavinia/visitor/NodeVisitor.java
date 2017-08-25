@@ -61,7 +61,8 @@ public class NodeVisitor extends CodeVisitor {
 		/*
 		 * for (String b : body) { logger.info(b); } logger.info("\n");
 		 */
-		identifier = fileName + ":\t" + function.getSignature();
+		// identifier = fileName + ":\t" + function.getSignature();
+		identifier = function.getSignature();
 		// logger.info(identifier);
 		// logger.info("Add: +" + function.getBody().size() + " " +
 		// function.getBody());

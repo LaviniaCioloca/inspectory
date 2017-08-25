@@ -31,9 +31,9 @@ public class FileHistoryInspectTest {
 		lineChanges.add(5);
 
 		visitor.setTotal(15);
-		fileHistoryInspect.addToResult(visitor, lineChanges, logger);
+		fileHistoryInspect.newEntryInResult(visitor, lineChanges, logger);
 		visitor.setTotal(5);
-		fileHistoryInspect.addToResult(visitor, lineChanges, logger);
+		fileHistoryInspect.newEntryInResult(visitor, lineChanges, logger);
 
 		Map<String, ArrayList<Integer>> actual = fileHistoryInspect.getResult();
 		Map<String, ArrayList<Integer>> expected = new HashMap<String, ArrayList<Integer>>();
@@ -51,13 +51,13 @@ public class FileHistoryInspectTest {
 		ArrayList<Integer> lineChanges = new ArrayList<Integer>();
 
 		visitor.setTotal(15);
-		fileHistoryInspect.addToResult(visitor, lineChanges, logger);
+		fileHistoryInspect.newEntryInResult(visitor, lineChanges, logger);
 
 		visitor.setIdentifier("cde");
 		visitor.setTotal(10);
-		fileHistoryInspect.addToResult(visitor, lineChanges, logger);
+		fileHistoryInspect.newEntryInResult(visitor, lineChanges, logger);
 		visitor.setTotal(5);
-		fileHistoryInspect.addToResult(visitor, lineChanges, logger);
+		fileHistoryInspect.newEntryInResult(visitor, lineChanges, logger);
 
 		List<ArrayList<Integer>> actual = fileHistoryInspect.sortResults();
 

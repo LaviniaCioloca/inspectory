@@ -3,7 +3,6 @@ package org.lavinia.inspect;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -13,9 +12,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.log4j.FileAppender;
 import org.apache.log4j.Logger;
 import org.lavinia.utils.CSVUtils;
+import org.lavinia.versioning.CSVData;
 import org.lavinia.versioning.Commit;
 import org.lavinia.visitor.EditVisitor;
 import org.lavinia.visitor.GenericVisitor;
@@ -47,22 +46,26 @@ public class FileHistoryInspect {
 		this.csvWriter = csvWriter;
 	}
 
-	public void addToResult(GenericVisitor visitor, ArrayList<Integer> lineChanges, Logger logger) {
-		if (result.get(visitor.getIdentifier()) != null) {
-			result.get(visitor.getIdentifier()).add(visitor.getTotal());
+	public boolean newEntryInResult(GenericVisitor visitor, ArrayList<Integer> lineChanges, String className) {
+		if (result.get(className + ": " + visitor.getIdentifier()) != null) {
+			result.get(className + ": " + visitor.getIdentifier()).add(visitor.getTotal());
+			return false;
 		} else {
 			lineChanges = new ArrayList<Integer>();
 			lineChanges.add(visitor.getTotal());
-			result.put(visitor.getIdentifier(), lineChanges);
+			result.put(className + ": " + visitor.getIdentifier(), lineChanges);
+			return true;
 		}
 		// logger.info("---> Total: " + (visitor.getTotal() > 0 ? "+" +
 		// visitor.getTotal() : visitor.getTotal()) + "\n");
 	}
 
 	private void createResults() {
+		ArrayList<CSVData> csvDataList = null;
 		try {
 			String logFolderName = "results";
 			Set<String> filesList = project.listFiles();
+			csvDataList = new ArrayList<CSVData>();
 			for (String fileName : filesList) {
 				if (fileName.startsWith(".") || !fileName.endsWith(".java")) {
 					continue;
@@ -87,8 +90,6 @@ public class FileHistoryInspect {
 						commit.setDate(he.getDate());
 						// logger.info("----------------------------------------------------------\n");
 						// logger.info(commit.toString());
-						ArrayList<String> csvLine = new ArrayList<String>();
-						csvLine.add(fileName);
 						ArrayList<Integer> lineChanges = null;
 						SourceFileTransaction sourceFileTransaction = he.getTransaction();
 						List<NodeSetEdit> nodeEditList = sourceFileTransaction.getNodeEdits();
@@ -96,25 +97,40 @@ public class FileHistoryInspect {
 
 						for (final NodeSetEdit edit : nodeEditList) {
 							if (edit instanceof NodeSetEdit.Change<?>) {
+								String className = ((NodeSetEdit.Change<?>) edit).getIdentifier();
 								Transaction<?> t = ((NodeSetEdit.Change<?>) edit).getTransaction();
 								List<NodeSetEdit> memberEdits = ((TypeTransaction) t).getMemberEdits();
 								for (NodeSetEdit me : memberEdits) {
 									visitor = new EditVisitor(logger, fileName);
 									((EditVisitor) visitor).visit(me);
-									addToResult(visitor, lineChanges, logger);
+									if (newEntryInResult(visitor, lineChanges, className)) {
+										CSVData csvData = new CSVData();
+										csvData.setFileName("\"" + fileName + "\"");
+										csvData.setClassName("\"" + className + "\"");
+										csvData.setMethodName("\"" + visitor.getIdentifier() + "\"");
+										csvDataList.add(csvData);
+									}
 								}
 							} else if (edit instanceof NodeSetEdit.Add) {
 								Node node = ((NodeSetEdit.Add) edit).getNode();
 								if (node instanceof Node.Type) {
-									//String modifiers = String.join(" ", ((Node.Type) node).getModifiers());
-									//csvLine.add(modifiers + " " + ((Node.Type) node).getName());
-									csvLine.add(((Node.Type) node).getName());
+									// String modifiers = String.join(" ",
+									// ((Node.Type) node).getModifiers());
+									// csvLine.add(modifiers + " " +
+									// ((Node.Type) node).getName());
+									String className = ((Node.Type) node).getName();
 									visitor = new NodeVisitor(logger, fileName);
 									Set<Node> members = ((Node.Type) node).getMembers();
 									for (Node n : members) {
 										if (n instanceof Node.Function) {
 											((NodeVisitor) visitor).visit(n);
-											addToResult(visitor, lineChanges, logger);
+											if (newEntryInResult(visitor, lineChanges, className)) {
+												CSVData csvData = new CSVData();
+												csvData.setFileName("\"" + fileName + "\"");
+												csvData.setClassName("\"" + className + "\"");
+												csvData.setMethodName("\"" + visitor.getIdentifier() + "\"");
+												csvDataList.add(csvData);
+											}
 										}
 									}
 								}
@@ -122,7 +138,7 @@ public class FileHistoryInspect {
 								deletedNodes.add(fileName);
 							}
 						}
-						CSVUtils.writeLine(csvWriter, csvLine);
+						// CSVUtils.writeLine(csvWriter, csvLine);
 					} catch (Exception e) {
 						continue;
 					}
@@ -130,13 +146,33 @@ public class FileHistoryInspect {
 				}
 			}
 
-		} catch (IOException e) {
+		} catch (
+
+		IOException e) {
 			/*
 			 * Need to have a NOP here because of the files that do not have a
 			 * model -> they have static initializers and getModel(file) throws
 			 * IOException
 			 */
 			// e.printStackTrace();
+		}
+		for (CSVData csvLine : csvDataList) {
+			try {
+				ArrayList<Integer> changesList = result.get(csvLine.getClassName().replaceAll("\"", "") + ": "
+						+ csvLine.getMethodName().replaceAll("\"", ""));
+				if (changesList != null) {
+					csvLine.setInitialSize(changesList.get(0));
+					csvLine.setNumberOfChanges(changesList.size());
+				} else {
+					csvLine.setInitialSize(-10);
+					csvLine.setNumberOfChanges(-10);
+				}
+				// System.out.println(csvLine.getCSVLine());
+				CSVUtils.writeLine(csvWriter, csvLine.getCSVLine(), ',', '"');
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -161,20 +197,19 @@ public class FileHistoryInspect {
 		List<ArrayList<Integer>> changesValues = sortResults();
 
 		startTime = System.nanoTime();
-		for (ArrayList<Integer> changeValues : changesValues) {
-			Iterator<Entry<String, ArrayList<Integer>>> iterator = result.entrySet().iterator();
-			while (iterator.hasNext()) {
-				Entry<String, ArrayList<Integer>> entry = iterator.next();
-				if (entry.getValue().equals(changeValues)) {
-					//System.out.println(entry.getKey() + "-" + changeValues + "; size: " + changeValues.size() + "\n");
-					iterator.remove();
-				}
-			}
-		}
-		/*System.out.println("\n\nDeleted nodes are:");
-		for (String deletedNode : deletedNodes) {
-			System.out.println(deletedNode);
-		}*/
+		/*
+		 * for (ArrayList<Integer> changeValues : changesValues) {
+		 * Iterator<Entry<String, ArrayList<Integer>>> iterator =
+		 * result.entrySet().iterator(); while (iterator.hasNext()) {
+		 * Entry<String, ArrayList<Integer>> entry = iterator.next(); if
+		 * (entry.getValue().equals(changeValues)) {
+		 * //System.out.println(entry.getKey() + "-" + changeValues + "; size: "
+		 * + changeValues.size() + "\n"); iterator.remove(); } } }
+		 */
+		/*
+		 * System.out.println("\n\nDeleted nodes are:"); for (String deletedNode
+		 * : deletedNodes) { System.out.println(deletedNode); }
+		 */
 		long endTime = System.nanoTime();
 		long duration = (endTime - startTime) / 1000000;
 		System.out.println("\nDuration of writing to file is: " + duration + "ms");
