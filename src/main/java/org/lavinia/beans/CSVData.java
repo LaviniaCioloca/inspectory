@@ -1,4 +1,4 @@
-package org.lavinia.versioning;
+package org.lavinia.beans;
 
 import java.util.ArrayList;
 
@@ -7,6 +7,7 @@ public class CSVData {
 	private String className;
 	private String methodName;
 	private Integer initialSize;
+	private Integer actualSize;
 	private Integer numberOfChanges;
 	private boolean isPulsar;
 	private boolean isSupernova;
@@ -33,6 +34,14 @@ public class CSVData {
 
 	public void setMethodName(String methodName) {
 		this.methodName = methodName;
+	}
+
+	public Integer getActualSize() {
+		return actualSize;
+	}
+
+	public void setActualSize(Integer actualSize) {
+		this.actualSize = actualSize;
 	}
 
 	public Integer getInitialSize() {
@@ -66,13 +75,14 @@ public class CSVData {
 	public void setSupernova(boolean isSupernova) {
 		this.isSupernova = isSupernova;
 	}
-	
+
 	public ArrayList<String> getCSVLine() {
 		ArrayList<String> csvLine = new ArrayList<>();
 		csvLine.add(this.getFileName());
 		csvLine.add(this.getClassName());
 		csvLine.add(this.getMethodName());
 		csvLine.add(this.getInitialSize().toString());
+		csvLine.add(this.getActualSize().toString());
 		csvLine.add(this.getNumberOfChanges().toString());
 		return csvLine;
 	}

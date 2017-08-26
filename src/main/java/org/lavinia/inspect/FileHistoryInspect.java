@@ -12,10 +12,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.log4j.FileAppender;
 import org.apache.log4j.Logger;
+import org.lavinia.beans.CSVData;
+import org.lavinia.beans.Commit;
 import org.lavinia.utils.CSVUtils;
-import org.lavinia.versioning.CSVData;
-import org.lavinia.versioning.Commit;
 import org.lavinia.visitor.EditVisitor;
 import org.lavinia.visitor.GenericVisitor;
 import org.lavinia.visitor.NodeVisitor;
@@ -46,9 +47,12 @@ public class FileHistoryInspect {
 		this.csvWriter = csvWriter;
 	}
 
-	public boolean newEntryInResult(GenericVisitor visitor, ArrayList<Integer> lineChanges, String className) {
+	public boolean newEntryInResult(GenericVisitor visitor, ArrayList<Integer> lineChanges, Logger logger,
+			String className) {
 		if (result.get(className + ": " + visitor.getIdentifier()) != null) {
 			result.get(className + ": " + visitor.getIdentifier()).add(visitor.getTotal());
+			logger.info(
+					"---> Total: " + (visitor.getTotal() > 0 ? "+" + visitor.getTotal() : visitor.getTotal()) + "\n");
 			return false;
 		} else {
 			lineChanges = new ArrayList<Integer>();
@@ -73,14 +77,12 @@ public class FileHistoryInspect {
 				// System.out.println("\n\nfile: " + file);
 				List<HistoryEntry> fileHistory = project.getFileHistory(fileName);
 
-				// String logFilePath = "./" + logFolderName + "/" + fileName +
-				// ".history";
+				String logFilePath = "./" + logFolderName + "/" + fileName + ".history";
 				Logger logger = Logger.getRootLogger();
-				/*
-				 * FileAppender appender = (FileAppender)
-				 * logger.getAppender("file"); appender.setFile(logFilePath);
-				 * appender.activateOptions();
-				 */
+
+				FileAppender appender = (FileAppender) logger.getAppender("file");
+				appender.setFile(logFilePath);
+				appender.activateOptions();
 
 				for (HistoryEntry he : fileHistory) {
 					try {
@@ -88,8 +90,8 @@ public class FileHistoryInspect {
 						commit.setRevision(he.getRevision());
 						commit.setAuthor(he.getAuthor());
 						commit.setDate(he.getDate());
-						// logger.info("----------------------------------------------------------\n");
-						// logger.info(commit.toString());
+						logger.info("----------------------------------------------------------\n");
+						logger.info(commit.toString());
 						ArrayList<Integer> lineChanges = null;
 						SourceFileTransaction sourceFileTransaction = he.getTransaction();
 						List<NodeSetEdit> nodeEditList = sourceFileTransaction.getNodeEdits();
@@ -103,7 +105,7 @@ public class FileHistoryInspect {
 								for (NodeSetEdit me : memberEdits) {
 									visitor = new EditVisitor(logger, fileName);
 									((EditVisitor) visitor).visit(me);
-									if (newEntryInResult(visitor, lineChanges, className)) {
+									if (newEntryInResult(visitor, lineChanges, logger, className)) {
 										CSVData csvData = new CSVData();
 										csvData.setFileName("\"" + fileName + "\"");
 										csvData.setClassName("\"" + className + "\"");
@@ -124,7 +126,7 @@ public class FileHistoryInspect {
 									for (Node n : members) {
 										if (n instanceof Node.Function) {
 											((NodeVisitor) visitor).visit(n);
-											if (newEntryInResult(visitor, lineChanges, className)) {
+											if (newEntryInResult(visitor, lineChanges, logger, className)) {
 												CSVData csvData = new CSVData();
 												csvData.setFileName("\"" + fileName + "\"");
 												csvData.setClassName("\"" + className + "\"");
@@ -160,12 +162,14 @@ public class FileHistoryInspect {
 			try {
 				ArrayList<Integer> changesList = result.get(csvLine.getClassName().replaceAll("\"", "") + ": "
 						+ csvLine.getMethodName().replaceAll("\"", ""));
+				Integer actualSize = 0;
+				for (Integer change : changesList) {
+					actualSize += change;
+				}
 				if (changesList != null) {
 					csvLine.setInitialSize(changesList.get(0));
 					csvLine.setNumberOfChanges(changesList.size());
-				} else {
-					csvLine.setInitialSize(-10);
-					csvLine.setNumberOfChanges(-10);
+					csvLine.setActualSize(actualSize);
 				}
 				// System.out.println(csvLine.getCSVLine());
 				CSVUtils.writeLine(csvWriter, csvLine.getCSVLine(), ',', '"');
