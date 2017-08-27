@@ -31,13 +31,13 @@ public class FileHistoryInspectTest {
 		lineChanges.add(5);
 
 		visitor.setTotal(15);
-		fileHistoryInspect.newEntryInResult(visitor, lineChanges, logger);
+		fileHistoryInspect.checkEntryInResultSet(visitor, lineChanges, logger, "SimpleClass");
 		visitor.setTotal(5);
-		fileHistoryInspect.newEntryInResult(visitor, lineChanges, logger);
+		fileHistoryInspect.checkEntryInResultSet(visitor, lineChanges, logger, "SimpleClass");
 
 		Map<String, ArrayList<Integer>> actual = fileHistoryInspect.getResult();
 		Map<String, ArrayList<Integer>> expected = new HashMap<String, ArrayList<Integer>>();
-		expected.put("abc", lineChanges);
+		expected.put("SimpleClass: abc", lineChanges);
 
 		assertEquals(expected, actual);
 	}
@@ -47,17 +47,17 @@ public class FileHistoryInspectTest {
 		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(RepoInspect.getProject());
 		Logger logger = Logger.getRootLogger();
 		GenericVisitor visitor = new NodeVisitor(logger);
-		visitor.setIdentifier("abc");
+		visitor.setIdentifier("SimpleClass: abc");
 		ArrayList<Integer> lineChanges = new ArrayList<Integer>();
 
 		visitor.setTotal(15);
-		fileHistoryInspect.newEntryInResult(visitor, lineChanges, logger);
+		fileHistoryInspect.checkEntryInResultSet(visitor, lineChanges, logger, "SimpleClass");
 
-		visitor.setIdentifier("cde");
+		visitor.setIdentifier("SimpleClass: cde");
 		visitor.setTotal(10);
-		fileHistoryInspect.newEntryInResult(visitor, lineChanges, logger);
+		fileHistoryInspect.checkEntryInResultSet(visitor, lineChanges, logger, "SimpleClass");
 		visitor.setTotal(5);
-		fileHistoryInspect.newEntryInResult(visitor, lineChanges, logger);
+		fileHistoryInspect.checkEntryInResultSet(visitor, lineChanges, logger, "SimpleClass");
 
 		List<ArrayList<Integer>> actual = fileHistoryInspect.sortResults();
 

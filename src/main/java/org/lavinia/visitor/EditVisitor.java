@@ -33,7 +33,8 @@ public class EditVisitor extends NodeSetEditVisitor {
 
 	@Override
 	public void visit(Remove remove) {
-		// identifier = fileName + ":\t" + ((NodeSetEdit.Remove) remove).getIdentifier();
+		// identifier = fileName + ":\t" + ((NodeSetEdit.Remove)
+		// remove).getIdentifier();
 		identifier = ((NodeSetEdit.Remove) remove).getIdentifier();
 		logger.info("Remove: " + identifier);
 		total -= 1;
@@ -42,7 +43,8 @@ public class EditVisitor extends NodeSetEditVisitor {
 
 	@Override
 	public void visit(Change<?> change) {
-		// identifier = fileName + ":\t" + ((NodeSetEdit.Change<?>) change).getIdentifier();
+		// identifier = fileName + ":\t" + ((NodeSetEdit.Change<?>)
+		// change).getIdentifier();
 		identifier = ((NodeSetEdit.Change<?>) change).getIdentifier();
 		logger.info(identifier);
 		Transaction<?> t1 = ((NodeSetEdit.Change<?>) change).getTransaction();

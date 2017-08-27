@@ -6,10 +6,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.log4j.FileAppender;
@@ -47,7 +45,7 @@ public class FileHistoryInspect {
 		this.csvWriter = csvWriter;
 	}
 
-	public boolean newEntryInResult(GenericVisitor visitor, ArrayList<Integer> lineChanges, Logger logger,
+	public boolean checkEntryInResultSet(GenericVisitor visitor, ArrayList<Integer> lineChanges, Logger logger,
 			String className) {
 		if (result.get(className + ": " + visitor.getIdentifier()) != null) {
 			result.get(className + ": " + visitor.getIdentifier()).add(visitor.getTotal());
@@ -103,14 +101,18 @@ public class FileHistoryInspect {
 								Transaction<?> t = ((NodeSetEdit.Change<?>) edit).getTransaction();
 								List<NodeSetEdit> memberEdits = ((TypeTransaction) t).getMemberEdits();
 								for (NodeSetEdit me : memberEdits) {
-									visitor = new EditVisitor(logger, fileName);
-									((EditVisitor) visitor).visit(me);
-									if (newEntryInResult(visitor, lineChanges, logger, className)) {
-										CSVData csvData = new CSVData();
-										csvData.setFileName("\"" + fileName + "\"");
-										csvData.setClassName("\"" + className + "\"");
-										csvData.setMethodName("\"" + visitor.getIdentifier() + "\"");
-										csvDataList.add(csvData);
+									try {
+										visitor = new EditVisitor(logger, fileName);
+										((EditVisitor) visitor).visit(me);
+										if (checkEntryInResultSet(visitor, lineChanges, logger, className)) {
+											CSVData csvData = new CSVData();
+											csvData.setFileName("\"" + fileName + "\"");
+											csvData.setClassName("\"" + className + "\"");
+											csvData.setMethodName("\"" + visitor.getIdentifier() + "\"");
+											csvDataList.add(csvData);
+										}
+									} catch (Exception e) {
+										continue;
 									}
 								}
 							} else if (edit instanceof NodeSetEdit.Add) {
@@ -124,15 +126,19 @@ public class FileHistoryInspect {
 									visitor = new NodeVisitor(logger, fileName);
 									Set<Node> members = ((Node.Type) node).getMembers();
 									for (Node n : members) {
-										if (n instanceof Node.Function) {
-											((NodeVisitor) visitor).visit(n);
-											if (newEntryInResult(visitor, lineChanges, logger, className)) {
-												CSVData csvData = new CSVData();
-												csvData.setFileName("\"" + fileName + "\"");
-												csvData.setClassName("\"" + className + "\"");
-												csvData.setMethodName("\"" + visitor.getIdentifier() + "\"");
-												csvDataList.add(csvData);
+										try {
+											if (n instanceof Node.Function) {
+												((NodeVisitor) visitor).visit(n);
+												if (checkEntryInResultSet(visitor, lineChanges, logger, className)) {
+													CSVData csvData = new CSVData();
+													csvData.setFileName("\"" + fileName + "\"");
+													csvData.setClassName("\"" + className + "\"");
+													csvData.setMethodName("\"" + visitor.getIdentifier() + "\"");
+													csvDataList.add(csvData);
+												}
 											}
+										} catch (Exception e) {
+											continue;
 										}
 									}
 								}
@@ -198,7 +204,7 @@ public class FileHistoryInspect {
 	public void getHistoryFunctionsAnalyze() {
 		long startTime = System.nanoTime();
 		createResults();
-		List<ArrayList<Integer>> changesValues = sortResults();
+		// List<ArrayList<Integer>> changesValues = sortResults();
 
 		startTime = System.nanoTime();
 		/*
