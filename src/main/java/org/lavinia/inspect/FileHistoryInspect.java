@@ -65,7 +65,7 @@ public class FileHistoryInspect {
 	private void createResults() {
 		ArrayList<CSVData> csvDataList = null;
 		try {
-			String logFolderName = "results";
+			String logFolderName = ".inspectory_results";
 			Set<String> filesList = project.listFiles();
 			csvDataList = new ArrayList<CSVData>();
 			for (String fileName : filesList) {

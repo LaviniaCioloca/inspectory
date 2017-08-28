@@ -22,43 +22,51 @@ public class EditVisitor extends NodeSetEditVisitor {
 	@Override
 	public void visit(Add add) {
 		Node n = ((NodeSetEdit.Add) add).getNode();
-		// identifier = fileName + ":\t" + n.getIdentifier();
-		identifier = n.getIdentifier();
-		logger.info("\n" + identifier);
-		List<String> body = ((Node.Function) n).getBody();
-		logger.info("Add: +" + body.size() + ": " + body);
-		total += body.size();
-
+		if (n instanceof Node.Function) {
+			// identifier = fileName + ":\t" + n.getIdentifier();
+			identifier = n.getIdentifier();
+			logger.info("\n" + identifier);
+			List<String> body = ((Node.Function) n).getBody();
+			logger.info("Add: +" + body.size() + ": " + body);
+			total += body.size();
+		}
 	}
 
 	@Override
 	public void visit(Remove remove) {
 		// identifier = fileName + ":\t" + ((NodeSetEdit.Remove)
 		// remove).getIdentifier();
-		identifier = ((NodeSetEdit.Remove) remove).getIdentifier();
-		logger.info("Remove: " + identifier);
-		total -= 1;
-
+		if (remove.getNodeType().equals(Node.Function.class)) {
+			identifier = ((NodeSetEdit.Remove) remove).getIdentifier();
+			logger.info("Remove: " + identifier);
+			total -= 1;
+		}
 	}
 
 	@Override
 	public void visit(Change<?> change) {
 		// identifier = fileName + ":\t" + ((NodeSetEdit.Change<?>)
 		// change).getIdentifier();
-		identifier = ((NodeSetEdit.Change<?>) change).getIdentifier();
-		logger.info(identifier);
-		Transaction<?> t1 = ((NodeSetEdit.Change<?>) change).getTransaction();
-		List<ListEdit<String>> bodyEdits = ((FunctionTransaction) t1).getBodyEdits();
-		for (ListEdit<String> le : bodyEdits) {
-			if (le instanceof ListEdit.Add<?>) {
-				logger.info("Change: +1: " + le);
-				total += 1;
-			} else if (le instanceof ListEdit.Remove<?>) {
-				logger.info("Change: -1: " + le);
-				total -= 1;
+		System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+		System.out.println("Change - nodeType: " + change.getNodeType());
+		System.out.println("Node.Function class: " + Node.Function.class);
+		System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+		if (change.getNodeType().equals(Node.Function.class)) {
+			identifier = ((NodeSetEdit.Change<?>) change).getIdentifier();
+			logger.info(identifier);
+			Transaction<?> t1 = ((NodeSetEdit.Change<?>) change).getTransaction();
+			List<ListEdit<String>> bodyEdits = ((FunctionTransaction) t1).getBodyEdits();
+			for (ListEdit<String> le : bodyEdits) {
+				if (le instanceof ListEdit.Add<?>) {
+					logger.info("Change: +1: " + le);
+					total += 1;
+				} else if (le instanceof ListEdit.Remove<?>) {
+					logger.info("Change: -1: " + le);
+					total -= 1;
+				}
 			}
-		}
 
+		}
 	}
 
 }
