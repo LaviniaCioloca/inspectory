@@ -32,12 +32,6 @@ public class FileHistoryInspect {
 	private ArrayList<String> deletedNodes = null;
 	private FileWriter csvWriter = null;
 
-	public FileHistoryInspect(PersistentProject project) {
-		FileHistoryInspect.project = project;
-		result = new HashMap<String, ArrayList<Integer>>();
-		deletedNodes = new ArrayList<String>();
-	}
-
 	public FileHistoryInspect(PersistentProject project, FileWriter csvWriter) {
 		FileHistoryInspect.project = project;
 		result = new HashMap<String, ArrayList<Integer>>();
@@ -47,6 +41,9 @@ public class FileHistoryInspect {
 
 	public boolean checkEntryInResultSet(GenericVisitor visitor, ArrayList<Integer> lineChanges, Logger logger,
 			String className) {
+		if (visitor.getIdentifier() == null) {
+			return false;
+		}
 		if (result.get(className + ": " + visitor.getIdentifier()) != null) {
 			result.get(className + ": " + visitor.getIdentifier()).add(visitor.getTotal());
 			logger.info(
@@ -100,10 +97,10 @@ public class FileHistoryInspect {
 								String className = ((NodeSetEdit.Change<?>) edit).getIdentifier();
 								Transaction<?> t = ((NodeSetEdit.Change<?>) edit).getTransaction();
 								List<NodeSetEdit> memberEdits = ((TypeTransaction) t).getMemberEdits();
-								for (NodeSetEdit me : memberEdits) {
+								for (NodeSetEdit memberEdit : memberEdits) {
 									try {
 										visitor = new EditVisitor(logger, fileName);
-										((EditVisitor) visitor).visit(me);
+										((EditVisitor) visitor).visit(memberEdit);
 										if (checkEntryInResultSet(visitor, lineChanges, logger, className)) {
 											CSVData csvData = new CSVData();
 											csvData.setFileName("\"" + fileName + "\"");
@@ -125,10 +122,10 @@ public class FileHistoryInspect {
 									String className = ((Node.Type) node).getName();
 									visitor = new NodeVisitor(logger, fileName);
 									Set<Node> members = ((Node.Type) node).getMembers();
-									for (Node n : members) {
+									for (Node member : members) {
 										try {
-											if (n instanceof Node.Function) {
-												((NodeVisitor) visitor).visit(n);
+											if (member instanceof Node.Function) {
+												((NodeVisitor) visitor).visit(member);
 												if (checkEntryInResultSet(visitor, lineChanges, logger, className)) {
 													CSVData csvData = new CSVData();
 													csvData.setFileName("\"" + fileName + "\"");
@@ -176,6 +173,7 @@ public class FileHistoryInspect {
 					csvLine.setInitialSize(changesList.get(0));
 					csvLine.setNumberOfChanges(changesList.size());
 					csvLine.setActualSize(actualSize);
+					csvLine.setChangesList(changesList);
 				}
 				// System.out.println(csvLine.getCSVLine());
 				CSVUtils.writeLine(csvWriter, csvLine.getCSVLine(), ',', '"');

@@ -9,6 +9,7 @@ public class CSVData {
 	private Integer initialSize;
 	private Integer actualSize;
 	private Integer numberOfChanges;
+	private ArrayList<Integer> changesList;
 	private boolean isPulsar;
 	private boolean isSupernova;
 
@@ -60,6 +61,14 @@ public class CSVData {
 		this.numberOfChanges = numberOfChanges;
 	}
 
+	public ArrayList<Integer> getChangesList() {
+		return changesList;
+	}
+
+	public void setChangesList(ArrayList<Integer> changesList) {
+		this.changesList = changesList;
+	}
+
 	public boolean isPulsar() {
 		return isPulsar;
 	}
@@ -84,6 +93,7 @@ public class CSVData {
 		csvLine.add(this.getInitialSize().toString());
 		csvLine.add(this.getActualSize().toString());
 		csvLine.add(this.getNumberOfChanges().toString());
+		csvLine.add(this.getChangesList().toString());
 		return csvLine;
 	}
 

@@ -24,7 +24,7 @@ public class EditVisitor extends NodeSetEditVisitor {
 		Node n = ((NodeSetEdit.Add) add).getNode();
 		if (n instanceof Node.Function) {
 			// identifier = fileName + ":\t" + n.getIdentifier();
-			identifier = n.getIdentifier();
+			identifier = ((Node.Function) n).getIdentifier();
 			logger.info("\n" + identifier);
 			List<String> body = ((Node.Function) n).getBody();
 			logger.info("Add: +" + body.size() + ": " + body);
@@ -36,7 +36,7 @@ public class EditVisitor extends NodeSetEditVisitor {
 	public void visit(Remove remove) {
 		// identifier = fileName + ":\t" + ((NodeSetEdit.Remove)
 		// remove).getIdentifier();
-		if (remove.getNodeType().equals(Node.Function.class)) {
+		if (remove.getNodeType().getQualifiedName().equals(Node.Function.class.getCanonicalName())) {
 			identifier = ((NodeSetEdit.Remove) remove).getIdentifier();
 			logger.info("Remove: " + identifier);
 			total -= 1;
@@ -47,21 +47,17 @@ public class EditVisitor extends NodeSetEditVisitor {
 	public void visit(Change<?> change) {
 		// identifier = fileName + ":\t" + ((NodeSetEdit.Change<?>)
 		// change).getIdentifier();
-		System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-		System.out.println("Change - nodeType: " + change.getNodeType());
-		System.out.println("Node.Function class: " + Node.Function.class);
-		System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-		if (change.getNodeType().equals(Node.Function.class)) {
+		if (change.getNodeType().getQualifiedName().equals(Node.Function.class.getCanonicalName())) {
 			identifier = ((NodeSetEdit.Change<?>) change).getIdentifier();
 			logger.info(identifier);
-			Transaction<?> t1 = ((NodeSetEdit.Change<?>) change).getTransaction();
-			List<ListEdit<String>> bodyEdits = ((FunctionTransaction) t1).getBodyEdits();
-			for (ListEdit<String> le : bodyEdits) {
-				if (le instanceof ListEdit.Add<?>) {
-					logger.info("Change: +1: " + le);
+			Transaction<?> transaction = ((NodeSetEdit.Change<?>) change).getTransaction();
+			List<ListEdit<String>> bodyEdits = ((FunctionTransaction) transaction).getBodyEdits();
+			for (ListEdit<String> listEdit : bodyEdits) {
+				if (listEdit instanceof ListEdit.Add<?>) {
+					logger.info("Change: +1: " + listEdit);
 					total += 1;
-				} else if (le instanceof ListEdit.Remove<?>) {
-					logger.info("Change: -1: " + le);
+				} else if (listEdit instanceof ListEdit.Remove<?>) {
+					logger.info("Change: -1: " + listEdit);
 					total -= 1;
 				}
 			}

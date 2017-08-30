@@ -2,6 +2,8 @@ package org.lavinia.inspect;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,14 +17,16 @@ import org.lavinia.visitor.NodeVisitor;
 public class FileHistoryInspectTest {
 
 	@Test(expected = NullPointerException.class)
-	public void testGetHistoryFunctionsAnalyze() {
-		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(RepoInspect.getProject());
+	public void testGetHistoryFunctionsAnalyze() throws IOException {
+		FileWriter writer = new FileWriter("testFile.csv");
+		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(RepoInspect.getProject(), writer);
 		fileHistoryInspect.getHistoryFunctionsAnalyze();
 	}
 
 	@Test
-	public void testAddToResult() {
-		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(RepoInspect.getProject());
+	public void testAddToResult() throws IOException {
+		FileWriter writer = new FileWriter("testFile.csv");
+		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(RepoInspect.getProject(), writer);
 		Logger logger = Logger.getRootLogger();
 		GenericVisitor visitor = new NodeVisitor(logger);
 		visitor.setIdentifier("abc");
@@ -43,8 +47,9 @@ public class FileHistoryInspectTest {
 	}
 
 	@Test
-	public void testSortResults() {
-		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(RepoInspect.getProject());
+	public void testSortResults() throws IOException {
+		FileWriter writer = new FileWriter("testFile.csv");
+		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(RepoInspect.getProject(), writer);
 		Logger logger = Logger.getRootLogger();
 		GenericVisitor visitor = new NodeVisitor(logger);
 		visitor.setIdentifier("SimpleClass: abc");
