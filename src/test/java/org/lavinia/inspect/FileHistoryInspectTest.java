@@ -56,9 +56,9 @@ public class FileHistoryInspectTest {
 		lineChanges.add(5);
 
 		visitor.setTotal(15);
-		fileHistoryInspect.checkEntryInResultSet(visitor, lineChanges, logger, "SimpleClass");
+		fileHistoryInspect.checkEntryInResultSet(visitor, lineChanges, "SimpleClass");
 		visitor.setTotal(5);
-		fileHistoryInspect.checkEntryInResultSet(visitor, lineChanges, logger, "SimpleClass");
+		fileHistoryInspect.checkEntryInResultSet(visitor, lineChanges, "SimpleClass");
 
 		Map<String, ArrayList<Integer>> actual = fileHistoryInspect.getResult();
 		Map<String, ArrayList<Integer>> expected = new HashMap<String, ArrayList<Integer>>();
@@ -77,13 +77,13 @@ public class FileHistoryInspectTest {
 		ArrayList<Integer> lineChanges = new ArrayList<Integer>();
 
 		visitor.setTotal(15);
-		fileHistoryInspect.checkEntryInResultSet(visitor, lineChanges, logger, "SimpleClass");
+		fileHistoryInspect.checkEntryInResultSet(visitor, lineChanges, "SimpleClass");
 
 		visitor.setIdentifier("SimpleClass: cde");
 		visitor.setTotal(10);
-		fileHistoryInspect.checkEntryInResultSet(visitor, lineChanges, logger, "SimpleClass");
+		fileHistoryInspect.checkEntryInResultSet(visitor, lineChanges, "SimpleClass");
 		visitor.setTotal(5);
-		fileHistoryInspect.checkEntryInResultSet(visitor, lineChanges, logger, "SimpleClass");
+		fileHistoryInspect.checkEntryInResultSet(visitor, lineChanges, "SimpleClass");
 
 		List<ArrayList<Integer>> actual = fileHistoryInspect.sortResults();
 

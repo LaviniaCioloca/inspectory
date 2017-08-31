@@ -53,6 +53,15 @@ public class FileHistoryInspect {
 	private ArrayList<String> deletedNodes = null;
 	private FileWriter csvWriter = null;
 
+	/**
+	 * FileHistoryInspect Constructor that initializes the result map and csv
+	 * writer to file.
+	 * 
+	 * @param project
+	 *            The project of the repository to inspect.
+	 * @param csvWriter
+	 *            The writer of result csv file.
+	 */
 	public FileHistoryInspect(PersistentProject project, FileWriter csvWriter) {
 		FileHistoryInspect.project = project;
 		result = new HashMap<String, ArrayList<Integer>>();
@@ -60,15 +69,29 @@ public class FileHistoryInspect {
 		this.csvWriter = csvWriter;
 	}
 
-	public boolean checkEntryInResultSet(GenericVisitor visitor, ArrayList<Integer> lineChanges, Logger logger,
-			String className) {
+	/**
+	 * Checking if the method exists in resultSet in order to add values to
+	 * changes list or to create a new one.
+	 * 
+	 * @param visitor
+	 *            The visitor
+	 * @param lineChanges
+	 *            ArrayList of Integers with the line changes.
+	 * @param className
+	 *            The method's class name in order to identify uniquely the
+	 *            method.
+	 * @return A boolean: false if the method's identifier is null or if it's a
+	 *         new entry in result and true otherwise
+	 */
+	public boolean checkEntryInResultSet(GenericVisitor visitor, ArrayList<Integer> lineChanges, String className) {
 		if (visitor.getIdentifier() == null) {
 			return false;
 		}
 		if (result.get(className + ": " + visitor.getIdentifier()) != null) {
 			result.get(className + ": " + visitor.getIdentifier()).add(visitor.getTotal());
-			logger.info(
-					"---> Total: " + (visitor.getTotal() > 0 ? "+" + visitor.getTotal() : visitor.getTotal()) + "\n");
+			// logger.info(
+			// "---> Total: " + (visitor.getTotal() > 0 ? "+" +
+			// visitor.getTotal() : visitor.getTotal()) + "\n");
 			return false;
 		} else {
 			lineChanges = new ArrayList<Integer>();
@@ -122,7 +145,7 @@ public class FileHistoryInspect {
 									try {
 										visitor = new EditVisitor(logger, fileName);
 										((EditVisitor) visitor).visit(memberEdit);
-										if (checkEntryInResultSet(visitor, lineChanges, logger, className)) {
+										if (checkEntryInResultSet(visitor, lineChanges, className)) {
 											CSVData csvData = new CSVData();
 											csvData.setFileName("\"" + fileName + "\"");
 											csvData.setClassName("\"" + className + "\"");
@@ -147,7 +170,7 @@ public class FileHistoryInspect {
 										try {
 											if (member instanceof Node.Function) {
 												((NodeVisitor) visitor).visit(member);
-												if (checkEntryInResultSet(visitor, lineChanges, logger, className)) {
+												if (checkEntryInResultSet(visitor, lineChanges, className)) {
 													CSVData csvData = new CSVData();
 													csvData.setFileName("\"" + fileName + "\"");
 													csvData.setClassName("\"" + className + "\"");

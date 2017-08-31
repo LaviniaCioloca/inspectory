@@ -106,6 +106,11 @@ public class CSVData {
 		this.isSupernova = isSupernova;
 	}
 
+	
+	/**
+	 * Retrieve the method's line to be written in csv file. 
+	 * @return An ArrayList of Strings data type. 
+	 */
 	public ArrayList<String> getCSVLine() {
 		ArrayList<String> csvLine = new ArrayList<>();
 		csvLine.add(this.getFileName());
