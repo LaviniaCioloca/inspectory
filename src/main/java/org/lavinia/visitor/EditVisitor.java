@@ -44,7 +44,6 @@ public class EditVisitor extends NodeSetEditVisitor {
 	public void visit(Add add) {
 		Node n = ((NodeSetEdit.Add) add).getNode();
 		if (n instanceof Node.Function) {
-			// identifier = fileName + ":\t" + n.getIdentifier();
 			identifier = ((Node.Function) n).getIdentifier();
 			logger.info("\n" + identifier);
 			List<String> body = ((Node.Function) n).getBody();
@@ -55,8 +54,6 @@ public class EditVisitor extends NodeSetEditVisitor {
 
 	@Override
 	public void visit(Remove remove) {
-		// identifier = fileName + ":\t" + ((NodeSetEdit.Remove)
-		// remove).getIdentifier();
 		if (remove.getNodeType().getQualifiedName().equals(Node.Function.class.getCanonicalName())) {
 			identifier = ((NodeSetEdit.Remove) remove).getIdentifier();
 			logger.info("Remove: " + identifier);
@@ -66,8 +63,6 @@ public class EditVisitor extends NodeSetEditVisitor {
 
 	@Override
 	public void visit(Change<?> change) {
-		// identifier = fileName + ":\t" + ((NodeSetEdit.Change<?>)
-		// change).getIdentifier();
 		if (change.getNodeType().getQualifiedName().equals(Node.Function.class.getCanonicalName())) {
 			identifier = ((NodeSetEdit.Change<?>) change).getIdentifier();
 			logger.info(identifier);
@@ -82,8 +77,6 @@ public class EditVisitor extends NodeSetEditVisitor {
 					total -= 1;
 				}
 			}
-
 		}
 	}
-
 }

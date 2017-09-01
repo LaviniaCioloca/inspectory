@@ -39,13 +39,16 @@ public class FileModelInspect {
 		FileModelInspect.project = project;
 	}
 
+	/**
+	 * Creates the .model file with the method's current model based on
+	 * model.json file from .metanalysis folder.
+	 */
 	public void getModelFunctionsAnalyze() {
 
 		try {
-			String logFolderName = "results";
+			String logFolderName = ".inspectory_results";
 			Set<String> filesList = project.listFiles();
 			for (String file : filesList) {
-				// logger.info("file: " + file);
 				if (file.startsWith(".") || !file.endsWith(".java")) {
 					continue;
 				}
@@ -62,7 +65,6 @@ public class FileModelInspect {
 				for (Node n : fileModelNodes) {
 					visitor.visit(n);
 				}
-				// logger.info("Final result map: ");
 
 				Map<String, Integer> map = visitor.getFunctionSize();
 				for (Map.Entry<String, Integer> entry : map.entrySet()) {
@@ -76,7 +78,6 @@ public class FileModelInspect {
 			 * model -> they have static initializers and getModel(file) throws
 			 * IOException
 			 */
-			// e.printStackTrace();
 		}
 	}
 

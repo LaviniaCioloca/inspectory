@@ -34,7 +34,7 @@ abstract class CodeVisitor extends GenericVisitor {
 	public abstract void visit(Node.Function function);
 
 	public final void visit(Node node) {
-		// safe to use `instanceof` because the class hierarchy is sealed
+		// safe to use 'instanceof' because the class hierarchy is sealed
 		if (node instanceof Node.Type) {
 			visit((Node.Type) node);
 		} else if (node instanceof Node.Variable) {

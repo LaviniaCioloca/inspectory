@@ -35,7 +35,6 @@ import org.metanalysis.core.model.Node.Variable;
 import org.metanalysis.core.model.SourceFile;
 
 public class NodeVisitor extends CodeVisitor {
-	// public final static Logger logger = Logger.getLogger(NodeVisitor.class);
 	private Map<String, Integer> functionSize = new HashMap<String, Integer>();
 
 	public NodeVisitor(Logger logger) {
@@ -49,40 +48,25 @@ public class NodeVisitor extends CodeVisitor {
 
 	@Override
 	public void visit(SourceFile sourceFile) {
-		// logger.info("Visit SourceFile");
-
 	}
 
 	@Override
 	public void visit(Type type) {
-		// logger.info("Visit Type");
-		// logger.info("\n\n");
 		Set<Node> members = type.getMembers();
 		for (Node n : members) {
-			// logger.info("Node identifier: " + n.getIdentifier());
 			this.visit(n);
 		}
 	}
 
 	@Override
 	public void visit(Variable variable) {
-		// logger.info("Visit Variable");
-
 	}
 
 	@Override
 	public void visit(Function function) {
-		// logger.info("Visit Function");
-		// String signature = function.getSignature();
-		// logger.info("Function signature: " + signature);
 		total = 0;
 		List<String> body = function.getBody();
-		// logger.info("Body size: " + body.size());
 		functionSize.put(function.getIdentifier(), body.size());
-		/*
-		 * for (String b : body) { logger.info(b); } logger.info("\n");
-		 */
-		// identifier = fileName + ":\t" + function.getSignature();
 		identifier = function.getSignature();
 		logger.info(identifier);
 		logger.info("Add: +" + function.getBody().size() + " " + function.getBody());

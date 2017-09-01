@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.FileAppender;
 import org.apache.log4j.Logger;
 import org.lavinia.beans.CSVData;
 import org.lavinia.beans.Commit;
@@ -103,10 +102,14 @@ public class FileHistoryInspect {
 		// visitor.getTotal() : visitor.getTotal()) + "\n");
 	}
 
+	/**
+	 * Creates the CSV information for every method by parsing every
+	 * history.json file of every .java file from .metanalysis folder.
+	 */
 	private void createResults() {
 		ArrayList<CSVData> csvDataList = null;
 		try {
-			String logFolderName = ".inspectory_results";
+			// String logFolderName = ".inspectory_results";
 			Set<String> filesList = project.listFiles();
 			csvDataList = new ArrayList<CSVData>();
 			for (String fileName : filesList) {
@@ -116,12 +119,15 @@ public class FileHistoryInspect {
 				// System.out.println("\n\nfile: " + file);
 				List<HistoryEntry> fileHistory = project.getFileHistory(fileName);
 
-				String logFilePath = "./" + logFolderName + "/" + fileName + ".history";
+				/*
+				 * String logFilePath = "./" + logFolderName + "/" + fileName +
+				 * ".history"; Logger logger = Logger.getRootLogger();
+				 * 
+				 * FileAppender appender = (FileAppender)
+				 * logger.getAppender("file"); appender.setFile(logFilePath);
+				 * appender.activateOptions();
+				 */
 				Logger logger = Logger.getRootLogger();
-
-				FileAppender appender = (FileAppender) logger.getAppender("file");
-				appender.setFile(logFilePath);
-				appender.activateOptions();
 
 				for (HistoryEntry he : fileHistory) {
 					try {
@@ -129,8 +135,8 @@ public class FileHistoryInspect {
 						commit.setRevision(he.getRevision());
 						commit.setAuthor(he.getAuthor());
 						commit.setDate(he.getDate());
-						logger.info("----------------------------------------------------------\n");
-						logger.info(commit.toString());
+						// logger.info("----------------------------------------------------------\n");
+						// logger.info(commit.toString());
 						ArrayList<Integer> lineChanges = null;
 						SourceFileTransaction sourceFileTransaction = he.getTransaction();
 						List<NodeSetEdit> nodeEditList = sourceFileTransaction.getNodeEdits();
@@ -159,10 +165,6 @@ public class FileHistoryInspect {
 							} else if (edit instanceof NodeSetEdit.Add) {
 								Node node = ((NodeSetEdit.Add) edit).getNode();
 								if (node instanceof Node.Type) {
-									// String modifiers = String.join(" ",
-									// ((Node.Type) node).getModifiers());
-									// csvLine.add(modifiers + " " +
-									// ((Node.Type) node).getName());
 									String className = ((Node.Type) node).getName();
 									visitor = new NodeVisitor(logger, fileName);
 									Set<Node> members = ((Node.Type) node).getMembers();
@@ -187,7 +189,6 @@ public class FileHistoryInspect {
 								deletedNodes.add(fileName);
 							}
 						}
-						// CSVUtils.writeLine(csvWriter, csvLine);
 					} catch (Exception e) {
 						continue;
 					}
@@ -195,16 +196,14 @@ public class FileHistoryInspect {
 				}
 			}
 
-		} catch (
-
-		IOException e) {
+		} catch (IOException e) {
 			/*
 			 * Need to have a NOP here because of the files that do not have a
 			 * model -> they have static initializers and getModel(file) throws
 			 * IOException
 			 */
-			// e.printStackTrace();
 		}
+
 		for (CSVData csvLine : csvDataList) {
 			try {
 				ArrayList<Integer> changesList = result.get(csvLine.getClassName().replaceAll("\"", "") + ": "
@@ -219,15 +218,20 @@ public class FileHistoryInspect {
 					csvLine.setActualSize(actualSize);
 					csvLine.setChangesList(changesList);
 				}
-				// System.out.println(csvLine.getCSVLine());
 				CSVUtils.writeLine(csvWriter, csvLine.getCSVLine(), ',', '"');
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 	}
 
+	/**
+	 * Sorts the result map descending by the number of changes a method has in
+	 * the commits history.
+	 * 
+	 * @return A List of ArrayLists of Integers: the result map of methods' line
+	 *         changes transformed into a list
+	 */
 	public List<ArrayList<Integer>> sortResults() {
 		long startTime = System.nanoTime();
 
@@ -237,6 +241,7 @@ public class FileHistoryInspect {
 				return Integer.compare(s2.size(), s1.size());
 			}
 		});
+
 		long endTime = System.nanoTime();
 		long duration = (endTime - startTime) / 1000000;
 		System.out.println("Duration of sort is: " + duration + "ms\n");
@@ -244,11 +249,9 @@ public class FileHistoryInspect {
 	}
 
 	public void getHistoryFunctionsAnalyze() {
-		long startTime = System.nanoTime();
 		createResults();
 		// List<ArrayList<Integer>> changesValues = sortResults();
 
-		startTime = System.nanoTime();
 		/*
 		 * for (ArrayList<Integer> changeValues : changesValues) {
 		 * Iterator<Entry<String, ArrayList<Integer>>> iterator =
@@ -262,17 +265,9 @@ public class FileHistoryInspect {
 		 * System.out.println("\n\nDeleted nodes are:"); for (String deletedNode
 		 * : deletedNodes) { System.out.println(deletedNode); }
 		 */
-		long endTime = System.nanoTime();
-		long duration = (endTime - startTime) / 1000000;
-		System.out.println("\nDuration of writing to file is: " + duration + "ms");
 	}
 
 	public Map<String, ArrayList<Integer>> getResult() {
 		return result;
 	}
-
-	public void setResult(Map<String, ArrayList<Integer>> result) {
-		this.result = result;
-	}
-
 }

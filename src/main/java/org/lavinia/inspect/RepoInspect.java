@@ -33,6 +33,12 @@ public class RepoInspect {
 
 	public final static Logger logger = Logger.getLogger(RepoInspect.class.getName());
 
+	/**
+	 * Static method that loads the .metanalysis persistent project for the
+	 * current repository to be analyzed.
+	 * 
+	 * @return A PersistentProject instance of the current repository.
+	 */
 	public static PersistentProject getProject() {
 		try {
 			return PersistentProject.load();
@@ -43,6 +49,13 @@ public class RepoInspect {
 		return null;
 	}
 
+	/**
+	 * Main method of inspectory project.
+	 * 
+	 * @param args
+	 *            The argument needed for inspectory to run is the csv file name
+	 *            to store the results.
+	 */
 	public static void main(String[] args) {
 		/*
 		 * FileModelInspect fileModelInspect = new
@@ -57,9 +70,6 @@ public class RepoInspect {
 		if (!csvFileName.endsWith(".csv")) {
 			csvFileName += ".csv";
 		}
-		// FileHistoryInspect fileHistoryInspect = new
-		// FileHistoryInspect(getProject());
-		// fileHistoryInspect.getHistoryFunctionsAnalyze();
 		FileWriter writer;
 		try {
 			writer = new FileWriter(csvFileName);
@@ -70,10 +80,7 @@ public class RepoInspect {
 			writer.flush();
 			writer.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 	}
-
 }

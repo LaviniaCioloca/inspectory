@@ -35,7 +35,7 @@ public abstract class HistoryEntryVisitor extends GenericVisitor {
 	public abstract void visit(Node.Function function, FunctionTransaction transaction);
 
 	public final void visit(Node node, Transaction<?> transaction) {
-		// safe to use `instanceof` because the class hierarchy is sealed
+		// safe to use 'instanceof' because the class hierarchy is sealed
 		if (node instanceof Node.Type) {
 			visit((Node.Type) node, (TypeTransaction) transaction);
 		} else if (node instanceof Node.Variable) {
