@@ -21,7 +21,7 @@
  *******************************************************************************/
 package org.lavinia.inspect;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -44,6 +44,38 @@ public class FileHistoryInspectTest {
 		fileHistoryInspect.getHistoryFunctionsAnalyze();
 	}
 
+	@Test
+	public void testCheckEntryInResultSetIdentifierNull() throws IOException {
+		FileWriter writer = new FileWriter("testFile.csv");
+		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(RepoInspect.getProject(), writer);
+		Logger logger = Logger.getRootLogger();
+		GenericVisitor visitor = new NodeVisitor(logger);
+		assertFalse(fileHistoryInspect.checkEntryInResultSet(visitor, new ArrayList<Integer>(), "SimpleClass"));
+	}
+	
+	@Test
+	public void testCheckEntryInResultSetMethodNotExists() throws IOException {
+		FileWriter writer = new FileWriter("testFile.csv");
+		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(RepoInspect.getProject(), writer);
+		Logger logger = Logger.getRootLogger();
+		GenericVisitor visitor = new NodeVisitor(logger);
+		visitor.setIdentifier("abc");
+		assertTrue(fileHistoryInspect.checkEntryInResultSet(visitor, new ArrayList<Integer>(), "SimpleClass"));
+	}
+	
+	@Test
+	public void testCheckEntryInResultSetMethodExists() throws IOException {
+		FileWriter writer = new FileWriter("testFile.csv");
+		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(RepoInspect.getProject(), writer);
+		Logger logger = Logger.getRootLogger();
+		GenericVisitor visitor = new NodeVisitor(logger);
+		visitor.setIdentifier("abc");
+		Map<String, ArrayList<Integer>> result = new HashMap<String, ArrayList<Integer>>();
+		result.put("SimpleClass" + ": " + visitor.getIdentifier(), new ArrayList<Integer>());
+		fileHistoryInspect.setResult(result);
+		assertFalse(fileHistoryInspect.checkEntryInResultSet(visitor, new ArrayList<Integer>(), "SimpleClass"));
+	}
+	
 	@Test
 	public void testAddToResult() throws IOException {
 		FileWriter writer = new FileWriter("testFile.csv");

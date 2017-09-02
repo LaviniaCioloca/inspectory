@@ -101,6 +101,28 @@ public class FileHistoryInspect {
 		// logger.info("---> Total: " + (visitor.getTotal() > 0 ? "+" +
 		// visitor.getTotal() : visitor.getTotal()) + "\n");
 	}
+	
+	private void writeCsvFileData(ArrayList<CSVData> csvDataList) {
+		for (CSVData csvLine : csvDataList) {
+			try {
+				ArrayList<Integer> changesList = result.get(csvLine.getClassName().replaceAll("\"", "") + ": "
+						+ csvLine.getMethodName().replaceAll("\"", ""));
+				Integer actualSize = 0;
+				for (Integer change : changesList) {
+					actualSize += change;
+				}
+				if (changesList != null) {
+					csvLine.setInitialSize(changesList.get(0));
+					csvLine.setNumberOfChanges(changesList.size());
+					csvLine.setActualSize(actualSize);
+					csvLine.setChangesList(changesList);
+				}
+				CSVUtils.writeLine(csvWriter, csvLine.getCSVLine(), ',', '"');
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 
 	/**
 	 * Creates the CSV information for every method by parsing every
@@ -203,26 +225,7 @@ public class FileHistoryInspect {
 			 * IOException
 			 */
 		}
-
-		for (CSVData csvLine : csvDataList) {
-			try {
-				ArrayList<Integer> changesList = result.get(csvLine.getClassName().replaceAll("\"", "") + ": "
-						+ csvLine.getMethodName().replaceAll("\"", ""));
-				Integer actualSize = 0;
-				for (Integer change : changesList) {
-					actualSize += change;
-				}
-				if (changesList != null) {
-					csvLine.setInitialSize(changesList.get(0));
-					csvLine.setNumberOfChanges(changesList.size());
-					csvLine.setActualSize(actualSize);
-					csvLine.setChangesList(changesList);
-				}
-				CSVUtils.writeLine(csvWriter, csvLine.getCSVLine(), ',', '"');
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+		writeCsvFileData(csvDataList);
 	}
 
 	/**
@@ -269,5 +272,9 @@ public class FileHistoryInspect {
 
 	public Map<String, ArrayList<Integer>> getResult() {
 		return result;
+	}
+
+	public void setResult(Map<String, ArrayList<Integer>> result) {
+		this.result = result;
 	}
 }
