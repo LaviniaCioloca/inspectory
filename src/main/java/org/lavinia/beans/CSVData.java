@@ -24,6 +24,7 @@ package org.lavinia.beans;
 import java.util.ArrayList;
 
 public class CSVData {
+	private ArrayList<Commit> commits;
 	private String fileName;
 	private String className;
 	private String methodName;
@@ -31,8 +32,16 @@ public class CSVData {
 	private Integer actualSize;
 	private Integer numberOfChanges;
 	private ArrayList<Integer> changesList;
-	private boolean isPulsar;
-	private boolean isSupernova;
+	private Boolean isPulsar;
+	private Boolean isSupernova;
+
+	public ArrayList<Commit> getCommits() {
+		return commits;
+	}
+
+	public void setCommits(ArrayList<Commit> commits) {
+		this.commits = commits;
+	}
 
 	public String getFileName() {
 		return fileName;
@@ -98,18 +107,18 @@ public class CSVData {
 		this.isPulsar = isPulsar;
 	}
 
-	public boolean isSupernova() {
+	public Boolean isSupernova() {
 		return isSupernova;
 	}
 
-	public void setSupernova(boolean isSupernova) {
+	public void setSupernova(Boolean isSupernova) {
 		this.isSupernova = isSupernova;
 	}
 
-	
 	/**
-	 * Retrieve the method's line to be written in csv file. 
-	 * @return An ArrayList of Strings data type. 
+	 * Retrieve the method's line to be written in csv file.
+	 * 
+	 * @return An ArrayList of Strings data type.
 	 */
 	public ArrayList<String> getCSVLine() {
 		ArrayList<String> csvLine = new ArrayList<>();
@@ -120,6 +129,7 @@ public class CSVData {
 		csvLine.add(this.getActualSize().toString());
 		csvLine.add(this.getNumberOfChanges().toString());
 		csvLine.add(this.getChangesList().toString());
+		csvLine.add(this.isSupernova.toString());
 		return csvLine;
 	}
 

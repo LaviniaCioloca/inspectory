@@ -24,8 +24,6 @@ package org.lavinia.inspect;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,9 +46,11 @@ import org.metanalysis.core.project.Project.HistoryEntry;
 
 public class FileHistoryInspect {
 	private static PersistentProject project = null;
-	private Map<String, ArrayList<Integer>> result = null;
+	// private Map<String, ArrayList<Integer>> result = null;
+	private Map<String, CSVData> result = null;
 	private ArrayList<String> deletedNodes = null;
 	private FileWriter csvWriter = null;
+	private ArrayList<CSVData> csvDataList = null;
 
 	/**
 	 * FileHistoryInspect Constructor that initializes the result map and csv
@@ -63,7 +63,8 @@ public class FileHistoryInspect {
 	 */
 	public FileHistoryInspect(PersistentProject project, FileWriter csvWriter) {
 		FileHistoryInspect.project = project;
-		result = new HashMap<String, ArrayList<Integer>>();
+		// result = new HashMap<String, ArrayList<Integer>>();
+		result = new HashMap<String, CSVData>();
 		deletedNodes = new ArrayList<String>();
 		this.csvWriter = csvWriter;
 	}
@@ -82,12 +83,17 @@ public class FileHistoryInspect {
 	 * @return A boolean: false if the method's identifier is null or if it's a
 	 *         new entry in result and true otherwise
 	 */
-	public boolean checkEntryInResultSet(GenericVisitor visitor, ArrayList<Integer> lineChanges, String className) {
+	public boolean checkEntryInResultSet(GenericVisitor visitor, ArrayList<Integer> lineChanges, String className,
+			Commit commit) {
 		if (visitor.getIdentifier() == null) {
 			return false;
 		}
 		if (result.get(className + ": " + visitor.getIdentifier()) != null) {
-			result.get(className + ": " + visitor.getIdentifier()).add(visitor.getTotal());
+			CSVData csvData = result.get(className + ": " + visitor.getIdentifier());
+			csvData.getChangesList().add(visitor.getTotal());
+			csvData.getCommits().add(commit);
+			// result.get(className + ": " +
+			// visitor.getIdentifier()).add(visitor.getTotal());
 			// logger.info(
 			// "---> Total: " + (visitor.getTotal() > 0 ? "+" +
 			// visitor.getTotal() : visitor.getTotal()) + "\n");
@@ -95,28 +101,40 @@ public class FileHistoryInspect {
 		} else {
 			lineChanges = new ArrayList<Integer>();
 			lineChanges.add(visitor.getTotal());
-			result.put(className + ": " + visitor.getIdentifier(), lineChanges);
+			ArrayList<Commit> commits = new ArrayList<>();
+			commits.add(commit);
+			CSVData csvData = new CSVData();
+			csvData.setChangesList(lineChanges);
+			csvData.setCommits(commits);
+			csvData.setClassName(className);
+			csvData.setMethodName(visitor.getIdentifier());
+			result.put(className + ": " + visitor.getIdentifier(), csvData);
+			// result.put(className + ": " + visitor.getIdentifier(),
+			// lineChanges);
 			return true;
 		}
 		// logger.info("---> Total: " + (visitor.getTotal() > 0 ? "+" +
 		// visitor.getTotal() : visitor.getTotal()) + "\n");
 	}
-	
+
 	private void writeCsvFileData(ArrayList<CSVData> csvDataList) {
 		for (CSVData csvLine : csvDataList) {
 			try {
 				ArrayList<Integer> changesList = result.get(csvLine.getClassName().replaceAll("\"", "") + ": "
-						+ csvLine.getMethodName().replaceAll("\"", ""));
+						+ csvLine.getMethodName().replaceAll("\"", "")).getChangesList();
+				ArrayList<Commit> commits = result.get(csvLine.getClassName().replaceAll("\"", "") + ": "
+						+ csvLine.getMethodName().replaceAll("\"", "")).getCommits();
 				Integer actualSize = 0;
 				for (Integer change : changesList) {
 					actualSize += change;
 				}
-				if (changesList != null) {
-					csvLine.setInitialSize(changesList.get(0));
-					csvLine.setNumberOfChanges(changesList.size());
-					csvLine.setActualSize(actualSize);
-					csvLine.setChangesList(changesList);
-				}
+				csvLine.setInitialSize(changesList.get(0));
+				csvLine.setNumberOfChanges(changesList.size());
+				csvLine.setActualSize(actualSize);
+				csvLine.setChangesList(changesList);
+				csvLine.setCommits(commits);
+				MethodMetrics methodMetrics = new MethodMetrics();
+				csvLine.setSupernova(methodMetrics.isSupernova(csvLine));
 				CSVUtils.writeLine(csvWriter, csvLine.getCSVLine(), ',', '"');
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -129,7 +147,6 @@ public class FileHistoryInspect {
 	 * history.json file of every .java file from .metanalysis folder.
 	 */
 	private void createResults() {
-		ArrayList<CSVData> csvDataList = null;
 		try {
 			// String logFolderName = ".inspectory_results";
 			Set<String> filesList = project.listFiles();
@@ -173,7 +190,7 @@ public class FileHistoryInspect {
 									try {
 										visitor = new EditVisitor(logger, fileName);
 										((EditVisitor) visitor).visit(memberEdit);
-										if (checkEntryInResultSet(visitor, lineChanges, className)) {
+										if (checkEntryInResultSet(visitor, lineChanges, className, commit)) {
 											CSVData csvData = new CSVData();
 											csvData.setFileName("\"" + fileName + "\"");
 											csvData.setClassName("\"" + className + "\"");
@@ -194,7 +211,7 @@ public class FileHistoryInspect {
 										try {
 											if (member instanceof Node.Function) {
 												((NodeVisitor) visitor).visit(member);
-												if (checkEntryInResultSet(visitor, lineChanges, className)) {
+												if (checkEntryInResultSet(visitor, lineChanges, className, commit)) {
 													CSVData csvData = new CSVData();
 													csvData.setFileName("\"" + fileName + "\"");
 													csvData.setClassName("\"" + className + "\"");
@@ -225,7 +242,6 @@ public class FileHistoryInspect {
 			 * IOException
 			 */
 		}
-		writeCsvFileData(csvDataList);
 	}
 
 	/**
@@ -235,24 +251,23 @@ public class FileHistoryInspect {
 	 * @return A List of ArrayLists of Integers: the result map of methods' line
 	 *         changes transformed into a list
 	 */
-	public List<ArrayList<Integer>> sortResults() {
-		long startTime = System.nanoTime();
-
-		List<ArrayList<Integer>> changesValues = new ArrayList<>(result.values());
-		Collections.sort(changesValues, new Comparator<ArrayList<Integer>>() {
-			public int compare(ArrayList<Integer> s1, ArrayList<Integer> s2) {
-				return Integer.compare(s2.size(), s1.size());
-			}
-		});
-
-		long endTime = System.nanoTime();
-		long duration = (endTime - startTime) / 1000000;
-		System.out.println("Duration of sort is: " + duration + "ms\n");
-		return changesValues;
-	}
-
+	/*
+	 * public List<ArrayList<Integer>> sortResults() { long startTime =
+	 * System.nanoTime();
+	 * 
+	 * List<ArrayList<Integer>> changesValues = new
+	 * ArrayList<>(result.values()); Collections.sort(changesValues, new
+	 * Comparator<ArrayList<Integer>>() { public int compare(ArrayList<Integer>
+	 * s1, ArrayList<Integer> s2) { return Integer.compare(s2.size(),
+	 * s1.size()); } });
+	 * 
+	 * long endTime = System.nanoTime(); long duration = (endTime - startTime) /
+	 * 1000000; System.out.println("Duration of sort is: " + duration + "ms\n");
+	 * return changesValues; }
+	 */
 	public void getHistoryFunctionsAnalyze() {
 		createResults();
+		writeCsvFileData(csvDataList);
 		// List<ArrayList<Integer>> changesValues = sortResults();
 
 		/*
@@ -270,11 +285,4 @@ public class FileHistoryInspect {
 		 */
 	}
 
-	public Map<String, ArrayList<Integer>> getResult() {
-		return result;
-	}
-
-	public void setResult(Map<String, ArrayList<Integer>> result) {
-		this.result = result;
-	}
 }
