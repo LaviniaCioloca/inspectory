@@ -46,7 +46,6 @@ import org.metanalysis.core.project.Project.HistoryEntry;
 
 public class FileHistoryInspect {
 	private static PersistentProject project = null;
-	// private Map<String, ArrayList<Integer>> result = null;
 	private Map<String, CSVData> result = null;
 	private ArrayList<String> deletedNodes = null;
 	private FileWriter csvWriter = null;
@@ -63,7 +62,6 @@ public class FileHistoryInspect {
 	 */
 	public FileHistoryInspect(PersistentProject project, FileWriter csvWriter) {
 		FileHistoryInspect.project = project;
-		// result = new HashMap<String, ArrayList<Integer>>();
 		result = new HashMap<String, CSVData>();
 		deletedNodes = new ArrayList<String>();
 		this.csvWriter = csvWriter;
@@ -92,11 +90,6 @@ public class FileHistoryInspect {
 			CSVData csvData = result.get(className + ": " + visitor.getIdentifier());
 			csvData.getChangesList().add(visitor.getTotal());
 			csvData.getCommits().add(commit);
-			// result.get(className + ": " +
-			// visitor.getIdentifier()).add(visitor.getTotal());
-			// logger.info(
-			// "---> Total: " + (visitor.getTotal() > 0 ? "+" +
-			// visitor.getTotal() : visitor.getTotal()) + "\n");
 			return false;
 		} else {
 			lineChanges = new ArrayList<Integer>();
@@ -109,12 +102,8 @@ public class FileHistoryInspect {
 			csvData.setClassName(className);
 			csvData.setMethodName(visitor.getIdentifier());
 			result.put(className + ": " + visitor.getIdentifier(), csvData);
-			// result.put(className + ": " + visitor.getIdentifier(),
-			// lineChanges);
 			return true;
 		}
-		// logger.info("---> Total: " + (visitor.getTotal() > 0 ? "+" +
-		// visitor.getTotal() : visitor.getTotal()) + "\n");
 	}
 
 	private void writeCsvFileData(ArrayList<CSVData> csvDataList) {
@@ -156,7 +145,6 @@ public class FileHistoryInspect {
 				if (fileName.startsWith(".") || !fileName.endsWith(".java")) {
 					continue;
 				}
-				// System.out.println("\n\nfile: " + file);
 				List<HistoryEntry> fileHistory = project.getFileHistory(fileName);
 
 				/*
@@ -175,8 +163,6 @@ public class FileHistoryInspect {
 						commit.setRevision(he.getRevision());
 						commit.setAuthor(he.getAuthor());
 						commit.setDate(he.getDate());
-						// logger.info("----------------------------------------------------------\n");
-						// logger.info(commit.toString());
 						ArrayList<Integer> lineChanges = null;
 						SourceFileTransaction sourceFileTransaction = he.getTransaction();
 						List<NodeSetEdit> nodeEditList = sourceFileTransaction.getNodeEdits();
@@ -245,45 +231,9 @@ public class FileHistoryInspect {
 		}
 	}
 
-	/**
-	 * Sorts the result map descending by the number of changes a method has in
-	 * the commits history.
-	 * 
-	 * @return A List of ArrayLists of Integers: the result map of methods' line
-	 *         changes transformed into a list
-	 */
-	/*
-	 * public List<ArrayList<Integer>> sortResults() { long startTime =
-	 * System.nanoTime();
-	 * 
-	 * List<ArrayList<Integer>> changesValues = new
-	 * ArrayList<>(result.values()); Collections.sort(changesValues, new
-	 * Comparator<ArrayList<Integer>>() { public int compare(ArrayList<Integer>
-	 * s1, ArrayList<Integer> s2) { return Integer.compare(s2.size(),
-	 * s1.size()); } });
-	 * 
-	 * long endTime = System.nanoTime(); long duration = (endTime - startTime) /
-	 * 1000000; System.out.println("Duration of sort is: " + duration + "ms\n");
-	 * return changesValues; }
-	 */
 	public void getHistoryFunctionsAnalyze() {
 		createResults();
 		writeCsvFileData(csvDataList);
-		// List<ArrayList<Integer>> changesValues = sortResults();
-
-		/*
-		 * for (ArrayList<Integer> changeValues : changesValues) {
-		 * Iterator<Entry<String, ArrayList<Integer>>> iterator =
-		 * result.entrySet().iterator(); while (iterator.hasNext()) {
-		 * Entry<String, ArrayList<Integer>> entry = iterator.next(); if
-		 * (entry.getValue().equals(changeValues)) {
-		 * //System.out.println(entry.getKey() + "-" + changeValues + "; size: "
-		 * + changeValues.size() + "\n"); iterator.remove(); } } }
-		 */
-		/*
-		 * System.out.println("\n\nDeleted nodes are:"); for (String deletedNode
-		 * : deletedNodes) { System.out.println(deletedNode); }
-		 */
 	}
 
 	public Map<String, CSVData> getResult() {

@@ -45,9 +45,7 @@ public class EditVisitor extends NodeSetEditVisitor {
 		Node n = ((NodeSetEdit.Add) add).getNode();
 		if (n instanceof Node.Function) {
 			identifier = ((Node.Function) n).getIdentifier();
-			logger.info("\n" + identifier);
 			List<String> body = ((Node.Function) n).getBody();
-			logger.info("Add: +" + body.size() + ": " + body);
 			total += body.size();
 		}
 	}
@@ -56,7 +54,6 @@ public class EditVisitor extends NodeSetEditVisitor {
 	public void visit(Remove remove) {
 		if (remove.getNodeType().getQualifiedName().equals(Node.Function.class.getCanonicalName())) {
 			identifier = ((NodeSetEdit.Remove) remove).getIdentifier();
-			logger.info("Remove: " + identifier);
 			total -= 1;
 		}
 	}
@@ -65,15 +62,12 @@ public class EditVisitor extends NodeSetEditVisitor {
 	public void visit(Change<?> change) {
 		if (change.getNodeType().getQualifiedName().equals(Node.Function.class.getCanonicalName())) {
 			identifier = ((NodeSetEdit.Change<?>) change).getIdentifier();
-			logger.info(identifier);
 			Transaction<?> transaction = ((NodeSetEdit.Change<?>) change).getTransaction();
 			List<ListEdit<String>> bodyEdits = ((FunctionTransaction) transaction).getBodyEdits();
 			for (ListEdit<String> listEdit : bodyEdits) {
 				if (listEdit instanceof ListEdit.Add<?>) {
-					logger.info("Change: +1: " + listEdit);
 					total += 1;
 				} else if (listEdit instanceof ListEdit.Remove<?>) {
-					logger.info("Change: -1: " + listEdit);
 					total -= 1;
 				}
 			}

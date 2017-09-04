@@ -68,8 +68,6 @@ public class NodeVisitor extends CodeVisitor {
 		List<String> body = function.getBody();
 		functionSize.put(function.getIdentifier(), body.size());
 		identifier = function.getSignature();
-		logger.info(identifier);
-		logger.info("Add: +" + function.getBody().size() + " " + function.getBody());
 		total += function.getBody().size();
 	}
 
