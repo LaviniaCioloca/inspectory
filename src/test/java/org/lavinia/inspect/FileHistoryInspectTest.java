@@ -21,17 +21,19 @@
  *******************************************************************************/
 package org.lavinia.inspect;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.junit.Test;
+import org.lavinia.beans.CSVData;
+import org.lavinia.beans.Commit;
 import org.lavinia.visitor.GenericVisitor;
 import org.lavinia.visitor.NodeVisitor;
 
@@ -50,9 +52,10 @@ public class FileHistoryInspectTest {
 		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(RepoInspect.getProject(), writer);
 		Logger logger = Logger.getRootLogger();
 		GenericVisitor visitor = new NodeVisitor(logger);
-		assertFalse(fileHistoryInspect.checkEntryInResultSet(visitor, new ArrayList<Integer>(), "SimpleClass"));
+		assertFalse(fileHistoryInspect.checkEntryInResultSet(visitor, new ArrayList<Integer>(), "SimpleClass",
+				new Commit()));
 	}
-	
+
 	@Test
 	public void testCheckEntryInResultSetMethodNotExists() throws IOException {
 		FileWriter writer = new FileWriter("testFile.csv");
@@ -60,9 +63,10 @@ public class FileHistoryInspectTest {
 		Logger logger = Logger.getRootLogger();
 		GenericVisitor visitor = new NodeVisitor(logger);
 		visitor.setIdentifier("abc");
-		assertTrue(fileHistoryInspect.checkEntryInResultSet(visitor, new ArrayList<Integer>(), "SimpleClass"));
+		assertTrue(fileHistoryInspect.checkEntryInResultSet(visitor, new ArrayList<Integer>(), "SimpleClass",
+				new Commit()));
 	}
-	
+
 	@Test
 	public void testCheckEntryInResultSetMethodExists() throws IOException {
 		FileWriter writer = new FileWriter("testFile.csv");
@@ -70,66 +74,13 @@ public class FileHistoryInspectTest {
 		Logger logger = Logger.getRootLogger();
 		GenericVisitor visitor = new NodeVisitor(logger);
 		visitor.setIdentifier("abc");
-		Map<String, ArrayList<Integer>> result = new HashMap<String, ArrayList<Integer>>();
-		result.put("SimpleClass" + ": " + visitor.getIdentifier(), new ArrayList<Integer>());
+		Map<String, CSVData> result = new HashMap<String, CSVData>();
+		CSVData csvData = new CSVData();
+		csvData.setChangesList(new ArrayList<Integer>());
+		csvData.setCommits(new ArrayList<Commit>());
+		result.put("SimpleClass" + ": " + visitor.getIdentifier(), csvData);
 		fileHistoryInspect.setResult(result);
-		assertFalse(fileHistoryInspect.checkEntryInResultSet(visitor, new ArrayList<Integer>(), "SimpleClass"));
-	}
-	
-	@Test
-	public void testAddToResult() throws IOException {
-		FileWriter writer = new FileWriter("testFile.csv");
-		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(RepoInspect.getProject(), writer);
-		Logger logger = Logger.getRootLogger();
-		GenericVisitor visitor = new NodeVisitor(logger);
-		visitor.setIdentifier("abc");
-		ArrayList<Integer> lineChanges = new ArrayList<Integer>();
-		lineChanges.add(15);
-		lineChanges.add(5);
-
-		visitor.setTotal(15);
-		fileHistoryInspect.checkEntryInResultSet(visitor, lineChanges, "SimpleClass");
-		visitor.setTotal(5);
-		fileHistoryInspect.checkEntryInResultSet(visitor, lineChanges, "SimpleClass");
-
-		Map<String, ArrayList<Integer>> actual = fileHistoryInspect.getResult();
-		Map<String, ArrayList<Integer>> expected = new HashMap<String, ArrayList<Integer>>();
-		expected.put("SimpleClass: abc", lineChanges);
-
-		assertEquals(expected, actual);
-	}
-
-	@Test
-	public void testSortResults() throws IOException {
-		FileWriter writer = new FileWriter("testFile.csv");
-		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(RepoInspect.getProject(), writer);
-		Logger logger = Logger.getRootLogger();
-		GenericVisitor visitor = new NodeVisitor(logger);
-		visitor.setIdentifier("SimpleClass: abc");
-		ArrayList<Integer> lineChanges = new ArrayList<Integer>();
-
-		visitor.setTotal(15);
-		fileHistoryInspect.checkEntryInResultSet(visitor, lineChanges, "SimpleClass");
-
-		visitor.setIdentifier("SimpleClass: cde");
-		visitor.setTotal(10);
-		fileHistoryInspect.checkEntryInResultSet(visitor, lineChanges, "SimpleClass");
-		visitor.setTotal(5);
-		fileHistoryInspect.checkEntryInResultSet(visitor, lineChanges, "SimpleClass");
-
-		List<ArrayList<Integer>> actual = fileHistoryInspect.sortResults();
-
-		List<ArrayList<Integer>> expected = new ArrayList<ArrayList<Integer>>();
-		ArrayList<Integer> list1 = new ArrayList<>();
-		list1.add(10);
-		list1.add(5);
-
-		ArrayList<Integer> list2 = new ArrayList<>();
-		list2.add(15);
-		expected.add(list1);
-		expected.add(list2);
-
-		assertEquals(expected, actual);
-
+		assertFalse(fileHistoryInspect.checkEntryInResultSet(visitor, new ArrayList<Integer>(), "SimpleClass",
+				new Commit()));
 	}
 }

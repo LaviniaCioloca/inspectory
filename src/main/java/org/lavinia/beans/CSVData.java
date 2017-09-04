@@ -130,6 +130,7 @@ public class CSVData {
 		csvLine.add(this.getNumberOfChanges().toString());
 		csvLine.add(this.getChangesList().toString());
 		csvLine.add(this.isSupernova.toString());
+		csvLine.add(this.isPulsar.toString());
 		return csvLine;
 	}
 

@@ -135,6 +135,7 @@ public class FileHistoryInspect {
 				csvLine.setCommits(commits);
 				MethodMetrics methodMetrics = new MethodMetrics();
 				csvLine.setSupernova(methodMetrics.isSupernova(csvLine));
+				csvLine.setPulsar(methodMetrics.isPulsar(csvLine));
 				CSVUtils.writeLine(csvWriter, csvLine.getCSVLine(), ',', '"');
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -283,6 +284,14 @@ public class FileHistoryInspect {
 		 * System.out.println("\n\nDeleted nodes are:"); for (String deletedNode
 		 * : deletedNodes) { System.out.println(deletedNode); }
 		 */
+	}
+
+	public Map<String, CSVData> getResult() {
+		return result;
+	}
+
+	public void setResult(Map<String, CSVData> result) {
+		this.result = result;
 	}
 
 }
