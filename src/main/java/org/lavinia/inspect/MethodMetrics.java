@@ -30,10 +30,13 @@ import org.lavinia.beans.CSVData;
 import org.lavinia.beans.Commit;
 
 public class MethodMetrics {
+	private final static Integer MIN_REFINE_LINES = -5; // lines
+	private final static Integer MAX_REFINE_LINES = 5; // lines
 	private final static Integer SIGNIFICANT_FILESIZE = 100; // lines
 	private final static Integer TIME_FRAME = 14; // days
-	private final static Integer LONG_TIMESPAN = 6 * TIME_FRAME;
+	private final static Integer MEDIUM_TIMESPAN = 3 * TIME_FRAME;
 	private final static Integer SHORT_TIMESPAN = 1 * TIME_FRAME;
+	private final static Integer LONG_TIMESPAN = 6 * TIME_FRAME;
 	private final static Integer MANY_PULSAR_CYCLES = 5; // commits
 	private final static Integer SMALL_SIZE_CHANGE = 15; // lines
 	private final static Integer MAJOR_SIZE_CHANGE = 1 * SIGNIFICANT_FILESIZE;
@@ -48,6 +51,12 @@ public class MethodMetrics {
 		}
 	}
 
+	/**
+	 * @param start
+	 * @param end
+	 * @return A Long representing the difference in days between start and end
+	 *         dates
+	 */
 	private Long getDifferenceInDays(Date start, Date end) {
 		Long startTime = start.getTime();
 		Long endTime = end.getTime();
@@ -55,21 +64,39 @@ public class MethodMetrics {
 		return diffTime / (1000 * 60 * 60 * 24);
 	}
 
+	/**
+	 * @param changesList
+	 *            ArrayList with number of lines the method suffered during the
+	 *            commits
+	 * @return ArrayList of Strings divided by categories in:
+	 *         refactor/refine/develop commits
+	 */
 	private ArrayList<String> getCommitsTypes(ArrayList<Integer> changesList) {
 		ArrayList<String> commitsTypes = new ArrayList<String>();
 		for (int i = 0; i < changesList.size(); ++i) {
-			if (changesList.get(i) < -5) { // refactor commit
+			if (changesList.get(i) < MIN_REFINE_LINES) { // refactor
 				commitsTypes.add("refactor");
-			} else if (changesList.get(i) >= -5 && changesList.get(i) <= 5) { // refine
-																				// commit
+			} else if (changesList.get(i) >= MIN_REFINE_LINES && changesList.get(i) <= MAX_REFINE_LINES) { // refine
 				commitsTypes.add("refine");
-			} else { // develop commit
+			} else { // develop
 				commitsTypes.add("develop");
 			}
 		}
 		return commitsTypes;
 	}
 
+	/**
+	 * To be a Pulsar, a method must: have at least SIGNIFICANT_FILESIZE lines,
+	 * and have been actively changed over the last LONG_TIMESPAN. We count the
+	 * number of refactor commits that are preceded by at least one develop
+	 * commit, or an uninterrupted sequence of refine commits that cumulated
+	 * produce a file growth that is larger than SMALL_SIZE_CHANGE lines. A
+	 * Pulsar needs to have at least MANY_PULSAR_CYCLES.
+	 * 
+	 * @param csvData
+	 *            The information of the current method
+	 * @return True if the method is Pulsar, false otherwise
+	 */
 	public Boolean isPulsar(CSVData csvData) {
 		if (csvData.getActualSize() >= SIGNIFICANT_FILESIZE) {
 			ArrayList<Commit> commits = csvData.getCommits();
@@ -109,6 +136,17 @@ public class MethodMetrics {
 		return false;
 	}
 
+	/**
+	 * To detect Supernova methods, we divide its lifetime in time intervals of
+	 * SHORT_TIMESPAN; then, for each time interval we compute the growth of
+	 * method's size during that period. If there is at least one time interval
+	 * during which the file size has grown significantly, i.e. with at least
+	 * MAJOR_SIZE_CHANGE lines the files is classified as Supernova.
+	 * 
+	 * @param csvData
+	 *            The information of the current method
+	 * @return True if the method is Supernova, false otherwise
+	 */
 	public Boolean isSupernova(CSVData csvData) {
 		ArrayList<Commit> commits = csvData.getCommits();
 		ArrayList<Integer> changesList = csvData.getChangesList();

@@ -78,6 +78,8 @@ public class FileHistoryInspect {
 	 * @param className
 	 *            The method's class name in order to identify uniquely the
 	 *            method.
+	 * @param commit
+	 *            The current commit where the method had changes
 	 * @return A boolean: false if the method's identifier is null or if it's a
 	 *         new entry in result and true otherwise
 	 */
@@ -106,6 +108,13 @@ public class FileHistoryInspect {
 		}
 	}
 
+	/**
+	 * Writes the csv lines in the inspectory result csv file.
+	 * 
+	 * @param csvDataList
+	 *            List with every CSV line, of every method, to be written in
+	 *            the inspectory result csv file
+	 */
 	private void writeCsvFileData(ArrayList<CSVData> csvDataList) {
 		for (CSVData csvLine : csvDataList) {
 			try {
@@ -231,6 +240,7 @@ public class FileHistoryInspect {
 		}
 	}
 
+	// Getters and setters
 	public void getHistoryFunctionsAnalyze() {
 		createResults();
 		writeCsvFileData(csvDataList);
