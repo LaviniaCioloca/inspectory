@@ -148,15 +148,15 @@ public class MethodMetricsTest {
 		commits.add(commit);
 
 		commit = new Commit();
-		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/01/07"));
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/03/07"));
 		commits.add(commit);
 
 		commit = new Commit();
-		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/01/15"));
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/03/15"));
 		commits.add(commit);
 
 		commit = new Commit();
-		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/03/01"));
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/03/30"));
 		commits.add(commit);
 
 		commit = new Commit();
