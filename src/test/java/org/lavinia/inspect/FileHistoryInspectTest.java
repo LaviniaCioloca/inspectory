@@ -30,7 +30,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.lavinia.beans.CSVData;
 import org.lavinia.beans.Commit;
@@ -50,8 +49,8 @@ public class FileHistoryInspectTest {
 	public void testCheckEntryInResultSetIdentifierNull() throws IOException {
 		FileWriter writer = new FileWriter("testFile.csv");
 		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(RepoInspect.getProject(), writer);
-		Logger logger = Logger.getRootLogger();
-		GenericVisitor visitor = new NodeVisitor(logger);
+		String fileName = "testFileName";
+		GenericVisitor visitor = new NodeVisitor(fileName);
 		assertFalse(fileHistoryInspect.checkEntryInResultSet(visitor, new ArrayList<Integer>(), "SimpleClass",
 				new Commit()));
 	}
@@ -60,8 +59,8 @@ public class FileHistoryInspectTest {
 	public void testCheckEntryInResultSetMethodNotExists() throws IOException {
 		FileWriter writer = new FileWriter("testFile.csv");
 		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(RepoInspect.getProject(), writer);
-		Logger logger = Logger.getRootLogger();
-		GenericVisitor visitor = new NodeVisitor(logger);
+		String fileName = "testFileName";
+		GenericVisitor visitor = new NodeVisitor(fileName);
 		visitor.setIdentifier("abc");
 		assertTrue(fileHistoryInspect.checkEntryInResultSet(visitor, new ArrayList<Integer>(), "SimpleClass",
 				new Commit()));
@@ -71,8 +70,8 @@ public class FileHistoryInspectTest {
 	public void testCheckEntryInResultSetMethodExists() throws IOException {
 		FileWriter writer = new FileWriter("testFile.csv");
 		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(RepoInspect.getProject(), writer);
-		Logger logger = Logger.getRootLogger();
-		GenericVisitor visitor = new NodeVisitor(logger);
+		String fileName = "testFileName";
+		GenericVisitor visitor = new NodeVisitor(fileName);
 		visitor.setIdentifier("abc");
 		Map<String, CSVData> result = new HashMap<String, CSVData>();
 		CSVData csvData = new CSVData();

@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.lavinia.beans.CSVData;
 import org.lavinia.beans.Commit;
 import org.lavinia.utils.CSVUtils;
@@ -52,13 +51,13 @@ public class FileHistoryInspect {
 	private ArrayList<CSVData> csvDataList = null;
 
 	/**
-	 * FileHistoryInspect Constructor that initializes the result map and csv
+	 * FileHistoryInspect Constructor that initializes the result map and CSV
 	 * writer to file.
 	 * 
 	 * @param project
 	 *            The project of the repository to inspect.
 	 * @param csvWriter
-	 *            The writer of result csv file.
+	 *            The writer of result CSV file.
 	 */
 	public FileHistoryInspect(PersistentProject project, FileWriter csvWriter) {
 		FileHistoryInspect.project = project;
@@ -80,8 +79,8 @@ public class FileHistoryInspect {
 	 *            method.
 	 * @param commit
 	 *            The current commit where the method had changes
-	 * @return A boolean: false if the method's identifier is null or if it's a
-	 *         new entry in result and true otherwise
+	 * @return A boolean: false if the method's identifier is null or if it
+	 *         already exists in result set and true otherwise
 	 */
 	public boolean checkEntryInResultSet(GenericVisitor visitor, ArrayList<Integer> lineChanges, String className,
 			Commit commit) {
@@ -109,13 +108,13 @@ public class FileHistoryInspect {
 	}
 
 	/**
-	 * Writes the csv lines in the inspectory result csv file.
+	 * Writes the CSV lines in the inspectory result CSV file.
 	 * 
 	 * @param csvDataList
 	 *            List with every CSV line, of every method, to be written in
-	 *            the inspectory result csv file
+	 *            the inspectory result CSV file
 	 */
-	private void writeCsvFileData(ArrayList<CSVData> csvDataList) {
+	private void writeCSVFileData(ArrayList<CSVData> csvDataList) {
 		for (CSVData csvLine : csvDataList) {
 			try {
 				ArrayList<Integer> changesList = result.get(csvLine.getClassName().replaceAll("\"", "") + ": "
@@ -141,6 +140,54 @@ public class FileHistoryInspect {
 		}
 	}
 
+	private void handleNodeSetEditChange(NodeSetEdit edit, GenericVisitor visitor, String fileName, Commit commit,
+			ArrayList<Integer> lineChanges) {
+		String className = ((NodeSetEdit.Change<?>) edit).getIdentifier();
+		Transaction<?> t = ((NodeSetEdit.Change<?>) edit).getTransaction();
+		List<NodeSetEdit> memberEdits = ((TypeTransaction) t).getMemberEdits();
+		for (NodeSetEdit memberEdit : memberEdits) {
+			try {
+				visitor = new EditVisitor(fileName);
+				((EditVisitor) visitor).visit(memberEdit);
+				if (checkEntryInResultSet(visitor, lineChanges, className, commit)) {
+					addDataInCSVList(fileName, className, visitor.getIdentifier());
+				}
+			} catch (Exception e) {
+				continue;
+			}
+		}
+	}
+
+	private void handleNodeSetEditAdd(NodeSetEdit edit, GenericVisitor visitor, String fileName, Commit commit,
+			ArrayList<Integer> lineChanges) {
+		Node node = ((NodeSetEdit.Add) edit).getNode();
+		if (node instanceof Node.Type) {
+			String className = ((Node.Type) node).getName();
+			visitor = new NodeVisitor(fileName);
+			Set<Node> members = ((Node.Type) node).getMembers();
+			for (Node member : members) {
+				try {
+					if (member instanceof Node.Function) {
+						((NodeVisitor) visitor).visit(member);
+						if (checkEntryInResultSet(visitor, lineChanges, className, commit)) {
+							addDataInCSVList(fileName, className, visitor.getIdentifier());
+						}
+					}
+				} catch (Exception e) {
+					continue;
+				}
+			}
+		}
+	}
+
+	private void addDataInCSVList(String fileName, String className, String methodName) {
+		CSVData csvData = new CSVData();
+		csvData.setFileName("\"" + fileName + "\"");
+		csvData.setClassName("\"" + className + "\"");
+		csvData.setMethodName("\"" + methodName + "\"");
+		csvDataList.add(csvData);
+	}
+
 	/**
 	 * Creates the CSV information for every method by parsing every
 	 * history.json file of every .java file from .metanalysis folder.
@@ -163,8 +210,9 @@ public class FileHistoryInspect {
 				 * FileAppender appender = (FileAppender)
 				 * logger.getAppender("file"); appender.setFile(logFilePath);
 				 * appender.activateOptions();
+				 * 
+				 * Logger logger = Logger.getRootLogger();
 				 */
-				Logger logger = Logger.getRootLogger();
 
 				for (HistoryEntry he : fileHistory) {
 					try {
@@ -179,47 +227,9 @@ public class FileHistoryInspect {
 
 						for (final NodeSetEdit edit : nodeEditList) {
 							if (edit instanceof NodeSetEdit.Change<?>) {
-								String className = ((NodeSetEdit.Change<?>) edit).getIdentifier();
-								Transaction<?> t = ((NodeSetEdit.Change<?>) edit).getTransaction();
-								List<NodeSetEdit> memberEdits = ((TypeTransaction) t).getMemberEdits();
-								for (NodeSetEdit memberEdit : memberEdits) {
-									try {
-										visitor = new EditVisitor(logger, fileName);
-										((EditVisitor) visitor).visit(memberEdit);
-										if (checkEntryInResultSet(visitor, lineChanges, className, commit)) {
-											CSVData csvData = new CSVData();
-											csvData.setFileName("\"" + fileName + "\"");
-											csvData.setClassName("\"" + className + "\"");
-											csvData.setMethodName("\"" + visitor.getIdentifier() + "\"");
-											csvDataList.add(csvData);
-										}
-									} catch (Exception e) {
-										continue;
-									}
-								}
+								handleNodeSetEditChange(edit, visitor, fileName, commit, lineChanges);
 							} else if (edit instanceof NodeSetEdit.Add) {
-								Node node = ((NodeSetEdit.Add) edit).getNode();
-								if (node instanceof Node.Type) {
-									String className = ((Node.Type) node).getName();
-									visitor = new NodeVisitor(logger, fileName);
-									Set<Node> members = ((Node.Type) node).getMembers();
-									for (Node member : members) {
-										try {
-											if (member instanceof Node.Function) {
-												((NodeVisitor) visitor).visit(member);
-												if (checkEntryInResultSet(visitor, lineChanges, className, commit)) {
-													CSVData csvData = new CSVData();
-													csvData.setFileName("\"" + fileName + "\"");
-													csvData.setClassName("\"" + className + "\"");
-													csvData.setMethodName("\"" + visitor.getIdentifier() + "\"");
-													csvDataList.add(csvData);
-												}
-											}
-										} catch (Exception e) {
-											continue;
-										}
-									}
-								}
+								handleNodeSetEditAdd(edit, visitor, fileName, commit, lineChanges);
 							} else {
 								deletedNodes.add(fileName);
 							}
@@ -227,10 +237,8 @@ public class FileHistoryInspect {
 					} catch (Exception e) {
 						continue;
 					}
-
 				}
 			}
-
 		} catch (IOException e) {
 			/*
 			 * Need to have a NOP here because of the files that do not have a
@@ -243,7 +251,7 @@ public class FileHistoryInspect {
 	// Getters and setters
 	public void getHistoryFunctionsAnalyze() {
 		createResults();
-		writeCsvFileData(csvDataList);
+		writeCSVFileData(csvDataList);
 	}
 
 	public Map<String, CSVData> getResult() {

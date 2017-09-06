@@ -23,20 +23,18 @@ package org.lavinia.visitor;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.metanalysis.core.delta.FunctionTransaction;
 import org.metanalysis.core.delta.ListEdit;
 import org.metanalysis.core.delta.NodeSetEdit;
 import org.metanalysis.core.delta.NodeSetEdit.Add;
 import org.metanalysis.core.delta.NodeSetEdit.Change;
 import org.metanalysis.core.delta.NodeSetEdit.Remove;
-import org.metanalysis.core.model.Node;
 import org.metanalysis.core.delta.Transaction;
+import org.metanalysis.core.model.Node;
 
 public class EditVisitor extends NodeSetEditVisitor {
 
-	public EditVisitor(Logger logger, String fileName) {
-		this.logger = logger;
+	public EditVisitor(String fileName) {
 		this.fileName = fileName;
 	}
 

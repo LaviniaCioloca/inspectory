@@ -50,6 +50,28 @@ public class RepoInspect {
 	}
 
 	/**
+	 * Writes in csvFileName on every line data about every method in the
+	 * repository.
+	 * 
+	 * @param csvFileName
+	 *            String with the name of the CSV file to store the results.
+	 */
+	private static void writeToFile(String csvFileName) {
+		FileWriter writer;
+		try {
+			writer = new FileWriter(csvFileName);
+			CSVUtils.writeLine(writer, Arrays.asList("File", "Class", "Method", "Initial size", "Actual size",
+					"Number of changes", "Changes List", "isSupernova", "isPulsar"));
+			FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(getProject(), writer);
+			fileHistoryInspect.getHistoryFunctionsAnalyze();
+			writer.flush();
+			writer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
 	 * Main method of inspectory project.
 	 * 
 	 * @param args
@@ -70,17 +92,6 @@ public class RepoInspect {
 		if (!csvFileName.endsWith(".csv")) {
 			csvFileName += ".csv";
 		}
-		FileWriter writer;
-		try {
-			writer = new FileWriter(csvFileName);
-			CSVUtils.writeLine(writer, Arrays.asList("File", "Class", "Method", "Initial size", "Actual size",
-					"Number of changes", "Changes List", "isSupernova", "isPulsar"));
-			FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(getProject(), writer);
-			fileHistoryInspect.getHistoryFunctionsAnalyze();
-			writer.flush();
-			writer.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		writeToFile(csvFileName);
 	}
 }

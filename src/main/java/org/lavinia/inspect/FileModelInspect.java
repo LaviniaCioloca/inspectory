@@ -61,7 +61,7 @@ public class FileModelInspect {
 				appender.activateOptions();
 
 				Set<Node> fileModelNodes = fileModel.getNodes();
-				NodeVisitor visitor = new NodeVisitor(logger);
+				NodeVisitor visitor = new NodeVisitor(file);
 				for (Node n : fileModelNodes) {
 					visitor.visit(n);
 				}
@@ -71,7 +71,6 @@ public class FileModelInspect {
 					logger.info(entry.getKey() + " - " + entry.getValue());
 				}
 			}
-
 		} catch (IOException e) {
 			/*
 			 * Need to have a NOP here because of the files that do not have a
@@ -80,5 +79,4 @@ public class FileModelInspect {
 			 */
 		}
 	}
-
 }

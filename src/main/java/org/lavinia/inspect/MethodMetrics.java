@@ -34,8 +34,8 @@ public class MethodMetrics {
 	private final static Integer MAX_REFINE_LINES = 5; // lines
 	private final static Integer SIGNIFICANT_FILESIZE = 100; // lines
 	private final static Integer TIME_FRAME = 14; // days
-	private final static Integer MEDIUM_TIMESPAN = 3 * TIME_FRAME;
 	private final static Integer SHORT_TIMESPAN = 1 * TIME_FRAME;
+	private final static Integer MEDIUM_TIMESPAN = 3 * TIME_FRAME;
 	private final static Integer LONG_TIMESPAN = 6 * TIME_FRAME;
 	private final static Integer MANY_PULSAR_CYCLES = 5; // commits
 	private final static Integer SMALL_SIZE_CHANGE = 15; // lines
@@ -151,16 +151,18 @@ public class MethodMetrics {
 		ArrayList<Commit> commits = csvData.getCommits();
 		ArrayList<Integer> changesList = csvData.getChangesList();
 		for (int i = 1; i < commits.size(); ++i) {
-			Integer sum = changesList.get(i);
-			for (int j = i + 1; j < commits.size() - 1; ++j) {
-				Long diffDays = getDifferenceInDays(commits.get(i).getDate(), commits.get(j).getDate());
-				if (diffDays <= SHORT_TIMESPAN) {
-					sum += changesList.get(j);
-					if (sum >= MAJOR_SIZE_CHANGE) {
-						return true;
+			if (getDifferenceInDays(commits.get(0).getDate(), commits.get(i).getDate()) >= MEDIUM_TIMESPAN) {
+				Integer sum = changesList.get(i);
+				for (int j = i + 1; j < commits.size() - 1; ++j) {
+					Long diffDays = getDifferenceInDays(commits.get(i).getDate(), commits.get(j).getDate());
+					if (diffDays <= SHORT_TIMESPAN) {
+						sum += changesList.get(j);
+						if (sum >= MAJOR_SIZE_CHANGE) {
+							return true;
+						}
+					} else {
+						break;
 					}
-				} else {
-					break;
 				}
 			}
 		}

@@ -116,7 +116,7 @@ public class CSVData {
 	}
 
 	/**
-	 * Retrieve the method's line to be written in csv file.
+	 * Retrieve the method's line to be written in CSV file.
 	 * 
 	 * @return An ArrayList of Strings data type.
 	 */

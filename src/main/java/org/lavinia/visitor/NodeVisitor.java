@@ -27,7 +27,6 @@ import java.util.Map;
 import java.util.Set;
 //import java.util.logging.Logger;
 
-import org.apache.log4j.Logger;
 import org.metanalysis.core.model.Node;
 import org.metanalysis.core.model.Node.Function;
 import org.metanalysis.core.model.Node.Type;
@@ -37,12 +36,7 @@ import org.metanalysis.core.model.SourceFile;
 public class NodeVisitor extends CodeVisitor {
 	private Map<String, Integer> functionSize = new HashMap<String, Integer>();
 
-	public NodeVisitor(Logger logger) {
-		this.logger = logger;
-	}
-
-	public NodeVisitor(Logger logger, String fileName) {
-		this.logger = logger;
+	public NodeVisitor(String fileName) {
 		this.fileName = fileName;
 	}
 

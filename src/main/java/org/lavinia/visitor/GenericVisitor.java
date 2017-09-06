@@ -21,10 +21,7 @@
  *******************************************************************************/
 package org.lavinia.visitor;
 
-import org.apache.log4j.Logger;
-
 public abstract class GenericVisitor {
-	public Logger logger = null;
 	protected String fileName = null;
 	protected String identifier = null;
 	protected Integer total = 0;
