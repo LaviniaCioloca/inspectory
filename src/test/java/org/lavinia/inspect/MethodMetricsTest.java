@@ -84,7 +84,7 @@ public class MethodMetricsTest {
 	public void testIsPulsarSmallSizeTrue() throws ParseException {
 		CSVData csvData = new CSVData();
 		ArrayList<Integer> changesList = new ArrayList<Integer>(
-				Arrays.asList(210, 5, 5, 5, -10, 10, 5, 5, 5, -10, 30, 5, 5, 5));
+				Arrays.asList(210, 5, 5, 5, -10, 10, 5, 5, 5, -10, 30, 5, 5, 5, 5));
 		ArrayList<Commit> commits = new ArrayList<>();
 		Commit commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/07/01"));
