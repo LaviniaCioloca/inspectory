@@ -24,6 +24,7 @@ package org.lavinia.inspect;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -40,14 +41,18 @@ public class FileHistoryInspectTest {
 
 	@Test(expected = NullPointerException.class)
 	public void testGetHistoryFunctionsAnalyze() throws IOException {
-		FileWriter writer = new FileWriter("testFile.csv");
+		File file = new File("./src/test/resources/testFile.csv");
+		file.getParentFile().mkdirs();
+		FileWriter writer = new FileWriter(file);
 		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(RepoInspect.getProject(), writer);
 		fileHistoryInspect.getHistoryFunctionsAnalyze();
 	}
 
 	@Test
 	public void testCheckEntryInResultSetIdentifierNull() throws IOException {
-		FileWriter writer = new FileWriter("testFile.csv");
+		File file = new File("./src/test/resources/testFile.csv");
+		file.getParentFile().mkdirs();
+		FileWriter writer = new FileWriter(file);
 		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(RepoInspect.getProject(), writer);
 		String fileName = "testFileName";
 		GenericVisitor visitor = new NodeVisitor(fileName);
@@ -57,7 +62,9 @@ public class FileHistoryInspectTest {
 
 	@Test
 	public void testCheckEntryInResultSetMethodNotExists() throws IOException {
-		FileWriter writer = new FileWriter("testFile.csv");
+		File file = new File("./src/test/resources/testFile.csv");
+		file.getParentFile().mkdirs();
+		FileWriter writer = new FileWriter(file);
 		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(RepoInspect.getProject(), writer);
 		String fileName = "testFileName";
 		GenericVisitor visitor = new NodeVisitor(fileName);
@@ -68,7 +75,9 @@ public class FileHistoryInspectTest {
 
 	@Test
 	public void testCheckEntryInResultSetMethodExists() throws IOException {
-		FileWriter writer = new FileWriter("testFile.csv");
+		File file = new File("./src/test/resources/testFile.csv");
+		file.getParentFile().mkdirs();
+		FileWriter writer = new FileWriter(file);
 		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(RepoInspect.getProject(), writer);
 		String fileName = "testFileName";
 		GenericVisitor visitor = new NodeVisitor(fileName);

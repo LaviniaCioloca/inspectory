@@ -113,7 +113,7 @@ public class MethodMetrics {
 				ArrayList<String> commitsTypes = getCommitsTypes(changesList);
 				Integer countPulsarCycles = 0;
 				Integer methodGrowth = 0;
-				for (int i = 1; i <= commitsTypes.size() - 1; ++i) {
+				for (int i = 1; i < commitsTypes.size() - 1; ++i) {
 					if (commitsTypes.get(i).equals("refactor") && commitsTypes.get(i + 1).equals("develop")) {
 						++countPulsarCycles;
 					}
