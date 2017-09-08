@@ -30,22 +30,22 @@ import org.lavinia.beans.CSVData;
 import org.lavinia.beans.Commit;
 
 public class MethodMetrics {
-	private final static Integer MIN_REFINE_LINES = -5; // lines
-	private final static Integer MAX_REFINE_LINES = 5; // lines
-	private final static Integer SIGNIFICANT_FILESIZE = 100; // lines
+	private final static Integer MIN_REFINE_LINES = -3; // lines
+	private final static Integer MAX_REFINE_LINES = 3; // lines
+	private final static Integer SIGNIFICANT_FILESIZE = 50; // lines
 	private final static Integer TIME_FRAME = 14; // days
 	private final static Integer SHORT_TIMESPAN = 1 * TIME_FRAME;
 	private final static Integer MEDIUM_TIMESPAN = 3 * TIME_FRAME;
-	private final static Integer LONG_TIMESPAN = 6 * TIME_FRAME;
-	private final static Integer MANY_PULSAR_CYCLES = 5; // commits
-	private final static Integer SMALL_SIZE_CHANGE = 15; // lines
+	private final static Integer LONG_TIMESPAN = 18 * TIME_FRAME;
+	private final static Integer MANY_PULSAR_CYCLES = 3; // commits
+	private final static Integer SMALL_SIZE_CHANGE = 10; // lines
 	private final static Integer MAJOR_SIZE_CHANGE = 1 * SIGNIFICANT_FILESIZE;
-	private final static Integer ACTIVELY_CHANGED = 5; // times changed
+	private final static Integer ACTIVELY_CHANGED = 3; // times changed
 	private static Date now = null;
 
 	public MethodMetrics() {
 		try {
-			now = new SimpleDateFormat("yyyy/MM/dd").parse("2017/06/01");
+			now = new SimpleDateFormat("yyyy/MM/dd").parse("2017/09/06");
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
@@ -83,6 +83,10 @@ public class MethodMetrics {
 			}
 		}
 		return commitsTypes;
+	}
+
+	public void getPulsarSeverity() {
+
 	}
 
 	/**
@@ -134,6 +138,10 @@ public class MethodMetrics {
 			}
 		}
 		return false;
+	}
+
+	public void getSupernovaSeverity() {
+
 	}
 
 	/**
