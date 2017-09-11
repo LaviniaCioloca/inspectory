@@ -84,10 +84,13 @@ public class MethodMetricsTest {
 	public void testIsPulsarSmallSizeTrue() throws ParseException {
 		CSVData csvData = new CSVData();
 		ArrayList<Integer> changesList = new ArrayList<Integer>(
-				Arrays.asList(210, 5, 5, 5, -10, 10, 5, 5, 5, -10, 30, 5, 5, 5, 5));
+				Arrays.asList(210, 3, 3, 3, 3, -10, 10, 3, 3, 3, 3, -10, 30, 3, 3, 3, 3, 3));
 		ArrayList<Commit> commits = new ArrayList<>();
 		Commit commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/07/01"));
+		commits.add(commit);
+		commits.add(commit);
+		commits.add(commit);
 		commits.add(commit);
 		commits.add(commit);
 		commits.add(commit);
@@ -196,5 +199,109 @@ public class MethodMetricsTest {
 		csvData.setCommits(commits);
 		MethodMetrics methodMetrics = new MethodMetrics();
 		assertFalse(methodMetrics.isSupernova(csvData));
+	}
+
+	@Test
+	public void testGetLeapsSizePointsTwo() {
+		MethodMetrics methodMetrics = new MethodMetrics();
+		assertTrue(methodMetrics.getLeapsSizePoints(200) == 2);
+	}
+
+	@Test
+	public void testGetLeapsSizePointsOne() {
+		MethodMetrics methodMetrics = new MethodMetrics();
+		assertTrue(methodMetrics.getLeapsSizePoints(100) == 1);
+	}
+
+	@Test
+	public void testGetLeapsSizePointsZero() {
+		MethodMetrics methodMetrics = new MethodMetrics();
+		assertTrue(methodMetrics.getLeapsSizePoints(10) == 0);
+	}
+
+	@Test
+	public void testGetRecentLeapsSizePointsThree() {
+		MethodMetrics methodMetrics = new MethodMetrics();
+		assertTrue(methodMetrics.getRecentLeapsSizePoints(200) == 3);
+	}
+
+	@Test
+	public void testGetRecentLeapsSizePointsTwo() {
+		MethodMetrics methodMetrics = new MethodMetrics();
+		assertTrue(methodMetrics.getRecentLeapsSizePoints(150) == 2);
+	}
+
+	@Test
+	public void testGetRecentLeapsSizePointsOne() {
+		MethodMetrics methodMetrics = new MethodMetrics();
+		assertTrue(methodMetrics.getRecentLeapsSizePoints(100) == 1);
+	}
+
+	@Test
+	public void testGetRecentLeapsSizePointsZero() {
+		MethodMetrics methodMetrics = new MethodMetrics();
+		assertTrue(methodMetrics.getRecentLeapsSizePoints(10) == 0);
+	}
+
+	@Test
+	public void testGetSubsequentRefactoringPointsTwo() {
+		MethodMetrics methodMetrics = new MethodMetrics();
+		assertTrue(methodMetrics.getSubsequentRefactoringPoints(10) == 2);
+	}
+
+	@Test
+	public void testGetSubsequentRefactoringPointsOne() {
+		MethodMetrics methodMetrics = new MethodMetrics();
+		assertTrue(methodMetrics.getSubsequentRefactoringPoints(45) == 1);
+	}
+
+	@Test
+	public void testGetSubsequentRefactoringPointsZero() {
+		MethodMetrics methodMetrics = new MethodMetrics();
+		assertTrue(methodMetrics.getSubsequentRefactoringPoints(50) == 0);
+	}
+
+	@Test
+	public void testGetFileSizePointsOne() {
+		MethodMetrics methodMetrics = new MethodMetrics();
+		assertTrue(methodMetrics.getFileSizePoints(150) == 1);
+	}
+
+	@Test
+	public void testGetFileSizePointsZero() {
+		MethodMetrics methodMetrics = new MethodMetrics();
+		assertTrue(methodMetrics.getFileSizePoints(10) == 0);
+	}
+
+	@Test
+	public void testGetActiveFilePointsOne() throws ParseException {
+		MethodMetrics methodMetrics = new MethodMetrics();
+		Commit commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/09/01"));
+		assertTrue(methodMetrics.getActiveFilePoints(commit) == 1);
+	}
+
+	@Test
+	public void testGetActiveFilePointsZero() throws ParseException {
+		MethodMetrics methodMetrics = new MethodMetrics();
+		Commit commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/09/01"));
+		assertTrue(methodMetrics.getActiveFilePoints(commit) == 0);
+	}
+
+	@Test
+	public void testCountSupernovaSeverityPointsMax() throws ParseException {
+		MethodMetrics methodMetrics = new MethodMetrics();
+		Commit commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/09/01"));
+		assertTrue(methodMetrics.countSupernovaSeverityPoints(200, 200, 20, 150, commit) == 10);
+	}
+
+	@Test
+	public void testCountSupernovaSeverityPointsMin() throws ParseException {
+		MethodMetrics methodMetrics = new MethodMetrics();
+		Commit commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/09/01"));
+		assertTrue(methodMetrics.countSupernovaSeverityPoints(20, 20, 200, 10, commit) == 1);
 	}
 }
