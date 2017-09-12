@@ -31,6 +31,8 @@ import java.util.Set;
 
 import org.lavinia.beans.CSVData;
 import org.lavinia.beans.Commit;
+import org.lavinia.metrics.PulsarMetric;
+import org.lavinia.metrics.SupernovaMetric;
 import org.lavinia.utils.CSVUtils;
 import org.lavinia.visitor.EditVisitor;
 import org.lavinia.visitor.GenericVisitor;
@@ -130,9 +132,10 @@ public class FileHistoryInspect {
 				csvLine.setActualSize(actualSize);
 				csvLine.setChangesList(changesList);
 				csvLine.setCommits(commits);
-				MethodMetrics methodMetrics = new MethodMetrics();
-				csvLine.setSupernova(methodMetrics.isSupernova(csvLine));
-				csvLine.setPulsar(methodMetrics.isPulsar(csvLine));
+				SupernovaMetric supernovaMetric = new SupernovaMetric();
+				csvLine.setSupernova(supernovaMetric.isSupernova(csvLine));
+				PulsarMetric pulsarMetric = new PulsarMetric();
+				csvLine.setPulsar(pulsarMetric.isPulsar(csvLine));
 				CSVUtils.writeLine(csvWriter, csvLine.getCSVLine(), ',', '"');
 			} catch (IOException e) {
 				e.printStackTrace();
