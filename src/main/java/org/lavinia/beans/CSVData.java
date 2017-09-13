@@ -34,6 +34,8 @@ public class CSVData {
 	private ArrayList<Integer> changesList;
 	private Boolean isPulsar;
 	private Boolean isSupernova;
+	private Integer pulsarSeverity;
+	private Integer supernovaSeverity;
 
 	public ArrayList<Commit> getCommits() {
 		return commits;
@@ -115,6 +117,38 @@ public class CSVData {
 		this.isSupernova = isSupernova;
 	}
 
+	public Boolean getIsPulsar() {
+		return isPulsar;
+	}
+
+	public void setIsPulsar(Boolean isPulsar) {
+		this.isPulsar = isPulsar;
+	}
+
+	public Boolean getIsSupernova() {
+		return isSupernova;
+	}
+
+	public void setIsSupernova(Boolean isSupernova) {
+		this.isSupernova = isSupernova;
+	}
+
+	public Integer getPulsarSeverity() {
+		return pulsarSeverity;
+	}
+
+	public void setPulsarSeverity(Integer pulsarSeverity) {
+		this.pulsarSeverity = pulsarSeverity;
+	}
+
+	public Integer getSupernovaSeverity() {
+		return supernovaSeverity;
+	}
+
+	public void setSupernovaSeverity(Integer supernovaSeverity) {
+		this.supernovaSeverity = supernovaSeverity;
+	}
+
 	/**
 	 * Retrieve the method's line to be written in CSV file.
 	 * 
@@ -131,6 +165,8 @@ public class CSVData {
 		csvLine.add(this.getChangesList().toString());
 		csvLine.add(this.isSupernova.toString());
 		csvLine.add(this.isPulsar.toString());
+		csvLine.add(this.getSupernovaSeverity().toString());
+		csvLine.add(this.getPulsarSeverity().toString());
 		return csvLine;
 	}
 
