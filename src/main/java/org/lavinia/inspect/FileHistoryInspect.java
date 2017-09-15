@@ -134,8 +134,10 @@ public class FileHistoryInspect {
 				csvLine.setCommits(commits);
 				SupernovaMetric supernovaMetric = new SupernovaMetric();
 				csvLine.setSupernova(supernovaMetric.isSupernova(csvLine));
+				csvLine.setSupernovaSeverity(supernovaMetric.getSupernovaSeverity(csvLine));
 				PulsarMetric pulsarMetric = new PulsarMetric();
 				csvLine.setPulsar(pulsarMetric.isPulsar(csvLine));
+				csvLine.setPulsarSeverity(pulsarMetric.getPulsarSeverity(csvLine));
 				CSVUtils.writeLine(csvWriter, csvLine.getCSVLine(), ',', '"');
 			} catch (IOException e) {
 				e.printStackTrace();

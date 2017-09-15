@@ -85,7 +85,7 @@ public abstract class MethodMetrics {
 		}
 		return commitsTypes;
 	}
-	
+
 	public Integer getFileSizePoints(Integer fileSize) {
 		if (fileSize >= EXTREMELY_LARGE_FILE) {
 			return 1;
