@@ -57,7 +57,8 @@ public class SupernovaMetric extends MethodMetrics {
 
 	/**
 	 * @param averageSubsequentCommits
-	 * @return An Integer: 0 - 2 representing the points of Subsequent Refactoring.
+	 * @return An Integer: 0 - 2 representing the points of Subsequent
+	 *         Refactoring.
 	 */
 	public Integer getSubsequentRefactoringPoints(Integer averageSubsequentCommits) {
 		if (averageSubsequentCommits >= 0 * MAJOR_SIZE_CHANGE && averageSubsequentCommits < 0.5 * MAJOR_SIZE_CHANGE) {

@@ -63,9 +63,9 @@ public class PulsarMetric extends MethodMetrics {
 
 	@Override
 	public Integer getMethodSizePoints(Integer fileSize) {
-		if (fileSize >= EXTREMELY_LARGE_FILE) {
+		if (fileSize >= EXTREMELY_LARGE_METHOD) {
 			return 2;
-		} else if (fileSize >= VERY_LARGE_FILE) {
+		} else if (fileSize >= VERY_LARGE_METHOD) {
 			return 1;
 		}
 		return 0;
@@ -102,7 +102,7 @@ public class PulsarMetric extends MethodMetrics {
 		Integer countRecentPulsarCycles = 0;
 		Integer methodGrowth = 0;
 		int countActiveChanges = 0;
-		if (csvData.getActualSize() >= SIGNIFICANT_FILESIZE) {
+		if (csvData.getActualSize() >= SIGNIFICANT_METHOD_SIZE) {
 			for (int i = commits.size() - 1; i >= 0; --i) {
 				if (getDifferenceInDays(commits.get(i).getDate(), now) <= LONG_TIMESPAN) {
 					++countActiveChanges;
@@ -152,19 +152,19 @@ public class PulsarMetric extends MethodMetrics {
 	}
 
 	/**
-	 * To be a Pulsar, a method must: have at least SIGNIFICANT_FILESIZE lines,
-	 * and have been actively changed over the last LONG_TIMESPAN. We count the
-	 * number of refactor commits that are preceded by at least one develop
-	 * commit, or an uninterrupted sequence of refine commits that cumulated
-	 * produce a file growth that is larger than SMALL_SIZE_CHANGE lines. A
-	 * Pulsar needs to have at least MANY_PULSAR_CYCLES.
+	 * To be a Pulsar, a method must: have at least SIGNIFICANT_METHOD_SIZE
+	 * lines, and have been actively changed over the last LONG_TIMESPAN. We
+	 * count the number of refactor commits that are preceded by at least one
+	 * develop commit, or an uninterrupted sequence of refine commits that
+	 * cumulated produce a file growth that is larger than SMALL_SIZE_CHANGE
+	 * lines. A Pulsar needs to have at least MANY_PULSAR_CYCLES.
 	 * 
 	 * @param csvData
 	 *            The information of the current method
 	 * @return True if the method is Pulsar, false otherwise.
 	 */
 	public Boolean isPulsar(CSVData csvData) {
-		if (csvData.getActualSize() >= SIGNIFICANT_FILESIZE) {
+		if (csvData.getActualSize() >= SIGNIFICANT_METHOD_SIZE) {
 			ArrayList<Commit> commits = csvData.getCommits();
 			Integer count = 0;
 			for (int i = commits.size() - 1; i >= 0; --i) {

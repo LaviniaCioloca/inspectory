@@ -21,6 +21,35 @@
  *******************************************************************************/
 package org.lavinia.metrics;
 
-public class MethodMetricsTest {
+import static org.junit.Assert.assertTrue;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+
+import org.junit.Test;
+
+public class MethodMetricsTest {
+	@Test
+	public void testGetDifferenceInDays() throws ParseException {
+		MethodMetrics methodMetric = new PulsarMetric();
+		Date start = new SimpleDateFormat("yyyy/MM/dd").parse("2010/01/01");
+		Date end = new SimpleDateFormat("yyyy/MM/dd").parse("2010/01/05");
+		assertTrue(methodMetric.getDifferenceInDays(start, end) == 4.0);
+	}
+
+	@Test
+	public void testGetCommitsTypes() {
+		MethodMetrics methodMetric = new PulsarMetric();
+		ArrayList<Integer> changesList = new ArrayList<>();
+		changesList.add(-10);
+		changesList.add(1);
+		changesList.add(10);
+		ArrayList<String> expectedResultList = new ArrayList<>();
+		expectedResultList.add("refactor");
+		expectedResultList.add("refine");
+		expectedResultList.add("develop");
+		assertTrue(methodMetric.getCommitsTypes(changesList).equals(expectedResultList));
+	}
 }

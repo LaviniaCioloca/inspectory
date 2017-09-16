@@ -31,16 +31,16 @@ import org.lavinia.beans.Commit;
 public abstract class MethodMetrics {
 	protected final static Integer MIN_REFINE_LINES = -3; // lines
 	protected final static Integer MAX_REFINE_LINES = 3; // lines
-	protected final static Integer SIGNIFICANT_FILESIZE = 50; // lines
-	protected final static Integer VERY_LARGE_FILE = 2 * SIGNIFICANT_FILESIZE;
-	protected final static Integer EXTREMELY_LARGE_FILE = 3 * SIGNIFICANT_FILESIZE;
+	protected final static Integer SIGNIFICANT_METHOD_SIZE = 50; // lines
+	protected final static Integer VERY_LARGE_METHOD = 2 * SIGNIFICANT_METHOD_SIZE;
+	protected final static Integer EXTREMELY_LARGE_METHOD = 3 * SIGNIFICANT_METHOD_SIZE;
 	protected final static Integer TIME_FRAME = 14; // days
 	protected final static Integer SHORT_TIMESPAN = 1 * TIME_FRAME;
 	protected final static Integer MEDIUM_TIMESPAN = 3 * TIME_FRAME;
 	protected final static Integer LONG_TIMESPAN = 18 * TIME_FRAME;
 	protected final static Integer MANY_PULSAR_CYCLES = 3; // commits
 	protected final static Integer SMALL_SIZE_CHANGE = 10; // lines
-	protected final static Integer MAJOR_SIZE_CHANGE = 1 * SIGNIFICANT_FILESIZE;
+	protected final static Integer MAJOR_SIZE_CHANGE = 1 * SIGNIFICANT_METHOD_SIZE;
 	protected final static Integer ACTIVELY_CHANGED = 3; // times changed
 	protected static Date now = null;
 
@@ -92,7 +92,7 @@ public abstract class MethodMetrics {
 
 	/**
 	 * Returns the points for the method if its size is bigger than
-	 * EXTREMELY_LARGE_FILE.
+	 * EXTREMELY_LARGE_METHOD.
 	 * 
 	 * @param methodSize
 	 *            The actual method size at the current time
@@ -100,7 +100,7 @@ public abstract class MethodMetrics {
 	 *         metrics.
 	 */
 	public Integer getMethodSizePoints(Integer methodSize) {
-		if (methodSize >= EXTREMELY_LARGE_FILE) {
+		if (methodSize >= EXTREMELY_LARGE_METHOD) {
 			return 1;
 		}
 		return 0;
