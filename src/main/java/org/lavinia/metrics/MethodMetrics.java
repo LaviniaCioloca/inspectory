@@ -54,7 +54,9 @@ public abstract class MethodMetrics {
 
 	/**
 	 * @param start
+	 *            Date
 	 * @param end
+	 *            Date
 	 * @return A Long representing the difference in days between start and end
 	 *         dates
 	 */
@@ -66,11 +68,13 @@ public abstract class MethodMetrics {
 	}
 
 	/**
+	 * Categorize commits into 3 types and return that list.
+	 * 
 	 * @param changesList
 	 *            ArrayList with number of lines the method suffered during the
 	 *            commits
 	 * @return ArrayList of Strings divided by categories in:
-	 *         refactor/refine/develop commits
+	 *         refactor/refine/develop commits.
 	 */
 	protected ArrayList<String> getCommitsTypes(ArrayList<Integer> changesList) {
 		ArrayList<String> commitsTypes = new ArrayList<String>();
@@ -86,14 +90,32 @@ public abstract class MethodMetrics {
 		return commitsTypes;
 	}
 
-	public Integer getFileSizePoints(Integer fileSize) {
-		if (fileSize >= EXTREMELY_LARGE_FILE) {
+	/**
+	 * Returns the points for the method if its size is bigger than
+	 * EXTREMELY_LARGE_FILE.
+	 * 
+	 * @param methodSize
+	 *            The actual method size at the current time
+	 * @return An Integer: 0 or 1 representing the points of method's size in
+	 *         metrics.
+	 */
+	public Integer getMethodSizePoints(Integer methodSize) {
+		if (methodSize >= EXTREMELY_LARGE_FILE) {
 			return 1;
 		}
 		return 0;
 	}
 
-	public Integer getActiveFilePoints(Commit commit) {
+	/**
+	 * If the method is active: the latest activity of the method has occurred
+	 * in of the most recent MEDIUM_TIMESPAN time-frames return 1 point.
+	 * 
+	 * @param commit
+	 *            Latest commit in list
+	 * @return An Integer: 0 or 1 representing the points of method's activity
+	 *         in metrics.
+	 */
+	public Integer getActiveMethodPoints(Commit commit) {
 		if (getDifferenceInDays(commit.getDate(), now) <= MEDIUM_TIMESPAN) {
 			return 1;
 		}

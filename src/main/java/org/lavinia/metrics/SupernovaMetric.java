@@ -27,6 +27,10 @@ import org.lavinia.beans.CSVData;
 import org.lavinia.beans.Commit;
 
 public class SupernovaMetric extends MethodMetrics {
+	/**
+	 * @param sumOfAllLeaps
+	 * @return An Integer: 0 - 2 representing the points of leaps size.
+	 */
 	public Integer getLeapsSizePoints(Integer sumOfAllLeaps) {
 		if (sumOfAllLeaps >= 4 * MAJOR_SIZE_CHANGE) {
 			return 2;
@@ -36,6 +40,10 @@ public class SupernovaMetric extends MethodMetrics {
 		return 0;
 	}
 
+	/**
+	 * @param sumRecentLeaps
+	 * @return An Integer: 0 - 3 representing the points of recent leaps size.
+	 */
 	public Integer getRecentLeapsSizePoints(Integer sumRecentLeaps) {
 		if (sumRecentLeaps >= 4 * MAJOR_SIZE_CHANGE) {
 			return 3;
@@ -47,6 +55,10 @@ public class SupernovaMetric extends MethodMetrics {
 		return 0;
 	}
 
+	/**
+	 * @param averageSubsequentCommits
+	 * @return An Integer: 0 - 2 representing the points of Subsequent Refactoring.
+	 */
 	public Integer getSubsequentRefactoringPoints(Integer averageSubsequentCommits) {
 		if (averageSubsequentCommits >= 0 * MAJOR_SIZE_CHANGE && averageSubsequentCommits < 0.5 * MAJOR_SIZE_CHANGE) {
 			return 2;
@@ -57,25 +69,19 @@ public class SupernovaMetric extends MethodMetrics {
 		return 0;
 	}
 
-	public Integer getFileSizePoints(Integer fileSize) {
-		if (fileSize >= EXTREMELY_LARGE_FILE) {
-			return 1;
-		}
-		return 0;
-	}
-
-	public Integer getActiveFilePoints(Commit commit) {
-		if (getDifferenceInDays(commit.getDate(), now) <= MEDIUM_TIMESPAN) {
-			return 1;
-		}
-		return 0;
-	}
-
+	/**
+	 * @param sumOfAllLeaps
+	 * @param sumRecentLeaps
+	 * @param averageSubsequentCommits
+	 * @param fileSize
+	 * @param commit
+	 * @return An Integer representing the total points of Supernova severity.
+	 */
 	public Integer countSupernovaSeverityPoints(Integer sumOfAllLeaps, Integer sumRecentLeaps,
 			Integer averageSubsequentCommits, Integer fileSize, Commit commit) {
 		return 1 + getLeapsSizePoints(sumOfAllLeaps) + getRecentLeapsSizePoints(sumRecentLeaps)
-				+ getSubsequentRefactoringPoints(averageSubsequentCommits) + getFileSizePoints(fileSize)
-				+ getActiveFilePoints(commit);
+				+ getSubsequentRefactoringPoints(averageSubsequentCommits) + getMethodSizePoints(fileSize)
+				+ getActiveMethodPoints(commit);
 	}
 
 	/**
@@ -84,7 +90,7 @@ public class SupernovaMetric extends MethodMetrics {
 	 * @param csvData
 	 *            The information of the current method
 	 * @return An Integer that represents the Supernova severity of the given
-	 *         method
+	 *         method.
 	 */
 	public Integer getSupernovaSeverity(CSVData csvData) {
 		ArrayList<Commit> commits = csvData.getCommits();

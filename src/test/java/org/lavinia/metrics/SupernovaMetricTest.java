@@ -157,13 +157,13 @@ public class SupernovaMetricTest {
 	@Test
 	public void testGetFileSizePointsOne() {
 		SupernovaMetric methodMetrics = new SupernovaMetric();
-		assertTrue(methodMetrics.getFileSizePoints(150) == 1);
+		assertTrue(methodMetrics.getMethodSizePoints(150) == 1);
 	}
 
 	@Test
 	public void testGetFileSizePointsZero() {
 		SupernovaMetric methodMetrics = new SupernovaMetric();
-		assertTrue(methodMetrics.getFileSizePoints(10) == 0);
+		assertTrue(methodMetrics.getMethodSizePoints(10) == 0);
 	}
 
 	@Test
@@ -171,7 +171,7 @@ public class SupernovaMetricTest {
 		SupernovaMetric methodMetrics = new SupernovaMetric();
 		Commit commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/09/01"));
-		assertTrue(methodMetrics.getActiveFilePoints(commit) == 1);
+		assertTrue(methodMetrics.getActiveMethodPoints(commit) == 1);
 	}
 
 	@Test
@@ -179,7 +179,7 @@ public class SupernovaMetricTest {
 		SupernovaMetric methodMetrics = new SupernovaMetric();
 		Commit commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/09/01"));
-		assertTrue(methodMetrics.getActiveFilePoints(commit) == 0);
+		assertTrue(methodMetrics.getActiveMethodPoints(commit) == 0);
 	}
 
 	@Test

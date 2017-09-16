@@ -28,6 +28,11 @@ import org.lavinia.beans.Commit;
 
 public class PulsarMetric extends MethodMetrics {
 
+	/**
+	 * @param countRecentPulsarCycles
+	 * @return An Integer: 0 - 3 representing the points of the recent Pulsar
+	 *         cycles.
+	 */
 	public Integer getRecentCyclesPoints(Integer countRecentPulsarCycles) {
 		if (countRecentPulsarCycles >= 6) {
 			return 3;
@@ -39,6 +44,11 @@ public class PulsarMetric extends MethodMetrics {
 		return 0;
 	}
 
+	/**
+	 * @param averageSizeIncrease
+	 * @return An Integer: 0 - 3 representing the points of the Pulsar method's
+	 *         average size increase.
+	 */
 	public Integer getAverageSizeIncrease(Double averageSizeIncrease) {
 		if (averageSizeIncrease >= 0.0 && averageSizeIncrease < (1.0 / 3.0) * MAJOR_SIZE_CHANGE) {
 			return 3;
@@ -52,7 +62,7 @@ public class PulsarMetric extends MethodMetrics {
 	}
 
 	@Override
-	public Integer getFileSizePoints(Integer fileSize) {
+	public Integer getMethodSizePoints(Integer fileSize) {
 		if (fileSize >= EXTREMELY_LARGE_FILE) {
 			return 2;
 		} else if (fileSize >= VERY_LARGE_FILE) {
@@ -61,10 +71,17 @@ public class PulsarMetric extends MethodMetrics {
 		return 0;
 	}
 
+	/**
+	 * @param countRecentPulsarCycles
+	 * @param averageSizeIncrease
+	 * @param fileSize
+	 * @param commit
+	 * @return An Integer representing the total points of Pulsar severity.
+	 */
 	public Integer countPulsarSeverityPoints(Integer countRecentPulsarCycles, Double averageSizeIncrease,
 			Integer fileSize, Commit commit) {
 		return 1 + getRecentCyclesPoints(countRecentPulsarCycles) + getAverageSizeIncrease(averageSizeIncrease)
-				+ getFileSizePoints(fileSize) + getActiveFilePoints(commit);
+				+ getMethodSizePoints(fileSize) + getActiveMethodPoints(commit);
 	}
 
 	/**
@@ -73,7 +90,7 @@ public class PulsarMetric extends MethodMetrics {
 	 * @param csvData
 	 *            The information of the current method
 	 * @return An Integer that represents the Pulsar severity of the given
-	 *         method
+	 *         method.
 	 */
 	public Integer getPulsarSeverity(CSVData csvData) {
 		ArrayList<Commit> commits = csvData.getCommits();
@@ -144,7 +161,7 @@ public class PulsarMetric extends MethodMetrics {
 	 * 
 	 * @param csvData
 	 *            The information of the current method
-	 * @return True if the method is Pulsar, false otherwise
+	 * @return True if the method is Pulsar, false otherwise.
 	 */
 	public Boolean isPulsar(CSVData csvData) {
 		if (csvData.getActualSize() >= SIGNIFICANT_FILESIZE) {

@@ -191,19 +191,19 @@ public class PulsarMetricTest {
 	@Test
 	public void testGetFileSizePointsTwo() {
 		PulsarMetric pulsarMetric = new PulsarMetric();
-		assertTrue(pulsarMetric.getFileSizePoints(150) == 2);
+		assertTrue(pulsarMetric.getMethodSizePoints(150) == 2);
 	}
 
 	@Test
 	public void testGetFileSizePointsOne() {
 		PulsarMetric pulsarMetric = new PulsarMetric();
-		assertTrue(pulsarMetric.getFileSizePoints(100) == 1);
+		assertTrue(pulsarMetric.getMethodSizePoints(100) == 1);
 	}
 
 	@Test
 	public void testGetFileSizePointsZero() {
 		PulsarMetric pulsarMetric = new PulsarMetric();
-		assertTrue(pulsarMetric.getFileSizePoints(50) == 0);
+		assertTrue(pulsarMetric.getMethodSizePoints(50) == 0);
 	}
 
 	@Test
@@ -211,7 +211,7 @@ public class PulsarMetricTest {
 		PulsarMetric pulsarMetric = new PulsarMetric();
 		Commit commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/09/01"));
-		assertTrue(pulsarMetric.getActiveFilePoints(commit) == 1);
+		assertTrue(pulsarMetric.getActiveMethodPoints(commit) == 1);
 	}
 
 	@Test
@@ -219,7 +219,7 @@ public class PulsarMetricTest {
 		PulsarMetric pulsarMetric = new PulsarMetric();
 		Commit commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/09/01"));
-		assertTrue(pulsarMetric.getActiveFilePoints(commit) == 0);
+		assertTrue(pulsarMetric.getActiveMethodPoints(commit) == 0);
 	}
 
 	@Test
