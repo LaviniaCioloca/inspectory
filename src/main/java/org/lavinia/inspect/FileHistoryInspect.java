@@ -82,7 +82,7 @@ public class FileHistoryInspect {
 	 * @param commit
 	 *            The current commit where the method had changes
 	 * @return A boolean: false if the method's identifier is null or if it
-	 *         already exists in result set and true otherwise
+	 *         already exists in result set and true otherwise.
 	 */
 	public boolean checkEntryInResultSet(GenericVisitor visitor, ArrayList<Integer> lineChanges, String className,
 			Commit commit) {
@@ -114,7 +114,7 @@ public class FileHistoryInspect {
 	 * 
 	 * @param csvDataList
 	 *            List with every CSV line, of every method, to be written in
-	 *            the inspectory result CSV file
+	 *            the inspectory result CSV file.
 	 */
 	private void writeCSVFileData(ArrayList<CSVData> csvDataList) {
 		for (CSVData csvLine : csvDataList) {
@@ -145,6 +145,16 @@ public class FileHistoryInspect {
 		}
 	}
 
+	/**
+	 * Checks for every Change MemberEdit of the current NodeSetEdit if there is
+	 * in the result set in order to add it to the CSV line.
+	 * 
+	 * @param edit
+	 * @param visitor
+	 * @param fileName
+	 * @param commit
+	 * @param lineChanges
+	 */
 	private void handleNodeSetEditChange(NodeSetEdit edit, GenericVisitor visitor, String fileName, Commit commit,
 			ArrayList<Integer> lineChanges) {
 		String className = ((NodeSetEdit.Change<?>) edit).getIdentifier();
@@ -163,6 +173,16 @@ public class FileHistoryInspect {
 		}
 	}
 
+	/**
+	 * Checks for every Add NodeSetEdit if there is in the result set in order
+	 * to add it to the CSV line.
+	 * 
+	 * @param edit
+	 * @param visitor
+	 * @param fileName
+	 * @param commit
+	 * @param lineChanges
+	 */
 	private void handleNodeSetEditAdd(NodeSetEdit edit, GenericVisitor visitor, String fileName, Commit commit,
 			ArrayList<Integer> lineChanges) {
 		Node node = ((NodeSetEdit.Add) edit).getNode();
@@ -185,6 +205,14 @@ public class FileHistoryInspect {
 		}
 	}
 
+	/**
+	 * Adds in csvDataList values for a method: file name, class name and
+	 * method's name.
+	 * 
+	 * @param fileName
+	 * @param className
+	 * @param methodName
+	 */
 	private void addDataInCSVList(String fileName, String className, String methodName) {
 		CSVData csvData = new CSVData();
 		csvData.setFileName("\"" + fileName + "\"");

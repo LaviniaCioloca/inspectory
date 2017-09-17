@@ -5,3 +5,4 @@
 .settings/
 bin/
 /src/test/resources
+.idea
