@@ -29,16 +29,23 @@ public class CSVUtilsTest {
 		List<String> values = new ArrayList<>();
 		CSVUtils.writeLine(w, values);
 	}
-	/*
-	 * @Test(expected = NullPointerException.class) public void
-	 * testWriteLineException() throws IOException { CSVUtils.writeLine(null,
-	 * null); }
-	 */
 	
 	@Test
-	public void testWriteLineFourArgs() throws IOException {
+	public void testWriteLineFourArgsSpace() throws IOException {
 		Writer w = new FileWriter("./src/test/resources/testFile.csv");
 		List<String> values = new ArrayList<>();
+		values.add("test1");
+		values.add("test2\"");
 		CSVUtils.writeLine(w, values, ',', ' ');
+	}
+	
+	@Test
+	public void testWriteLineFourArgsNotSpace() throws IOException {
+		Writer w = new FileWriter("./src/test/resources/testFile.csv");
+		List<String> values = new ArrayList<>();
+		values.add("test1");
+		values.add("test2\"");
+		values.add("\'test3\'");
+		CSVUtils.writeLine(w, values, ',', '\'');
 	}
 }
