@@ -8,4 +8,4 @@ sudo: false # faster builds
 script: "mvn clean -U install -U package -U cobertura:cobertura"
 
 after_success:
-  - bash <(curl -s https://codecov.io/bash) -t 37ead7f3-f56c-4fa2-858f-b62f31b0ee66
+  - bash <(curl -s https://codecov.io/bash) -t 7b49f701-88a8-4334-8ae5-ad8a2313436f
