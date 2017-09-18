@@ -1,4 +1,9 @@
 language: java
+
+jdk:
+  - oraclejdk8
+  - oraclejdk7
+
 sudo: false # faster builds
 
 script: "mvn cobertura:cobertura"
