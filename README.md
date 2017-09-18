@@ -5,5 +5,5 @@ Inspect your repository
 [![Build Status](https://travis-ci.com/LaviniaCioloca/inspectory.svg?token=wZgM2vdBUk6rczwiApsx&branch=master)](https://travis-ci.com/LaviniaCioloca/inspectory)
 
 ### Licence
-[![Open Source Love](https://badges.frapsoft.com/os/mit/mit.svg?v=102)](https://github.com/ellerbrock/open-source-badge/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
