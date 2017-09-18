@@ -33,11 +33,7 @@ public class CSVUtils {
 		writeLine(w, values, DEFAULT_SEPARATOR, ' ');
 	}
 
-	public static void writeLine(Writer w, List<String> values, char separators) throws IOException {
-		writeLine(w, values, separators, ' ');
-	}
-
-	private static String followCVSformat(String value) {
+	public static String followCVSformat(String value) {
 		String result = value;
 		if (result.contains("\"")) {
 			result = result.replace("\"", "\"\"");
