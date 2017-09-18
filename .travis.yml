@@ -2,11 +2,10 @@ language: java
 
 jdk:
   - oraclejdk8
-  - oraclejdk7
 
 sudo: false # faster builds
 
-script: "mvn cobertura:cobertura"
+script: "mvn clean -U install -U package -U cobertura:cobertura"
 
 after_success:
   - bash <(curl -s https://codecov.io/bash) -t 37ead7f3-f56c-4fa2-858f-b62f31b0ee66
