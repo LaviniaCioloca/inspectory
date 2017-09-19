@@ -239,15 +239,15 @@ public class PulsarMetricTest {
 	}
 	
 	@Test
-	public void testGetPulsarSeverity() throws ParseException {
+	public void testGetPulsarSeveritySeven() throws ParseException {
 		PulsarMetric pulsarMetric = new PulsarMetric();
 		CSVData csvData = new CSVData();
 		csvData.setActualSize(200);
 		ArrayList<Commit> commits = new ArrayList<>();
 		ArrayList<Integer> changesList = new ArrayList<>();
-		changesList.add(-50);
+		changesList.add(-5);
+		changesList.add(5);
 		changesList.add(1);
-		changesList.add(50);
 		changesList.add(1);
 		Commit commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/08/01"));
@@ -256,10 +256,26 @@ public class PulsarMetricTest {
 		commits.add(commit);
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/09/01"));
 		commits.add(commit);
-		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/10/01"));
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/09/03"));
 		commits.add(commit);
 		csvData.setCommits(commits);
 		csvData.setChangesList(changesList);
 		assertTrue(pulsarMetric.getPulsarSeverity(csvData) == 7);
+	}
+	
+	@Test
+	public void testGetPulsarSeverityFour() throws ParseException {
+		PulsarMetric pulsarMetric = new PulsarMetric();
+		CSVData csvData = new CSVData();
+		csvData.setActualSize(10);
+		ArrayList<Commit> commits = new ArrayList<>();
+		ArrayList<Integer> changesList = new ArrayList<>();
+		changesList.add(-5);
+		Commit commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/01/01"));
+		commits.add(commit);
+		csvData.setCommits(commits);
+		csvData.setChangesList(changesList);
+		assertTrue(pulsarMetric.getPulsarSeverity(csvData) == 4);
 	}
 }
