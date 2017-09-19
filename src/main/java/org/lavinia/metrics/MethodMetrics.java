@@ -44,9 +44,13 @@ public abstract class MethodMetrics {
 	protected final static Integer ACTIVELY_CHANGED = 3; // times changed
 	protected static Date now = null;
 
+	public static Date parseDate(String date) throws ParseException {
+		return new SimpleDateFormat("yyyy/MM/dd").parse(date);
+	}
+
 	public MethodMetrics() {
 		try {
-			now = new SimpleDateFormat("yyyy/MM/dd").parse("2017/09/06");
+			now = parseDate("2017/09/06");
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}

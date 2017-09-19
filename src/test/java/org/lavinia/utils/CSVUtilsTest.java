@@ -46,6 +46,6 @@ public class CSVUtilsTest {
 		values.add("test1");
 		values.add("test2\"");
 		values.add("\'test3\'");
-		CSVUtils.writeLine(w, values, ',', '\'');
+		CSVUtils.writeLine(w, values, ' ', '\'');
 	}
 }

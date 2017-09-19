@@ -31,6 +31,11 @@ import java.util.Date;
 import org.junit.Test;
 
 public class MethodMetricsTest {
+	@Test(expected = ParseException.class)
+	public void testParseDate() throws ParseException {
+		MethodMetrics.parseDate("!13/13/13");
+	}
+
 	@Test
 	public void testGetDifferenceInDays() throws ParseException {
 		MethodMetrics methodMetric = new PulsarMetric();
