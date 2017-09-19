@@ -48,4 +48,10 @@ public class CSVUtilsTest {
 		values.add("\'test3\'");
 		CSVUtils.writeLine(w, values, ' ', '\'');
 	}
+	
+	@Test
+	public void testInstantiation() throws IOException {
+		CSVUtils csvUtils = new CSVUtils();
+		assertFalse(csvUtils == null);
+	}
 }
