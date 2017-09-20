@@ -111,7 +111,7 @@ public class PulsarMetric extends MethodMetrics {
 				}
 			}
 			if (countActiveChanges >= ACTIVELY_CHANGED) {
-				for (int i = 1; i < commitsTypes.size() - 1; ++i) {
+				for (int i = 0; i < commitsTypes.size() - 1; ++i) {
 					if (commitsTypes.get(i).equals("refactor") && commitsTypes.get(i + 1).equals("develop")) {
 						++countPulsarCycles;
 						if (getDifferenceInDays(commits.get(i).getDate(), now) <= MEDIUM_TIMESPAN) {

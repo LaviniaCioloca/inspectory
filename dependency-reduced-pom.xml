@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.lavinia.inspectory</groupId>
   <artifactId>inspectory</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.1</version>
   <build>
     <plugins>
       <plugin>
@@ -17,6 +17,7 @@
               <mainClass>org.lavinia.inspect.RepoInspect</mainClass>
             </manifest>
           </archive>
+          <outputDirectory>/home/lavinia/Licenta/kotlin</outputDirectory>
         </configuration>
       </plugin>
       <plugin>
@@ -31,7 +32,7 @@
       </plugin>
       <plugin>
         <artifactId>maven-shade-plugin</artifactId>
-        <version>3.0.0</version>
+        <version>3.1.0</version>
         <executions>
           <execution>
             <phase>package</phase>
@@ -43,10 +44,10 @@
       </plugin>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.6.2</version>
+        <version>3.7.0</version>
         <configuration>
-          <source>1.7</source>
-          <target>1.7</target>
+          <source>1.8</source>
+          <target>1.8</target>
         </configuration>
       </plugin>
       <plugin>

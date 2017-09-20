@@ -86,7 +86,7 @@ public class RepoInspect {
 		 * fileModelInspect.getModelFunctionsAnalyze();
 		 */
 		if (args.length != 1) {
-			System.out.println("Usage: java -jar inspectory-0.0.1-SNAPSHOT.jar <cvs_file_name>");
+			System.out.println("Usage: java -jar inspectory-<version>.jar <cvs_file_name>");
 			System.exit(1);
 		}
 		String csvFileName = args[0];

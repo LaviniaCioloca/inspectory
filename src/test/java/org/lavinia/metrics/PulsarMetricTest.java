@@ -239,7 +239,7 @@ public class PulsarMetricTest {
 	}
 	
 	@Test
-	public void testGetPulsarSeveritySeven() throws ParseException {
+	public void testGetPulsarSeverityEight() throws ParseException {
 		PulsarMetric pulsarMetric = new PulsarMetric();
 		CSVData csvData = new CSVData();
 		csvData.setActualSize(200);
@@ -260,7 +260,7 @@ public class PulsarMetricTest {
 		commits.add(commit);
 		csvData.setCommits(commits);
 		csvData.setChangesList(changesList);
-		assertTrue(pulsarMetric.getPulsarSeverity(csvData) == 7);
+		assertTrue(pulsarMetric.getPulsarSeverity(csvData) == 8);
 	}
 	
 	@Test

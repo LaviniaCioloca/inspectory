@@ -65,7 +65,7 @@ public abstract class MethodMetrics {
 		Long endTime = end.getTime();
 		Long diffTime = endTime - startTime;
 		if (diffTime < 0) {
-			return null;
+			return -diffTime / (1000 * 60 * 60 * 24);
 		}
 		return diffTime / (1000 * 60 * 60 * 24);
 	}
