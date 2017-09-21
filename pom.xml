@@ -67,7 +67,7 @@
 							<mainClass>org.lavinia.inspect.RepoInspect</mainClass>
 						</manifest>
 					</archive>
-					<outputDirectory>/home/lavinia/Licenta/kotlin</outputDirectory>
+					<!--  <outputDirectory>/home/lavinia/Licenta/kotlin</outputDirectory>  -->
 				</configuration>
 			</plugin>
 			<plugin>
