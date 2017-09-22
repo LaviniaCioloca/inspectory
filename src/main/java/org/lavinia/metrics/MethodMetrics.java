@@ -31,15 +31,15 @@ import org.lavinia.beans.Commit;
 public abstract class MethodMetrics {
 	protected final static Integer MIN_REFINE_LINES = -3; // lines
 	protected final static Integer MAX_REFINE_LINES = 3; // lines
-	protected final static Integer SIGNIFICANT_METHOD_SIZE = 50; // lines
+	protected final static Integer SIGNIFICANT_METHOD_SIZE = 30; // lines
 	protected final static Integer VERY_LARGE_METHOD = 2 * SIGNIFICANT_METHOD_SIZE;
 	protected final static Integer EXTREMELY_LARGE_METHOD = 3 * SIGNIFICANT_METHOD_SIZE;
-	protected final static Integer TIME_FRAME = 14; // days
+	protected final static Integer TIME_FRAME = 28; // days
 	protected final static Integer SHORT_TIMESPAN = 1 * TIME_FRAME;
 	protected final static Integer MEDIUM_TIMESPAN = 3 * TIME_FRAME;
-	protected final static Integer LONG_TIMESPAN = 18 * TIME_FRAME;
+	protected final static Integer LONG_TIMESPAN = 6 * TIME_FRAME;
 	protected final static Integer MANY_PULSAR_CYCLES = 3; // commits
-	protected final static Integer SMALL_SIZE_CHANGE = 10; // lines
+	protected final static Integer SMALL_SIZE_CHANGE = 5; // lines
 	protected final static Integer MAJOR_SIZE_CHANGE = 1 * SIGNIFICANT_METHOD_SIZE;
 	protected final static Integer ACTIVELY_CHANGED = 3; // times changed
 	protected static Date now = null;
