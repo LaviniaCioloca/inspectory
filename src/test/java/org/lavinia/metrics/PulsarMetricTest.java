@@ -179,7 +179,7 @@ public class PulsarMetricTest {
 	@Test
 	public void testGetAverageSizeIncreaseOne() {
 		PulsarMetric pulsarMetric = new PulsarMetric();
-		assertTrue(pulsarMetric.getAverageSizeIncrease(33.4) == 1);
+		assertTrue(pulsarMetric.getAverageSizeIncrease(25.0) == 1);
 	}
 
 	@Test
@@ -197,7 +197,7 @@ public class PulsarMetricTest {
 	@Test
 	public void testGetFileSizePointsOne() {
 		PulsarMetric pulsarMetric = new PulsarMetric();
-		assertTrue(pulsarMetric.getMethodSizePoints(100) == 1);
+		assertTrue(pulsarMetric.getMethodSizePoints(70) == 1);
 	}
 
 	@Test

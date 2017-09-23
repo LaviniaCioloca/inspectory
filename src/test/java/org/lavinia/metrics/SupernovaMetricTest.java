@@ -44,19 +44,19 @@ public class SupernovaMetricTest {
 		commits.add(commit);
 
 		commit = new Commit();
-		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/03/07"));
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/05/07"));
 		commits.add(commit);
 
 		commit = new Commit();
-		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/03/15"));
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/05/15"));
 		commits.add(commit);
 
 		commit = new Commit();
-		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/03/30"));
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/05/30"));
 		commits.add(commit);
 
 		commit = new Commit();
-		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/04/01"));
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/06/01"));
 		commits.add(commit);
 		csvData.setChangesList(changesList);
 		csvData.setCommits(commits);
@@ -121,13 +121,13 @@ public class SupernovaMetricTest {
 	@Test
 	public void testGetRecentLeapsSizePointsTwo() {
 		SupernovaMetric methodMetrics = new SupernovaMetric();
-		assertTrue(methodMetrics.getRecentLeapsSizePoints(150) == 2);
+		assertTrue(methodMetrics.getRecentLeapsSizePoints(90) == 2);
 	}
 
 	@Test
 	public void testGetRecentLeapsSizePointsOne() {
 		SupernovaMetric methodMetrics = new SupernovaMetric();
-		assertTrue(methodMetrics.getRecentLeapsSizePoints(100) == 1);
+		assertTrue(methodMetrics.getRecentLeapsSizePoints(60) == 1);
 	}
 
 	@Test
@@ -145,7 +145,7 @@ public class SupernovaMetricTest {
 	@Test
 	public void testGetSubsequentRefactoringPointsOne() {
 		SupernovaMetric methodMetrics = new SupernovaMetric();
-		assertTrue(methodMetrics.getSubsequentRefactoringPoints(45) == 1);
+		assertTrue(methodMetrics.getSubsequentRefactoringPoints(25) == 1);
 	}
 
 	@Test
@@ -187,7 +187,7 @@ public class SupernovaMetricTest {
 		SupernovaMetric methodMetrics = new SupernovaMetric();
 		Commit commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/09/01"));
-		assertTrue(methodMetrics.countSupernovaSeverityPoints(200, 200, 20, 150, commit) == 10);
+		assertTrue(methodMetrics.countSupernovaSeverityPoints(200, 200, 10, 150, commit) == 10);
 	}
 
 	@Test
