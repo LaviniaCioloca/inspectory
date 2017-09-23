@@ -109,8 +109,6 @@ public class SupernovaMetric extends MethodMetrics {
 			}
 			for (int j = i + 1; j < commits.size() - 1; ++j) {
 				Long diffDays = getDifferenceInDays(commits.get(i).getDate(), commits.get(j).getDate());
-				System.out.println("commits.get(i).getDate(): " + commits.get(i).getDate() + commits.get(j).getDate());
-				System.out.println("Diff: " + diffDays);
 				if (diffDays <= SHORT_TIMESPAN) {
 					sumOfAllLeaps += changesList.get(j);
 					if (commitTypes.get(i).equals("refactor")) {
