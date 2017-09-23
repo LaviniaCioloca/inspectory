@@ -102,7 +102,8 @@ public class SupernovaMetric extends MethodMetrics {
 		Integer countLeaps = 0;
 		Integer averageSubsequentCommits = 0;
 		for (int i = 0; i < commits.size(); ++i) {
-			if (getDifferenceInDays(commits.get(0).getDate(), commits.get(i).getDate()) >= MEDIUM_TIMESPAN) {
+			if (getDifferenceInDays(commits.get(commits.size() - 1).getDate(),
+					commits.get(i).getDate()) <= MEDIUM_TIMESPAN) {
 				sumRecentLeaps += changesList.get(i);
 			}
 			for (int j = i + 1; j < commits.size() - 1; ++j) {
