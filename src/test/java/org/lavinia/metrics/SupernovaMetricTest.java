@@ -205,31 +205,31 @@ public class SupernovaMetricTest {
 		Commit commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/01/01"));
 		commits.add(commit);
-		
+
 		commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/03/01"));
 		commits.add(commit);
-		
+
 		commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/03/10"));
 		commits.add(commit);
-		
+
 		commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/03/15"));
 		commits.add(commit);
-		
+
 		commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/04/01"));
 		commits.add(commit);
-		
+
 		commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/06/01"));
 		commits.add(commit);
-		
+
 		commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/07/10"));
 		commits.add(commit);
-		
+
 		commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/09/01"));
 		commits.add(commit);

@@ -29,7 +29,7 @@ public class CSVUtilsTest {
 		List<String> values = new ArrayList<>();
 		CSVUtils.writeLine(w, values);
 	}
-	
+
 	@Test
 	public void testWriteLineFourArgsSpace() throws IOException {
 		Writer w = new FileWriter("./src/test/resources/testFile.csv");
@@ -38,7 +38,7 @@ public class CSVUtilsTest {
 		values.add("test2\"");
 		CSVUtils.writeLine(w, values, ',', ' ');
 	}
-	
+
 	@Test
 	public void testWriteLineFourArgsNotSpace() throws IOException {
 		Writer w = new FileWriter("./src/test/resources/testFile.csv");
@@ -48,7 +48,7 @@ public class CSVUtilsTest {
 		values.add("\'test3\'");
 		CSVUtils.writeLine(w, values, ' ', '\'');
 	}
-	
+
 	@Test
 	public void testInstantiation() throws IOException {
 		CSVUtils csvUtils = new CSVUtils();

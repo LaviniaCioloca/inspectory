@@ -237,7 +237,7 @@ public class PulsarMetricTest {
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/09/01"));
 		assertTrue(pulsarMetric.countPulsarSeverityPoints(0, 50.0, 10, commit) == 1);
 	}
-	
+
 	@Test
 	public void testGetPulsarSeverityEight() throws ParseException {
 		PulsarMetric pulsarMetric = new PulsarMetric();
@@ -262,7 +262,7 @@ public class PulsarMetricTest {
 		csvData.setChangesList(changesList);
 		assertTrue(pulsarMetric.getPulsarSeverity(csvData) == 8);
 	}
-	
+
 	@Test
 	public void testGetPulsarSeverityFour() throws ParseException {
 		PulsarMetric pulsarMetric = new PulsarMetric();
