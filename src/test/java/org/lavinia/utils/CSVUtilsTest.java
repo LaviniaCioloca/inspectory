@@ -13,6 +13,8 @@ import org.junit.Test;
 
 public class CSVUtilsTest {
 
+	private static String fileName = "./src/test/resources/testFile.csv";
+
 	@Test
 	public void testFollowCVSformatTrue() {
 		assertTrue(CSVUtils.followCVSformat("testQuote\"").equals("testQuote\"\""));
@@ -25,14 +27,14 @@ public class CSVUtilsTest {
 
 	@Test
 	public void testWriteLineTwoArgs() throws IOException {
-		Writer w = new FileWriter("./src/test/resources/testFile.csv");
+		Writer w = new FileWriter(fileName);
 		List<String> values = new ArrayList<>();
 		CSVUtils.writeLine(w, values);
 	}
 
 	@Test
 	public void testWriteLineFourArgsSpace() throws IOException {
-		Writer w = new FileWriter("./src/test/resources/testFile.csv");
+		Writer w = new FileWriter(fileName);
 		List<String> values = new ArrayList<>();
 		values.add("test1");
 		values.add("test2\"");
@@ -41,7 +43,7 @@ public class CSVUtilsTest {
 
 	@Test
 	public void testWriteLineFourArgsNotSpace() throws IOException {
-		Writer w = new FileWriter("./src/test/resources/testFile.csv");
+		Writer w = new FileWriter(fileName);
 		List<String> values = new ArrayList<>();
 		values.add("test1");
 		values.add("test2\"");

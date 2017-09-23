@@ -28,6 +28,10 @@ import org.lavinia.beans.Commit;
 
 public class PulsarMetric extends MethodMetrics {
 
+	public PulsarMetric(String dateNow) {
+		super(dateNow);
+	}
+
 	/**
 	 * @param countRecentPulsarCycles
 	 * @return An Integer: 0 - 3 representing the points of the recent Pulsar

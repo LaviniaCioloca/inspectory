@@ -132,10 +132,10 @@ public class FileHistoryInspect {
 				csvLine.setActualSize(actualSize);
 				csvLine.setChangesList(changesList);
 				csvLine.setCommits(commits);
-				SupernovaMetric supernovaMetric = new SupernovaMetric();
+				SupernovaMetric supernovaMetric = new SupernovaMetric("2017/09/06");
 				csvLine.setSupernova(supernovaMetric.isSupernova(csvLine));
 				csvLine.setSupernovaSeverity(supernovaMetric.getSupernovaSeverity(csvLine));
-				PulsarMetric pulsarMetric = new PulsarMetric();
+				PulsarMetric pulsarMetric = new PulsarMetric("2017/09/06");
 				csvLine.setPulsar(pulsarMetric.isPulsar(csvLine));
 				csvLine.setPulsarSeverity(pulsarMetric.getPulsarSeverity(csvLine));
 				CSVUtils.writeLine(csvWriter, csvLine.getCSVLine(), ',', '"');

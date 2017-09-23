@@ -27,6 +27,10 @@ import org.lavinia.beans.CSVData;
 import org.lavinia.beans.Commit;
 
 public class SupernovaMetric extends MethodMetrics {
+	public SupernovaMetric(String dateNow) {
+		super(dateNow);
+	}
+
 	/**
 	 * @param sumOfAllLeaps
 	 * @return An Integer: 0 - 2 representing the points of leaps size.

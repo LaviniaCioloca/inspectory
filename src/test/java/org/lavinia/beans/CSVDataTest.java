@@ -28,7 +28,7 @@ public class CSVDataTest {
 		csvData.setPulsar(false);
 		csvData.setSupernovaSeverity(5);
 		csvData.setPulsarSeverity(5);
-		
+
 		for (int i = 0; i < 3; ++i) {
 			expected.add(null);
 		}
@@ -36,8 +36,8 @@ public class CSVDataTest {
 		expected.add("100");
 		expected.add("10");
 		expected.add(changesList.toString());
-		expected.add("false");
-		expected.add("false");
+		expected.add(csvData.isSupernova().toString());
+		expected.add(csvData.isPulsar().toString());
 		expected.add("5");
 		expected.add("5");
 		Assert.assertEquals(expected, csvData.getCSVLine());

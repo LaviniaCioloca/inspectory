@@ -31,10 +31,15 @@ import java.util.Date;
 import org.junit.Test;
 
 public class MethodMetricsTest {
+	private static MethodMetrics methodMetric = new PulsarMetric("2017/09/06");
+
+	@Test
+	public void testConstructorParseException() {
+		methodMetric = new PulsarMetric("!");
+	}
 
 	@Test
 	public void testGetDifferenceInDays() throws ParseException {
-		MethodMetrics methodMetric = new PulsarMetric();
 		Date start = new SimpleDateFormat("yyyy/MM/dd").parse("2010/01/01");
 		Date end = new SimpleDateFormat("yyyy/MM/dd").parse("2010/01/05");
 		assertTrue(methodMetric.getDifferenceInDays(start, end) == 4.0);
@@ -42,7 +47,6 @@ public class MethodMetricsTest {
 
 	@Test
 	public void testGetCommitsTypes() {
-		MethodMetrics methodMetric = new PulsarMetric();
 		ArrayList<Integer> changesList = new ArrayList<>();
 		changesList.add(-10);
 		changesList.add(1);

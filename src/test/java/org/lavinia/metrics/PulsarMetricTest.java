@@ -34,6 +34,8 @@ import org.lavinia.beans.CSVData;
 import org.lavinia.beans.Commit;
 
 public class PulsarMetricTest {
+	private static PulsarMetric pulsarMetric = new PulsarMetric("2017/09/06");
+
 	@Test
 	public void testIsPulsarTrue() throws ParseException {
 		CSVData csvData = new CSVData();
@@ -75,7 +77,6 @@ public class PulsarMetricTest {
 		csvData.setChangesList(changesList);
 		csvData.setCommits(commits);
 		csvData.setActualSize(520);
-		PulsarMetric pulsarMetric = new PulsarMetric();
 		assertTrue(pulsarMetric.isPulsar(csvData));
 	}
 
@@ -107,7 +108,6 @@ public class PulsarMetricTest {
 		csvData.setChangesList(changesList);
 		csvData.setCommits(commits);
 		csvData.setActualSize(500);
-		PulsarMetric pulsarMetric = new PulsarMetric();
 		assertTrue(pulsarMetric.isPulsar(csvData));
 	}
 
@@ -115,7 +115,6 @@ public class PulsarMetricTest {
 	public void testIsPulsarSizeFalse() throws ParseException {
 		CSVData csvData = new CSVData();
 		csvData.setActualSize(20);
-		PulsarMetric pulsarMetric = new PulsarMetric();
 		assertFalse(pulsarMetric.isPulsar(csvData));
 	}
 
@@ -136,79 +135,66 @@ public class PulsarMetricTest {
 		csvData.setChangesList(changesList);
 		csvData.setCommits(commits);
 		csvData.setActualSize(520);
-		PulsarMetric pulsarMetric = new PulsarMetric();
 		assertFalse(pulsarMetric.isPulsar(csvData));
 	}
 
 	@Test
 	public void testGetRecentCyclesPointsThree() {
-		PulsarMetric pulsarMetric = new PulsarMetric();
 		assertTrue(pulsarMetric.getRecentCyclesPoints(6) == 3);
 	}
 
 	@Test
 	public void testGetRecentCyclesPointsTwo() {
-		PulsarMetric pulsarMetric = new PulsarMetric();
 		assertTrue(pulsarMetric.getRecentCyclesPoints(4) == 2);
 	}
 
 	@Test
 	public void testGetRecentCyclesPointsOne() {
-		PulsarMetric pulsarMetric = new PulsarMetric();
 		assertTrue(pulsarMetric.getRecentCyclesPoints(2) == 1);
 	}
 
 	@Test
 	public void testGetRecentCyclesPointsZero() {
-		PulsarMetric pulsarMetric = new PulsarMetric();
 		assertTrue(pulsarMetric.getRecentCyclesPoints(0) == 0);
 	}
 
 	@Test
 	public void testGetAverageSizeIncreaseThree() {
-		PulsarMetric pulsarMetric = new PulsarMetric();
 		assertTrue(pulsarMetric.getAverageSizeIncrease(0.0) == 3);
 	}
 
 	@Test
 	public void testGetAverageSizeIncreaseTwo() {
-		PulsarMetric pulsarMetric = new PulsarMetric();
 		assertTrue(pulsarMetric.getAverageSizeIncrease(16.7) == 2);
 	}
 
 	@Test
 	public void testGetAverageSizeIncreaseOne() {
-		PulsarMetric pulsarMetric = new PulsarMetric();
 		assertTrue(pulsarMetric.getAverageSizeIncrease(25.0) == 1);
 	}
 
 	@Test
 	public void testGetAverageSizeIncreaseZero() {
-		PulsarMetric pulsarMetric = new PulsarMetric();
 		assertTrue(pulsarMetric.getAverageSizeIncrease(50.0) == 0);
 	}
 
 	@Test
 	public void testGetFileSizePointsTwo() {
-		PulsarMetric pulsarMetric = new PulsarMetric();
 		assertTrue(pulsarMetric.getMethodSizePoints(150) == 2);
 	}
 
 	@Test
 	public void testGetFileSizePointsOne() {
-		PulsarMetric pulsarMetric = new PulsarMetric();
 		assertTrue(pulsarMetric.getMethodSizePoints(70) == 1);
 	}
 
 	@Test
 	public void testGetFileSizePointsZero() {
-		PulsarMetric pulsarMetric = new PulsarMetric();
 		assertTrue(pulsarMetric.getMethodSizePoints(50) == 0);
 	}
 
 	@Test
 	public void testGetActiveFilePointsOne() throws ParseException {
-		PulsarMetric pulsarMetric = new PulsarMetric();
 		Commit commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/09/01"));
 		assertTrue(pulsarMetric.getActiveMethodPoints(commit) == 1);
@@ -216,7 +202,6 @@ public class PulsarMetricTest {
 
 	@Test
 	public void testGetActiveFilePointsZero() throws ParseException {
-		PulsarMetric pulsarMetric = new PulsarMetric();
 		Commit commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/09/01"));
 		assertTrue(pulsarMetric.getActiveMethodPoints(commit) == 0);
@@ -224,7 +209,6 @@ public class PulsarMetricTest {
 
 	@Test
 	public void testCountPulsarSeverityPointsMax() throws ParseException {
-		PulsarMetric pulsarMetric = new PulsarMetric();
 		Commit commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/09/01"));
 		assertTrue(pulsarMetric.countPulsarSeverityPoints(6, 0.0, 150, commit) == 10);
@@ -232,7 +216,6 @@ public class PulsarMetricTest {
 
 	@Test
 	public void testCountPulsarSeverityPointsMin() throws ParseException {
-		PulsarMetric pulsarMetric = new PulsarMetric();
 		Commit commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/09/01"));
 		assertTrue(pulsarMetric.countPulsarSeverityPoints(0, 50.0, 10, commit) == 1);
@@ -240,7 +223,6 @@ public class PulsarMetricTest {
 
 	@Test
 	public void testGetPulsarSeverityEight() throws ParseException {
-		PulsarMetric pulsarMetric = new PulsarMetric();
 		CSVData csvData = new CSVData();
 		csvData.setActualSize(200);
 		ArrayList<Commit> commits = new ArrayList<>();
@@ -265,7 +247,6 @@ public class PulsarMetricTest {
 
 	@Test
 	public void testGetPulsarSeverityFour() throws ParseException {
-		PulsarMetric pulsarMetric = new PulsarMetric();
 		CSVData csvData = new CSVData();
 		csvData.setActualSize(10);
 		ArrayList<Commit> commits = new ArrayList<>();

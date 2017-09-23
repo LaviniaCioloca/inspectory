@@ -34,6 +34,8 @@ import org.lavinia.beans.CSVData;
 import org.lavinia.beans.Commit;
 
 public class SupernovaMetricTest {
+	SupernovaMetric supernovaMetric = new SupernovaMetric("2017/09/06");
+
 	@Test
 	public void testIsSupernovaTrue() throws ParseException {
 		CSVData csvData = new CSVData();
@@ -60,7 +62,6 @@ public class SupernovaMetricTest {
 		commits.add(commit);
 		csvData.setChangesList(changesList);
 		csvData.setCommits(commits);
-		SupernovaMetric supernovaMetric = new SupernovaMetric();
 		assertTrue(supernovaMetric.isSupernova(csvData));
 	}
 
@@ -90,85 +91,71 @@ public class SupernovaMetricTest {
 		commits.add(commit);
 		csvData.setChangesList(changesList);
 		csvData.setCommits(commits);
-		SupernovaMetric supernovaMetric = new SupernovaMetric();
 		assertFalse(supernovaMetric.isSupernova(csvData));
 	}
 
 	@Test
 	public void testGetLeapsSizePointsTwo() {
-		SupernovaMetric supernovaMetric = new SupernovaMetric();
 		assertTrue(supernovaMetric.getLeapsSizePoints(200) == 2);
 	}
 
 	@Test
 	public void testGetLeapsSizePointsOne() {
-		SupernovaMetric supernovaMetric = new SupernovaMetric();
 		assertTrue(supernovaMetric.getLeapsSizePoints(100) == 1);
 	}
 
 	@Test
 	public void testGetLeapsSizePointsZero() {
-		SupernovaMetric supernovaMetric = new SupernovaMetric();
 		assertTrue(supernovaMetric.getLeapsSizePoints(10) == 0);
 	}
 
 	@Test
 	public void testGetRecentLeapsSizePointsThree() {
-		SupernovaMetric supernovaMetric = new SupernovaMetric();
 		assertTrue(supernovaMetric.getRecentLeapsSizePoints(200) == 3);
 	}
 
 	@Test
 	public void testGetRecentLeapsSizePointsTwo() {
-		SupernovaMetric supernovaMetric = new SupernovaMetric();
 		assertTrue(supernovaMetric.getRecentLeapsSizePoints(90) == 2);
 	}
 
 	@Test
 	public void testGetRecentLeapsSizePointsOne() {
-		SupernovaMetric supernovaMetric = new SupernovaMetric();
 		assertTrue(supernovaMetric.getRecentLeapsSizePoints(60) == 1);
 	}
 
 	@Test
 	public void testGetRecentLeapsSizePointsZero() {
-		SupernovaMetric supernovaMetric = new SupernovaMetric();
 		assertTrue(supernovaMetric.getRecentLeapsSizePoints(10) == 0);
 	}
 
 	@Test
 	public void testGetSubsequentRefactoringPointsTwo() {
-		SupernovaMetric supernovaMetric = new SupernovaMetric();
 		assertTrue(supernovaMetric.getSubsequentRefactoringPoints(10) == 2);
 	}
 
 	@Test
 	public void testGetSubsequentRefactoringPointsOne() {
-		SupernovaMetric supernovaMetric = new SupernovaMetric();
 		assertTrue(supernovaMetric.getSubsequentRefactoringPoints(25) == 1);
 	}
 
 	@Test
 	public void testGetSubsequentRefactoringPointsZero() {
-		SupernovaMetric supernovaMetric = new SupernovaMetric();
 		assertTrue(supernovaMetric.getSubsequentRefactoringPoints(50) == 0);
 	}
 
 	@Test
 	public void testGetFileSizePointsOne() {
-		SupernovaMetric supernovaMetric = new SupernovaMetric();
 		assertTrue(supernovaMetric.getMethodSizePoints(150) == 1);
 	}
 
 	@Test
 	public void testGetFileSizePointsZero() {
-		SupernovaMetric supernovaMetric = new SupernovaMetric();
 		assertTrue(supernovaMetric.getMethodSizePoints(10) == 0);
 	}
 
 	@Test
 	public void testGetActiveFilePointsOne() throws ParseException {
-		SupernovaMetric supernovaMetric = new SupernovaMetric();
 		Commit commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/09/01"));
 		assertTrue(supernovaMetric.getActiveMethodPoints(commit) == 1);
@@ -176,7 +163,6 @@ public class SupernovaMetricTest {
 
 	@Test
 	public void testGetActiveFilePointsZero() throws ParseException {
-		SupernovaMetric supernovaMetric = new SupernovaMetric();
 		Commit commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/09/01"));
 		assertTrue(supernovaMetric.getActiveMethodPoints(commit) == 0);
@@ -184,7 +170,6 @@ public class SupernovaMetricTest {
 
 	@Test
 	public void testCountSupernovaSeverityPointsMax() throws ParseException {
-		SupernovaMetric supernovaMetric = new SupernovaMetric();
 		Commit commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/09/01"));
 		assertTrue(supernovaMetric.countSupernovaSeverityPoints(200, 200, 10, 150, commit) == 10);
@@ -192,7 +177,6 @@ public class SupernovaMetricTest {
 
 	@Test
 	public void testCountSupernovaSeverityPointsMin() throws ParseException {
-		SupernovaMetric supernovaMetric = new SupernovaMetric();
 		Commit commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/09/01"));
 		assertTrue(supernovaMetric.countSupernovaSeverityPoints(20, 20, 200, 10, commit) == 1);
@@ -237,7 +221,6 @@ public class SupernovaMetricTest {
 		csvData.setActualSize(120);
 		csvData.setChangesList(changesList);
 		csvData.setCommits(commits);
-		SupernovaMetric supernovaMetric = new SupernovaMetric();
 		supernovaMetric.getSupernovaSeverity(csvData);
 		assertTrue(supernovaMetric.getSupernovaSeverity(csvData) == 10);
 	}

@@ -39,9 +39,10 @@ import org.lavinia.visitor.NodeVisitor;
 
 public class FileHistoryInspectTest {
 
+	private static File file = new File("./src/test/resources/testFile.csv");
+
 	@Test(expected = NullPointerException.class)
 	public void testGetHistoryFunctionsAnalyze() throws IOException {
-		File file = new File("./src/test/resources/testFile.csv");
 		file.getParentFile().mkdirs();
 		FileWriter writer = new FileWriter(file);
 		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(RepoInspect.getProject(), writer);
@@ -50,7 +51,6 @@ public class FileHistoryInspectTest {
 
 	@Test
 	public void testCheckEntryInResultSetIdentifierNull() throws IOException {
-		File file = new File("./src/test/resources/testFile.csv");
 		file.getParentFile().mkdirs();
 		FileWriter writer = new FileWriter(file);
 		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(RepoInspect.getProject(), writer);
@@ -62,7 +62,6 @@ public class FileHistoryInspectTest {
 
 	@Test
 	public void testCheckEntryInResultSetMethodNotExists() throws IOException {
-		File file = new File("./src/test/resources/testFile.csv");
 		file.getParentFile().mkdirs();
 		FileWriter writer = new FileWriter(file);
 		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(RepoInspect.getProject(), writer);
@@ -75,7 +74,6 @@ public class FileHistoryInspectTest {
 
 	@Test
 	public void testCheckEntryInResultSetMethodExists() throws IOException {
-		File file = new File("./src/test/resources/testFile.csv");
 		file.getParentFile().mkdirs();
 		FileWriter writer = new FileWriter(file);
 		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(RepoInspect.getProject(), writer);
