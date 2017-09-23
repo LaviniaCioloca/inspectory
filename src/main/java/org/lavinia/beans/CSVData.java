@@ -101,11 +101,11 @@ public class CSVData {
 		this.changesList = changesList;
 	}
 
-	public boolean isPulsar() {
+	public Boolean isPulsar() {
 		return isPulsar;
 	}
 
-	public void setPulsar(boolean isPulsar) {
+	public void setPulsar(Boolean isPulsar) {
 		this.isPulsar = isPulsar;
 	}
 
