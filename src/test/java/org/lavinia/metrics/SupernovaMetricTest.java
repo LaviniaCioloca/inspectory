@@ -203,27 +203,42 @@ public class SupernovaMetricTest {
 		CSVData csvData = new CSVData();
 		ArrayList<Commit> commits = new ArrayList<>();
 		Commit commit = new Commit();
-		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2009/01/01"));
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/01/01"));
 		commits.add(commit);
-		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/03/01"));
+		
+		commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/03/01"));
 		commits.add(commit);
-		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/03/10"));
+		
+		commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/03/10"));
 		commits.add(commit);
-		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/03/15"));
+		
+		commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/03/15"));
 		commits.add(commit);
-		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/04/01"));
+		
+		commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/04/01"));
 		commits.add(commit);
-		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/05/01"));
+		
+		commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/06/01"));
 		commits.add(commit);
-		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/05/10"));
+		
+		commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/07/10"));
 		commits.add(commit);
+		
+		commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/09/01"));
 		commits.add(commit);
-		ArrayList<Integer> changesList = new ArrayList<>(Arrays.asList(100, -5, -5, 20, 70, -5, 10, 5));
+		ArrayList<Integer> changesList = new ArrayList<>(Arrays.asList(100, -5, -5, 20, 70, -5, 150, 5));
 		csvData.setActualSize(120);
 		csvData.setChangesList(changesList);
 		csvData.setCommits(commits);
 		SupernovaMetric supernovaMetric = new SupernovaMetric();
+		supernovaMetric.getSupernovaSeverity(csvData);
 		assertTrue(supernovaMetric.getSupernovaSeverity(csvData) == 10);
 	}
 }

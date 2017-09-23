@@ -96,6 +96,7 @@ public class SupernovaMetric extends MethodMetrics {
 	public Integer getSupernovaSeverity(CSVData csvData) {
 		ArrayList<Commit> commits = csvData.getCommits();
 		ArrayList<Integer> changesList = csvData.getChangesList();
+		ArrayList<String> commitTypes = getCommitsTypes(changesList);
 		Integer sumOfAllLeaps = 0;
 		Integer sumRecentLeaps = 0;
 		Integer deletedRefactoringLines = 0;
@@ -108,13 +109,15 @@ public class SupernovaMetric extends MethodMetrics {
 			}
 			for (int j = i + 1; j < commits.size() - 1; ++j) {
 				Long diffDays = getDifferenceInDays(commits.get(i).getDate(), commits.get(j).getDate());
+				System.out.println("commits.get(i).getDate(): " + commits.get(i).getDate() + commits.get(j).getDate());
+				System.out.println("Diff: " + diffDays);
 				if (diffDays <= SHORT_TIMESPAN) {
 					sumOfAllLeaps += changesList.get(j);
-					if (changesList.get(i).equals("refactor")) {
+					if (commitTypes.get(i).equals("refactor")) {
 						deletedRefactoringLines += changesList.get(i);
 					}
 				} else if (diffDays <= MEDIUM_TIMESPAN) {
-					if (changesList.get(i).equals("refactor")) {
+					if (commitTypes.get(i).equals("refactor")) {
 						deletedRefactoringLines += changesList.get(i);
 					}
 				} else {
@@ -124,14 +127,18 @@ public class SupernovaMetric extends MethodMetrics {
 			}
 		}
 		if (countLeaps > 0) {
-			averageSubsequentCommits = deletedRefactoringLines / countLeaps;
+			averageSubsequentCommits = -deletedRefactoringLines / countLeaps;
 		}
 		/*
 		 * System.out.println("\nSupernovaMetric - Method: " +
-		 * csvData.getFileName() + csvData.getMethodName()); System.out.println(
-		 * "Parameters called: " + "sumOfAllLeaps: " + sumOfAllLeaps +
-		 * "; sumRecentLeaps: " + sumRecentLeaps + "; averageSubComm: " +
-		 * averageSubsequentCommits + ";" + commits.get(commits.size() - 1));
+		 * csvData.getFileName() + csvData.getMethodName());
+		 * System.out.println("Parameters called: " + "sumOfAllLeaps: " +
+		 * sumOfAllLeaps + "; sumRecentLeaps: " + sumRecentLeaps +
+		 * "; averageSubComm: " + averageSubsequentCommits + "; countLeaps" +
+		 * countLeaps); System.out.println("Count: " +
+		 * countSupernovaSeverityPoints(sumOfAllLeaps, sumRecentLeaps,
+		 * averageSubsequentCommits, csvData.getActualSize(),
+		 * commits.get(commits.size() - 1)));
 		 */
 		return countSupernovaSeverityPoints(sumOfAllLeaps, sumRecentLeaps, averageSubsequentCommits,
 				csvData.getActualSize(), commits.get(commits.size() - 1));
