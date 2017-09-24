@@ -234,10 +234,16 @@ public class PulsarMetricTest {
 		Commit commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/08/01"));
 		commits.add(commit);
+
+		commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/08/20"));
 		commits.add(commit);
+
+		commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/09/01"));
 		commits.add(commit);
+
+		commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/09/03"));
 		commits.add(commit);
 		csvData.setCommits(commits);
@@ -258,5 +264,46 @@ public class PulsarMetricTest {
 		csvData.setCommits(commits);
 		csvData.setChangesList(changesList);
 		assertTrue(pulsarMetric.getPulsarSeverity(csvData) == 4);
+	}
+
+	@Test
+	public void testIsMethodActivelyChangedFalse() {
+		CSVData csvData = new CSVData();
+		ArrayList<Commit> commits = new ArrayList<>();
+		csvData.setCommits(commits);
+		assertTrue(pulsarMetric.isMethodActivelyChanged(csvData) == false);
+	}
+
+	@Test
+	public void testIsMethodActivelyChangedTrue() throws ParseException {
+		CSVData csvData = new CSVData();
+		ArrayList<Commit> commits = new ArrayList<>();
+		Commit commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/08/01"));
+		commits.add(commit);
+
+		commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/08/20"));
+		commits.add(commit);
+
+		commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/08/21"));
+		commits.add(commit);
+
+		commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/08/30"));
+		commits.add(commit);
+		csvData.setCommits(commits);
+		assertTrue(pulsarMetric.isMethodActivelyChanged(csvData) == true);
+	}
+
+	@Test
+	public void testCalculateAverageSizeIncreaseZero() {
+		assertTrue(pulsarMetric.calculateAverageSizeIncrease(0, 0) == 0.0);
+	}
+
+	@Test
+	public void testCalculateAverageSizeIncreaseTen() {
+		assertTrue(pulsarMetric.calculateAverageSizeIncrease(1, 10) == 10.0);
 	}
 }

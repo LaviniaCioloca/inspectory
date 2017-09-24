@@ -131,17 +131,17 @@ public class SupernovaMetricTest {
 
 	@Test
 	public void testGetSubsequentRefactoringPointsTwo() {
-		assertTrue(supernovaMetric.getSubsequentRefactoringPoints(10) == 2);
+		assertTrue(supernovaMetric.getSubsequentRefactoringPoints(10.0) == 2);
 	}
 
 	@Test
 	public void testGetSubsequentRefactoringPointsOne() {
-		assertTrue(supernovaMetric.getSubsequentRefactoringPoints(25) == 1);
+		assertTrue(supernovaMetric.getSubsequentRefactoringPoints(25.0) == 1);
 	}
 
 	@Test
 	public void testGetSubsequentRefactoringPointsZero() {
-		assertTrue(supernovaMetric.getSubsequentRefactoringPoints(50) == 0);
+		assertTrue(supernovaMetric.getSubsequentRefactoringPoints(50.0) == 0);
 	}
 
 	@Test
@@ -172,14 +172,14 @@ public class SupernovaMetricTest {
 	public void testCountSupernovaSeverityPointsMax() throws ParseException {
 		Commit commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/09/01"));
-		assertTrue(supernovaMetric.countSupernovaSeverityPoints(200, 200, 10, 150, commit) == 10);
+		assertTrue(supernovaMetric.countSupernovaSeverityPoints(200, 200, 10.0, 150, commit) == 10);
 	}
 
 	@Test
 	public void testCountSupernovaSeverityPointsMin() throws ParseException {
 		Commit commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/09/01"));
-		assertTrue(supernovaMetric.countSupernovaSeverityPoints(20, 20, 200, 10, commit) == 1);
+		assertTrue(supernovaMetric.countSupernovaSeverityPoints(20, 20, 200.0, 10, commit) == 1);
 	}
 
 	@Test
