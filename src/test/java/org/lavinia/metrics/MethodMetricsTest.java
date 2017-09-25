@@ -21,14 +21,18 @@
  *******************************************************************************/
 package org.lavinia.metrics;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 
 import org.junit.Test;
+import org.lavinia.beans.CSVData;
+import org.lavinia.beans.Commit;
 
 public class MethodMetricsTest {
 	private static MethodMetrics methodMetric = new PulsarMetric("2017/09/06");
@@ -55,6 +59,54 @@ public class MethodMetricsTest {
 		expectedResultList.add("refactor");
 		expectedResultList.add("refine");
 		expectedResultList.add("develop");
-		assertTrue(methodMetric.getCommitsTypes(changesList).equals(expectedResultList));
+		assertEquals(methodMetric.getCommitsTypes(changesList), expectedResultList);
+	}
+
+	@Test
+	public void testSplitCommitsIntoTimeFrames() throws ParseException {
+		CSVData csvData = new CSVData();
+		ArrayList<Commit> commits = new ArrayList<>();
+		Commit commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2016/08/01"));
+		commits.add(commit);
+
+		commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2016/08/20"));
+		commits.add(commit);
+
+		commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/10/01"));
+		commits.add(commit);
+
+		commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/10/03"));
+		commits.add(commit);
+
+		commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/11/05"));
+		commits.add(commit);
+
+		commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/11/06"));
+		commits.add(commit);
+
+		commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/11/07"));
+		commits.add(commit);
+
+		commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/11/08"));
+		commits.add(commit);
+		csvData.setCommits(commits);
+		HashMap<Commit, Integer> expected = new HashMap<>();
+		expected.put(commits.get(0), 0);
+		expected.put(commits.get(1), 0);
+		expected.put(commits.get(2), 1);
+		expected.put(commits.get(3), 1);
+		expected.put(commits.get(4), 2);
+		expected.put(commits.get(5), 2);
+		expected.put(commits.get(6), 2);
+		expected.put(commits.get(7), 2);
+		assertEquals(expected, methodMetric.splitCommitsIntoTimeFrames(commits));
 	}
 }

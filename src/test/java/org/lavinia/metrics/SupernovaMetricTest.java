@@ -21,6 +21,7 @@
  *******************************************************************************/
 package org.lavinia.metrics;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -258,27 +259,27 @@ public class SupernovaMetricTest {
 		commits.add(commit);
 
 		commit = new Commit();
-		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/09/01"));
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/11/01"));
 		commits.add(commit);
 
 		commit = new Commit();
-		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/09/02"));
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/11/02"));
 		commits.add(commit);
 
 		commit = new Commit();
-		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/09/03"));
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/11/03"));
 		commits.add(commit);
 
 		commit = new Commit();
-		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/09/04"));
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/11/04"));
 		commits.add(commit);
 		csvData.setChangesList(changesList);
 		csvData.setCommits(commits);
 		Map<String, Object> supernovaCriterionValues = new HashMap<>();
 		supernovaCriterionValues.put("isSupernova", false);
-		supernovaCriterionValues.put("sumOfAllLeaps", -8);
+		supernovaCriterionValues.put("sumOfAllLeaps", 2);
 		supernovaCriterionValues.put("sumRecentLeaps", 54);
 		supernovaCriterionValues.put("averageSubsequentCommits", 80.0);
-		assertTrue(supernovaMetric.getSupernovaCriterionValues(csvData).equals(supernovaCriterionValues));
+		assertEquals(supernovaMetric.getSupernovaCriterionValues(csvData), supernovaCriterionValues);
 	}
 }

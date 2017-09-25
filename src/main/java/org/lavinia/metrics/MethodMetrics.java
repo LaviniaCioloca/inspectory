@@ -25,6 +25,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 
 import org.lavinia.beans.Commit;
 
@@ -68,6 +69,23 @@ public abstract class MethodMetrics {
 			return -diffTime / (1000 * 60 * 60 * 24);
 		}
 		return diffTime / (1000 * 60 * 60 * 24);
+	}
+
+	/**
+	 * @param commits
+	 * @return
+	 */
+	protected HashMap<Commit, Integer> splitCommitsIntoTimeFrames(ArrayList<Commit> commits) {
+		HashMap<Commit, Integer> commitsIntoTimeFrames = new HashMap<>();
+		Integer currentTimeFrame = 0;
+		commitsIntoTimeFrames.put(commits.get(0), currentTimeFrame);
+		for (int i = 1; i < commits.size(); ++i) {
+			if (getDifferenceInDays(commits.get(i - 1).getDate(), commits.get(i).getDate()) > TIME_FRAME) {
+				++currentTimeFrame;
+			}
+			commitsIntoTimeFrames.put(commits.get(i), currentTimeFrame);
+		}
+		return commitsIntoTimeFrames;
 	}
 
 	/**

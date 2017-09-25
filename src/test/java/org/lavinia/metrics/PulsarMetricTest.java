@@ -21,6 +21,7 @@
  *******************************************************************************/
 package org.lavinia.metrics;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -375,6 +376,6 @@ public class PulsarMetricTest {
 		pulsarCriterionValues.put("averageSizeIncrease", 18.0);
 		pulsarCriterionValues.put("countPulsarCycles", 3);
 		pulsarCriterionValues.put("countRecentPulsarCycles", 3);
-		assertTrue(pulsarMetric.getPulsarCriterionValues(csvData).equals(pulsarCriterionValues));
+		assertEquals(pulsarMetric.getPulsarCriterionValues(csvData), pulsarCriterionValues);
 	}
 }
