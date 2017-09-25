@@ -28,6 +28,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Test;
 import org.lavinia.beans.CSVData;
@@ -223,5 +225,60 @@ public class SupernovaMetricTest {
 		csvData.setCommits(commits);
 		supernovaMetric.getSupernovaSeverity(csvData);
 		assertTrue(supernovaMetric.getSupernovaSeverity(csvData) == 10);
+	}
+	
+	@Test
+	public void testGetSupernovaCriterionValues() throws ParseException {
+		CSVData csvData = new CSVData();
+		csvData.setActualSize(250);
+		ArrayList<Integer> changesList = new ArrayList<>();
+		changesList.add(-10);
+		changesList.add(50);
+		changesList.add(-20);
+		changesList.add(2);
+		changesList.add(2);
+		changesList.add(20);
+		changesList.add(-10);
+		changesList.add(60);
+		ArrayList<Commit> commits = new ArrayList<>();
+		Commit commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2016/08/01"));
+		commits.add(commit);
+
+		commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2016/08/20"));
+		commits.add(commit);
+
+		commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/10/01"));
+		commits.add(commit);
+
+		commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/10/03"));
+		commits.add(commit);
+
+		commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/09/01"));
+		commits.add(commit);
+
+		commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/09/02"));
+		commits.add(commit);
+
+		commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/09/03"));
+		commits.add(commit);
+
+		commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/09/04"));
+		commits.add(commit);
+		csvData.setChangesList(changesList);
+		csvData.setCommits(commits);
+		Map<String, Object> supernovaCriterionValues = new HashMap<>();
+		supernovaCriterionValues.put("isSupernova", false);
+		supernovaCriterionValues.put("sumOfAllLeaps", -8);
+		supernovaCriterionValues.put("sumRecentLeaps", 54);
+		supernovaCriterionValues.put("averageSubsequentCommits", 80.0);
+		assertTrue(supernovaMetric.getSupernovaCriterionValues(csvData).equals(supernovaCriterionValues));
 	}
 }

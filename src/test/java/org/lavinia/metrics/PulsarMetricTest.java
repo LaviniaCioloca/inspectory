@@ -328,6 +328,7 @@ public class PulsarMetricTest {
 		csvData.setActualSize(250);
 		ArrayList<Integer> changesList = new ArrayList<>();
 		changesList.add(-10);
+		changesList.add(-10);
 		changesList.add(50);
 		changesList.add(2);
 		changesList.add(2);
@@ -374,6 +375,6 @@ public class PulsarMetricTest {
 		pulsarCriterionValues.put("averageSizeIncrease", 18.0);
 		pulsarCriterionValues.put("countPulsarCycles", 3);
 		pulsarCriterionValues.put("countRecentPulsarCycles", 3);
-		pulsarMetric.getPulsarCriterionValues(csvData);
+		assertTrue(pulsarMetric.getPulsarCriterionValues(csvData).equals(pulsarCriterionValues));
 	}
 }

@@ -148,6 +148,11 @@ public class SupernovaMetric extends MethodMetrics {
 		supernovaCriterionValues.put("sumOfAllLeaps", sumOfAllLeaps);
 		supernovaCriterionValues.put("sumRecentLeaps", sumRecentLeaps);
 		supernovaCriterionValues.put("averageSubsequentCommits", averageSubsequentCommits);
+		/*
+		 * for (Map.Entry<String, Object> entry :
+		 * supernovaCriterionValues.entrySet()) {
+		 * System.out.println(entry.getKey() + " = " + entry.getValue()); }
+		 */
 		return supernovaCriterionValues;
 	}
 
