@@ -17,7 +17,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.lavinia.inspectory</groupId>
 	<artifactId>inspectory</artifactId>
-	<version>0.1</version>
+	<version>0.1.1</version>
 	<repositories>
 		<repository>
 			<id>jitpack.io</id>
