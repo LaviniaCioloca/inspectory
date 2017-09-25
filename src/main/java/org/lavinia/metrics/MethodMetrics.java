@@ -58,7 +58,7 @@ public abstract class MethodMetrics {
 	 * @param end
 	 *            Date
 	 * @return A Long representing the difference in days between start and end
-	 *         dates
+	 *         date.
 	 */
 	protected Long getDifferenceInDays(Date start, Date end) {
 		Long startTime = start.getTime();
@@ -111,7 +111,7 @@ public abstract class MethodMetrics {
 
 	/**
 	 * If the method is active: the latest activity of the method has occurred
-	 * in of the most recent MEDIUM_TIMESPAN time-frames return 1 point.
+	 * in of the most recent MEDIUM_TIMESPAN time-frames, returns 1 point.
 	 * 
 	 * @param commit
 	 *            Latest commit in list

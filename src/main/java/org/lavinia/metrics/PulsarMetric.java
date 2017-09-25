@@ -150,8 +150,11 @@ public class PulsarMetric extends MethodMetrics {
 	}
 
 	/**
+	 * A PulsarCycle is considered recent if it was detected very recently, i.e.
+	 * in the last MEDIUM_TIMESPAN time-frames of the project.
+	 * 
 	 * @param commitDate
-	 * @return
+	 * @return An Integer: 1 if Pulsar cycle is recent and 0 if false.
 	 */
 	public Integer checkIfRecentPulsarCycle(Date commitDate) {
 		if (getDifferenceInDays(commitDate, now) <= MEDIUM_TIMESPAN) {
@@ -162,7 +165,9 @@ public class PulsarMetric extends MethodMetrics {
 
 	/**
 	 * @param csvData
-	 * @return
+	 * @return A Map with the values for the following Pulsar criterias:
+	 *         averageSizeIncrease; countPulsarCycles; countRecentPulsarCycles;
+	 *         isPulsar.
 	 */
 	public Map<String, Object> getPulsarCriterionValues(CSVData csvData) {
 		ArrayList<Commit> commits = csvData.getCommits();
@@ -205,6 +210,11 @@ public class PulsarMetric extends MethodMetrics {
 		pulsarCriterionValues.put("averageSizeIncrease", averageSizeIncrease);
 		pulsarCriterionValues.put("countPulsarCycles", countPulsarCycles);
 		pulsarCriterionValues.put("countRecentPulsarCycles", countRecentPulsarCycles);
+		/*
+		 * for (Map.Entry<String, Object> entry :
+		 * pulsarCriterionValues.entrySet()) { System.out.println(entry.getKey()
+		 * + " = " + entry.getValue()); }
+		 */
 		return pulsarCriterionValues;
 	}
 

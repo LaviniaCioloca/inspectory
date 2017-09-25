@@ -28,6 +28,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Test;
 import org.lavinia.beans.CSVData;
@@ -305,5 +308,72 @@ public class PulsarMetricTest {
 	@Test
 	public void testCalculateAverageSizeIncreaseTen() {
 		assertTrue(pulsarMetric.calculateAverageSizeIncrease(1, 10) == 10.0);
+	}
+
+	@Test
+	public void testCheckIfRecentPulsarCycleZero() throws ParseException {
+		Date date = new SimpleDateFormat("yyyy/MM/dd").parse("2010/01/01");
+		assertTrue(pulsarMetric.checkIfRecentPulsarCycle(date) == 0);
+	}
+
+	@Test
+	public void testCheckIfRecentPulsarCycleOne() throws ParseException {
+		Date date = new SimpleDateFormat("yyyy/MM/dd").parse("2017/09/10");
+		assertTrue(pulsarMetric.checkIfRecentPulsarCycle(date) == 1);
+	}
+
+	@Test
+	public void testGetPulsarCriterionValues() throws ParseException {
+		CSVData csvData = new CSVData();
+		csvData.setActualSize(250);
+		ArrayList<Integer> changesList = new ArrayList<>();
+		changesList.add(-10);
+		changesList.add(50);
+		changesList.add(2);
+		changesList.add(2);
+		changesList.add(2);
+		changesList.add(20);
+		changesList.add(-10);
+		changesList.add(60);
+		ArrayList<Commit> commits = new ArrayList<>();
+		Commit commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/08/01"));
+		commits.add(commit);
+
+		commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/08/20"));
+		commits.add(commit);
+
+		commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/08/21"));
+		commits.add(commit);
+
+		commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/08/30"));
+		commits.add(commit);
+
+		commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/09/01"));
+		commits.add(commit);
+
+		commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/09/02"));
+		commits.add(commit);
+
+		commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/09/03"));
+		commits.add(commit);
+
+		commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/09/04"));
+		commits.add(commit);
+		csvData.setChangesList(changesList);
+		csvData.setCommits(commits);
+		Map<String, Object> pulsarCriterionValues = new HashMap<>();
+		pulsarCriterionValues.put("isPulsar", true);
+		pulsarCriterionValues.put("averageSizeIncrease", 18.0);
+		pulsarCriterionValues.put("countPulsarCycles", 3);
+		pulsarCriterionValues.put("countRecentPulsarCycles", 3);
+		pulsarMetric.getPulsarCriterionValues(csvData);
 	}
 }
