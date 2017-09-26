@@ -109,4 +109,38 @@ public class MethodMetricsTest {
 		expected.put(commits.get(7), 2);
 		assertEquals(expected, methodMetric.splitCommitsIntoTimeFrames(commits));
 	}
+
+	@Test
+	public void getActiveTimeFrameMethodPointsOne() throws ParseException {
+		CSVData csvData = new CSVData();
+		ArrayList<Commit> commits = new ArrayList<>();
+		Commit commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2016/08/01"));
+		commits.add(commit);
+
+		Commit lastCommit = new Commit();
+		lastCommit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2016/08/20"));
+		commits.add(lastCommit);
+
+		csvData.setCommits(commits);
+		HashMap<Commit, Integer> commitsIntoTimeFrames = methodMetric.splitCommitsIntoTimeFrames(commits);
+		assertTrue(methodMetric.getActiveTimeFrameMethodPoints(commit, lastCommit, commitsIntoTimeFrames) == 1);
+	}
+
+	@Test
+	public void getActiveTimeFrameMethodPointsZero() throws ParseException {
+		CSVData csvData = new CSVData();
+		ArrayList<Commit> commits = new ArrayList<>();
+		Commit commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2016/08/01"));
+		commits.add(commit);
+
+		Commit lastCommit = new Commit();
+		lastCommit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/20"));
+		commits.add(lastCommit);
+
+		csvData.setCommits(commits);
+		HashMap<Commit, Integer> commitsIntoTimeFrames = methodMetric.splitCommitsIntoTimeFrames(commits);
+		assertTrue(methodMetric.getActiveTimeFrameMethodPoints(commit, lastCommit, commitsIntoTimeFrames) == 1);
+	}
 }

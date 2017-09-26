@@ -142,4 +142,21 @@ public abstract class MethodMetrics {
 		}
 		return 0;
 	}
+
+	/**
+	 * @param commit
+	 * @param lastCommit
+	 * @param commitsIntoTimeFrames
+	 * @return
+	 */
+	public Integer getActiveTimeFrameMethodPoints(Commit commit, Commit lastCommit,
+			HashMap<Commit, Integer> commitsIntoTimeFrames) {
+		Integer lastTimeFrameNumber = commitsIntoTimeFrames.get(lastCommit);
+		Integer timeFrameForGivenCommit = commitsIntoTimeFrames.get(commit);
+		if ((lastTimeFrameNumber - timeFrameForGivenCommit <= MEDIUM_TIMESPAN)
+				&& (lastTimeFrameNumber - timeFrameForGivenCommit >= 0)) {
+			return 1;
+		}
+		return 0;
+	}
 }
