@@ -34,6 +34,10 @@ public class PulsarMetric extends MethodMetrics {
 	public PulsarMetric(String dateNow) {
 		super(dateNow);
 	}
+	
+	public PulsarMetric(Date dateNow) {
+		super(dateNow);
+	}
 
 	/**
 	 * @param countRecentPulsarCycles
@@ -92,9 +96,8 @@ public class PulsarMetric extends MethodMetrics {
 	}
 
 	/**
-	 * If a method has minimum SIGNIFICANT_METHOD_SIZE and has been actively
-	 * changed over the last LONG_TIMESPAN then it is an Actively Changed
-	 * method.
+	 * If a method has been actively changed over the last LONG_TIMESPAN then it
+	 * is an Actively Changed method.
 	 * 
 	 * @param csvData
 	 * @return A Boolean: true if the method is actively changed.
@@ -102,6 +105,27 @@ public class PulsarMetric extends MethodMetrics {
 	public Boolean isMethodActivelyChanged(CSVData csvData) {
 		Integer countActiveChanges = 0;
 		ArrayList<Commit> commits = csvData.getCommits();
+		for (int i = commits.size() - 1; i >= 0; --i) {
+			if (getDifferenceInDays(commits.get(i).getDate(), now) <= LONG_TIMESPAN) {
+				++countActiveChanges;
+			} else {
+				break;
+			}
+		}
+		return countActiveChanges >= ACTIVELY_CHANGED;
+	}
+
+	/**
+	 * If a method has been actively changed over the last LONG_TIMESPAN
+	 * time-frames then it is an Actively Changed method.
+	 * 
+	 * @param csvData
+	 * @return A Boolean: true if the method is actively changed.
+	 */
+	public Boolean isMethodTimeFrameActivelyChanged(CSVData csvData) {
+		Integer countActiveChanges = 0;
+		ArrayList<Commit> commits = csvData.getCommits();
+		HashMap<Commit, Integer> commitsIntoTimeFrames = splitCommitsIntoTimeFrames(commits);
 		for (int i = commits.size() - 1; i >= 0; --i) {
 			if (getDifferenceInDays(commits.get(i).getDate(), now) <= LONG_TIMESPAN) {
 				++countActiveChanges;

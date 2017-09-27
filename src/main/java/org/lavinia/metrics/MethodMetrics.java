@@ -53,6 +53,10 @@ public abstract class MethodMetrics {
 		}
 	}
 
+	public MethodMetrics(Date dateNow) {
+		now = dateNow;
+	}
+
 	/**
 	 * @param start
 	 *            Date

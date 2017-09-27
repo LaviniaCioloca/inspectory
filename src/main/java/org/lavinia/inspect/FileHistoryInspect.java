@@ -51,6 +51,7 @@ public class FileHistoryInspect {
 	private ArrayList<String> deletedNodes = null;
 	private FileWriter csvWriter = null;
 	private ArrayList<CSVData> csvDataList = null;
+	private ArrayList<Commit> latestCommits = null;
 
 	/**
 	 * FileHistoryInspect Constructor that initializes the result map and CSV
@@ -109,6 +110,23 @@ public class FileHistoryInspect {
 		}
 	}
 
+	public Commit getLatestCommit(ArrayList<CSVData> csvDataList) {
+		latestCommits = new ArrayList<>();
+		for (CSVData csvLine : csvDataList) {
+			ArrayList<Commit> commits = result.get(
+					csvLine.getClassName().replaceAll("\"", "") + ": " + csvLine.getMethodName().replaceAll("\"", ""))
+					.getCommits();
+			latestCommits.add(commits.get(commits.size() - 1));
+		}
+		Commit latestCommit = latestCommits.get(0);
+		for (Commit commit : latestCommits) {
+			if (commit.getDate().after(latestCommit.getDate())) {
+				latestCommit = commit;
+			}
+		}
+		return latestCommit;
+	}
+
 	/**
 	 * Writes the CSV lines in the inspectory result CSV file.
 	 * 
@@ -132,10 +150,11 @@ public class FileHistoryInspect {
 				csvLine.setActualSize(actualSize);
 				csvLine.setChangesList(changesList);
 				csvLine.setCommits(commits);
-				SupernovaMetric supernovaMetric = new SupernovaMetric("2017/09/06");
+				Commit latestCommit = getLatestCommit(csvDataList);
+				SupernovaMetric supernovaMetric = new SupernovaMetric(latestCommit.getDate());
 				csvLine.setSupernova(supernovaMetric.isSupernova(csvLine));
 				csvLine.setSupernovaSeverity(supernovaMetric.getSupernovaSeverity(csvLine));
-				PulsarMetric pulsarMetric = new PulsarMetric("2017/09/06");
+				PulsarMetric pulsarMetric = new PulsarMetric(latestCommit.getDate());
 				csvLine.setPulsar(pulsarMetric.isPulsar(csvLine));
 				csvLine.setPulsarSeverity(pulsarMetric.getPulsarSeverity(csvLine));
 				CSVUtils.writeLine(csvWriter, csvLine.getCSVLine(), ',', '"');

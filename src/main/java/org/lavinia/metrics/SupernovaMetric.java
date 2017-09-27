@@ -22,6 +22,7 @@
 package org.lavinia.metrics;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,6 +31,10 @@ import org.lavinia.beans.Commit;
 
 public class SupernovaMetric extends MethodMetrics {
 	public SupernovaMetric(String dateNow) {
+		super(dateNow);
+	}
+	
+	public SupernovaMetric(Date dateNow) {
 		super(dateNow);
 	}
 
