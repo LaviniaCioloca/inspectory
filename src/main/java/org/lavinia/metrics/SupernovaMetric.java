@@ -34,8 +34,8 @@ public class SupernovaMetric extends MethodMetrics {
 		super(dateNow);
 	}
 	
-	public SupernovaMetric(Date dateNow) {
-		super(dateNow);
+	public SupernovaMetric(Date dateNow, ArrayList<Commit> allCommits) {
+		super(dateNow, allCommits);
 	}
 
 	/**

@@ -35,8 +35,8 @@ public class PulsarMetric extends MethodMetrics {
 		super(dateNow);
 	}
 	
-	public PulsarMetric(Date dateNow) {
-		super(dateNow);
+	public PulsarMetric(Date dateNow, ArrayList<Commit> allCommits) {
+		super(dateNow, allCommits);
 	}
 
 	/**
@@ -125,7 +125,6 @@ public class PulsarMetric extends MethodMetrics {
 	public Boolean isMethodTimeFrameActivelyChanged(CSVData csvData) {
 		Integer countActiveChanges = 0;
 		ArrayList<Commit> commits = csvData.getCommits();
-		HashMap<Commit, Integer> commitsIntoTimeFrames = splitCommitsIntoTimeFrames(commits);
 		for (int i = commits.size() - 1; i >= 0; --i) {
 			if (getDifferenceInDays(commits.get(i).getDate(), now) <= LONG_TIMESPAN) {
 				++countActiveChanges;

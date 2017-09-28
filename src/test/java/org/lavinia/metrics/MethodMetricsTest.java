@@ -109,7 +109,7 @@ public class MethodMetricsTest {
 		expected.put(commits.get(7), 2);
 		assertEquals(expected, methodMetric.splitCommitsIntoTimeFrames(commits));
 	}
-
+	/*
 	@Test
 	public void getActiveTimeFrameMethodPointsOne() throws ParseException {
 		CSVData csvData = new CSVData();
@@ -143,4 +143,5 @@ public class MethodMetricsTest {
 		HashMap<Commit, Integer> commitsIntoTimeFrames = methodMetric.splitCommitsIntoTimeFrames(commits);
 		assertTrue(methodMetric.getActiveTimeFrameMethodPoints(commit, lastCommit, commitsIntoTimeFrames) == 1);
 	}
+	*/
 }

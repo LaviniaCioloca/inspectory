@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
+import javax.annotation.PostConstruct;
+
 import org.lavinia.beans.Commit;
 
 public abstract class MethodMetrics {
@@ -39,11 +41,17 @@ public abstract class MethodMetrics {
 	protected final static Integer SHORT_TIMESPAN = 1 * TIME_FRAME;
 	protected final static Integer MEDIUM_TIMESPAN = 3 * TIME_FRAME;
 	protected final static Integer LONG_TIMESPAN = 6 * TIME_FRAME;
+	protected final static Integer SHORT_TIMESPAN_TF = 1;
+	protected final static Integer MEDIUM_TIMESPAN_TF = 3;
+	protected final static Integer LONG_TIMESPAN_TF = 6;
 	protected final static Integer MANY_PULSAR_CYCLES = 3; // commits
 	protected final static Integer SMALL_SIZE_CHANGE = 5; // lines
 	protected final static Integer MAJOR_SIZE_CHANGE = 1 * SIGNIFICANT_METHOD_SIZE;
 	protected final static Integer ACTIVELY_CHANGED = 3; // times changed
 	protected static Date now = null;
+	private ArrayList<Commit> allCommits = null;
+	protected HashMap<Commit, Integer> allCommitsIntoTimeFrames = null;
+	private Integer maximumTimeFrameNumber = null;
 
 	public MethodMetrics(String dateNow) {
 		try {
@@ -53,8 +61,14 @@ public abstract class MethodMetrics {
 		}
 	}
 
-	public MethodMetrics(Date dateNow) {
+	public MethodMetrics(Date dateNow, ArrayList<Commit> allCommits) {
 		now = dateNow;
+		this.allCommits = allCommits;
+	}
+
+	@PostConstruct
+	public void splitAllCommitsIntoTimeFrames() {
+		allCommitsIntoTimeFrames = splitCommitsIntoTimeFrames(allCommits);
 	}
 
 	/**
@@ -89,6 +103,7 @@ public abstract class MethodMetrics {
 			}
 			commitsIntoTimeFrames.put(commits.get(i), currentTimeFrame);
 		}
+		maximumTimeFrameNumber = currentTimeFrame;
 		return commitsIntoTimeFrames;
 	}
 
@@ -153,13 +168,12 @@ public abstract class MethodMetrics {
 	 * @param commitsIntoTimeFrames
 	 * @return
 	 */
-	public Integer getActiveTimeFrameMethodPoints(Commit commit, Commit lastCommit,
-			HashMap<Commit, Integer> commitsIntoTimeFrames) {
-		Integer lastTimeFrameNumber = commitsIntoTimeFrames.get(lastCommit);
-		Integer timeFrameForGivenCommit = commitsIntoTimeFrames.get(commit);
-		if ((lastTimeFrameNumber - timeFrameForGivenCommit <= MEDIUM_TIMESPAN)
-				&& (lastTimeFrameNumber - timeFrameForGivenCommit >= 0)) {
-			return 1;
+	public Integer getActiveTimeFrameMethodPoints(Commit lastCommit) {
+		for (HashMap.Entry<Commit, Integer> currentEntry : allCommitsIntoTimeFrames.entrySet()) {
+			if ((currentEntry.getValue() <= maximumTimeFrameNumber - MEDIUM_TIMESPAN_TF)
+					&& (currentEntry.getKey().equals(lastCommit))) {
+				return 1;
+			}
 		}
 		return 0;
 	}
