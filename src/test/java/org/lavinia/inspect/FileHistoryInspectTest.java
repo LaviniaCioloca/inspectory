@@ -21,13 +21,17 @@
  *******************************************************************************/
 package org.lavinia.inspect;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -88,5 +92,76 @@ public class FileHistoryInspectTest {
 		fileHistoryInspect.setResult(result);
 		assertFalse(fileHistoryInspect.checkEntryInResultSet(visitor, new ArrayList<Integer>(), "SimpleClass",
 				new Commit()));
+	}
+
+	@Test
+	public void testAddToAllCommits() throws IOException {
+		file.getParentFile().mkdirs();
+		FileWriter writer = new FileWriter(file);
+		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(RepoInspect.getProject(), writer);
+		Commit commit = new Commit();
+		ArrayList<Commit> commits = new ArrayList<>();
+		commits.add(commit);
+		commits.add(commit);
+		fileHistoryInspect.addToAllCommits(commits);
+		assertEquals(commits, fileHistoryInspect.getAllCommits());
+	}
+
+	@Test
+	public void testSortAllCommits() throws IOException, ParseException {
+		file.getParentFile().mkdirs();
+		FileWriter writer = new FileWriter(file);
+		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(RepoInspect.getProject(), writer);
+		ArrayList<Commit> commits = new ArrayList<>();
+		Commit commit1 = new Commit();
+		commit1.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2016/08/30"));
+		commits.add(commit1);
+
+		Commit commit2 = new Commit();
+		commit2.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2016/08/20"));
+		commits.add(commit2);
+
+		Commit commit3 = new Commit();
+		commit3.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/10/01"));
+		commits.add(commit3);
+
+		fileHistoryInspect.addToAllCommits(commits);
+		fileHistoryInspect.sortAllCommits();
+		commits = new ArrayList<>();
+		commits.add(commit2);
+		commits.add(commit1);
+		commits.add(commit3);
+		assertEquals(commits, fileHistoryInspect.getAllCommits());
+	}
+
+	@Test
+	public void testGetLatestCommit() throws IOException, ParseException {
+		file.getParentFile().mkdirs();
+		FileWriter writer = new FileWriter(file);
+		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(RepoInspect.getProject(), writer);
+		ArrayList<Commit> commits = new ArrayList<>();
+		Commit commit1 = new Commit();
+		commit1.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2016/08/20"));
+		commits.add(commit1);
+		
+		Commit commit2 = new Commit();
+		commit2.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2016/08/30"));
+		commits.add(commit2);
+
+		Commit commit3 = new Commit();
+		commit3.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/10/01"));
+		commits.add(commit3);
+		Map<String, CSVData> result = new HashMap<String, CSVData>();
+		CSVData csvData = new CSVData();
+		csvData.setChangesList(new ArrayList<>(Arrays.asList(210, -10, 50)));
+		csvData.setCommits(commits);
+		csvData.setClassName("test");
+		csvData.setMethodName("test");
+		result.put("test: test", csvData);
+		csvData.setCommits(commits);
+		fileHistoryInspect.setResult(result);
+		ArrayList<CSVData> csvDataList = new ArrayList<>();
+		csvDataList.add(csvData);
+		assertEquals(commit3, fileHistoryInspect.getLatestCommit(csvDataList));
 	}
 }

@@ -128,6 +128,19 @@ public class FileHistoryInspect {
 
 	/**
 	 * @param csvDataList
+	 */
+	public void createAndSortAllCommits(ArrayList<CSVData> csvDataList) {
+		for (CSVData csvLine : csvDataList) {
+			ArrayList<Commit> commits = result.get(
+					csvLine.getClassName().replaceAll("\"", "") + ": " + csvLine.getMethodName().replaceAll("\"", ""))
+					.getCommits();
+			addToAllCommits(commits);
+		}
+		sortAllCommits();
+	}
+
+	/**
+	 * @param csvDataList
 	 * @return
 	 */
 	public Commit getLatestCommit(ArrayList<CSVData> csvDataList) {
@@ -136,10 +149,8 @@ public class FileHistoryInspect {
 			ArrayList<Commit> commits = result.get(
 					csvLine.getClassName().replaceAll("\"", "") + ": " + csvLine.getMethodName().replaceAll("\"", ""))
 					.getCommits();
-			addToAllCommits(commits);
 			latestCommits.add(commits.get(commits.size() - 1));
 		}
-		sortAllCommits();
 		Commit latestCommit = latestCommits.get(0);
 		for (Commit commit : latestCommits) {
 			if (commit.getDate().after(latestCommit.getDate())) {
@@ -334,6 +345,10 @@ public class FileHistoryInspect {
 
 	public void setResult(Map<String, CSVData> result) {
 		this.result = result;
+	}
+
+	public ArrayList<Commit> getAllCommits() {
+		return allCommits;
 	}
 
 }
