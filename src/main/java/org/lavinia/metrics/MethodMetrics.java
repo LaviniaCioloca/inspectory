@@ -49,9 +49,9 @@ public abstract class MethodMetrics {
 	protected final static Integer MAJOR_SIZE_CHANGE = 1 * SIGNIFICANT_METHOD_SIZE;
 	protected final static Integer ACTIVELY_CHANGED = 3; // times changed
 	protected static Date now = null;
-	private ArrayList<Commit> allCommits = null;
+	protected ArrayList<Commit> allCommits = null;
 	protected HashMap<Commit, Integer> allCommitsIntoTimeFrames = null;
-	private Integer maximumTimeFrameNumber = null;
+	protected Integer maximumTimeFrameNumber = null;
 
 	public MethodMetrics(String dateNow) {
 		try {

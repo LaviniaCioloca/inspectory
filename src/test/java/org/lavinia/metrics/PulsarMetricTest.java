@@ -378,4 +378,12 @@ public class PulsarMetricTest {
 		pulsarCriterionValues.put("countRecentPulsarCycles", 3);
 		assertEquals(pulsarMetric.getPulsarCriterionValues(csvData), pulsarCriterionValues);
 	}
+	
+	@Test
+	public void testIsMethodTimeFrameActivelyChanged() throws ParseException {
+		ArrayList<Commit> allCommits = new ArrayList<>();
+		Date dateNow = new SimpleDateFormat("yyyy/MM/dd").parse("2010/01/01");
+		PulsarMetric pulsarMetric = new PulsarMetric(dateNow, allCommits);
+		
+	}
 }
