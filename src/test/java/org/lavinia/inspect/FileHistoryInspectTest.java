@@ -135,26 +135,25 @@ public class FileHistoryInspectTest {
 	}
 
 	@Test
-	public void testGetLatestCommit() throws IOException, ParseException {
+	public void testCreateAndSortAllCommits() throws ParseException, IOException {
 		file.getParentFile().mkdirs();
 		FileWriter writer = new FileWriter(file);
 		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(RepoInspect.getProject(), writer);
 		ArrayList<Commit> commits = new ArrayList<>();
 		Commit commit1 = new Commit();
-		commit1.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2016/08/20"));
+		commit1.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2016/08/10"));
 		commits.add(commit1);
-		
+
 		Commit commit2 = new Commit();
-		commit2.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2016/08/30"));
+		commit2.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2016/08/20"));
 		commits.add(commit2);
 
 		Commit commit3 = new Commit();
 		commit3.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/10/01"));
 		commits.add(commit3);
+
 		Map<String, CSVData> result = new HashMap<String, CSVData>();
 		CSVData csvData = new CSVData();
-		csvData.setChangesList(new ArrayList<>(Arrays.asList(210, -10, 50)));
-		csvData.setCommits(commits);
 		csvData.setClassName("test");
 		csvData.setMethodName("test");
 		result.put("test: test", csvData);
@@ -162,6 +161,66 @@ public class FileHistoryInspectTest {
 		fileHistoryInspect.setResult(result);
 		ArrayList<CSVData> csvDataList = new ArrayList<>();
 		csvDataList.add(csvData);
-		assertEquals(commit3, fileHistoryInspect.getLatestCommit(csvDataList));
+		fileHistoryInspect.createAndSortAllCommits(csvDataList);
+		assertEquals(commits, fileHistoryInspect.getAllCommits());
+	}
+
+	@Test
+	public void testWriteCSVFileData() throws IOException, ParseException {
+		file.getParentFile().mkdirs();
+		FileWriter writer = new FileWriter(file);
+		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(RepoInspect.getProject(), writer);
+		ArrayList<Commit> commits = new ArrayList<>();
+		Commit commit1 = new Commit();
+		commit1.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2016/08/10"));
+		commits.add(commit1);
+
+		Commit commit2 = new Commit();
+		commit2.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2016/08/20"));
+		commits.add(commit2);
+
+		Commit commit3 = new Commit();
+		commit3.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/10/01"));
+		commits.add(commit3);
+
+		Map<String, CSVData> result = new HashMap<String, CSVData>();
+		ArrayList<Integer> changesList = new ArrayList<Integer>(Arrays.asList(210, -10, 50));
+		CSVData csvData = new CSVData();
+		csvData.setChangesList(changesList);
+		csvData.setFileName("test");
+		csvData.setClassName("test");
+		csvData.setMethodName("test");
+		result.put("test: test", csvData);
+		csvData.setCommits(commits);
+		fileHistoryInspect.setResult(result);
+		ArrayList<CSVData> csvDataList = new ArrayList<>();
+		csvDataList.add(csvData);
+		fileHistoryInspect.writeCSVFileData(csvDataList);
+	}
+
+	@Test
+	public void testAddDataInCSVList() throws IOException {
+		file.getParentFile().mkdirs();
+		FileWriter writer = new FileWriter(file);
+		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(RepoInspect.getProject(), writer);
+		CSVData csvData = new CSVData();
+		csvData.setFileName("\"test\"");
+		csvData.setClassName("\"test\"");
+		csvData.setMethodName("\"test\"");
+		ArrayList<CSVData> csvDataList = fileHistoryInspect.getCsvDataList();
+		csvDataList.add(csvData);
+		fileHistoryInspect.addDataInCSVList("test", "test", "test");
+		assertEquals(csvDataList, fileHistoryInspect.getCsvDataList());
+	}
+
+	@Test
+	public void testGettersAndSetters() throws IOException {
+		file.getParentFile().mkdirs();
+		FileWriter writer = new FileWriter(file);
+		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(RepoInspect.getProject(), writer);
+		fileHistoryInspect.setResult(new HashMap<String, CSVData>());
+		fileHistoryInspect.getResult();
+		fileHistoryInspect.getAllCommits();
+		fileHistoryInspect.getCsvDataList();
 	}
 }

@@ -52,7 +52,6 @@ public class FileHistoryInspect {
 	private ArrayList<String> deletedNodes = null;
 	private FileWriter csvWriter = null;
 	private ArrayList<CSVData> csvDataList = null;
-	private ArrayList<Commit> latestCommits = null;
 	private ArrayList<Commit> allCommits = null;
 
 	/**
@@ -69,6 +68,7 @@ public class FileHistoryInspect {
 		result = new HashMap<String, CSVData>();
 		deletedNodes = new ArrayList<String>();
 		this.csvWriter = csvWriter;
+		csvDataList = new ArrayList<>();
 		allCommits = new ArrayList<>();
 	}
 
@@ -140,34 +140,15 @@ public class FileHistoryInspect {
 	}
 
 	/**
-	 * @param csvDataList
-	 * @return
-	 */
-	public Commit getLatestCommit(ArrayList<CSVData> csvDataList) {
-		latestCommits = new ArrayList<>();
-		for (CSVData csvLine : csvDataList) {
-			ArrayList<Commit> commits = result.get(
-					csvLine.getClassName().replaceAll("\"", "") + ": " + csvLine.getMethodName().replaceAll("\"", ""))
-					.getCommits();
-			latestCommits.add(commits.get(commits.size() - 1));
-		}
-		Commit latestCommit = latestCommits.get(0);
-		for (Commit commit : latestCommits) {
-			if (commit.getDate().after(latestCommit.getDate())) {
-				latestCommit = commit;
-			}
-		}
-		return latestCommit;
-	}
-
-	/**
 	 * Writes the CSV lines in the inspectory result CSV file.
 	 * 
 	 * @param csvDataList
 	 *            List with every CSV line, of every method, to be written in
 	 *            the inspectory result CSV file.
 	 */
-	private void writeCSVFileData(ArrayList<CSVData> csvDataList) {
+	public void writeCSVFileData(ArrayList<CSVData> csvDataList) {
+		createAndSortAllCommits(csvDataList);
+		Commit latestCommit = allCommits.get(allCommits.size() - 1);
 		for (CSVData csvLine : csvDataList) {
 			try {
 				ArrayList<Integer> changesList = result.get(csvLine.getClassName().replaceAll("\"", "") + ": "
@@ -183,7 +164,6 @@ public class FileHistoryInspect {
 				csvLine.setActualSize(actualSize);
 				csvLine.setChangesList(changesList);
 				csvLine.setCommits(commits);
-				Commit latestCommit = getLatestCommit(csvDataList);
 				SupernovaMetric supernovaMetric = new SupernovaMetric(latestCommit.getDate(), allCommits);
 				csvLine.setSupernova(supernovaMetric.isSupernova(csvLine));
 				csvLine.setSupernovaSeverity(supernovaMetric.getSupernovaSeverity(csvLine));
@@ -207,7 +187,7 @@ public class FileHistoryInspect {
 	 * @param commit
 	 * @param lineChanges
 	 */
-	private void handleNodeSetEditChange(NodeSetEdit edit, GenericVisitor visitor, String fileName, Commit commit,
+	public void handleNodeSetEditChange(NodeSetEdit edit, GenericVisitor visitor, String fileName, Commit commit,
 			ArrayList<Integer> lineChanges) {
 		String className = ((NodeSetEdit.Change<?>) edit).getIdentifier();
 		Transaction<?> t = ((NodeSetEdit.Change<?>) edit).getTransaction();
@@ -235,7 +215,7 @@ public class FileHistoryInspect {
 	 * @param commit
 	 * @param lineChanges
 	 */
-	private void handleNodeSetEditAdd(NodeSetEdit edit, GenericVisitor visitor, String fileName, Commit commit,
+	public void handleNodeSetEditAdd(NodeSetEdit edit, GenericVisitor visitor, String fileName, Commit commit,
 			ArrayList<Integer> lineChanges) {
 		Node node = ((NodeSetEdit.Add) edit).getNode();
 		if (node instanceof Node.Type) {
@@ -265,7 +245,7 @@ public class FileHistoryInspect {
 	 * @param className
 	 * @param methodName
 	 */
-	private void addDataInCSVList(String fileName, String className, String methodName) {
+	public void addDataInCSVList(String fileName, String className, String methodName) {
 		CSVData csvData = new CSVData();
 		csvData.setFileName("\"" + fileName + "\"");
 		csvData.setClassName("\"" + className + "\"");
@@ -277,7 +257,7 @@ public class FileHistoryInspect {
 	 * Creates the CSV information for every method by parsing every
 	 * history.json file of every .java file from .metanalysis folder.
 	 */
-	private void createResults() {
+	public void createResults() {
 		try {
 			// String logFolderName = ".inspectory_results";
 			Set<String> filesList = project.listFiles();
@@ -349,6 +329,10 @@ public class FileHistoryInspect {
 
 	public ArrayList<Commit> getAllCommits() {
 		return allCommits;
+	}
+
+	public ArrayList<CSVData> getCsvDataList() {
+		return csvDataList;
 	}
 
 }
