@@ -47,7 +47,7 @@ public class PulsarMetricTest {
 				Arrays.asList(210, -10, 50, -40, 250, -40, 100, -10, 15, -11, 100, -20));
 		ArrayList<Commit> commits = new ArrayList<>();
 		Commit commit = new Commit();
-		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/01/01"));
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2013/01/01"));
 		commits.add(commit);
 
 		commit = new Commit();
@@ -378,12 +378,106 @@ public class PulsarMetricTest {
 		pulsarCriterionValues.put("countRecentPulsarCycles", 3);
 		assertEquals(pulsarMetric.getPulsarCriterionValues(csvData), pulsarCriterionValues);
 	}
-	
+
 	@Test
-	public void testIsMethodTimeFrameActivelyChanged() throws ParseException {
+	public void testIsMethodTimeFrameActivelyChangedTrue() throws ParseException {
 		ArrayList<Commit> allCommits = new ArrayList<>();
-		Date dateNow = new SimpleDateFormat("yyyy/MM/dd").parse("2010/01/01");
+		Date dateNow = new SimpleDateFormat("yyyy/MM/dd").parse("2017/01/01");
+		Commit commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2015/08/01"));
+		allCommits.add(commit);
+
+		commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2016/08/20"));
+		allCommits.add(commit);
+
+		commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/05/21"));
+		allCommits.add(commit);
+
+		Commit commit1 = new Commit();
+		commit1.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/08/30"));
+		allCommits.add(commit1);
+
+		Commit commit2 = new Commit();
+		commit2.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/09/01"));
+		allCommits.add(commit2);
+
+		Commit commit3 = new Commit();
+		commit3.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/09/02"));
+		allCommits.add(commit3);
+
+		commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/09/03"));
+		allCommits.add(commit);
+
+		commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/09/04"));
+		allCommits.add(commit);
 		PulsarMetric pulsarMetric = new PulsarMetric(dateNow, allCommits);
+		ArrayList<Commit> commits = new ArrayList<>();
+		commits.add(commit1);
+		commits.add(commit2);
+		commits.add(commit3);
+		CSVData csvData = new CSVData();
+		csvData.setCommits(commits);
+		assertEquals(pulsarMetric.isMethodTimeFrameActivelyChanged(csvData), true);
+	}
+
+	@Test
+	public void testIsMethodTimeFrameActivelyChangedSmallSizeFalse() throws ParseException {
+		Commit commit1 = new Commit();
+		commit1.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/08/30"));
+
+		Commit commit2 = new Commit();
+		commit2.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/09/01"));
+
+		Commit commit3 = new Commit();
+		commit3.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/09/02"));
+
+		ArrayList<Commit> commits = new ArrayList<>();
+		commits.add(commit1);
+		commits.add(commit2);
+		CSVData csvData = new CSVData();
+		csvData.setCommits(commits);
+		assertEquals(pulsarMetric.isMethodTimeFrameActivelyChanged(csvData), false);
+	}
+
+	@Test
+	public void testIsMethodTimeFrameActivelyChangedFalse() throws ParseException {
+		ArrayList<Commit> allCommits = new ArrayList<>();
+		Date dateNow = new SimpleDateFormat("yyyy/MM/dd").parse("2018/01/01");
+		Commit commit1 = new Commit();
+		commit1.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2016/05/30"));
+
+		Commit commit2 = new Commit();
+		commit2.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2016/07/01"));
+
+		Commit commit3 = new Commit();
+		commit3.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2016/09/02"));
+
+		Commit commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/08/03"));
+		allCommits.add(commit);
+
+		commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/09/04"));
+		allCommits.add(commit);
 		
+		commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/11/04"));
+		allCommits.add(commit);
+		
+		commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/12/30"));
+		allCommits.add(commit);
+		PulsarMetric pulsarMetric = new PulsarMetric(dateNow, allCommits);
+		ArrayList<Commit> commits = new ArrayList<>();
+		commits.add(commit1);
+		commits.add(commit2);
+		commits.add(commit3);
+		CSVData csvData = new CSVData();
+		csvData.setCommits(commits);
+		assertEquals(pulsarMetric.isMethodTimeFrameActivelyChanged(csvData), false);
 	}
 }

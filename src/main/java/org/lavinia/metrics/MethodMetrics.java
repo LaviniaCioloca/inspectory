@@ -27,8 +27,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
-import javax.annotation.PostConstruct;
-
 import org.lavinia.beans.Commit;
 
 public abstract class MethodMetrics {
@@ -48,7 +46,7 @@ public abstract class MethodMetrics {
 	protected final static Integer SMALL_SIZE_CHANGE = 5; // lines
 	protected final static Integer MAJOR_SIZE_CHANGE = 1 * SIGNIFICANT_METHOD_SIZE;
 	protected final static Integer ACTIVELY_CHANGED = 3; // times changed
-	protected static Date now = null;
+	protected Date now = null;
 	protected ArrayList<Commit> allCommits = null;
 	protected HashMap<Commit, Integer> allCommitsIntoTimeFrames = null;
 	protected Integer maximumTimeFrameNumber = null;
@@ -64,10 +62,6 @@ public abstract class MethodMetrics {
 	public MethodMetrics(Date dateNow, ArrayList<Commit> allCommits) {
 		now = dateNow;
 		this.allCommits = allCommits;
-	}
-
-	@PostConstruct
-	public void splitAllCommitsIntoTimeFrames() {
 		allCommitsIntoTimeFrames = splitCommitsIntoTimeFrames(allCommits);
 	}
 

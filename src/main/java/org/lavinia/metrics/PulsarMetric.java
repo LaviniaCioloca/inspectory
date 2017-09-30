@@ -126,11 +126,14 @@ public class PulsarMetric extends MethodMetrics {
 		Integer countActiveChanges = 0;
 		ArrayList<Commit> commits = csvData.getCommits();
 		ArrayList<Commit> latestCommits = new ArrayList<>();
+		if (commits.size() < ACTIVELY_CHANGED) {
+			return false;
+		}
 		for (int i = commits.size() - 1; i > commits.size() - 1 - ACTIVELY_CHANGED; --i) {
 			latestCommits.add(commits.get(i));
 		}
 		for (int i = allCommits.size() - 1; i >= 0; --i) {
-			if ((allCommitsIntoTimeFrames.get(allCommits.get(i)) <= maximumTimeFrameNumber - LONG_TIMESPAN_TF)) {
+			if ((allCommitsIntoTimeFrames.get(allCommits.get(i)) >= maximumTimeFrameNumber - LONG_TIMESPAN_TF)) {
 				for (int j = 0; j < latestCommits.size(); ++j) {
 					if (allCommits.get(i).equals(latestCommits.get(j))) {
 						++countActiveChanges;
