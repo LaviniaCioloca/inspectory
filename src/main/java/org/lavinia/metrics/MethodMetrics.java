@@ -21,8 +21,6 @@
  *******************************************************************************/
 package org.lavinia.metrics;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -46,24 +44,10 @@ public abstract class MethodMetrics {
 	protected final static Integer SMALL_SIZE_CHANGE = 5; // lines
 	protected final static Integer MAJOR_SIZE_CHANGE = 1 * SIGNIFICANT_METHOD_SIZE;
 	protected final static Integer ACTIVELY_CHANGED = 3; // times changed
-	protected Date now = null;
-	protected ArrayList<Commit> allCommits = null;
-	protected HashMap<Commit, Integer> allCommitsIntoTimeFrames = null;
-	protected Integer maximumTimeFrameNumber = null;
-
-	public MethodMetrics(String dateNow) {
-		try {
-			now = new SimpleDateFormat("yyyy/MM/dd").parse(dateNow);
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-	}
-
-	public MethodMetrics(Date dateNow, ArrayList<Commit> allCommits) {
-		now = dateNow;
-		this.allCommits = allCommits;
-		allCommitsIntoTimeFrames = splitCommitsIntoTimeFrames(allCommits);
-	}
+	protected static Date now = null;
+	protected static ArrayList<Commit> allCommits = null;
+	protected static HashMap<Commit, Integer> allCommitsIntoTimeFrames = null;
+	protected static Integer maximumTimeFrameNumber = null;
 
 	/**
 	 * @param start
@@ -73,7 +57,7 @@ public abstract class MethodMetrics {
 	 * @return A Long representing the difference in days between start and end
 	 *         date.
 	 */
-	protected Long getDifferenceInDays(Date start, Date end) {
+	protected static Long getDifferenceInDays(Date start, Date end) {
 		Long startTime = start.getTime();
 		Long endTime = end.getTime();
 		Long diffTime = endTime - startTime;
@@ -87,7 +71,8 @@ public abstract class MethodMetrics {
 	 * @param commits
 	 * @return
 	 */
-	protected HashMap<Commit, Integer> splitCommitsIntoTimeFrames(ArrayList<Commit> commits) {
+	protected static HashMap<Commit, Integer> splitCommitsIntoTimeFrames(ArrayList<Commit> commits) {
+		// System.out.println("Start - splitCommitsIntoTimeFrames: " + new Date());
 		HashMap<Commit, Integer> commitsIntoTimeFrames = new HashMap<>();
 		Integer currentTimeFrame = 0;
 		commitsIntoTimeFrames.put(commits.get(0), currentTimeFrame);
@@ -98,6 +83,7 @@ public abstract class MethodMetrics {
 			commitsIntoTimeFrames.put(commits.get(i), currentTimeFrame);
 		}
 		maximumTimeFrameNumber = currentTimeFrame;
+		// System.out.println("Stop - splitCommitsIntoTimeFrames: " + new Date());
 		return commitsIntoTimeFrames;
 	}
 
@@ -171,4 +157,17 @@ public abstract class MethodMetrics {
 		}
 		return 0;
 	}
+
+	public static void setAllCommits(ArrayList<Commit> allCommits) {
+		MethodMetrics.allCommits = allCommits;
+	}
+
+	public static void setAllCommitsIntoTimeFrames() {
+		MethodMetrics.allCommitsIntoTimeFrames = splitCommitsIntoTimeFrames(allCommits);
+	}
+
+	public static void setNow(Date now) {
+		MethodMetrics.now = now;
+	}
+
 }

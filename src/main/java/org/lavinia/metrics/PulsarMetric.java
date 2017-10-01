@@ -31,14 +31,6 @@ import org.lavinia.beans.Commit;
 
 public class PulsarMetric extends MethodMetrics {
 
-	public PulsarMetric(String dateNow) {
-		super(dateNow);
-	}
-
-	public PulsarMetric(Date dateNow, ArrayList<Commit> allCommits) {
-		super(dateNow, allCommits);
-	}
-
 	/**
 	 * @param countRecentPulsarCycles
 	 * @return An Integer: 0 - 3 representing the points of the recent Pulsar
@@ -198,6 +190,23 @@ public class PulsarMetric extends MethodMetrics {
 	}
 
 	/**
+	 * @param commitDate
+	 * @return
+	 */
+	public Integer checkIfRecentTimeFramePulsarCycle(Date commitDate) {
+		for (int i = allCommits.size() - 1; i >= 0; --i) {
+			if ((allCommitsIntoTimeFrames.get(allCommits.get(i)) >= maximumTimeFrameNumber - MEDIUM_TIMESPAN_TF)) {
+				if (allCommits.get(i).getDate().compareTo(commitDate) <= 0) {
+					return 1;
+				} else {
+					break;
+				}
+			}
+		}
+		return 0;
+	}
+
+	/**
 	 * @param csvData
 	 * @return A Map with the values for the following Pulsar criterias:
 	 *         averageSizeIncrease; countPulsarCycles; countRecentPulsarCycles;
@@ -226,6 +235,55 @@ public class PulsarMetric extends MethodMetrics {
 						if (methodGrowth >= SMALL_SIZE_CHANGE) {
 							++countPulsarCycles;
 							countRecentPulsarCycles += checkIfRecentPulsarCycle(commits.get(i).getDate());
+						}
+					} else {
+						methodGrowth = 0;
+					}
+					if (commitsTypes.get(i + 1).equals("refine")) {
+						sumOfSizeIncrease += changesList.get(i);
+					}
+					if (countPulsarCycles >= MANY_PULSAR_CYCLES
+							&& !pulsarCriterionValues.get("isPulsar").equals(true)) {
+						pulsarCriterionValues.put("isPulsar", true);
+					}
+				}
+			}
+		}
+		averageSizeIncrease = calculateAverageSizeIncrease(countPulsarCycles, sumOfSizeIncrease);
+		pulsarCriterionValues.put("averageSizeIncrease", averageSizeIncrease);
+		pulsarCriterionValues.put("countPulsarCycles", countPulsarCycles);
+		pulsarCriterionValues.put("countRecentPulsarCycles", countRecentPulsarCycles);
+		/*
+		 * for (Map.Entry<String, Object> entry :
+		 * pulsarCriterionValues.entrySet()) { System.out.println(entry.getKey()
+		 * + " = " + entry.getValue()); }
+		 */
+		return pulsarCriterionValues;
+	}
+
+	public Map<String, Object> getPulsarTimeFrameCriterionValues(CSVData csvData) {
+		ArrayList<Commit> commits = csvData.getCommits();
+		Map<String, Object> pulsarCriterionValues = new HashMap<>();
+		pulsarCriterionValues.put("isPulsar", false);
+		Integer sumOfSizeIncrease = 0;
+		Double averageSizeIncrease = 0.0;
+		Integer countRecentPulsarCycles = 0;
+		Integer countPulsarCycles = 0;
+		Integer methodGrowth = 0;
+		if (csvData.getActualSize() >= SIGNIFICANT_METHOD_SIZE) {
+			if (isMethodActivelyChanged(csvData)) {
+				ArrayList<Integer> changesList = csvData.getChangesList();
+				ArrayList<String> commitsTypes = getCommitsTypes(changesList);
+				for (int i = 0; i < commitsTypes.size() - 1; ++i) {
+					if (commitsTypes.get(i).equals("refactor") && commitsTypes.get(i + 1).equals("develop")) {
+						++countPulsarCycles;
+						countRecentPulsarCycles += checkIfRecentTimeFramePulsarCycle(commits.get(i).getDate());
+					}
+					if (commitsTypes.get(i).equals("refine")) {
+						methodGrowth += changesList.get(i);
+						if (methodGrowth >= SMALL_SIZE_CHANGE) {
+							++countPulsarCycles;
+							countRecentPulsarCycles += checkIfRecentTimeFramePulsarCycle(commits.get(i).getDate());
 						}
 					} else {
 						methodGrowth = 0;

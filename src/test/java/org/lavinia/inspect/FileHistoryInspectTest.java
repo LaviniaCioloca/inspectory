@@ -38,6 +38,7 @@ import java.util.Map;
 import org.junit.Test;
 import org.lavinia.beans.CSVData;
 import org.lavinia.beans.Commit;
+import org.lavinia.metrics.MethodMetrics;
 import org.lavinia.visitor.GenericVisitor;
 import org.lavinia.visitor.NodeVisitor;
 
@@ -195,6 +196,9 @@ public class FileHistoryInspectTest {
 		fileHistoryInspect.setResult(result);
 		ArrayList<CSVData> csvDataList = new ArrayList<>();
 		csvDataList.add(csvData);
+		MethodMetrics.setAllCommits(commits);
+		MethodMetrics.setAllCommitsIntoTimeFrames();
+		MethodMetrics.setNow(commit3.getDate());
 		fileHistoryInspect.writeCSVFileData(csvDataList);
 	}
 

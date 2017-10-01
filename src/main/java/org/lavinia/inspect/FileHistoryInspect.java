@@ -32,6 +32,7 @@ import java.util.Set;
 
 import org.lavinia.beans.CSVData;
 import org.lavinia.beans.Commit;
+import org.lavinia.metrics.MethodMetrics;
 import org.lavinia.metrics.PulsarMetric;
 import org.lavinia.metrics.SupernovaMetric;
 import org.lavinia.utils.CSVUtils;
@@ -123,13 +124,16 @@ public class FileHistoryInspect {
 	}
 
 	public void sortAllCommits() {
+		// System.out.println("\tStart - sortAllCommits: " + new Date());
 		Collections.sort(allCommits, (commit1, commit2) -> commit1.getDate().compareTo(commit2.getDate()));
+		// System.out.println("\tStop - sortAllCommits: " + new Date());
 	}
 
 	/**
 	 * @param csvDataList
 	 */
 	public void createAndSortAllCommits(ArrayList<CSVData> csvDataList) {
+		// System.out.println("Start - createAndSortAllCommits: " + new Date());
 		for (CSVData csvLine : csvDataList) {
 			ArrayList<Commit> commits = result.get(
 					csvLine.getClassName().replaceAll("\"", "") + ": " + csvLine.getMethodName().replaceAll("\"", ""))
@@ -137,6 +141,7 @@ public class FileHistoryInspect {
 			addToAllCommits(commits);
 		}
 		sortAllCommits();
+		// System.out.println("Stop - createAndSortAllCommits: " + new Date());
 	}
 
 	/**
@@ -149,6 +154,9 @@ public class FileHistoryInspect {
 	public void writeCSVFileData(ArrayList<CSVData> csvDataList) {
 		createAndSortAllCommits(csvDataList);
 		Commit latestCommit = allCommits.get(allCommits.size() - 1);
+		MethodMetrics.setAllCommits(allCommits);
+		MethodMetrics.setAllCommitsIntoTimeFrames();
+		MethodMetrics.setNow(latestCommit.getDate());
 		for (CSVData csvLine : csvDataList) {
 			try {
 				ArrayList<Integer> changesList = result.get(csvLine.getClassName().replaceAll("\"", "") + ": "
@@ -164,10 +172,10 @@ public class FileHistoryInspect {
 				csvLine.setActualSize(actualSize);
 				csvLine.setChangesList(changesList);
 				csvLine.setCommits(commits);
-				SupernovaMetric supernovaMetric = new SupernovaMetric(latestCommit.getDate(), allCommits);
+				SupernovaMetric supernovaMetric = new SupernovaMetric();
 				csvLine.setSupernova(supernovaMetric.isSupernova(csvLine));
 				csvLine.setSupernovaSeverity(supernovaMetric.getSupernovaSeverity(csvLine));
-				PulsarMetric pulsarMetric = new PulsarMetric(latestCommit.getDate(), allCommits);
+				PulsarMetric pulsarMetric = new PulsarMetric();
 				csvLine.setPulsar(pulsarMetric.isPulsar(csvLine));
 				csvLine.setPulsarSeverity(pulsarMetric.getPulsarSeverity(csvLine));
 				CSVUtils.writeLine(csvWriter, csvLine.getCSVLine(), ',', '"');

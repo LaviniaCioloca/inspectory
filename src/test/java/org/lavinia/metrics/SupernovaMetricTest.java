@@ -29,6 +29,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,7 +38,7 @@ import org.lavinia.beans.CSVData;
 import org.lavinia.beans.Commit;
 
 public class SupernovaMetricTest {
-	SupernovaMetric supernovaMetric = new SupernovaMetric("2017/09/06");
+	SupernovaMetric supernovaMetric = new SupernovaMetric();
 
 	@Test
 	public void testIsSupernovaTrue() throws ParseException {
@@ -168,6 +169,8 @@ public class SupernovaMetricTest {
 	public void testGetActiveFilePointsZero() throws ParseException {
 		Commit commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/09/01"));
+		Date dateNow = new SimpleDateFormat("yyyy/MM/dd").parse("2017/09/06");
+		MethodMetrics.setNow(dateNow);
 		assertTrue(supernovaMetric.getActiveMethodPoints(commit) == 0);
 	}
 
@@ -227,7 +230,7 @@ public class SupernovaMetricTest {
 		supernovaMetric.getSupernovaSeverity(csvData);
 		assertTrue(supernovaMetric.getSupernovaSeverity(csvData) == 10);
 	}
-	
+
 	@Test
 	public void testGetSupernovaCriterionValues() throws ParseException {
 		CSVData csvData = new CSVData();

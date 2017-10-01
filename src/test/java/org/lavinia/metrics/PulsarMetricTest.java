@@ -38,7 +38,7 @@ import org.lavinia.beans.CSVData;
 import org.lavinia.beans.Commit;
 
 public class PulsarMetricTest {
-	private static PulsarMetric pulsarMetric = new PulsarMetric("2017/09/06");
+	private static PulsarMetric pulsarMetric = new PulsarMetric();
 
 	@Test
 	public void testIsPulsarTrue() throws ParseException {
@@ -215,6 +215,8 @@ public class PulsarMetricTest {
 	public void testCountPulsarSeverityPointsMax() throws ParseException {
 		Commit commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/09/01"));
+		Date dateNow = new SimpleDateFormat("yyyy/MM/dd").parse("2017/09/06");
+		MethodMetrics.setNow(dateNow);
 		assertTrue(pulsarMetric.countPulsarSeverityPoints(6, 0.0, 150, commit) == 10);
 	}
 
@@ -252,6 +254,8 @@ public class PulsarMetricTest {
 		commits.add(commit);
 		csvData.setCommits(commits);
 		csvData.setChangesList(changesList);
+		Date dateNow = new SimpleDateFormat("yyyy/MM/dd").parse("2017/09/06");
+		MethodMetrics.setNow(dateNow);
 		assertTrue(pulsarMetric.getPulsarSeverity(csvData) == 8);
 	}
 
@@ -414,7 +418,10 @@ public class PulsarMetricTest {
 		commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/09/04"));
 		allCommits.add(commit);
-		PulsarMetric pulsarMetric = new PulsarMetric(dateNow, allCommits);
+		MethodMetrics.setAllCommits(allCommits);
+		MethodMetrics.setAllCommitsIntoTimeFrames();
+		MethodMetrics.setNow(dateNow);
+		PulsarMetric pulsarMetric = new PulsarMetric();
 		ArrayList<Commit> commits = new ArrayList<>();
 		commits.add(commit1);
 		commits.add(commit2);
@@ -463,15 +470,18 @@ public class PulsarMetricTest {
 		commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/09/04"));
 		allCommits.add(commit);
-		
+
 		commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/11/04"));
 		allCommits.add(commit);
-		
+
 		commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/12/30"));
 		allCommits.add(commit);
-		PulsarMetric pulsarMetric = new PulsarMetric(dateNow, allCommits);
+		MethodMetrics.setAllCommits(allCommits);
+		MethodMetrics.setAllCommitsIntoTimeFrames();
+		MethodMetrics.setNow(dateNow);
+		PulsarMetric pulsarMetric = new PulsarMetric();
 		ArrayList<Commit> commits = new ArrayList<>();
 		commits.add(commit1);
 		commits.add(commit2);

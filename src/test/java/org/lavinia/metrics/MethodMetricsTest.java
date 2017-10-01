@@ -35,18 +35,13 @@ import org.lavinia.beans.CSVData;
 import org.lavinia.beans.Commit;
 
 public class MethodMetricsTest {
-	private static MethodMetrics methodMetric = new PulsarMetric("2017/09/06");
-
-	@Test
-	public void testConstructorParseException() {
-		methodMetric = new PulsarMetric("!");
-	}
+	private static MethodMetrics methodMetric = new PulsarMetric();
 
 	@Test
 	public void testGetDifferenceInDays() throws ParseException {
 		Date start = new SimpleDateFormat("yyyy/MM/dd").parse("2010/01/01");
 		Date end = new SimpleDateFormat("yyyy/MM/dd").parse("2010/01/05");
-		assertTrue(methodMetric.getDifferenceInDays(start, end) == 4.0);
+		assertTrue(MethodMetrics.getDifferenceInDays(start, end) == 4.0);
 	}
 
 	@Test
@@ -107,41 +102,37 @@ public class MethodMetricsTest {
 		expected.put(commits.get(5), 2);
 		expected.put(commits.get(6), 2);
 		expected.put(commits.get(7), 2);
-		assertEquals(expected, methodMetric.splitCommitsIntoTimeFrames(commits));
+		assertEquals(expected, MethodMetrics.splitCommitsIntoTimeFrames(commits));
 	}
 	/*
-	@Test
-	public void getActiveTimeFrameMethodPointsOne() throws ParseException {
-		CSVData csvData = new CSVData();
-		ArrayList<Commit> commits = new ArrayList<>();
-		Commit commit = new Commit();
-		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2016/08/01"));
-		commits.add(commit);
-
-		Commit lastCommit = new Commit();
-		lastCommit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2016/08/20"));
-		commits.add(lastCommit);
-
-		csvData.setCommits(commits);
-		HashMap<Commit, Integer> commitsIntoTimeFrames = methodMetric.splitCommitsIntoTimeFrames(commits);
-		assertTrue(methodMetric.getActiveTimeFrameMethodPoints(commit, lastCommit, commitsIntoTimeFrames) == 1);
-	}
-
-	@Test
-	public void getActiveTimeFrameMethodPointsZero() throws ParseException {
-		CSVData csvData = new CSVData();
-		ArrayList<Commit> commits = new ArrayList<>();
-		Commit commit = new Commit();
-		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2016/08/01"));
-		commits.add(commit);
-
-		Commit lastCommit = new Commit();
-		lastCommit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/20"));
-		commits.add(lastCommit);
-
-		csvData.setCommits(commits);
-		HashMap<Commit, Integer> commitsIntoTimeFrames = methodMetric.splitCommitsIntoTimeFrames(commits);
-		assertTrue(methodMetric.getActiveTimeFrameMethodPoints(commit, lastCommit, commitsIntoTimeFrames) == 1);
-	}
-	*/
+	 * @Test public void getActiveTimeFrameMethodPointsOne() throws
+	 * ParseException { CSVData csvData = new CSVData(); ArrayList<Commit>
+	 * commits = new ArrayList<>(); Commit commit = new Commit();
+	 * commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2016/08/01"));
+	 * commits.add(commit);
+	 * 
+	 * Commit lastCommit = new Commit(); lastCommit.setDate(new
+	 * SimpleDateFormat("yyyy/MM/dd").parse("2016/08/20"));
+	 * commits.add(lastCommit);
+	 * 
+	 * csvData.setCommits(commits); HashMap<Commit, Integer>
+	 * commitsIntoTimeFrames = methodMetric.splitCommitsIntoTimeFrames(commits);
+	 * assertTrue(methodMetric.getActiveTimeFrameMethodPoints(commit,
+	 * lastCommit, commitsIntoTimeFrames) == 1); }
+	 * 
+	 * @Test public void getActiveTimeFrameMethodPointsZero() throws
+	 * ParseException { CSVData csvData = new CSVData(); ArrayList<Commit>
+	 * commits = new ArrayList<>(); Commit commit = new Commit();
+	 * commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2016/08/01"));
+	 * commits.add(commit);
+	 * 
+	 * Commit lastCommit = new Commit(); lastCommit.setDate(new
+	 * SimpleDateFormat("yyyy/MM/dd").parse("2010/08/20"));
+	 * commits.add(lastCommit);
+	 * 
+	 * csvData.setCommits(commits); HashMap<Commit, Integer>
+	 * commitsIntoTimeFrames = methodMetric.splitCommitsIntoTimeFrames(commits);
+	 * assertTrue(methodMetric.getActiveTimeFrameMethodPoints(commit,
+	 * lastCommit, commitsIntoTimeFrames) == 1); }
+	 */
 }
