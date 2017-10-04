@@ -22,13 +22,17 @@
 package org.lavinia.metrics;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.lavinia.beans.CSVData;
 import org.lavinia.beans.Commit;
 
 public class SupernovaMetric extends MethodMetrics {
+	private Integer maximumTimeInterval = 0;
 
 	/**
 	 * @param sumOfAllLeaps
@@ -153,6 +157,131 @@ public class SupernovaMetric extends MethodMetrics {
 		return supernovaCriterionValues;
 	}
 
+	public ArrayList<Commit> getCommitsAfterMediumTimespan(HashMap<Commit, Integer> commitsIntoTimeFrames) {
+		Iterator<Map.Entry<Commit, Integer>> entries = commitsIntoTimeFrames.entrySet().iterator();
+		ArrayList<Commit> commitsAfterMediumTimespan = new ArrayList<>();
+		while (entries.hasNext()) {
+			Map.Entry<Commit, Integer> currentEntry = entries.next();
+			if (currentEntry.getValue() > MEDIUM_TIMESPAN_TF) {
+				commitsAfterMediumTimespan.add(currentEntry.getKey());
+			}
+		}
+		return commitsAfterMediumTimespan;
+	}
+
+	public HashMap<Commit, Integer> splitCommitsIntoTimeIntervals(ArrayList<Commit> commits) {
+		HashMap<Commit, Integer> commitsIntoTimeIntervals = new HashMap<>();
+		Integer currentTimeInterval = 0;
+		commitsIntoTimeIntervals.put(commits.get(0), currentTimeInterval);
+		for (int i = 1; i < commits.size(); ++i) {
+			if (getDifferenceInDays(commits.get(i - 1).getDate(), commits.get(i).getDate()) > TIME_FRAME) {
+				++currentTimeInterval;
+			}
+			commitsIntoTimeIntervals.put(commits.get(i), currentTimeInterval);
+		}
+		maximumTimeInterval = currentTimeInterval;
+		return commitsIntoTimeIntervals;
+	}
+
+	public ArrayList<Commit> sortAllCommitsAfterMediumTimespan(ArrayList<Commit> commitsAfterMediumTimespan) {
+		Collections.sort(commitsAfterMediumTimespan, new Comparator<Commit>() {
+		    @Override
+		    public int compare(Commit commit1, Commit commit2) {
+		        return commit1.getDate().compareTo(commit2.getDate());
+		    }
+		});
+		//Collections.sort(commitsAfterMediumTimespan, (commit1, commit2) -> commit1.getDate().compareTo(commit2.getDate()));
+		return commitsAfterMediumTimespan;
+	}
+	
+	/**
+	 * @param csvData
+	 * @return
+	 */
+	public HashMap<Commit, Integer> divideLifetimeInIntervals(CSVData csvData) {
+		ArrayList<Commit> commits = csvData.getCommits();
+		HashMap<Commit, Integer> commitsIntoTimeFrames = splitCommitsIntoTimeFrames(commits);
+		ArrayList<Commit> commitsAfterMediumTimespan = getCommitsAfterMediumTimespan(commitsIntoTimeFrames);
+		commitsAfterMediumTimespan = sortAllCommitsAfterMediumTimespan(commitsAfterMediumTimespan);
+		HashMap<Commit, Integer> lifetimeIntoIntervals = new HashMap<>();
+		lifetimeIntoIntervals = splitCommitsIntoTimeIntervals(commitsAfterMediumTimespan);
+		return lifetimeIntoIntervals;
+	}
+
+	/**
+	 * @param csvData
+	 * @return
+	 */
+	public Map<String, Object> getSupernovaTimeFrameCriterionValues(CSVData csvData) {
+		Map<String, Object> supernovaCriterionValues = new HashMap<>();
+		supernovaCriterionValues.put("isSupernova", false);
+		ArrayList<Commit> commits = csvData.getCommits();
+		ArrayList<Integer> changesList = csvData.getChangesList();
+		ArrayList<String> commitTypes = getCommitsTypes(changesList);
+		Integer methodGrowth = 0;
+		boolean commitOlderThanMediumTimespan = false;
+		Integer sumOfAllLeaps = 0;
+		Integer sumRecentLeaps = 0;
+		Integer deletedRefactoringLines = 0;
+		Integer countLeaps = 0;
+		Double averageSubsequentCommits = 0.0;
+		if (csvData.getActualSize() >= 0) {
+			HashMap<Commit, Integer> commitsIntoTimeFrames = splitCommitsIntoTimeFrames(commits);
+			for (HashMap.Entry<Commit, Integer> entry : commitsIntoTimeFrames.entrySet()) {
+				if (entry.getValue() > MEDIUM_TIMESPAN_TF) {
+
+				}
+				System.out.println(entry.getKey() + "/" + entry.getValue());
+			}
+			for (int i = 1; i < commits.size(); ++i) {
+				if (getDifferenceInDays(commits.get(commits.size() - 1).getDate(),
+						commits.get(i).getDate()) <= MEDIUM_TIMESPAN) {
+					sumRecentLeaps += changesList.get(i);
+				}
+				if (getDifferenceInDays(commits.get(0).getDate(), commits.get(i).getDate()) >= MEDIUM_TIMESPAN) {
+					methodGrowth = changesList.get(i);
+					commitOlderThanMediumTimespan = true;
+				}
+				for (int j = i + 1; j < commits.size() - 1; ++j) {
+					Long diffDays = getDifferenceInDays(commits.get(i).getDate(), commits.get(j).getDate());
+					if (diffDays <= SHORT_TIMESPAN) {
+						sumOfAllLeaps += changesList.get(j);
+						if (commitTypes.get(i).equals("refactor")) {
+							deletedRefactoringLines += changesList.get(i);
+						}
+						if (commitOlderThanMediumTimespan) {
+							methodGrowth += changesList.get(j);
+							if (methodGrowth >= MAJOR_SIZE_CHANGE
+									&& !supernovaCriterionValues.get("isSupernova").equals(true)) {
+								supernovaCriterionValues.put("isSupernova", true);
+							}
+						}
+					} else if (diffDays <= MEDIUM_TIMESPAN) {
+						if (commitTypes.get(i).equals("refactor")) {
+							deletedRefactoringLines += changesList.get(i);
+						}
+					} else {
+						++countLeaps;
+						break;
+					}
+				}
+				commitOlderThanMediumTimespan = false;
+			}
+		}
+		if (countLeaps > 0) {
+			averageSubsequentCommits = (double) -deletedRefactoringLines / (double) countLeaps;
+		}
+		supernovaCriterionValues.put("sumOfAllLeaps", sumOfAllLeaps);
+		supernovaCriterionValues.put("sumRecentLeaps", sumRecentLeaps);
+		supernovaCriterionValues.put("averageSubsequentCommits", averageSubsequentCommits);
+		/*
+		 * for (Map.Entry<String, Object> entry :
+		 * supernovaCriterionValues.entrySet()) {
+		 * System.out.println(entry.getKey() + " = " + entry.getValue()); }
+		 */
+		return supernovaCriterionValues;
+	}
+
 	/**
 	 * Calculates the overall Supernova severity points of a method.
 	 * 
@@ -196,4 +325,9 @@ public class SupernovaMetric extends MethodMetrics {
 	public Boolean isSupernova(CSVData csvData) {
 		return (Boolean) getSupernovaCriterionValues(csvData).get("isSupernova");
 	}
+
+	public Integer getMaximumTimeInterval() {
+		return maximumTimeInterval;
+	}
+
 }

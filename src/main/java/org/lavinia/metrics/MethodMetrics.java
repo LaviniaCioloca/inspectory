@@ -69,10 +69,12 @@ public abstract class MethodMetrics {
 
 	/**
 	 * @param commits
-	 * @return
+	 * @return A HashMap for every commit in the commits list with the number of
+	 *         the time-frame in which it is.
 	 */
 	protected static HashMap<Commit, Integer> splitCommitsIntoTimeFrames(ArrayList<Commit> commits) {
-		// System.out.println("Start - splitCommitsIntoTimeFrames: " + new Date());
+		// System.out.println("Start - splitCommitsIntoTimeFrames: " + new
+		// Date());
 		HashMap<Commit, Integer> commitsIntoTimeFrames = new HashMap<>();
 		Integer currentTimeFrame = 0;
 		commitsIntoTimeFrames.put(commits.get(0), currentTimeFrame);
@@ -83,12 +85,13 @@ public abstract class MethodMetrics {
 			commitsIntoTimeFrames.put(commits.get(i), currentTimeFrame);
 		}
 		maximumTimeFrameNumber = currentTimeFrame;
-		// System.out.println("Stop - splitCommitsIntoTimeFrames: " + new Date());
+		// System.out.println("Stop - splitCommitsIntoTimeFrames: " + new
+		// Date());
 		return commitsIntoTimeFrames;
 	}
 
 	/**
-	 * Categorize commits into 3 types and return that list.
+	 * Categorizes commits into 3 types and return that list.
 	 * 
 	 * @param changesList
 	 *            ArrayList with number of lines the method suffered during the

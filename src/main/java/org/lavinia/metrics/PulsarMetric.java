@@ -75,19 +75,6 @@ public class PulsarMetric extends MethodMetrics {
 	}
 
 	/**
-	 * @param countRecentPulsarCycles
-	 * @param averageSizeIncrease
-	 * @param fileSize
-	 * @param commit
-	 * @return An Integer representing the total points of Pulsar severity.
-	 */
-	public Integer countPulsarSeverityPoints(Integer countRecentPulsarCycles, Double averageSizeIncrease,
-			Integer fileSize, Commit commit) {
-		return 1 + getRecentCyclesPoints(countRecentPulsarCycles) + getAverageSizeIncrease(averageSizeIncrease)
-				+ getMethodSizePoints(fileSize) + getActiveMethodPoints(commit);
-	}
-
-	/**
 	 * If a method has been actively changed over the last LONG_TIMESPAN then it
 	 * is an Actively Changed method.
 	 * 
@@ -136,6 +123,19 @@ public class PulsarMetric extends MethodMetrics {
 			}
 		}
 		return countActiveChanges >= ACTIVELY_CHANGED;
+	}
+
+	/**
+	 * @param countRecentPulsarCycles
+	 * @param averageSizeIncrease
+	 * @param fileSize
+	 * @param commit
+	 * @return An Integer representing the total points of Pulsar severity.
+	 */
+	public Integer countPulsarSeverityPoints(Integer countRecentPulsarCycles, Double averageSizeIncrease,
+			Integer fileSize, Commit commit) {
+		return 1 + getRecentCyclesPoints(countRecentPulsarCycles) + getAverageSizeIncrease(averageSizeIncrease)
+				+ getMethodSizePoints(fileSize) + getActiveMethodPoints(commit);
 	}
 
 	/**

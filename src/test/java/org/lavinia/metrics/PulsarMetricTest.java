@@ -331,6 +331,7 @@ public class PulsarMetricTest {
 	public void testGetPulsarCriterionValues() throws ParseException {
 		CSVData csvData = new CSVData();
 		csvData.setActualSize(250);
+		Date dateNow = new SimpleDateFormat("yyyy/MM/dd").parse("2017/07/01");
 		ArrayList<Integer> changesList = new ArrayList<>();
 		changesList.add(-10);
 		changesList.add(-10);
@@ -375,12 +376,13 @@ public class PulsarMetricTest {
 		commits.add(commit);
 		csvData.setChangesList(changesList);
 		csvData.setCommits(commits);
-		Map<String, Object> pulsarCriterionValues = new HashMap<>();
-		pulsarCriterionValues.put("isPulsar", true);
-		pulsarCriterionValues.put("averageSizeIncrease", 18.0);
-		pulsarCriterionValues.put("countPulsarCycles", 3);
-		pulsarCriterionValues.put("countRecentPulsarCycles", 3);
-		assertEquals(pulsarMetric.getPulsarCriterionValues(csvData), pulsarCriterionValues);
+		Map<String, Object> expectedPulsarCriterionValues = new HashMap<>();
+		expectedPulsarCriterionValues.put("isPulsar", true);
+		expectedPulsarCriterionValues.put("averageSizeIncrease", 18.0);
+		expectedPulsarCriterionValues.put("countPulsarCycles", 3);
+		expectedPulsarCriterionValues.put("countRecentPulsarCycles", 3);
+		MethodMetrics.setNow(dateNow);
+		assertEquals(expectedPulsarCriterionValues, pulsarMetric.getPulsarCriterionValues(csvData));
 	}
 
 	@Test

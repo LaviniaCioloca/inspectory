@@ -25,6 +25,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -115,6 +116,9 @@ public class FileHistoryInspect {
 	}
 
 	/**
+	 * Adds to the list with all commits the ArrayList of commits for every
+	 * method.
+	 * 
 	 * @param commits
 	 */
 	public void addToAllCommits(ArrayList<Commit> commits) {
@@ -123,13 +127,27 @@ public class FileHistoryInspect {
 		}
 	}
 
+	/**
+	 * Sorts the ArrayList containing all the commits in the repository in
+	 * chronological order.
+	 */
 	public void sortAllCommits() {
 		// System.out.println("\tStart - sortAllCommits: " + new Date());
-		Collections.sort(allCommits, (commit1, commit2) -> commit1.getDate().compareTo(commit2.getDate()));
+		Collections.sort(allCommits, new Comparator<Commit>() {
+		    @Override
+		    public int compare(Commit commit1, Commit commit2) {
+		        return commit1.getDate().compareTo(commit2.getDate());
+		    }
+		});
+		//Collections.sort(allCommits, (commit1, commit2) -> commit1.getDate().compareTo(commit2.getDate()));
 		// System.out.println("\tStop - sortAllCommits: " + new Date());
 	}
 
 	/**
+	 * Takes all the commits from the csvDataList that will be written in the
+	 * CSV file and add them to the allCommits ArrayList. After that, sorts the
+	 * ArrayList chronological.
+	 * 
 	 * @param csvDataList
 	 */
 	public void createAndSortAllCommits(ArrayList<CSVData> csvDataList) {
