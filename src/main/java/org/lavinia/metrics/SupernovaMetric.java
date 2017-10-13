@@ -89,7 +89,7 @@ public class SupernovaMetric extends MethodMetrics {
 			Double averageSubsequentCommits, Integer fileSize, Commit commit) {
 		return 1 + getLeapsSizePoints(sumOfAllLeaps) + getRecentLeapsSizePoints(sumRecentLeaps)
 				+ getSubsequentRefactoringPoints(averageSubsequentCommits) + getMethodSizePoints(fileSize)
-				+ getActiveMethodPoints(commit);
+				+ getActiveTimeFrameMethodPoints(commit);
 	}
 
 	/**

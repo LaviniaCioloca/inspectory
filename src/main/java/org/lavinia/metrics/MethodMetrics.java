@@ -138,12 +138,14 @@ public abstract class MethodMetrics {
 	 * @return An Integer: 0 or 1 representing the points of method's activity
 	 *         in metrics.
 	 */
+	/*
 	public Integer getActiveMethodPoints(Commit commit) {
 		if (getDifferenceInDays(commit.getDate(), now) <= MEDIUM_TIMESPAN) {
 			return 1;
 		}
 		return 0;
 	}
+	*/
 
 	/**
 	 * @param commit
@@ -153,7 +155,7 @@ public abstract class MethodMetrics {
 	 */
 	public Integer getActiveTimeFrameMethodPoints(Commit lastCommit) {
 		for (HashMap.Entry<Commit, Integer> currentEntry : allCommitsIntoTimeFrames.entrySet()) {
-			if ((currentEntry.getValue() <= maximumTimeFrameNumber - MEDIUM_TIMESPAN_TF)
+			if ((currentEntry.getValue() >= maximumTimeFrameNumber - MEDIUM_TIMESPAN_TF)
 					&& (currentEntry.getKey().equals(lastCommit))) {
 				return 1;
 			}

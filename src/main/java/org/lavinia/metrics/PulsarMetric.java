@@ -74,6 +74,7 @@ public class PulsarMetric extends MethodMetrics {
 		return 0;
 	}
 
+	
 	/**
 	 * If a method has been actively changed over the last LONG_TIMESPAN then it
 	 * is an Actively Changed method.
@@ -81,6 +82,7 @@ public class PulsarMetric extends MethodMetrics {
 	 * @param csvData
 	 * @return A Boolean: true if the method is actively changed.
 	 */
+	/*
 	public Boolean isMethodActivelyChanged(CSVData csvData) {
 		Integer countActiveChanges = 0;
 		ArrayList<Commit> commits = csvData.getCommits();
@@ -93,7 +95,8 @@ public class PulsarMetric extends MethodMetrics {
 		}
 		return countActiveChanges >= ACTIVELY_CHANGED;
 	}
-
+	*/
+	
 	/**
 	 * If a method has been actively changed over the last LONG_TIMESPAN
 	 * time-frames then it is an Actively Changed method.
@@ -132,12 +135,20 @@ public class PulsarMetric extends MethodMetrics {
 	 * @param commit
 	 * @return An Integer representing the total points of Pulsar severity.
 	 */
+	/*
 	public Integer countPulsarSeverityPoints(Integer countRecentPulsarCycles, Double averageSizeIncrease,
 			Integer fileSize, Commit commit) {
 		return 1 + getRecentCyclesPoints(countRecentPulsarCycles) + getAverageSizeIncrease(averageSizeIncrease)
 				+ getMethodSizePoints(fileSize) + getActiveMethodPoints(commit);
 	}
-
+	*/
+	
+	public Integer countPulsarSeverityPoints(Integer countRecentPulsarCycles, Double averageSizeIncrease,
+			Integer fileSize, Commit commit) {
+		return 1 + getRecentCyclesPoints(countRecentPulsarCycles) + getAverageSizeIncrease(averageSizeIncrease)
+				+ getMethodSizePoints(fileSize) + getActiveTimeFrameMethodPoints(commit);
+	}
+	
 	/**
 	 * @param countPulsarCycles
 	 * @param sumOfSizeIncrease
@@ -161,7 +172,7 @@ public class PulsarMetric extends MethodMetrics {
 	 */
 	public Integer getPulsarSeverity(CSVData csvData) {
 		ArrayList<Commit> commits = csvData.getCommits();
-		Map<String, Object> pulsarCriterionValues = getPulsarCriterionValues(csvData);
+		Map<String, Object> pulsarCriterionValues = getPulsarTimeFrameCriterionValues(csvData);
 		Integer countRecentPulsarCycles = (Integer) pulsarCriterionValues.get("countRecentPulsarCycles");
 		Double averageSizeIncrease = (Double) pulsarCriterionValues.get("averageSizeIncrease");
 		/*
@@ -182,12 +193,14 @@ public class PulsarMetric extends MethodMetrics {
 	 * @param commitDate
 	 * @return An Integer: 1 if Pulsar cycle is recent and 0 if false.
 	 */
+	/*
 	public Integer checkIfRecentPulsarCycle(Date commitDate) {
 		if (getDifferenceInDays(commitDate, now) <= MEDIUM_TIMESPAN) {
 			return 1;
 		}
 		return 0;
 	}
+	*/
 
 	/**
 	 * @param commitDate
@@ -212,6 +225,7 @@ public class PulsarMetric extends MethodMetrics {
 	 *         averageSizeIncrease; countPulsarCycles; countRecentPulsarCycles;
 	 *         isPulsar.
 	 */
+	/*
 	public Map<String, Object> getPulsarCriterionValues(CSVData csvData) {
 		ArrayList<Commit> commits = csvData.getCommits();
 		Map<String, Object> pulsarCriterionValues = new HashMap<>();
@@ -253,13 +267,16 @@ public class PulsarMetric extends MethodMetrics {
 		pulsarCriterionValues.put("averageSizeIncrease", averageSizeIncrease);
 		pulsarCriterionValues.put("countPulsarCycles", countPulsarCycles);
 		pulsarCriterionValues.put("countRecentPulsarCycles", countRecentPulsarCycles);
+		*/
 		/*
 		 * for (Map.Entry<String, Object> entry :
 		 * pulsarCriterionValues.entrySet()) { System.out.println(entry.getKey()
 		 * + " = " + entry.getValue()); }
 		 */
+	/*
 		return pulsarCriterionValues;
 	}
+	*/
 
 	public Map<String, Object> getPulsarTimeFrameCriterionValues(CSVData csvData) {
 		ArrayList<Commit> commits = csvData.getCommits();
@@ -271,7 +288,7 @@ public class PulsarMetric extends MethodMetrics {
 		Integer countPulsarCycles = 0;
 		Integer methodGrowth = 0;
 		if (csvData.getActualSize() >= SIGNIFICANT_METHOD_SIZE) {
-			if (isMethodActivelyChanged(csvData)) {
+			if (isMethodTimeFrameActivelyChanged(csvData)) {
 				ArrayList<Integer> changesList = csvData.getChangesList();
 				ArrayList<String> commitsTypes = getCommitsTypes(changesList);
 				for (int i = 0; i < commitsTypes.size() - 1; ++i) {
@@ -323,6 +340,6 @@ public class PulsarMetric extends MethodMetrics {
 	 * @return True if the method is Pulsar, false otherwise.
 	 */
 	public Boolean isPulsar(CSVData csvData) {
-		return (Boolean) getPulsarCriterionValues(csvData).get("isPulsar");
+		return (Boolean) getPulsarTimeFrameCriterionValues(csvData).get("isPulsar");
 	}
 }
