@@ -71,6 +71,7 @@ public class SupernovaMetricTest {
 		commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/06/01"));
 		commits.add(commit);
+		csvData.setActualSize(100);
 		csvData.setChangesList(changesList);
 		csvData.setCommits(commits);
 		assertTrue(supernovaMetric.isSupernova(csvData));
@@ -102,6 +103,7 @@ public class SupernovaMetricTest {
 		commits.add(commit);
 		csvData.setChangesList(changesList);
 		csvData.setCommits(commits);
+		csvData.setActualSize(100);
 		assertFalse(supernovaMetric.isSupernova(csvData));
 	}
 
@@ -171,7 +173,7 @@ public class SupernovaMetricTest {
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/09/01"));
 		MethodMetrics.setAllCommits(new ArrayList<>(Arrays.asList(commit)));
 		MethodMetrics.setAllCommitsIntoTimeFrames();
-		assertTrue(supernovaMetric.getActiveTimeFrameMethodPoints(commit) == 1);
+		assertTrue(supernovaMetric.getActiveMethodPoints(commit) == 1);
 	}
 
 	@Test
@@ -198,7 +200,7 @@ public class SupernovaMetricTest {
 		commits.add(commit2);
 		MethodMetrics.setAllCommits(commits);
 		MethodMetrics.setAllCommitsIntoTimeFrames();
-		assertTrue(supernovaMetric.getActiveTimeFrameMethodPoints(commit1) == 0);
+		assertTrue(supernovaMetric.getActiveMethodPoints(commit1) == 0);
 	}
 
 	@Test

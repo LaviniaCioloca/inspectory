@@ -228,14 +228,14 @@ public class PulsarMetricTest {
 		commits.add(commit);
 		MethodMetrics.setAllCommits(commits);
 		MethodMetrics.setAllCommitsIntoTimeFrames();
-		assertTrue(pulsarMetric.getActiveTimeFrameMethodPoints(commit) == 1);
+		assertTrue(pulsarMetric.getActiveMethodPoints(commit) == 1);
 	}
 
 	@Test
 	public void testGetActiveFilePointsZero() throws ParseException {
 		Commit commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/09/01"));
-		assertTrue(pulsarMetric.getActiveTimeFrameMethodPoints(commit) == 0);
+		assertTrue(pulsarMetric.getActiveMethodPoints(commit) == 0);
 	}
 
 	@Test
@@ -310,7 +310,7 @@ public class PulsarMetricTest {
 		CSVData csvData = new CSVData();
 		ArrayList<Commit> commits = new ArrayList<>();
 		csvData.setCommits(commits);
-		assertTrue(pulsarMetric.isMethodTimeFrameActivelyChanged(csvData) == false);
+		assertTrue(pulsarMetric.isMethodActivelyChanged(csvData) == false);
 	}
 
 	@Test
@@ -335,7 +335,7 @@ public class PulsarMetricTest {
 		csvData.setCommits(commits);
 		MethodMetrics.setAllCommits(commits);
 		MethodMetrics.setAllCommitsIntoTimeFrames();
-		assertTrue(pulsarMetric.isMethodTimeFrameActivelyChanged(csvData) == true);
+		assertTrue(pulsarMetric.isMethodActivelyChanged(csvData) == true);
 	}
 
 	@Test
@@ -351,7 +351,7 @@ public class PulsarMetricTest {
 	@Test
 	public void testCheckIfRecentPulsarCycleZero() throws ParseException {
 		Date date = new SimpleDateFormat("yyyy/MM/dd").parse("2010/01/01");
-		assertTrue(pulsarMetric.checkIfRecentTimeFramePulsarCycle(date) == 0);
+		assertTrue(pulsarMetric.checkIfRecentPulsarCycle(date) == 0);
 	}
 
 	@Test
@@ -361,7 +361,7 @@ public class PulsarMetricTest {
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/08/01"));
 		MethodMetrics.setAllCommits(new ArrayList<Commit>(Arrays.asList(commit)));
 		MethodMetrics.setAllCommitsIntoTimeFrames();
-		assertTrue(pulsarMetric.checkIfRecentTimeFramePulsarCycle(date) == 1);
+		assertTrue(pulsarMetric.checkIfRecentPulsarCycle(date) == 1);
 	}
 
 	@Test
@@ -421,7 +421,7 @@ public class PulsarMetricTest {
 		MethodMetrics.setAllCommits(commits);
 		MethodMetrics.setAllCommitsIntoTimeFrames();
 		MethodMetrics.setNow(dateNow);
-		assertEquals(expectedPulsarCriterionValues, pulsarMetric.getPulsarTimeFrameCriterionValues(csvData));
+		assertEquals(expectedPulsarCriterionValues, pulsarMetric.getPulsarCriterionValues(csvData));
 	}
 
 	@Test
@@ -469,7 +469,7 @@ public class PulsarMetricTest {
 		commits.add(commit3);
 		CSVData csvData = new CSVData();
 		csvData.setCommits(commits);
-		assertEquals(pulsarMetric.isMethodTimeFrameActivelyChanged(csvData), true);
+		assertEquals(pulsarMetric.isMethodActivelyChanged(csvData), true);
 	}
 
 	@Test
@@ -488,7 +488,7 @@ public class PulsarMetricTest {
 		commits.add(commit2);
 		CSVData csvData = new CSVData();
 		csvData.setCommits(commits);
-		assertEquals(pulsarMetric.isMethodTimeFrameActivelyChanged(csvData), false);
+		assertEquals(pulsarMetric.isMethodActivelyChanged(csvData), false);
 	}
 
 	@Test
@@ -529,6 +529,6 @@ public class PulsarMetricTest {
 		commits.add(commit3);
 		CSVData csvData = new CSVData();
 		csvData.setCommits(commits);
-		assertEquals(pulsarMetric.isMethodTimeFrameActivelyChanged(csvData), false);
+		assertEquals(pulsarMetric.isMethodActivelyChanged(csvData), false);
 	}
 }

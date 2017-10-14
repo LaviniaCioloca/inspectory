@@ -148,12 +148,15 @@ public abstract class MethodMetrics {
 	*/
 
 	/**
-	 * @param commit
+	 * If the method is active: the latest activity of the method has occurred
+	 * in of the most recent MEDIUM_TIMESPAN time-frames, returns 1 point.
+	 * 
 	 * @param lastCommit
-	 * @param commitsIntoTimeFrames
-	 * @return
+	 *            Latest commit in list
+	 * @return An Integer: 0 or 1 representing the points of method's activity
+	 *         in metrics.
 	 */
-	public Integer getActiveTimeFrameMethodPoints(Commit lastCommit) {
+	public Integer getActiveMethodPoints(Commit lastCommit) {
 		for (HashMap.Entry<Commit, Integer> currentEntry : allCommitsIntoTimeFrames.entrySet()) {
 			if ((currentEntry.getValue() >= maximumTimeFrameNumber - MEDIUM_TIMESPAN_TF)
 					&& (currentEntry.getKey().equals(lastCommit))) {
