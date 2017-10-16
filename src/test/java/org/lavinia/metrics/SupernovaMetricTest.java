@@ -40,7 +40,7 @@ import org.lavinia.beans.Commit;
 
 public class SupernovaMetricTest {
 	SupernovaMetric supernovaMetric = new SupernovaMetric();
-	
+
 	@After
 	public void tearDown() {
 		MethodMetrics.setAllCommits(new ArrayList<Commit>());
@@ -50,7 +50,8 @@ public class SupernovaMetricTest {
 	@Test
 	public void testIsSupernovaTrue() throws ParseException {
 		CSVData csvData = new CSVData();
-		ArrayList<Integer> changesList = new ArrayList<Integer>(Arrays.asList(210, 110, 50, -250, -40));
+		ArrayList<Integer> changesList = new ArrayList<Integer>(
+				Arrays.asList(210, 110, 50, -250, -40, 25, -10, 15, -10, 5, -15, 50, 15));
 		ArrayList<Commit> commits = new ArrayList<>();
 		Commit commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/01/01"));
@@ -70,6 +71,38 @@ public class SupernovaMetricTest {
 
 		commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/06/01"));
+		commits.add(commit);
+
+		commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/01"));
+		commits.add(commit);
+
+		commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/09/01"));
+		commits.add(commit);
+
+		commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/10/01"));
+		commits.add(commit);
+
+		commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/11/01"));
+		commits.add(commit);
+
+		commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/12/15"));
+		commits.add(commit);
+		
+		commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/20"));
+		commits.add(commit);
+
+		commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/21"));
+		commits.add(commit);
+
+		commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/03/15"));
 		commits.add(commit);
 		csvData.setActualSize(100);
 		csvData.setChangesList(changesList);
@@ -182,19 +215,19 @@ public class SupernovaMetricTest {
 		Commit commit1 = new Commit();
 		commit1.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/09/01"));
 		commits.add(commit1);
-		
+
 		Commit commit2 = new Commit();
 		commit2.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/01/01"));
 		commits.add(commit2);
-		
+
 		commit2 = new Commit();
 		commit2.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/03/01"));
 		commits.add(commit2);
-		
+
 		commit2 = new Commit();
 		commit2.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/04/15"));
 		commits.add(commit2);
-		
+
 		commit2 = new Commit();
 		commit2.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/08/01"));
 		commits.add(commit2);
@@ -276,6 +309,12 @@ public class SupernovaMetricTest {
 		changesList.add(20);
 		changesList.add(-10);
 		changesList.add(60);
+		changesList.add(-20);
+		changesList.add(-10);
+		changesList.add(-6);
+		changesList.add(10);
+		changesList.add(-6);
+		changesList.add(1);
 		ArrayList<Commit> commits = new ArrayList<>();
 		Commit commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2016/08/01"));
@@ -308,13 +347,37 @@ public class SupernovaMetricTest {
 		commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/11/04"));
 		commits.add(commit);
+
+		commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/12/04"));
+		commits.add(commit);
+
+		commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2018/02/15"));
+		commits.add(commit);
+
+		commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2018/04/30"));
+		commits.add(commit);
+
+		commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2018/05/15"));
+		commits.add(commit);
+
+		commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2018/06/20"));
+		commits.add(commit);
+
+		commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2018/07/30"));
+		commits.add(commit);
 		csvData.setChangesList(changesList);
 		csvData.setCommits(commits);
 		Map<String, Object> supernovaCriterionValues = new HashMap<>();
 		supernovaCriterionValues.put("isSupernova", false);
-		supernovaCriterionValues.put("sumOfAllLeaps", 2);
-		supernovaCriterionValues.put("sumRecentLeaps", 54);
-		supernovaCriterionValues.put("averageSubsequentCommits", 80.0);
+		supernovaCriterionValues.put("sumOfAllLeaps", -31);
+		supernovaCriterionValues.put("sumRecentLeaps", 5);
+		supernovaCriterionValues.put("averageSubsequentCommits", (double) 22 / (double) 3);
 		assertEquals(supernovaMetric.getSupernovaCriterionValues(csvData), supernovaCriterionValues);
 	}
 
@@ -344,10 +407,6 @@ public class SupernovaMetricTest {
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/01/01"));
 		commits.add(commit);
 
-		commit = new Commit();
-		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/02/03"));
-		commits.add(commit);
-
 		Commit commit1 = new Commit();
 		commit1.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/04/01"));
 		commits.add(commit1);
@@ -372,13 +431,6 @@ public class SupernovaMetricTest {
 		expectedLifetimeIntoIntervals.put(commit2, 1);
 		expectedLifetimeIntoIntervals.put(commit3, 2);
 		expectedLifetimeIntoIntervals.put(commit4, 3);
-		/*
-		 * Iterator<Map.Entry<Commit, Integer>> entries =
-		 * lifetimeIntoIntervals.entrySet().iterator(); while
-		 * (entries.hasNext()) { Map.Entry<Commit, Integer> entry =
-		 * entries.next(); System.out.println("Key = " + entry.getKey() +
-		 * ", Value = " + entry.getValue()); }
-		 */
 		assertEquals(expectedLifetimeIntoIntervals, lifetimeIntoIntervals);
 	}
 }
