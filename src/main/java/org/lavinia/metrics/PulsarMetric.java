@@ -30,6 +30,7 @@ import org.lavinia.beans.CSVData;
 import org.lavinia.beans.Commit;
 
 public class PulsarMetric extends MethodMetrics {
+	private final static Integer MANY_PULSAR_CYCLES = 3; // commits
 
 	/**
 	 * @param countRecentPulsarCycles
@@ -75,22 +76,6 @@ public class PulsarMetric extends MethodMetrics {
 	}
 
 	/**
-	 * If a method has been actively changed over the last LONG_TIMESPAN then it
-	 * is an Actively Changed method.
-	 * 
-	 * @param csvData
-	 * @return A Boolean: true if the method is actively changed.
-	 */
-	/*
-	 * public Boolean isMethodActivelyChanged(CSVData csvData) { Integer
-	 * countActiveChanges = 0; ArrayList<Commit> commits = csvData.getCommits();
-	 * for (int i = commits.size() - 1; i >= 0; --i) { if
-	 * (getDifferenceInDays(commits.get(i).getDate(), now) <= LONG_TIMESPAN) {
-	 * ++countActiveChanges; } else { break; } } return countActiveChanges >=
-	 * ACTIVELY_CHANGED; }
-	 */
-
-	/**
 	 * If a method has been actively changed over the last LONG_TIMESPAN
 	 * time-frames then it is an Actively Changed method.
 	 * 
@@ -108,7 +93,7 @@ public class PulsarMetric extends MethodMetrics {
 			latestCommits.add(commits.get(i));
 		}
 		for (int i = allCommits.size() - 1; i >= 0; --i) {
-			if ((allCommitsIntoTimeFrames.get(allCommits.get(i)) >= maximumTimeFrameNumber - LONG_TIMESPAN_TF)) {
+			if ((allCommitsIntoTimeFrames.get(allCommits.get(i)) >= maximumTimeFrameNumber - LONG_TIMESPAN)) {
 				for (int j = 0; j < latestCommits.size(); ++j) {
 					if (allCommits.get(i).equals(latestCommits.get(j))) {
 						++countActiveChanges;
@@ -193,7 +178,7 @@ public class PulsarMetric extends MethodMetrics {
 	 */
 	public Integer checkIfRecentPulsarCycle(Date commitDate) {
 		for (int i = allCommits.size() - 1; i >= 0; --i) {
-			if ((allCommitsIntoTimeFrames.get(allCommits.get(i)) >= maximumTimeFrameNumber - MEDIUM_TIMESPAN_TF)) {
+			if ((allCommitsIntoTimeFrames.get(allCommits.get(i)) >= maximumTimeFrameNumber - MEDIUM_TIMESPAN)) {
 				if (allCommits.get(i).getDate().compareTo(commitDate) <= 0) {
 					return 1;
 				} else {

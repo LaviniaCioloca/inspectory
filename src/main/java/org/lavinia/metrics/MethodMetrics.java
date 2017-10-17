@@ -34,13 +34,9 @@ public abstract class MethodMetrics {
 	protected final static Integer VERY_LARGE_METHOD = 2 * SIGNIFICANT_METHOD_SIZE;
 	protected final static Integer EXTREMELY_LARGE_METHOD = 3 * SIGNIFICANT_METHOD_SIZE;
 	protected final static Integer TIME_FRAME = 28; // days
-	protected final static Integer SHORT_TIMESPAN = 1 * TIME_FRAME;
-	protected final static Integer MEDIUM_TIMESPAN = 3 * TIME_FRAME;
-	protected final static Integer LONG_TIMESPAN = 6 * TIME_FRAME;
-	protected final static Integer SHORT_TIMESPAN_TF = 1;
-	protected final static Integer MEDIUM_TIMESPAN_TF = 3;
-	protected final static Integer LONG_TIMESPAN_TF = 6;
-	protected final static Integer MANY_PULSAR_CYCLES = 3; // commits
+	protected final static Integer SHORT_TIMESPAN = 1;
+	protected final static Integer MEDIUM_TIMESPAN = 3;
+	protected final static Integer LONG_TIMESPAN = 6;
 	protected final static Integer SMALL_SIZE_CHANGE = 5; // lines
 	protected final static Integer MAJOR_SIZE_CHANGE = 1 * SIGNIFICANT_METHOD_SIZE;
 	protected final static Integer ACTIVELY_CHANGED = 3; // times changed
@@ -73,8 +69,6 @@ public abstract class MethodMetrics {
 	 *         the time-frame in which it is.
 	 */
 	protected static HashMap<Commit, Integer> splitCommitsIntoTimeFrames(ArrayList<Commit> commits) {
-		// System.out.println("Start - splitCommitsIntoTimeFrames: " + new
-		// Date());
 		HashMap<Commit, Integer> commitsIntoTimeFrames = new HashMap<>();
 		Integer currentTimeFrame = 0;
 		commitsIntoTimeFrames.put(commits.get(0), currentTimeFrame);
@@ -85,8 +79,6 @@ public abstract class MethodMetrics {
 			commitsIntoTimeFrames.put(commits.get(i), currentTimeFrame);
 		}
 		maximumTimeFrameNumber = currentTimeFrame;
-		// System.out.println("Stop - splitCommitsIntoTimeFrames: " + new
-		// Date());
 		return commitsIntoTimeFrames;
 	}
 
@@ -102,11 +94,11 @@ public abstract class MethodMetrics {
 	protected ArrayList<String> getCommitsTypes(ArrayList<Integer> changesList) {
 		ArrayList<String> commitsTypes = new ArrayList<String>();
 		for (int i = 0; i < changesList.size(); ++i) {
-			if (changesList.get(i) < MIN_REFINE_LINES) { // refactor
+			if (changesList.get(i) < MIN_REFINE_LINES) { 
 				commitsTypes.add("refactor");
-			} else if (changesList.get(i) >= MIN_REFINE_LINES && changesList.get(i) <= MAX_REFINE_LINES) { // refine
+			} else if (changesList.get(i) >= MIN_REFINE_LINES && changesList.get(i) <= MAX_REFINE_LINES) { 
 				commitsTypes.add("refine");
-			} else { // develop
+			} else { 
 				commitsTypes.add("develop");
 			}
 		}
@@ -133,24 +125,6 @@ public abstract class MethodMetrics {
 	 * If the method is active: the latest activity of the method has occurred
 	 * in of the most recent MEDIUM_TIMESPAN time-frames, returns 1 point.
 	 * 
-	 * @param commit
-	 *            Latest commit in list
-	 * @return An Integer: 0 or 1 representing the points of method's activity
-	 *         in metrics.
-	 */
-	/*
-	public Integer getActiveMethodPoints(Commit commit) {
-		if (getDifferenceInDays(commit.getDate(), now) <= MEDIUM_TIMESPAN) {
-			return 1;
-		}
-		return 0;
-	}
-	*/
-
-	/**
-	 * If the method is active: the latest activity of the method has occurred
-	 * in of the most recent MEDIUM_TIMESPAN time-frames, returns 1 point.
-	 * 
 	 * @param lastCommit
 	 *            Latest commit in list
 	 * @return An Integer: 0 or 1 representing the points of method's activity
@@ -158,7 +132,7 @@ public abstract class MethodMetrics {
 	 */
 	public Integer getActiveMethodPoints(Commit lastCommit) {
 		for (HashMap.Entry<Commit, Integer> currentEntry : allCommitsIntoTimeFrames.entrySet()) {
-			if ((currentEntry.getValue() >= maximumTimeFrameNumber - MEDIUM_TIMESPAN_TF)
+			if ((currentEntry.getValue() >= maximumTimeFrameNumber - MEDIUM_TIMESPAN)
 					&& (currentEntry.getKey().equals(lastCommit))) {
 				return 1;
 			}

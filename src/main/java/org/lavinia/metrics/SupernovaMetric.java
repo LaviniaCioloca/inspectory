@@ -149,7 +149,7 @@ public class SupernovaMetric extends MethodMetrics {
 		ArrayList<Commit> commitsAfterMediumTimespan = new ArrayList<>();
 		while (entries.hasNext()) {
 			Map.Entry<Commit, Integer> currentEntry = entries.next();
-			if (currentEntry.getValue() >= MEDIUM_TIMESPAN_TF) {
+			if (currentEntry.getValue() >= MEDIUM_TIMESPAN) {
 				commitsAfterMediumTimespan.add(currentEntry.getKey());
 			}
 		}
@@ -165,7 +165,8 @@ public class SupernovaMetric extends MethodMetrics {
 		Integer currentTimeInterval = 0;
 		commitsIntoTimeIntervals.put(commits.get(0), currentTimeInterval);
 		for (int i = 1; i < commits.size(); ++i) {
-			if (getDifferenceInDays(commits.get(i - 1).getDate(), commits.get(i).getDate()) > SHORT_TIMESPAN) {
+			if (getDifferenceInDays(commits.get(i - 1).getDate(), commits.get(i).getDate()) > SHORT_TIMESPAN
+					* TIME_FRAME) {
 				++currentTimeInterval;
 			}
 			commitsIntoTimeIntervals.put(commits.get(i), currentTimeInterval);
@@ -249,14 +250,14 @@ public class SupernovaMetric extends MethodMetrics {
 			for (HashMap.Entry<Commit, Integer> entry : commitsIntoTimeIntervals.entrySet()) {
 				sumOfAllLeaps += commitsAndTheirChanges.get(entry.getKey());
 				if (getDifferenceInDays(entry.getKey().getDate(),
-						commits.get(commits.size() - 1).getDate()) <= MEDIUM_TIMESPAN_TF * TIME_FRAME) {
+						commits.get(commits.size() - 1).getDate()) <= MEDIUM_TIMESPAN * TIME_FRAME) {
 					sumRecentLeaps += commitsAndTheirChanges.get(entry.getKey());
 				}
 			}
 			TreeMap<Integer, ArrayList<Commit>> intervalsCommitsMap = getIntervalsCommitsMap(commitsIntoTimeIntervals);
-			for (int timeInterval = 0; timeInterval < maximumTimeInterval - MEDIUM_TIMESPAN_TF; ++timeInterval) {
+			for (int timeInterval = 0; timeInterval < maximumTimeInterval - MEDIUM_TIMESPAN; ++timeInterval) {
 				for (int nextTimeInterval = timeInterval + 1; nextTimeInterval <= timeInterval
-						+ MEDIUM_TIMESPAN_TF; ++nextTimeInterval) {
+						+ MEDIUM_TIMESPAN; ++nextTimeInterval) {
 					for (Commit commit : intervalsCommitsMap.get(nextTimeInterval)) {
 						if (commitsAndTheirChanges.get(commit) < MIN_REFINE_LINES) {
 							deletedRefactoringLines += commitsAndTheirChanges.get(commit);
