@@ -207,6 +207,11 @@ public class SupernovaMetric extends MethodMetrics {
 		return lifetimeIntoIntervals;
 	}
 
+	/**
+	 * @param commits
+	 * @param changesList
+	 * @return
+	 */
 	public HashMap<Commit, Integer> getCommitsAndChangesMap(ArrayList<Commit> commits, ArrayList<Integer> changesList) {
 		HashMap<Commit, Integer> commitsAndTheirChanges = new HashMap<>();
 		for (int i = 0; i < commits.size(); ++i) {
@@ -215,6 +220,10 @@ public class SupernovaMetric extends MethodMetrics {
 		return commitsAndTheirChanges;
 	}
 
+	/**
+	 * @param commitsIntoTimeIntervals
+	 * @return
+	 */
 	public TreeMap<Integer, ArrayList<Commit>> getIntervalsCommitsMap(
 			HashMap<Commit, Integer> commitsIntoTimeIntervals) {
 		TreeMap<Integer, ArrayList<Commit>> intervalsCommitsList = new TreeMap<>();
