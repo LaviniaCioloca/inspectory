@@ -140,7 +140,6 @@ public class FileHistoryInspect {
 		        return commit1.getDate().compareTo(commit2.getDate());
 		    }
 		});
-		//Collections.sort(allCommits, (commit1, commit2) -> commit1.getDate().compareTo(commit2.getDate()));
 		// System.out.println("\tStop - sortAllCommits: " + new Date());
 	}
 

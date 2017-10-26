@@ -418,7 +418,7 @@ public class PulsarMetricTest {
 		csvData.setCommits(commits);
 		Map<String, Object> expectedPulsarCriterionValues = new HashMap<>();
 		expectedPulsarCriterionValues.put("isPulsar", true);
-		expectedPulsarCriterionValues.put("averageSizeIncrease", 18.0);
+		expectedPulsarCriterionValues.put("averageSizeIncrease", 20.0 / 3.0);
 		expectedPulsarCriterionValues.put("countPulsarCycles", 3);
 		expectedPulsarCriterionValues.put("countRecentPulsarCycles", 1);
 		MethodMetrics.setAllCommits(commits);

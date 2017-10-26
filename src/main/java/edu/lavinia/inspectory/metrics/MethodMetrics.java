@@ -50,8 +50,8 @@ public abstract class MethodMetrics {
 	 *            Date
 	 * @param end
 	 *            Date
-	 * @return A Long representing the difference in days between start and end
-	 *         date.
+	 * @return A Long representing the difference in days between {@code start}
+	 *         and {@code end} date.
 	 */
 	protected static Long getDifferenceInDays(Date start, Date end) {
 		Long startTime = start.getTime();
@@ -65,7 +65,7 @@ public abstract class MethodMetrics {
 
 	/**
 	 * @param commits
-	 * @return A HashMap for every commit in the commits list with the number of
+	 * @return A HashMap for every commit in the {@code commits} list with the number of
 	 *         the time-frame in which it is.
 	 */
 	protected static HashMap<Commit, Integer> splitCommitsIntoTimeFrames(ArrayList<Commit> commits) {
@@ -94,11 +94,11 @@ public abstract class MethodMetrics {
 	protected ArrayList<String> getCommitsTypes(ArrayList<Integer> changesList) {
 		ArrayList<String> commitsTypes = new ArrayList<String>();
 		for (int i = 0; i < changesList.size(); ++i) {
-			if (changesList.get(i) < MIN_REFINE_LINES) { 
+			if (changesList.get(i) < MIN_REFINE_LINES) {
 				commitsTypes.add("refactor");
-			} else if (changesList.get(i) >= MIN_REFINE_LINES && changesList.get(i) <= MAX_REFINE_LINES) { 
+			} else if (changesList.get(i) >= MIN_REFINE_LINES && changesList.get(i) <= MAX_REFINE_LINES) {
 				commitsTypes.add("refine");
-			} else { 
+			} else {
 				commitsTypes.add("develop");
 			}
 		}
@@ -106,12 +106,12 @@ public abstract class MethodMetrics {
 	}
 
 	/**
-	 * Returns the points for the method if its size is bigger than
+	 * Returns the points for the method if its {@code size} is bigger than
 	 * EXTREMELY_LARGE_METHOD.
 	 * 
 	 * @param methodSize
 	 *            The actual method size at the current time
-	 * @return An Integer: 0 or 1 representing the points of method's size in
+	 * @return An Integer: 0 or 1 representing the points of {@code method's size} in
 	 *         metrics.
 	 */
 	public Integer getMethodSizePoints(Integer methodSize) {

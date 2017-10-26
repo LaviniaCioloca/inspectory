@@ -142,7 +142,8 @@ public class SupernovaMetric extends MethodMetrics {
 
 	/**
 	 * @param commitsIntoTimeFrames
-	 * @return
+	 * @return ArrayList with the commits encountered after the
+	 *         {@code MEDIUM_TIMESPAN}.
 	 */
 	public ArrayList<Commit> getCommitsAfterMediumTimespan(HashMap<Commit, Integer> commitsIntoTimeFrames) {
 		Iterator<Map.Entry<Commit, Integer>> entries = commitsIntoTimeFrames.entrySet().iterator();
@@ -158,7 +159,7 @@ public class SupernovaMetric extends MethodMetrics {
 
 	/**
 	 * @param commits
-	 * @return
+	 * @return A map with every commit and the associated time interval number.
 	 */
 	public HashMap<Commit, Integer> splitCommitsIntoTimeIntervals(ArrayList<Commit> commits) {
 		HashMap<Commit, Integer> commitsIntoTimeIntervals = new HashMap<>();
@@ -177,7 +178,7 @@ public class SupernovaMetric extends MethodMetrics {
 
 	/**
 	 * @param commitsAfterMediumTimespan
-	 * @return
+	 * @return Sorted ArrayList of commits after the {@code MEDIUM_TIMESPAN}.
 	 */
 	public ArrayList<Commit> sortAllCommitsAfterMediumTimespan(ArrayList<Commit> commitsAfterMediumTimespan) {
 		Collections.sort(commitsAfterMediumTimespan, new Comparator<Commit>() {
@@ -186,14 +187,13 @@ public class SupernovaMetric extends MethodMetrics {
 				return commit1.getDate().compareTo(commit2.getDate());
 			}
 		});
-		// Collections.sort(commitsAfterMediumTimespan, (commit1, commit2) ->
-		// commit1.getDate().compareTo(commit2.getDate()));
 		return commitsAfterMediumTimespan;
 	}
 
 	/**
 	 * @param csvData
-	 * @return
+	 * @return The lifetime of the method divided into a HashMap with commits
+	 *         and their associated interval number.
 	 */
 	public HashMap<Commit, Integer> divideLifetimeInIntervals(CSVData csvData) {
 		ArrayList<Commit> commits = csvData.getCommits();
@@ -208,9 +208,12 @@ public class SupernovaMetric extends MethodMetrics {
 	}
 
 	/**
+	 * For every commit put the number of lines added or deleted into a map.
+	 * 
 	 * @param commits
 	 * @param changesList
-	 * @return
+	 * @return A map for every commit and the number of lines added/deleted in
+	 *         that commit.
 	 */
 	public HashMap<Commit, Integer> getCommitsAndChangesMap(ArrayList<Commit> commits, ArrayList<Integer> changesList) {
 		HashMap<Commit, Integer> commitsAndTheirChanges = new HashMap<>();
@@ -221,8 +224,10 @@ public class SupernovaMetric extends MethodMetrics {
 	}
 
 	/**
+	 * Associates for every time interval its commits list.
+	 * 
 	 * @param commitsIntoTimeIntervals
-	 * @return
+	 * @return A sorted map with every time interval with its commits list.
 	 */
 	public TreeMap<Integer, ArrayList<Commit>> getIntervalsCommitsMap(
 			HashMap<Commit, Integer> commitsIntoTimeIntervals) {
@@ -241,7 +246,9 @@ public class SupernovaMetric extends MethodMetrics {
 
 	/**
 	 * @param csvData
-	 * @return
+	 * @return A Map with the values for the following Supernova criteria:
+	 *         sumOfAllLeaps; sumRecentLeaps; averageSubsequentCommits;
+	 *         isSupernova.
 	 */
 	public Map<String, Object> getSupernovaCriterionValues(CSVData csvData) {
 		Map<String, Object> supernovaCriterionValues = new HashMap<>();
@@ -335,7 +342,7 @@ public class SupernovaMetric extends MethodMetrics {
 	 * 
 	 * @param csvData
 	 *            The information of the current method
-	 * @return True if the method is Supernova, false otherwise
+	 * @return True if the method is Supernova, false otherwise.
 	 */
 	public Boolean isSupernova(CSVData csvData) {
 		return (Boolean) getSupernovaCriterionValues(csvData).get("isSupernova");
