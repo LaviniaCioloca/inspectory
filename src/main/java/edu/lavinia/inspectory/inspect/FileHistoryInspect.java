@@ -185,6 +185,7 @@ public class FileHistoryInspect {
 				.setSubsequentRefactoringPoints(supernovaMetric.getSubsequentRefactoringPoints());
 		supernovaCriteria.setMethodSizePoints(supernovaMetric.getMethodSizePoints());
 		supernovaCriteria.setActivityStatePoints(supernovaMetric.getActivityStatePoints());
+		methodInformation.setSupernovaCriteria(supernovaCriteria);
 
 		PulsarMetric pulsarMetric = new PulsarMetric();
 		methodInformation.setPulsar(pulsarMetric.isPulsar(methodInformation));
@@ -194,6 +195,7 @@ public class FileHistoryInspect {
 		pulsarCriteria.setAverageSizeIncreasePoints(pulsarMetric.getAverageSizeIncreasePoints());
 		pulsarCriteria.setMethodSizePoints(pulsarMetric.getMethodSizePoints());
 		pulsarCriteria.setActivityStatePoints(pulsarMetric.getActivityStatePoints());
+		methodInformation.setPulsarCriteria(pulsarCriteria);
 		return methodInformation;
 	}
 

@@ -14,7 +14,7 @@
             <manifest>
               <addClasspath>true</addClasspath>
               <classpathPrefix>lib/</classpathPrefix>
-              <mainClass>org.lavinia.inspect.RepoInspect</mainClass>
+              <mainClass>edu.lavinia.inspectory.inspect.RepoInspect</mainClass>
             </manifest>
           </archive>
         </configuration>
