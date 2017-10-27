@@ -39,10 +39,10 @@ import org.metanalysis.core.model.Node;
 import org.metanalysis.core.project.PersistentProject;
 import org.metanalysis.core.project.Project.HistoryEntry;
 
+import edu.lavinia.inspectory.beans.Commit;
 import edu.lavinia.inspectory.beans.MethodInformation;
 import edu.lavinia.inspectory.beans.PulsarCriteria;
 import edu.lavinia.inspectory.beans.SupernovaCriteria;
-import edu.lavinia.inspectory.beans.Commit;
 import edu.lavinia.inspectory.metrics.MethodMetrics;
 import edu.lavinia.inspectory.metrics.PulsarMetric;
 import edu.lavinia.inspectory.metrics.SupernovaMetric;
@@ -93,13 +93,14 @@ public class FileHistoryInspect {
 	 * @return A boolean: false if the method's identifier is null or if it
 	 *         already exists in result set and true otherwise.
 	 */
-	public boolean checkEntryInResultSet(GenericVisitor visitor, ArrayList<Integer> lineChanges, String className,
-			Commit commit) {
+	public boolean checkEntryInResultSet(GenericVisitor visitor, ArrayList<Integer> lineChanges,
+			String className, Commit commit) {
 		if (visitor.getIdentifier() == null) {
 			return false;
 		}
 		if (result.get(className + ": " + visitor.getIdentifier()) != null) {
-			MethodInformation methodInformation = result.get(className + ": " + visitor.getIdentifier());
+			MethodInformation methodInformation = result
+					.get(className + ": " + visitor.getIdentifier());
 			methodInformation.getChangesList().add(visitor.getTotal());
 			methodInformation.getCommits().add(commit);
 			return false;
@@ -155,32 +156,36 @@ public class FileHistoryInspect {
 	public void createAndSortAllCommits(ArrayList<MethodInformation> methodInformationList) {
 		// System.out.println("Start - createAndSortAllCommits: " + new Date());
 		for (MethodInformation methodInformation : methodInformationList) {
-			ArrayList<Commit> commits = result.get(methodInformation.getClassName().replaceAll("\"", "") + ": "
-					+ methodInformation.getMethodName().replaceAll("\"", "")).getCommits();
+			ArrayList<Commit> commits = result
+					.get(methodInformation.getClassName().replaceAll("\"", "") + ": "
+							+ methodInformation.getMethodName().replaceAll("\"", ""))
+					.getCommits();
 			addToAllCommits(commits);
 		}
 		sortAllCommits();
 		// System.out.println("Stop - createAndSortAllCommits: " + new Date());
 	}
 
-	public MethodInformation setMethodInformation(MethodInformation methodInformation, ArrayList<Integer> changesList,
-			ArrayList<Commit> commits, Integer actualSize) {
+	public MethodInformation setMethodInformation(MethodInformation methodInformation,
+			ArrayList<Integer> changesList, ArrayList<Commit> commits, Integer actualSize) {
 		methodInformation.setInitialSize(changesList.get(0));
 		methodInformation.setNumberOfChanges(changesList.size());
 		methodInformation.setActualSize(actualSize);
 		methodInformation.setChangesList(changesList);
 		methodInformation.setCommits(commits);
-		
+
 		SupernovaMetric supernovaMetric = new SupernovaMetric();
 		methodInformation.setSupernova(supernovaMetric.isSupernova(methodInformation));
-		methodInformation.setSupernovaSeverity(supernovaMetric.getSupernovaSeverity(methodInformation));
+		methodInformation
+				.setSupernovaSeverity(supernovaMetric.getSupernovaSeverity(methodInformation));
 		SupernovaCriteria supernovaCriteria = new SupernovaCriteria();
 		supernovaCriteria.setLeapsSizePoints(supernovaMetric.getLeapsSizePoints());
 		supernovaCriteria.setRecentLeapsSizePoints(supernovaMetric.getRecentLeapsSizePoints());
-		supernovaCriteria.setSubsequentRefactoringPoints(supernovaMetric.getSubsequentRefactoringPoints());
+		supernovaCriteria
+				.setSubsequentRefactoringPoints(supernovaMetric.getSubsequentRefactoringPoints());
 		supernovaCriteria.setMethodSizePoints(supernovaMetric.getMethodSizePoints());
 		supernovaCriteria.setActivityStatePoints(supernovaMetric.getActivityStatePoints());
-		
+
 		PulsarMetric pulsarMetric = new PulsarMetric();
 		methodInformation.setPulsar(pulsarMetric.isPulsar(methodInformation));
 		methodInformation.setPulsarSeverity(pulsarMetric.getPulsarSeverity(methodInformation));
@@ -196,8 +201,8 @@ public class FileHistoryInspect {
 	 * Writes the CSV lines in the inspectory result CSV file.
 	 * 
 	 * @param methodInformationList
-	 *            List with every CSV line, of every method, to be written in
-	 *            the inspectory result CSV file.
+	 *            List with every {@code methodInformation} line, of every
+	 *            method, to be written in the inspectory result CSV file.
 	 */
 	public void writeCSVFileData(ArrayList<MethodInformation> methodInformationList) {
 		createAndSortAllCommits(methodInformationList);
@@ -207,16 +212,22 @@ public class FileHistoryInspect {
 		MethodMetrics.setNow(latestCommit.getDate());
 		for (MethodInformation methodInformation : methodInformationList) {
 			try {
-				ArrayList<Integer> changesList = result.get(methodInformation.getClassName().replaceAll("\"", "") + ": "
-						+ methodInformation.getMethodName().replaceAll("\"", "")).getChangesList();
-				ArrayList<Commit> commits = result.get(methodInformation.getClassName().replaceAll("\"", "") + ": "
-						+ methodInformation.getMethodName().replaceAll("\"", "")).getCommits();
+				ArrayList<Integer> changesList = result
+						.get(methodInformation.getClassName().replaceAll("\"", "") + ": "
+								+ methodInformation.getMethodName().replaceAll("\"", ""))
+						.getChangesList();
+				ArrayList<Commit> commits = result
+						.get(methodInformation.getClassName().replaceAll("\"", "") + ": "
+								+ methodInformation.getMethodName().replaceAll("\"", ""))
+						.getCommits();
 				Integer actualSize = 0;
 				for (Integer change : changesList) {
 					actualSize += change;
 				}
-				methodInformation = setMethodInformation(methodInformation, changesList, commits, actualSize);
-				CSVUtils.writeLine(csvWriter, methodInformation.getMethodInformationLine(), ',', '"');
+				methodInformation = setMethodInformation(methodInformation, changesList, commits,
+						actualSize);
+				CSVUtils.writeLine(csvWriter, methodInformation.getMethodInformationLine(), ',',
+						'"');
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -233,8 +244,8 @@ public class FileHistoryInspect {
 	 * @param commit
 	 * @param lineChanges
 	 */
-	public void handleNodeSetEditChange(NodeSetEdit edit, GenericVisitor visitor, String fileName, Commit commit,
-			ArrayList<Integer> lineChanges) {
+	public void handleNodeSetEditChange(NodeSetEdit edit, GenericVisitor visitor, String fileName,
+			Commit commit, ArrayList<Integer> lineChanges) {
 		String className = ((NodeSetEdit.Change<?>) edit).getIdentifier();
 		Transaction<?> t = ((NodeSetEdit.Change<?>) edit).getTransaction();
 		List<NodeSetEdit> memberEdits = ((TypeTransaction) t).getMemberEdits();
@@ -243,7 +254,7 @@ public class FileHistoryInspect {
 				visitor = new EditVisitor(fileName);
 				((EditVisitor) visitor).visit(memberEdit);
 				if (checkEntryInResultSet(visitor, lineChanges, className, commit)) {
-					addDataInCSVList(fileName, className, visitor.getIdentifier());
+					addDataInMethodInformationList(fileName, className, visitor.getIdentifier());
 				}
 			} catch (Exception e) {
 				continue;
@@ -261,8 +272,8 @@ public class FileHistoryInspect {
 	 * @param commit
 	 * @param lineChanges
 	 */
-	public void handleNodeSetEditAdd(NodeSetEdit edit, GenericVisitor visitor, String fileName, Commit commit,
-			ArrayList<Integer> lineChanges) {
+	public void handleNodeSetEditAdd(NodeSetEdit edit, GenericVisitor visitor, String fileName,
+			Commit commit, ArrayList<Integer> lineChanges) {
 		Node node = ((NodeSetEdit.Add) edit).getNode();
 		if (node instanceof Node.Type) {
 			String className = ((Node.Type) node).getName();
@@ -273,7 +284,8 @@ public class FileHistoryInspect {
 					if (member instanceof Node.Function) {
 						((NodeVisitor) visitor).visit(member);
 						if (checkEntryInResultSet(visitor, lineChanges, className, commit)) {
-							addDataInCSVList(fileName, className, visitor.getIdentifier());
+							addDataInMethodInformationList(fileName, className,
+									visitor.getIdentifier());
 						}
 					}
 				} catch (Exception e) {
@@ -291,7 +303,8 @@ public class FileHistoryInspect {
 	 * @param className
 	 * @param methodName
 	 */
-	public void addDataInCSVList(String fileName, String className, String methodName) {
+	public void addDataInMethodInformationList(String fileName, String className,
+			String methodName) {
 		MethodInformation methodInformation = new MethodInformation();
 		methodInformation.setFileName("\"" + fileName + "\"");
 		methodInformation.setClassName("\"" + className + "\"");
@@ -300,8 +313,8 @@ public class FileHistoryInspect {
 	}
 
 	/**
-	 * Creates the CSV information for every method by parsing every
-	 * history.json file of every .java file from .metanalysis folder.
+	 * Creates the information for every method by parsing every history.json
+	 * file of every .java file from .metanalysis folder.
 	 */
 	public void createResults() {
 		try {
@@ -338,7 +351,8 @@ public class FileHistoryInspect {
 
 						for (final NodeSetEdit edit : nodeEditList) {
 							if (edit instanceof NodeSetEdit.Change<?>) {
-								handleNodeSetEditChange(edit, visitor, fileName, commit, lineChanges);
+								handleNodeSetEditChange(edit, visitor, fileName, commit,
+										lineChanges);
 							} else if (edit instanceof NodeSetEdit.Add) {
 								handleNodeSetEditAdd(edit, visitor, fileName, commit, lineChanges);
 							} else {

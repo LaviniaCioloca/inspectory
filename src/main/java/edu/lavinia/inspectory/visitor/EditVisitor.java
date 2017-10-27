@@ -50,7 +50,8 @@ public class EditVisitor extends NodeSetEditVisitor {
 
 	@Override
 	public void visit(Remove remove) {
-		if (remove.getNodeType().getQualifiedName().equals(Node.Function.class.getCanonicalName())) {
+		if (remove.getNodeType().getQualifiedName()
+				.equals(Node.Function.class.getCanonicalName())) {
 			identifier = ((NodeSetEdit.Remove) remove).getIdentifier();
 			total -= 1;
 		}
@@ -58,7 +59,8 @@ public class EditVisitor extends NodeSetEditVisitor {
 
 	@Override
 	public void visit(Change<?> change) {
-		if (change.getNodeType().getQualifiedName().equals(Node.Function.class.getCanonicalName())) {
+		if (change.getNodeType().getQualifiedName()
+				.equals(Node.Function.class.getCanonicalName())) {
 			identifier = ((NodeSetEdit.Change<?>) change).getIdentifier();
 			Transaction<?> transaction = ((NodeSetEdit.Change<?>) change).getTransaction();
 			List<ListEdit<String>> bodyEdits = ((FunctionTransaction) transaction).getBodyEdits();

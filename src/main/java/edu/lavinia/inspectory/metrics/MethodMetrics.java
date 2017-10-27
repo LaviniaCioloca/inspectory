@@ -65,15 +65,17 @@ public abstract class MethodMetrics {
 
 	/**
 	 * @param commits
-	 * @return A HashMap for every commit in the {@code commits} list with the number of
-	 *         the time-frame in which it is.
+	 * @return A HashMap for every commit in the {@code commits} list with the
+	 *         number of the time-frame in which it is.
 	 */
-	protected static HashMap<Commit, Integer> splitCommitsIntoTimeFrames(ArrayList<Commit> commits) {
+	protected static HashMap<Commit, Integer> splitCommitsIntoTimeFrames(
+			ArrayList<Commit> commits) {
 		HashMap<Commit, Integer> commitsIntoTimeFrames = new HashMap<>();
 		Integer currentTimeFrame = 0;
 		commitsIntoTimeFrames.put(commits.get(0), currentTimeFrame);
 		for (int i = 1; i < commits.size(); ++i) {
-			if (getDifferenceInDays(commits.get(i - 1).getDate(), commits.get(i).getDate()) > TIME_FRAME) {
+			if (getDifferenceInDays(commits.get(i - 1).getDate(),
+					commits.get(i).getDate()) > TIME_FRAME) {
 				++currentTimeFrame;
 			}
 			commitsIntoTimeFrames.put(commits.get(i), currentTimeFrame);
@@ -96,7 +98,8 @@ public abstract class MethodMetrics {
 		for (int i = 0; i < changesList.size(); ++i) {
 			if (changesList.get(i) < MIN_REFINE_LINES) {
 				commitsTypes.add("refactor");
-			} else if (changesList.get(i) >= MIN_REFINE_LINES && changesList.get(i) <= MAX_REFINE_LINES) {
+			} else if (changesList.get(i) >= MIN_REFINE_LINES
+					&& changesList.get(i) <= MAX_REFINE_LINES) {
 				commitsTypes.add("refine");
 			} else {
 				commitsTypes.add("develop");
@@ -111,8 +114,8 @@ public abstract class MethodMetrics {
 	 * 
 	 * @param methodSize
 	 *            The actual method size at the current time
-	 * @return An Integer: 0 or 1 representing the points of {@code method's size} in
-	 *         metrics.
+	 * @return An Integer: 0 or 1 representing the points of
+	 *         {@code method's size} in metrics.
 	 */
 	public Integer getMethodSizePoints(Integer methodSize) {
 		if (methodSize >= EXTREMELY_LARGE_METHOD) {

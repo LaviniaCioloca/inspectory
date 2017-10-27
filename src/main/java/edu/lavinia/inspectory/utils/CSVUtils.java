@@ -54,7 +54,8 @@ public class CSVUtils {
 	 *            Custom quote for the values: can be empty.
 	 * @throws IOException
 	 */
-	public static void writeLine(Writer w, List<String> values, char separator, char customQuote) throws IOException {
+	public static void writeLine(Writer w, List<String> values, char separator, char customQuote)
+			throws IOException {
 		boolean first = true;
 		if (separator == ' ') {
 			separator = DEFAULT_SEPARATOR;

@@ -36,10 +36,8 @@ import java.util.Map;
 import org.junit.After;
 import org.junit.Test;
 
-import edu.lavinia.inspectory.beans.MethodInformation;
 import edu.lavinia.inspectory.beans.Commit;
-import edu.lavinia.inspectory.metrics.MethodMetrics;
-import edu.lavinia.inspectory.metrics.SupernovaMetric;
+import edu.lavinia.inspectory.beans.MethodInformation;
 
 public class SupernovaMetricTest {
 	SupernovaMetric supernovaMetric = new SupernovaMetric();
@@ -52,7 +50,7 @@ public class SupernovaMetricTest {
 
 	@Test
 	public void testIsSupernovaTrue() throws ParseException {
-		MethodInformation csvData = new MethodInformation();
+		MethodInformation methodInformation = new MethodInformation();
 		ArrayList<Integer> changesList = new ArrayList<Integer>(
 				Arrays.asList(210, 110, 50, -250, -40, 25, -10, 15, -10, 5, -15, 50, 15));
 		ArrayList<Commit> commits = new ArrayList<>();
@@ -95,7 +93,7 @@ public class SupernovaMetricTest {
 		commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/12/15"));
 		commits.add(commit);
-		
+
 		commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/20"));
 		commits.add(commit);
@@ -107,16 +105,17 @@ public class SupernovaMetricTest {
 		commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/03/15"));
 		commits.add(commit);
-		csvData.setActualSize(100);
-		csvData.setChangesList(changesList);
-		csvData.setCommits(commits);
-		assertTrue(supernovaMetric.isSupernova(csvData));
+		methodInformation.setActualSize(100);
+		methodInformation.setChangesList(changesList);
+		methodInformation.setCommits(commits);
+		assertTrue(supernovaMetric.isSupernova(methodInformation));
 	}
 
 	@Test
 	public void testIsSupernovaFalse() throws ParseException {
-		MethodInformation csvData = new MethodInformation();
-		ArrayList<Integer> changesList = new ArrayList<Integer>(Arrays.asList(200, -10, 50, 250, -40));
+		MethodInformation methodInformation = new MethodInformation();
+		ArrayList<Integer> changesList = new ArrayList<Integer>(
+				Arrays.asList(200, -10, 50, 250, -40));
 		ArrayList<Commit> commits = new ArrayList<>();
 		Commit commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/01/01"));
@@ -137,10 +136,10 @@ public class SupernovaMetricTest {
 		commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/04/01"));
 		commits.add(commit);
-		csvData.setChangesList(changesList);
-		csvData.setCommits(commits);
-		csvData.setActualSize(100);
-		assertFalse(supernovaMetric.isSupernova(csvData));
+		methodInformation.setChangesList(changesList);
+		methodInformation.setCommits(commits);
+		methodInformation.setActualSize(100);
+		assertFalse(supernovaMetric.isSupernova(methodInformation));
 	}
 
 	@Test
@@ -257,7 +256,7 @@ public class SupernovaMetricTest {
 
 	@Test
 	public void testGetSupernovaSeverity() throws ParseException {
-		MethodInformation csvData = new MethodInformation();
+		MethodInformation methodInformation = new MethodInformation();
 		ArrayList<Commit> commits = new ArrayList<>();
 		Commit commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/01/01"));
@@ -290,19 +289,20 @@ public class SupernovaMetricTest {
 		commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/09/01"));
 		commits.add(commit);
-		ArrayList<Integer> changesList = new ArrayList<>(Arrays.asList(100, -5, -5, 20, 70, -5, 150, 5));
-		csvData.setActualSize(120);
-		csvData.setChangesList(changesList);
-		csvData.setCommits(commits);
+		ArrayList<Integer> changesList = new ArrayList<>(
+				Arrays.asList(100, -5, -5, 20, 70, -5, 150, 5));
+		methodInformation.setActualSize(120);
+		methodInformation.setChangesList(changesList);
+		methodInformation.setCommits(commits);
 		MethodMetrics.setAllCommits(commits);
 		MethodMetrics.setAllCommitsIntoTimeFrames();
-		assertTrue(supernovaMetric.getSupernovaSeverity(csvData) == 10);
+		assertTrue(supernovaMetric.getSupernovaSeverity(methodInformation) == 10);
 	}
 
 	@Test
 	public void testGetSupernovaCriterionValues() throws ParseException {
-		MethodInformation csvData = new MethodInformation();
-		csvData.setActualSize(250);
+		MethodInformation methodInformation = new MethodInformation();
+		methodInformation.setActualSize(250);
 		ArrayList<Integer> changesList = new ArrayList<>();
 		changesList.add(-10);
 		changesList.add(50);
@@ -374,20 +374,21 @@ public class SupernovaMetricTest {
 		commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2018/07/30"));
 		commits.add(commit);
-		csvData.setChangesList(changesList);
-		csvData.setCommits(commits);
+		methodInformation.setChangesList(changesList);
+		methodInformation.setCommits(commits);
 		Map<String, Object> supernovaCriterionValues = new HashMap<>();
 		supernovaCriterionValues.put("isSupernova", false);
 		supernovaCriterionValues.put("sumOfAllLeaps", -31);
 		supernovaCriterionValues.put("sumRecentLeaps", 5);
 		supernovaCriterionValues.put("averageSubsequentCommits", (double) 22 / (double) 3);
-		assertEquals(supernovaMetric.getSupernovaCriterionValues(csvData), supernovaCriterionValues);
+		assertEquals(supernovaMetric.getSupernovaCriterionValues(methodInformation),
+				supernovaCriterionValues);
 	}
 
 	@Test
 	public void testDivideLifetimeInIntervals() throws ParseException {
-		MethodInformation csvData = new MethodInformation();
-		csvData.setActualSize(250);
+		MethodInformation methodInformation = new MethodInformation();
+		methodInformation.setActualSize(250);
 		ArrayList<Integer> changesList = new ArrayList<>();
 		changesList.add(-10);
 		changesList.add(50);
@@ -425,10 +426,11 @@ public class SupernovaMetricTest {
 		Commit commit4 = new Commit();
 		commit4.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/11/04"));
 		commits.add(commit4);
-		csvData.setChangesList(changesList);
-		csvData.setCommits(commits);
+		methodInformation.setChangesList(changesList);
+		methodInformation.setCommits(commits);
 
-		HashMap<Commit, Integer> lifetimeIntoIntervals = supernovaMetric.divideLifetimeInIntervals(csvData);
+		HashMap<Commit, Integer> lifetimeIntoIntervals = supernovaMetric
+				.divideLifetimeInIntervals(methodInformation);
 		HashMap<Commit, Integer> expectedLifetimeIntoIntervals = new HashMap<>();
 		expectedLifetimeIntoIntervals.put(commit1, 0);
 		expectedLifetimeIntoIntervals.put(commit2, 1);

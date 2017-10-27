@@ -173,21 +173,21 @@ public class MethodInformation {
 	 * @return An ArrayList of Strings data type.
 	 */
 	public ArrayList<String> getMethodInformationLine() {
-		ArrayList<String> csvLine = new ArrayList<>();
-		csvLine.add(this.getFileName());
-		csvLine.add(this.getClassName());
-		csvLine.add(this.getMethodName());
-		csvLine.add(this.getInitialSize().toString());
-		csvLine.add(this.getActualSize().toString());
-		csvLine.add(this.getNumberOfChanges().toString());
-		csvLine.add(this.getChangesList().toString());
-		csvLine.add(this.isSupernova.toString());
-		csvLine.add(this.isPulsar.toString());
-		csvLine.add(this.getSupernovaSeverity().toString());
-		csvLine.add(this.getPulsarSeverity().toString());
-		csvLine.add(supernovaCriteria.toString());
-		csvLine.add(pulsarCriteria.toString());
-		return csvLine;
+		ArrayList<String> methodInformationLine = new ArrayList<>();
+		methodInformationLine.add(this.getFileName());
+		methodInformationLine.add(this.getClassName());
+		methodInformationLine.add(this.getMethodName());
+		methodInformationLine.add(this.getInitialSize().toString());
+		methodInformationLine.add(this.getActualSize().toString());
+		methodInformationLine.add(this.getNumberOfChanges().toString());
+		methodInformationLine.add(this.getChangesList().toString());
+		methodInformationLine.add(this.isSupernova.toString());
+		methodInformationLine.add(this.isPulsar.toString());
+		methodInformationLine.add(this.getSupernovaSeverity().toString());
+		methodInformationLine.add(this.getPulsarSeverity().toString());
+		methodInformationLine.add(supernovaCriteria.toString());
+		methodInformationLine.add(pulsarCriteria.toString());
+		return methodInformationLine;
 	}
 
 }
