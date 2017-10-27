@@ -32,7 +32,7 @@ import java.util.HashMap;
 
 import org.junit.Test;
 
-import edu.lavinia.inspectory.beans.CSVData;
+import edu.lavinia.inspectory.beans.MethodInformation;
 import edu.lavinia.inspectory.beans.Commit;
 import edu.lavinia.inspectory.metrics.MethodMetrics;
 import edu.lavinia.inspectory.metrics.PulsarMetric;
@@ -62,7 +62,7 @@ public class MethodMetricsTest {
 
 	@Test
 	public void testSplitCommitsIntoTimeFrames() throws ParseException {
-		CSVData csvData = new CSVData();
+		MethodInformation csvData = new MethodInformation();
 		ArrayList<Commit> commits = new ArrayList<>();
 		Commit commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2016/08/01"));

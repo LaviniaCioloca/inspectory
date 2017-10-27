@@ -26,11 +26,15 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import edu.lavinia.inspectory.beans.CSVData;
+import edu.lavinia.inspectory.beans.MethodInformation;
 import edu.lavinia.inspectory.beans.Commit;
 
 public class PulsarMetric extends MethodMetrics {
 	private final static Integer MANY_PULSAR_CYCLES = 3; // commits
+	private Integer recentCyclesPoints = 0;
+	private Integer averageSizeIncreasePoints = 0;
+	private Integer methodSizePoints = 0;
+	private Integer activityStatePoints = 0;
 
 	/**
 	 * @param countRecentPulsarCycles
@@ -82,7 +86,7 @@ public class PulsarMetric extends MethodMetrics {
 	 * @param csvData
 	 * @return A Boolean: true if the method is actively changed.
 	 */
-	public Boolean isMethodActivelyChanged(CSVData csvData) {
+	public Boolean isMethodActivelyChanged(MethodInformation csvData) {
 		Integer countActiveChanges = 0;
 		ArrayList<Commit> commits = csvData.getCommits();
 		ArrayList<Commit> latestCommits = new ArrayList<>();
@@ -115,8 +119,11 @@ public class PulsarMetric extends MethodMetrics {
 	 */
 	public Integer countPulsarSeverityPoints(Integer countRecentPulsarCycles, Double averageSizeIncrease,
 			Integer fileSize, Commit commit) {
-		return 1 + getRecentCyclesPoints(countRecentPulsarCycles) + getAverageSizeIncrease(averageSizeIncrease)
-				+ getMethodSizePoints(fileSize) + getActiveMethodPoints(commit);
+		recentCyclesPoints = getRecentCyclesPoints(countRecentPulsarCycles);
+		averageSizeIncreasePoints = getAverageSizeIncrease(averageSizeIncrease);
+		methodSizePoints = getMethodSizePoints(fileSize);
+		activityStatePoints = getActiveMethodPoints(commit);
+		return 1 + recentCyclesPoints + averageSizeIncreasePoints + methodSizePoints + activityStatePoints;
 	}
 
 	/**
@@ -140,7 +147,7 @@ public class PulsarMetric extends MethodMetrics {
 	 * @return An Integer that represents the Pulsar severity of the given
 	 *         method.
 	 */
-	public Integer getPulsarSeverity(CSVData csvData) {
+	public Integer getPulsarSeverity(MethodInformation csvData) {
 		ArrayList<Commit> commits = csvData.getCommits();
 		Map<String, Object> pulsarCriterionValues = getPulsarCriterionValues(csvData);
 		Integer countRecentPulsarCycles = (Integer) pulsarCriterionValues.get("countRecentPulsarCycles");
@@ -233,7 +240,7 @@ public class PulsarMetric extends MethodMetrics {
 	 *         averageSizeIncrease; countPulsarCycles; countRecentPulsarCycles;
 	 *         isPulsar.
 	 */
-	public Map<String, Object> getPulsarCriterionValues(CSVData csvData) {
+	public Map<String, Object> getPulsarCriterionValues(MethodInformation csvData) {
 		ArrayList<Commit> commits = csvData.getCommits();
 		Map<String, Object> pulsarCriterionValues = new HashMap<>();
 		pulsarCriterionValues.put("isPulsar", false);
@@ -291,7 +298,24 @@ public class PulsarMetric extends MethodMetrics {
 	 *            The information of the current method
 	 * @return True if the method is Pulsar, false otherwise.
 	 */
-	public Boolean isPulsar(CSVData csvData) {
+	public Boolean isPulsar(MethodInformation csvData) {
 		return (Boolean) getPulsarCriterionValues(csvData).get("isPulsar");
 	}
+
+	public Integer getRecentCyclesPoints() {
+		return recentCyclesPoints;
+	}
+
+	public Integer getAverageSizeIncreasePoints() {
+		return averageSizeIncreasePoints;
+	}
+
+	public Integer getMethodSizePoints() {
+		return methodSizePoints;
+	}
+
+	public Integer getActivityStatePoints() {
+		return activityStatePoints;
+	}
+
 }

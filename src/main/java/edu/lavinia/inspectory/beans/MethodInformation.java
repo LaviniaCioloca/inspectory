@@ -23,7 +23,7 @@ package edu.lavinia.inspectory.beans;
 
 import java.util.ArrayList;
 
-public class CSVData {
+public class MethodInformation {
 	private ArrayList<Commit> commits;
 	private String fileName;
 	private String className;
@@ -36,6 +36,8 @@ public class CSVData {
 	private Boolean isSupernova;
 	private Integer pulsarSeverity;
 	private Integer supernovaSeverity;
+	private PulsarCriteria pulsarCriteria;
+	private SupernovaCriteria supernovaCriteria;
 
 	public ArrayList<Commit> getCommits() {
 		return commits;
@@ -149,12 +151,28 @@ public class CSVData {
 		this.supernovaSeverity = supernovaSeverity;
 	}
 
+	public PulsarCriteria getPulsarCriteria() {
+		return pulsarCriteria;
+	}
+
+	public void setPulsarCriteria(PulsarCriteria pulsarCriteria) {
+		this.pulsarCriteria = pulsarCriteria;
+	}
+
+	public SupernovaCriteria getSupernovaCriteria() {
+		return supernovaCriteria;
+	}
+
+	public void setSupernovaCriteria(SupernovaCriteria supernovaCriteria) {
+		this.supernovaCriteria = supernovaCriteria;
+	}
+
 	/**
 	 * Retrieve the method's line to be written in CSV file.
 	 * 
 	 * @return An ArrayList of Strings data type.
 	 */
-	public ArrayList<String> getCSVLine() {
+	public ArrayList<String> getMethodInformationLine() {
 		ArrayList<String> csvLine = new ArrayList<>();
 		csvLine.add(this.getFileName());
 		csvLine.add(this.getClassName());
@@ -167,6 +185,8 @@ public class CSVData {
 		csvLine.add(this.isPulsar.toString());
 		csvLine.add(this.getSupernovaSeverity().toString());
 		csvLine.add(this.getPulsarSeverity().toString());
+		csvLine.add(supernovaCriteria.toString());
+		csvLine.add(pulsarCriteria.toString());
 		return csvLine;
 	}
 

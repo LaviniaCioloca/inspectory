@@ -36,7 +36,7 @@ import java.util.Map;
 import org.junit.After;
 import org.junit.Test;
 
-import edu.lavinia.inspectory.beans.CSVData;
+import edu.lavinia.inspectory.beans.MethodInformation;
 import edu.lavinia.inspectory.beans.Commit;
 import edu.lavinia.inspectory.metrics.MethodMetrics;
 import edu.lavinia.inspectory.metrics.SupernovaMetric;
@@ -52,7 +52,7 @@ public class SupernovaMetricTest {
 
 	@Test
 	public void testIsSupernovaTrue() throws ParseException {
-		CSVData csvData = new CSVData();
+		MethodInformation csvData = new MethodInformation();
 		ArrayList<Integer> changesList = new ArrayList<Integer>(
 				Arrays.asList(210, 110, 50, -250, -40, 25, -10, 15, -10, 5, -15, 50, 15));
 		ArrayList<Commit> commits = new ArrayList<>();
@@ -115,7 +115,7 @@ public class SupernovaMetricTest {
 
 	@Test
 	public void testIsSupernovaFalse() throws ParseException {
-		CSVData csvData = new CSVData();
+		MethodInformation csvData = new MethodInformation();
 		ArrayList<Integer> changesList = new ArrayList<Integer>(Arrays.asList(200, -10, 50, 250, -40));
 		ArrayList<Commit> commits = new ArrayList<>();
 		Commit commit = new Commit();
@@ -257,7 +257,7 @@ public class SupernovaMetricTest {
 
 	@Test
 	public void testGetSupernovaSeverity() throws ParseException {
-		CSVData csvData = new CSVData();
+		MethodInformation csvData = new MethodInformation();
 		ArrayList<Commit> commits = new ArrayList<>();
 		Commit commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/01/01"));
@@ -301,7 +301,7 @@ public class SupernovaMetricTest {
 
 	@Test
 	public void testGetSupernovaCriterionValues() throws ParseException {
-		CSVData csvData = new CSVData();
+		MethodInformation csvData = new MethodInformation();
 		csvData.setActualSize(250);
 		ArrayList<Integer> changesList = new ArrayList<>();
 		changesList.add(-10);
@@ -386,7 +386,7 @@ public class SupernovaMetricTest {
 
 	@Test
 	public void testDivideLifetimeInIntervals() throws ParseException {
-		CSVData csvData = new CSVData();
+		MethodInformation csvData = new MethodInformation();
 		csvData.setActualSize(250);
 		ArrayList<Integer> changesList = new ArrayList<>();
 		changesList.add(-10);

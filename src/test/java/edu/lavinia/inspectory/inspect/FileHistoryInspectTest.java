@@ -37,7 +37,9 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import edu.lavinia.inspectory.beans.CSVData;
+import edu.lavinia.inspectory.beans.MethodInformation;
+import edu.lavinia.inspectory.beans.PulsarCriteria;
+import edu.lavinia.inspectory.beans.SupernovaCriteria;
 import edu.lavinia.inspectory.beans.Commit;
 import edu.lavinia.inspectory.inspect.FileHistoryInspect;
 import edu.lavinia.inspectory.inspect.RepoInspect;
@@ -88,11 +90,11 @@ public class FileHistoryInspectTest {
 		String fileName = "testFileName";
 		GenericVisitor visitor = new NodeVisitor(fileName);
 		visitor.setIdentifier("abc");
-		Map<String, CSVData> result = new HashMap<String, CSVData>();
-		CSVData csvData = new CSVData();
-		csvData.setChangesList(new ArrayList<Integer>());
-		csvData.setCommits(new ArrayList<Commit>());
-		result.put("SimpleClass" + ": " + visitor.getIdentifier(), csvData);
+		Map<String, MethodInformation> result = new HashMap<String, MethodInformation>();
+		MethodInformation methodInformation = new MethodInformation();
+		methodInformation.setChangesList(new ArrayList<Integer>());
+		methodInformation.setCommits(new ArrayList<Commit>());
+		result.put("SimpleClass" + ": " + visitor.getIdentifier(), methodInformation);
 		fileHistoryInspect.setResult(result);
 		assertFalse(fileHistoryInspect.checkEntryInResultSet(visitor, new ArrayList<Integer>(), "SimpleClass",
 				new Commit()));
@@ -156,15 +158,15 @@ public class FileHistoryInspectTest {
 		commit3.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/10/01"));
 		commits.add(commit3);
 
-		Map<String, CSVData> result = new HashMap<String, CSVData>();
-		CSVData csvData = new CSVData();
-		csvData.setClassName("test");
-		csvData.setMethodName("test");
-		result.put("test: test", csvData);
-		csvData.setCommits(commits);
+		Map<String, MethodInformation> result = new HashMap<String, MethodInformation>();
+		MethodInformation methodInformation = new MethodInformation();
+		methodInformation.setClassName("test");
+		methodInformation.setMethodName("test");
+		result.put("test: test", methodInformation);
+		methodInformation.setCommits(commits);
 		fileHistoryInspect.setResult(result);
-		ArrayList<CSVData> csvDataList = new ArrayList<>();
-		csvDataList.add(csvData);
+		ArrayList<MethodInformation> csvDataList = new ArrayList<>();
+		csvDataList.add(methodInformation);
 		fileHistoryInspect.createAndSortAllCommits(csvDataList);
 		assertEquals(commits, fileHistoryInspect.getAllCommits());
 	}
@@ -187,22 +189,26 @@ public class FileHistoryInspectTest {
 		commit3.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/10/01"));
 		commits.add(commit3);
 
-		Map<String, CSVData> result = new HashMap<String, CSVData>();
+		Map<String, MethodInformation> result = new HashMap<String, MethodInformation>();
 		ArrayList<Integer> changesList = new ArrayList<Integer>(Arrays.asList(210, -10, 50));
-		CSVData csvData = new CSVData();
-		csvData.setChangesList(changesList);
-		csvData.setFileName("test");
-		csvData.setClassName("test");
-		csvData.setMethodName("test");
-		result.put("test: test", csvData);
-		csvData.setCommits(commits);
+		MethodInformation methodInformation = new MethodInformation();
+		methodInformation.setChangesList(changesList);
+		methodInformation.setFileName("test");
+		methodInformation.setClassName("test");
+		methodInformation.setMethodName("test");
+		result.put("test: test", methodInformation);
+		methodInformation.setCommits(commits);
+		SupernovaCriteria supernovaCriteria = new SupernovaCriteria();
+		PulsarCriteria pulsarCriteria = new PulsarCriteria();
+		methodInformation.setSupernovaCriteria(supernovaCriteria);
+		methodInformation.setPulsarCriteria(pulsarCriteria);
 		fileHistoryInspect.setResult(result);
-		ArrayList<CSVData> csvDataList = new ArrayList<>();
-		csvDataList.add(csvData);
+		ArrayList<MethodInformation> methodInformationList = new ArrayList<>();
+		methodInformationList.add(methodInformation);
 		MethodMetrics.setAllCommits(commits);
 		MethodMetrics.setAllCommitsIntoTimeFrames();
 		MethodMetrics.setNow(commit3.getDate());
-		fileHistoryInspect.writeCSVFileData(csvDataList);
+		fileHistoryInspect.writeCSVFileData(methodInformationList);
 	}
 
 	@Test
@@ -210,14 +216,14 @@ public class FileHistoryInspectTest {
 		file.getParentFile().mkdirs();
 		FileWriter writer = new FileWriter(file);
 		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(RepoInspect.getProject(), writer);
-		CSVData csvData = new CSVData();
-		csvData.setFileName("\"test\"");
-		csvData.setClassName("\"test\"");
-		csvData.setMethodName("\"test\"");
-		ArrayList<CSVData> csvDataList = fileHistoryInspect.getCsvDataList();
-		csvDataList.add(csvData);
+		MethodInformation methodInformation = new MethodInformation();
+		methodInformation.setFileName("\"test\"");
+		methodInformation.setClassName("\"test\"");
+		methodInformation.setMethodName("\"test\"");
+		ArrayList<MethodInformation> csvDataList = fileHistoryInspect.getMethodInformationList();
+		csvDataList.add(methodInformation);
 		fileHistoryInspect.addDataInCSVList("test", "test", "test");
-		assertEquals(csvDataList, fileHistoryInspect.getCsvDataList());
+		assertEquals(csvDataList, fileHistoryInspect.getMethodInformationList());
 	}
 
 	@Test
@@ -225,9 +231,9 @@ public class FileHistoryInspectTest {
 		file.getParentFile().mkdirs();
 		FileWriter writer = new FileWriter(file);
 		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(RepoInspect.getProject(), writer);
-		fileHistoryInspect.setResult(new HashMap<String, CSVData>());
+		fileHistoryInspect.setResult(new HashMap<String, MethodInformation>());
 		fileHistoryInspect.getResult();
 		fileHistoryInspect.getAllCommits();
-		fileHistoryInspect.getCsvDataList();
+		fileHistoryInspect.getMethodInformationList();
 	}
 }
