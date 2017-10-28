@@ -181,12 +181,21 @@ public class MethodInformation {
 		methodInformationLine.add(this.getActualSize().toString());
 		methodInformationLine.add(this.getNumberOfChanges().toString());
 		methodInformationLine.add(this.getChangesList().toString());
+
 		methodInformationLine.add(this.isSupernova.toString());
-		methodInformationLine.add(this.isPulsar.toString());
 		methodInformationLine.add(this.getSupernovaSeverity().toString());
+		methodInformationLine.add(supernovaCriteria.getLeapsSizePoints().toString());
+		methodInformationLine.add(supernovaCriteria.getRecentLeapsSizePoints().toString());
+		methodInformationLine.add(supernovaCriteria.getSubsequentRefactoringPoints().toString());
+		methodInformationLine.add(supernovaCriteria.getMethodSizePoints().toString());
+		methodInformationLine.add(supernovaCriteria.getActivityStatePoints().toString());
+
+		methodInformationLine.add(this.isPulsar.toString());
 		methodInformationLine.add(this.getPulsarSeverity().toString());
-		methodInformationLine.add(supernovaCriteria.toString());
-		methodInformationLine.add(pulsarCriteria.toString());
+		methodInformationLine.add(pulsarCriteria.getRecentCyclesPoints().toString());
+		methodInformationLine.add(pulsarCriteria.getAverageSizeIncreasePoints().toString());
+		methodInformationLine.add(pulsarCriteria.getMethodSizePoints().toString());
+		methodInformationLine.add(pulsarCriteria.getActivityStatePoints().toString());
 		return methodInformationLine;
 	}
 

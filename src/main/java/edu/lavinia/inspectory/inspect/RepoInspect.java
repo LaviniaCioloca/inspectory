@@ -61,11 +61,13 @@ public class RepoInspect {
 		FileWriter writer;
 		try {
 			writer = new FileWriter(csvFileName);
-			CSVUtils.writeLine(writer,
-					Arrays.asList("File", "Class", "Method", "Initial size", "Actual size",
-							"Number of changes", "Changes List", "isSupernova", "isPulsar",
-							"Supernova Severity", "Pulsar Severity", "Supernova Criteria",
-							"Pulsar Criteria"));
+			CSVUtils.writeLine(writer, Arrays.asList("File", "Class", "Method", "Initial size",
+					"Actual size", "Number of changes", "Changes List", "isSupernova",
+					"Supernova Severity", "Supernova - Leaps Size", "Supernova - Recent Leaps Size",
+					"Supernova - Subsequent Refactoring", "Supernova - Method Size",
+					"Supernova - Activity State", "isPulsar", "Pulsar Severity",
+					"Pulsar - Recent Cycles", "Pulsar - Average Size Increase",
+					"Pulsar - Method Size", "Pulsar - Activity State"));
 			FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(getProject(), writer);
 			fileHistoryInspect.getHistoryFunctionsAnalyze();
 			writer.flush();

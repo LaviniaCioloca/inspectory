@@ -7,7 +7,6 @@ import java.util.Arrays;
 import org.junit.Assert;
 import org.junit.Test;
 
-import edu.lavinia.inspectory.beans.MethodInformation;
 import net.codebox.javabeantester.JavaBeanTester;
 
 public class MethodInformationTest {
@@ -42,13 +41,18 @@ public class MethodInformationTest {
 		expected.add("10");
 		expected.add(changesList.toString());
 		expected.add(methodInformation.isSupernova().toString());
+		expected.add("5");
+		expected.add("0");
+		expected.add("0");
+		expected.add("0");
+		expected.add("0");
+		expected.add("0");
 		expected.add(methodInformation.isPulsar().toString());
 		expected.add("5");
-		expected.add("5");
-		expected.add(
-				"SupernovaCriteria [leapsSizePoints=0, recentLeapsSizePoints=0, subsequentRefactoringPoints=0, methodSizePoints=0, activityStatePoints=0]");
-		expected.add(
-				"PulsarCriteria [recentCyclesPoints=0, averageSizeIncreasePoints=0, methodSizePoints=0, activityStatePoints=0]");
+		expected.add("0");
+		expected.add("0");
+		expected.add("0");
+		expected.add("0");
 		Assert.assertEquals(expected, methodInformation.getMethodInformationLine());
 	}
 }
