@@ -57,21 +57,31 @@ public class RepoInspect {
 	 * @param csvFileName
 	 *            String with the name of the CSV file to store the results.
 	 */
-	private static void writeToFile(String csvFileName) {
-		FileWriter writer;
+	private static void writeToFile(String csvFileName, String csvMethodDynamicsFileName,
+			String jsonFileName) {
+		FileWriter csvWriter = null, csvMethodDynamicsWriter = null, jsonWriter = null;
 		try {
-			writer = new FileWriter(csvFileName);
-			CSVUtils.writeLine(writer, Arrays.asList("File", "Class", "Method", "Initial size",
+			csvWriter = new FileWriter(csvFileName);
+			jsonWriter = new FileWriter(jsonFileName);
+			csvMethodDynamicsWriter = new FileWriter(csvMethodDynamicsFileName);
+			CSVUtils.writeLine(csvWriter, Arrays.asList("File", "Class", "Method", "Initial size",
 					"Actual size", "Number of changes", "Changes List", "isSupernova",
 					"Supernova Severity", "Supernova - Leaps Size", "Supernova - Recent Leaps Size",
 					"Supernova - Subsequent Refactoring", "Supernova - Method Size",
 					"Supernova - Activity State", "isPulsar", "Pulsar Severity",
 					"Pulsar - Recent Cycles", "Pulsar - Average Size Increase",
 					"Pulsar - Method Size", "Pulsar - Activity State"));
-			FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(getProject(), writer);
+			CSVUtils.writeLine(csvMethodDynamicsWriter, Arrays.asList("File", "Supernova Methods",
+					"Pulsar Methods", "Supernova Severity", "Pulsar Severity"));
+			FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(getProject(), csvWriter,
+					csvMethodDynamicsWriter, jsonWriter);
 			fileHistoryInspect.getHistoryFunctionsAnalyze();
-			writer.flush();
-			writer.close();
+			csvWriter.flush();
+			csvWriter.close();
+			csvMethodDynamicsWriter.flush();
+			csvMethodDynamicsWriter.close();
+			jsonWriter.flush();
+			jsonWriter.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -90,14 +100,20 @@ public class RepoInspect {
 		 * FileModelInspect(getProject());
 		 * fileModelInspect.getModelFunctionsAnalyze();
 		 */
-		if (args.length != 1) {
-			System.out.println("Usage: java -jar inspectory-<version>.jar <cvs_file_name>");
+		if (args.length != 2) {
+			System.out.println(
+					"Usage: java -jar inspectory-<version>.jar <cvs_file_name> <json_file_name>");
 			System.exit(1);
 		}
 		String csvFileName = args[0];
 		if (!csvFileName.endsWith(".csv")) {
 			csvFileName += ".csv";
 		}
-		writeToFile(csvFileName);
+		String jsonFileName = args[1];
+		String csvMethodDynamicsFileName = jsonFileName + ".csv";
+		if (!jsonFileName.endsWith(".json")) {
+			jsonFileName += ".json";
+		}
+		writeToFile(csvFileName, csvMethodDynamicsFileName, jsonFileName);
 	}
 }

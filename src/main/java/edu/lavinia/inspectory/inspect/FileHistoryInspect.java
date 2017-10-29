@@ -24,6 +24,7 @@ package edu.lavinia.inspectory.inspect;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -39,7 +40,13 @@ import org.metanalysis.core.model.Node;
 import org.metanalysis.core.project.PersistentProject;
 import org.metanalysis.core.project.Project.HistoryEntry;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
 import edu.lavinia.inspectory.beans.Commit;
+import edu.lavinia.inspectory.beans.FileMethodDynamics;
 import edu.lavinia.inspectory.beans.MethodInformation;
 import edu.lavinia.inspectory.beans.PulsarCriteria;
 import edu.lavinia.inspectory.beans.SupernovaCriteria;
@@ -47,6 +54,8 @@ import edu.lavinia.inspectory.metrics.MethodMetrics;
 import edu.lavinia.inspectory.metrics.PulsarMetric;
 import edu.lavinia.inspectory.metrics.SupernovaMetric;
 import edu.lavinia.inspectory.utils.CSVUtils;
+import edu.lavinia.inspectory.utils.JSONUtils;
+import edu.lavinia.inspectory.utils.MethodDynamicsUtils;
 import edu.lavinia.inspectory.visitor.EditVisitor;
 import edu.lavinia.inspectory.visitor.GenericVisitor;
 import edu.lavinia.inspectory.visitor.NodeVisitor;
@@ -56,8 +65,11 @@ public class FileHistoryInspect {
 	private Map<String, MethodInformation> result = null;
 	private ArrayList<String> deletedNodes = null;
 	private FileWriter csvWriter = null;
+	private FileWriter csvMethodDynamicsWriter = null;
+	private FileWriter jsonWriter = null;
 	private ArrayList<MethodInformation> methodInformationList = null;
 	private ArrayList<Commit> allCommits = null;
+	private MethodDynamicsUtils methodDynamics = null;
 
 	/**
 	 * FileHistoryInspect Constructor that initializes the result map and CSV
@@ -68,13 +80,17 @@ public class FileHistoryInspect {
 	 * @param csvWriter
 	 *            The writer of result CSV file.
 	 */
-	public FileHistoryInspect(PersistentProject project, FileWriter csvWriter) {
+	public FileHistoryInspect(PersistentProject project, FileWriter csvWriter,
+			FileWriter csvMethodDynamicsWriter, FileWriter jsonWriter) {
 		FileHistoryInspect.project = project;
 		result = new HashMap<String, MethodInformation>();
 		deletedNodes = new ArrayList<String>();
 		this.csvWriter = csvWriter;
+		this.csvMethodDynamicsWriter = csvMethodDynamicsWriter;
+		this.jsonWriter = jsonWriter;
 		methodInformationList = new ArrayList<>();
 		allCommits = new ArrayList<>();
+		methodDynamics = new MethodDynamicsUtils();
 	}
 
 	/**
@@ -136,14 +152,12 @@ public class FileHistoryInspect {
 	 * chronological order.
 	 */
 	public void sortAllCommits() {
-		// System.out.println("\tStart - sortAllCommits: " + new Date());
 		Collections.sort(allCommits, new Comparator<Commit>() {
 			@Override
 			public int compare(Commit commit1, Commit commit2) {
 				return commit1.getDate().compareTo(commit2.getDate());
 			}
 		});
-		// System.out.println("\tStop - sortAllCommits: " + new Date());
 	}
 
 	/**
@@ -154,7 +168,6 @@ public class FileHistoryInspect {
 	 * @param methodInformationList
 	 */
 	public void createAndSortAllCommits(ArrayList<MethodInformation> methodInformationList) {
-		// System.out.println("Start - createAndSortAllCommits: " + new Date());
 		for (MethodInformation methodInformation : methodInformationList) {
 			ArrayList<Commit> commits = result
 					.get(methodInformation.getClassName().replaceAll("\"", "") + ": "
@@ -163,9 +176,15 @@ public class FileHistoryInspect {
 			addToAllCommits(commits);
 		}
 		sortAllCommits();
-		// System.out.println("Stop - createAndSortAllCommits: " + new Date());
 	}
 
+	/**
+	 * @param methodInformation
+	 * @param changesList
+	 * @param commits
+	 * @param actualSize
+	 * @return
+	 */
 	public MethodInformation setMethodInformation(MethodInformation methodInformation,
 			ArrayList<Integer> changesList, ArrayList<Commit> commits, Integer actualSize) {
 		methodInformation.setInitialSize(changesList.get(0));
@@ -196,6 +215,14 @@ public class FileHistoryInspect {
 		pulsarCriteria.setMethodSizePoints(pulsarMetric.getMethodSizePoints());
 		pulsarCriteria.setActivityStatePoints(pulsarMetric.getActivityStatePoints());
 		methodInformation.setPulsarCriteria(pulsarCriteria);
+		if (methodInformation.isSupernova()) {
+			methodDynamics.addSupernovaMethodDynamics(methodInformation.getFileName(),
+					methodInformation.getSupernovaSeverity());
+		}
+		if (methodInformation.isPulsar()) {
+			methodDynamics.addPulsarMethodDynamics(methodInformation.getFileName(),
+					methodInformation.getPulsarSeverity());
+		}
 		return methodInformation;
 	}
 
@@ -320,7 +347,6 @@ public class FileHistoryInspect {
 	 */
 	public void createResults() {
 		try {
-			// String logFolderName = ".inspectory_results";
 			Set<String> filesList = project.listFiles();
 			methodInformationList = new ArrayList<MethodInformation>();
 			for (String fileName : filesList) {
@@ -328,17 +354,6 @@ public class FileHistoryInspect {
 					continue;
 				}
 				List<HistoryEntry> fileHistory = project.getFileHistory(fileName);
-
-				/*
-				 * String logFilePath = "./" + logFolderName + "/" + fileName +
-				 * ".history"; Logger logger = Logger.getRootLogger();
-				 * 
-				 * FileAppender appender = (FileAppender)
-				 * logger.getAppender("file"); appender.setFile(logFilePath);
-				 * appender.activateOptions();
-				 * 
-				 * Logger logger = Logger.getRootLogger();
-				 */
 
 				for (HistoryEntry he : fileHistory) {
 					try {
@@ -375,10 +390,59 @@ public class FileHistoryInspect {
 		}
 	}
 
+	/**
+	 * Creates for every method an empty entry for the fileName in the map with
+	 * method properties values.
+	 */
+	public void createDefaultMethodInformation() {
+		Set<String> filesList = project.listFiles();
+		for (String fileName : filesList) {
+			if (fileName.startsWith(".") || !fileName.endsWith(".java")) {
+				continue;
+			}
+			methodDynamics.addDefaultMethodDynamics(fileName);
+		}
+	}
+
+	/**
+	 * Writes data from method dynamics analysis into a JSON and a CSV file.
+	 */
+	public void writeMethodDynamicsData() {
+		JSONUtils jsonUtils = new JSONUtils();
+		try {
+			JsonObject entireJson = new JsonObject();
+			JsonArray jsonArray = new JsonArray();
+			for (HashMap.Entry<String, FileMethodDynamics> entry : methodDynamics
+					.getProjectMethodDynamics().entrySet()) {
+				jsonArray.add(jsonUtils.getSupernovaMethodsJSON(entry.getKey(),
+						entry.getValue().getSupernovaMethods()));
+				jsonArray.add(jsonUtils.getPulsarMethodsJSON(entry.getKey(),
+						entry.getValue().getPulsarMethods()));
+				jsonArray.add(jsonUtils.getSupernovaSeverityJSON(entry.getKey(),
+						entry.getValue().getSupernovaSeverity()));
+				jsonArray.add(jsonUtils.getPulsarSeverityJSON(entry.getKey(),
+						entry.getValue().getPulsarMethods()));
+				CSVUtils.writeLine(csvMethodDynamicsWriter,
+						Arrays.asList(entry.getKey(),
+								entry.getValue().getSupernovaMethods().toString(),
+								entry.getValue().getPulsarMethods().toString(),
+								entry.getValue().getSupernovaSeverity().toString(),
+								entry.getValue().getPulsarSeverity().toString()));
+			}
+			entireJson.add("repository results", jsonArray);
+			Gson gson = new GsonBuilder().setPrettyPrinting().create();
+			jsonWriter.write(gson.toJson(entireJson));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 	// Getters and setters
 	public void getHistoryFunctionsAnalyze() {
 		createResults();
+		createDefaultMethodInformation();
 		writeCSVFileData(methodInformationList);
+		writeMethodDynamicsData();
 	}
 
 	public Map<String, MethodInformation> getResult() {

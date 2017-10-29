@@ -54,7 +54,7 @@ public class FileHistoryInspectTest {
 		file.getParentFile().mkdirs();
 		FileWriter writer = new FileWriter(file);
 		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(RepoInspect.getProject(),
-				writer);
+				writer, writer, writer);
 		fileHistoryInspect.getHistoryFunctionsAnalyze();
 	}
 
@@ -63,7 +63,7 @@ public class FileHistoryInspectTest {
 		file.getParentFile().mkdirs();
 		FileWriter writer = new FileWriter(file);
 		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(RepoInspect.getProject(),
-				writer);
+				writer, writer, writer);
 		String fileName = "testFileName";
 		GenericVisitor visitor = new NodeVisitor(fileName);
 		assertFalse(fileHistoryInspect.checkEntryInResultSet(visitor, new ArrayList<Integer>(),
@@ -75,7 +75,7 @@ public class FileHistoryInspectTest {
 		file.getParentFile().mkdirs();
 		FileWriter writer = new FileWriter(file);
 		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(RepoInspect.getProject(),
-				writer);
+				writer, writer, writer);
 		String fileName = "testFileName";
 		GenericVisitor visitor = new NodeVisitor(fileName);
 		visitor.setIdentifier("abc");
@@ -88,7 +88,7 @@ public class FileHistoryInspectTest {
 		file.getParentFile().mkdirs();
 		FileWriter writer = new FileWriter(file);
 		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(RepoInspect.getProject(),
-				writer);
+				writer, writer, writer);
 		String fileName = "testFileName";
 		GenericVisitor visitor = new NodeVisitor(fileName);
 		visitor.setIdentifier("abc");
@@ -107,7 +107,7 @@ public class FileHistoryInspectTest {
 		file.getParentFile().mkdirs();
 		FileWriter writer = new FileWriter(file);
 		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(RepoInspect.getProject(),
-				writer);
+				writer, writer, writer);
 		Commit commit = new Commit();
 		ArrayList<Commit> commits = new ArrayList<>();
 		commits.add(commit);
@@ -121,7 +121,7 @@ public class FileHistoryInspectTest {
 		file.getParentFile().mkdirs();
 		FileWriter writer = new FileWriter(file);
 		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(RepoInspect.getProject(),
-				writer);
+				writer, writer, writer);
 		ArrayList<Commit> commits = new ArrayList<>();
 		Commit commit1 = new Commit();
 		commit1.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2016/08/30"));
@@ -149,7 +149,7 @@ public class FileHistoryInspectTest {
 		file.getParentFile().mkdirs();
 		FileWriter writer = new FileWriter(file);
 		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(RepoInspect.getProject(),
-				writer);
+				writer, writer, writer);
 		ArrayList<Commit> commits = new ArrayList<>();
 		Commit commit1 = new Commit();
 		commit1.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2016/08/10"));
@@ -181,7 +181,7 @@ public class FileHistoryInspectTest {
 		file.getParentFile().mkdirs();
 		FileWriter writer = new FileWriter(file);
 		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(RepoInspect.getProject(),
-				writer);
+				writer, writer, writer);
 		ArrayList<Commit> commits = new ArrayList<>();
 		Commit commit1 = new Commit();
 		commit1.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2016/08/10"));
@@ -222,7 +222,7 @@ public class FileHistoryInspectTest {
 		file.getParentFile().mkdirs();
 		FileWriter writer = new FileWriter(file);
 		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(RepoInspect.getProject(),
-				writer);
+				writer, writer, writer);
 		MethodInformation methodInformation = new MethodInformation();
 		methodInformation.setFileName("\"test\"");
 		methodInformation.setClassName("\"test\"");
@@ -239,7 +239,7 @@ public class FileHistoryInspectTest {
 		file.getParentFile().mkdirs();
 		FileWriter writer = new FileWriter(file);
 		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(RepoInspect.getProject(),
-				writer);
+				writer, writer, writer);
 		fileHistoryInspect.setResult(new HashMap<String, MethodInformation>());
 		fileHistoryInspect.getResult();
 		fileHistoryInspect.getAllCommits();
