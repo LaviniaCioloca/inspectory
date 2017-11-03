@@ -35,6 +35,10 @@ public class MethodDynamicsUtils {
 		projectMethodDynamics.put(fileName, fileMethodDynamics);
 	}
 
+	public void setProjectMethodDynamics(Map<String, FileMethodDynamics> projectMethodDynamics) {
+		this.projectMethodDynamics = projectMethodDynamics;
+	}
+
 	public Map<String, FileMethodDynamics> getProjectMethodDynamics() {
 		return projectMethodDynamics;
 	}
