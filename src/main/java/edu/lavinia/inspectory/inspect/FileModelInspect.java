@@ -34,10 +34,10 @@ import org.metanalysis.core.project.PersistentProject;
 import edu.lavinia.inspectory.visitor.NodeVisitor;
 
 public class FileModelInspect {
-	private static PersistentProject project = null;
+	private PersistentProject project = null;
 
 	public FileModelInspect(PersistentProject project) {
-		FileModelInspect.project = project;
+		this.project = project;
 	}
 
 	/**

@@ -13,7 +13,7 @@ import kotlin.reflect.jvm.internal.KClassImpl;
 
 public class NodeSetEditVisitorTest {
 	@Test
-	public void testVisitNode() {
+	public void testVisitNodeSetEdit() {
 		NodeSetEditVisitor visitor = new EditVisitor(null);
 		Node node = new Node.Type("test", new HashSet<>(), new HashSet<>(), new HashSet<>());
 		NodeSetEdit nodeSetEdit = new NodeSetEdit.Add(node);

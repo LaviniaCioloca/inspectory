@@ -61,7 +61,7 @@ import edu.lavinia.inspectory.visitor.GenericVisitor;
 import edu.lavinia.inspectory.visitor.NodeVisitor;
 
 public class FileHistoryInspect {
-	private static PersistentProject project = null;
+	private PersistentProject project = null;
 	private Map<String, MethodInformation> result = null;
 	private ArrayList<String> deletedNodes = null;
 	private FileWriter csvWriter = null;
@@ -82,7 +82,7 @@ public class FileHistoryInspect {
 	 */
 	public FileHistoryInspect(PersistentProject project, FileWriter csvWriter,
 			FileWriter csvMethodDynamicsWriter, FileWriter jsonWriter) {
-		FileHistoryInspect.project = project;
+		this.project = project;
 		result = new HashMap<String, MethodInformation>();
 		deletedNodes = new ArrayList<String>();
 		this.csvWriter = csvWriter;
@@ -355,14 +355,14 @@ public class FileHistoryInspect {
 				}
 				List<HistoryEntry> fileHistory = project.getFileHistory(fileName);
 
-				for (HistoryEntry he : fileHistory) {
+				for (HistoryEntry historyEntry : fileHistory) {
 					try {
 						Commit commit = new Commit();
-						commit.setRevision(he.getRevision());
-						commit.setAuthor(he.getAuthor());
-						commit.setDate(he.getDate());
+						commit.setRevision(historyEntry.getRevision());
+						commit.setAuthor(historyEntry.getAuthor());
+						commit.setDate(historyEntry.getDate());
 						ArrayList<Integer> lineChanges = null;
-						SourceFileTransaction sourceFileTransaction = he.getTransaction();
+						SourceFileTransaction sourceFileTransaction = historyEntry.getTransaction();
 						List<NodeSetEdit> nodeEditList = sourceFileTransaction.getNodeEdits();
 						GenericVisitor visitor = null;
 
