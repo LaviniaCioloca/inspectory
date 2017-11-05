@@ -414,14 +414,18 @@ public class FileHistoryInspect {
 			JsonArray jsonArray = new JsonArray();
 			for (HashMap.Entry<String, FileMethodDynamics> entry : methodDynamics
 					.getProjectMethodDynamics().entrySet()) {
-				jsonArray.add(jsonUtils.getSupernovaMethodsJSON(entry.getKey(),
-						entry.getValue().getSupernovaMethods()));
-				jsonArray.add(jsonUtils.getPulsarMethodsJSON(entry.getKey(),
-						entry.getValue().getPulsarMethods()));
-				jsonArray.add(jsonUtils.getSupernovaSeverityJSON(entry.getKey(),
-						entry.getValue().getSupernovaSeverity()));
-				jsonArray.add(jsonUtils.getPulsarSeverityJSON(entry.getKey(),
-						entry.getValue().getPulsarMethods()));
+				if (entry.getValue().getSupernovaMethods().intValue() > 0) {
+					jsonArray.add(jsonUtils.getSupernovaMethodsJSON(entry.getKey(),
+							entry.getValue().getSupernovaMethods()));
+					jsonArray.add(jsonUtils.getSupernovaSeverityJSON(entry.getKey(),
+							entry.getValue().getSupernovaSeverity()));
+				}
+				if (entry.getValue().getPulsarMethods().intValue() > 0) {
+					jsonArray.add(jsonUtils.getPulsarMethodsJSON(entry.getKey(),
+							entry.getValue().getPulsarMethods()));
+					jsonArray.add(jsonUtils.getPulsarSeverityJSON(entry.getKey(),
+							entry.getValue().getPulsarMethods()));
+				}
 				CSVUtils.writeLine(csvMethodDynamicsWriter,
 						Arrays.asList(entry.getKey(),
 								entry.getValue().getSupernovaMethods().toString(),
