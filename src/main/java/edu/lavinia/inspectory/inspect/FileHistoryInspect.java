@@ -43,7 +43,6 @@ import org.metanalysis.core.project.Project.HistoryEntry;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 
 import edu.lavinia.inspectory.beans.Commit;
 import edu.lavinia.inspectory.beans.FileMethodDynamics;
@@ -410,7 +409,7 @@ public class FileHistoryInspect {
 	public void writeMethodDynamicsData() {
 		JSONUtils jsonUtils = new JSONUtils();
 		try {
-			JsonObject entireJson = new JsonObject();
+			// JsonObject entireJson = new JsonObject();
 			JsonArray jsonArray = new JsonArray();
 			for (HashMap.Entry<String, FileMethodDynamics> entry : methodDynamics
 					.getProjectMethodDynamics().entrySet()) {
@@ -433,9 +432,10 @@ public class FileHistoryInspect {
 								entry.getValue().getSupernovaSeverity().toString(),
 								entry.getValue().getPulsarSeverity().toString()));
 			}
-			entireJson.add("repository results", jsonArray);
+			// entireJson.add("repository result", jsonArray);
 			Gson gson = new GsonBuilder().setPrettyPrinting().create();
-			jsonWriter.write(gson.toJson(entireJson));
+			jsonWriter.write(gson.toJson(jsonArray));
+			// jsonWriter.write(gson.toJson(entireJson));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
