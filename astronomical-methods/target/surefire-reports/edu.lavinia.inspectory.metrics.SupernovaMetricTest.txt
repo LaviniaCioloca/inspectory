@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: edu.lavinia.inspectory.metrics.SupernovaMetricTest
+-------------------------------------------------------------------------------
+Tests run: 21, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.033 s - in edu.lavinia.inspectory.metrics.SupernovaMetricTest

@@ -1,0 +1,13 @@
+/home/lavinia/Licenta/inspectory/src/test/java/edu/lavinia/inspectory/utils/CSVUtilsTest.java
+/home/lavinia/Licenta/inspectory/src/test/java/edu/lavinia/inspectory/inspect/FileHistoryInspectTest.java
+/home/lavinia/Licenta/inspectory/src/test/java/edu/lavinia/inspectory/visitor/NodeSetEditVisitorTest.java
+/home/lavinia/Licenta/inspectory/src/test/java/edu/lavinia/inspectory/beans/CommitTest.java
+/home/lavinia/Licenta/inspectory/src/test/java/edu/lavinia/inspectory/metrics/SupernovaMetricTest.java
+/home/lavinia/Licenta/inspectory/src/test/java/edu/lavinia/inspectory/metrics/PulsarMetricTest.java
+/home/lavinia/Licenta/inspectory/src/test/java/edu/lavinia/inspectory/inspect/FileModelInspectTest.java
+/home/lavinia/Licenta/inspectory/src/test/java/edu/lavinia/inspectory/utils/MethodDynamicsUtilsTest.java
+/home/lavinia/Licenta/inspectory/src/test/java/edu/lavinia/inspectory/metrics/MethodMetricsTest.java
+/home/lavinia/Licenta/inspectory/src/test/java/edu/lavinia/inspectory/beans/MethodInformationTest.java
+/home/lavinia/Licenta/inspectory/src/test/java/edu/lavinia/inspectory/inspect/RepoInspectTest.java
+/home/lavinia/Licenta/inspectory/src/test/java/edu/lavinia/inspectory/utils/JSONUtilsTest.java
+/home/lavinia/Licenta/inspectory/src/test/java/edu/lavinia/inspectory/visitor/CodeVisitorTest.java
