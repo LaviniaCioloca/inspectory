@@ -354,6 +354,10 @@ public class PulsarMetricTest {
 
 	@Test
 	public void testCheckIfRecentPulsarCycleZero() throws ParseException {
+		Commit commit = new Commit();
+		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/08/01"));
+		MethodMetrics.setAllCommits(new ArrayList<Commit>(Arrays.asList(commit)));
+		MethodMetrics.setAllCommitsIntoTimeFrames();
 		Date date = new SimpleDateFormat("yyyy/MM/dd").parse("2010/01/01");
 		assertTrue(pulsarMetric.checkIfRecentPulsarCycle(date) == 0);
 	}
