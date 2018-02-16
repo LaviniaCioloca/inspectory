@@ -9,8 +9,9 @@
         <version>0.2.0</version>
     </parent>
 
-    <artifactId>astronomical-methods</artifactId>
-    <name>Astronomical - Supernova and Pulsar methods metric</name>
+    <artifactId>inspectory-core</artifactId>
+    <name>Core (commons) module</name>
+    <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
@@ -49,12 +50,6 @@
             <groupId>net.codebox</groupId>
             <artifactId>javabean-tester</artifactId>
             <version>1.0.0</version>
-        </dependency>
-        
-        <dependency>
-        	<groupId>org.lavinia.inspectory</groupId>
-            <artifactId>inspectory-core</artifactId>
-            <version>${project.version}</version>
         </dependency>
     </dependencies>
 

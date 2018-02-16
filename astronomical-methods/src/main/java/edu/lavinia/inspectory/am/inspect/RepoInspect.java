@@ -32,7 +32,8 @@ import edu.lavinia.inspectory.am.utils.CSVUtils;
 
 public class RepoInspect {
 
-	public final static Logger logger = Logger.getLogger(RepoInspect.class.getName());
+	public final static Logger logger = Logger
+			.getLogger(RepoInspect.class.getName());
 
 	/**
 	 * Static method that loads the .metanalysis persistent project for the
@@ -57,24 +58,30 @@ public class RepoInspect {
 	 * @param csvFileName
 	 *            String with the name of the CSV file to store the results.
 	 */
-	private static void writeToFile(String csvFileName, String csvMethodDynamicsFileName,
-			String jsonFileName) {
-		FileWriter csvWriter = null, csvMethodDynamicsWriter = null, jsonWriter = null;
+	private static void writeToFile(String csvFileName,
+			String csvMethodDynamicsFileName, String jsonFileName) {
+		FileWriter csvWriter = null, csvMethodDynamicsWriter = null,
+				jsonWriter = null;
 		try {
 			csvWriter = new FileWriter(csvFileName);
 			jsonWriter = new FileWriter(jsonFileName);
 			csvMethodDynamicsWriter = new FileWriter(csvMethodDynamicsFileName);
-			CSVUtils.writeLine(csvWriter, Arrays.asList("File", "Class", "Method", "Initial size",
-					"Actual size", "Number of changes", "Changes List", "isSupernova",
-					"Supernova Severity", "Supernova - Leaps Size", "Supernova - Recent Leaps Size",
-					"Supernova - Subsequent Refactoring", "Supernova - Method Size",
-					"Supernova - Activity State", "isPulsar", "Pulsar Severity",
-					"Pulsar - Recent Cycles", "Pulsar - Average Size Increase",
-					"Pulsar - Method Size", "Pulsar - Activity State"));
-			CSVUtils.writeLine(csvMethodDynamicsWriter, Arrays.asList("File", "Supernova Methods",
-					"Pulsar Methods", "Supernova Severity", "Pulsar Severity"));
-			FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(getProject(), csvWriter,
-					csvMethodDynamicsWriter, jsonWriter);
+			CSVUtils.writeLine(csvWriter, Arrays.asList("File", "Class",
+					"Method", "Initial size", "Actual size",
+					"Number of changes", "Changes List", "isSupernova",
+					"Supernova Severity", "Supernova - Leaps Size",
+					"Supernova - Recent Leaps Size",
+					"Supernova - Subsequent Refactoring",
+					"Supernova - Method Size", "Supernova - Activity State",
+					"isPulsar", "Pulsar Severity", "Pulsar - Recent Cycles",
+					"Pulsar - Average Size Increase", "Pulsar - Method Size",
+					"Pulsar - Activity State"));
+			CSVUtils.writeLine(csvMethodDynamicsWriter,
+					Arrays.asList("File", "Supernova Methods", "Pulsar Methods",
+							"Supernova Severity", "Pulsar Severity"));
+			FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(
+					getProject(), csvWriter, csvMethodDynamicsWriter,
+					jsonWriter);
 			fileHistoryInspect.getHistoryFunctionsAnalyze();
 			csvWriter.flush();
 			csvWriter.close();

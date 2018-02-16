@@ -10,7 +10,6 @@
     </parent>
 
     <artifactId>ownership-problems</artifactId>
-    <version>0.0.1</version>
     <name>Ownership problems metric</name>
 
     <dependencies>
@@ -50,6 +49,12 @@
             <groupId>net.codebox</groupId>
             <artifactId>javabean-tester</artifactId>
             <version>1.0.0</version>
+        </dependency>
+        
+        <dependency>
+        	<groupId>org.lavinia.inspectory</groupId>
+            <artifactId>inspectory-core</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 

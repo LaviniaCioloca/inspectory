@@ -6,8 +6,8 @@
     <version>0.2.0</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>ownership-problems</artifactId>
-  <name>Ownership problems metric</name>
+  <artifactId>inspectory-core</artifactId>
+  <name>Core (commons) module</name>
   <build>
     <resources>
       <resource>
@@ -21,9 +21,6 @@
       </plugin>
       <plugin>
         <artifactId>maven-clean-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
       </plugin>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -49,12 +46,6 @@
       </plugin>
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <systemPropertyVariables>
-            <java.util.logging.SimpleFormatter.format>%1$tY-%1$tm-%1$td%1$tH:%1$tM:%1$tS
-							%4$-6s %2$s %5$s%6$s%n</java.util.logging.SimpleFormatter.format>
-          </systemPropertyVariables>
-        </configuration>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
