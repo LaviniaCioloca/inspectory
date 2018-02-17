@@ -55,7 +55,12 @@ public class RepoInspect {
 	 */
 	public static void main(String[] args) {
 		final PersistentProject project = getProject();
-		Commands commands = new Commands(args, project);
-		commands.parse();
+		if (project != null) {
+			Commands commands = new Commands(args, project);
+			commands.parse();
+		} else {
+			System.out.println(
+					"Error! Project persistency not found: .metanalysis folder! Use metanalysis to generate the model first!");
+		}
 	}
 }

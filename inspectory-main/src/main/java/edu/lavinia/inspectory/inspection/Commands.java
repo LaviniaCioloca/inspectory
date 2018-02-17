@@ -21,8 +21,7 @@ import edu.lavinia.inspectory.utils.CSVUtils;
 
 public class Commands {
 
-	public final static Logger logger = Logger
-			.getLogger(Commands.class.getName());
+	public final static Logger logger = Logger.getLogger(Commands.class.getName());
 	private String[] args = null;
 	private Options options = new Options();
 
@@ -41,23 +40,17 @@ public class Commands {
 
 	private void generateOptions() {
 
-		final Option helpOption = Option.builder("h").longOpt("help")
-				.required(false).hasArg(false)
+		final Option helpOption = Option.builder("h").longOpt("help").required(false).hasArg(false)
 				.desc("Show usage instructions for every command.").build();
 
-		final Option cleanOption = Option.builder("c").longOpt("clean")
-				.required(false)
+		final Option cleanOption = Option.builder("c").longOpt("clean").required(false)
 				.desc("Clean previously files of inspectory results.").build();
 
-		final Option ammOption = Option.builder("amm").longOpt("astronomical")
-				.required(false)
-				.desc("Atronomical Methods - Supernova & Pulsar - Metric applied on the current repository.")
-				.build();
+		final Option ammOption = Option.builder("amm").longOpt("astronomical").required(false)
+				.desc("Atronomical Methods - Supernova & Pulsar - Metric applied on the current repository.").build();
 
-		final Option opmOption = Option.builder("opm").longOpt("ownership")
-				.required(false)
-				.desc("Ownership Problems Metric applied on the current repository.")
-				.build();
+		final Option opmOption = Option.builder("opm").longOpt("ownership").required(false)
+				.desc("Ownership Problems Metric applied on the current repository.").build();
 
 		options.addOption(helpOption);
 		options.addOption(cleanOption);
@@ -79,10 +72,9 @@ public class Commands {
 			} else if (cmd.hasOption("amm")) {
 				astronomicalMethodsMetric();
 			} else if (cmd.hasOption("opm")) {
-				logger.info("Using cli argument -amm");
-				// Whatever you want to do with the setting goes here
+				System.out.println("Using cli argument -amm");
 			} else {
-				logger.info("Missing valid option");
+				System.out.println("Missing valid option");
 				help();
 			}
 
@@ -94,8 +86,7 @@ public class Commands {
 	private void help() {
 		HelpFormatter formater = new HelpFormatter();
 
-		formater.printHelp("java -jar inspectory-<version>.jar <command>",
-				options);
+		formater.printHelp("java -jar inspectory-<version>.jar <command>", options);
 		System.exit(0);
 	}
 
@@ -106,37 +97,32 @@ public class Commands {
 		try {
 			// Deleting the directory recursively using FileUtils.
 			FileUtils.deleteDirectory(file);
-			logger.info("Directory " + directoryPath
-					+ " has been deleted recursively!");
+			System.out.println("Directory " + directoryPath + " has been deleted recursively!");
 		} catch (IOException e) {
-			logger.info("Problem occurs when deleting the directory : "
-					+ directoryPath);
+			System.out.println("Problem occurs when deleting the directory : " + directoryPath);
 			e.printStackTrace();
 		}
 	}
 
 	private void astronomicalMethodsMetric() {
-		FileWriter csvWriter = null, csvMethodDynamicsWriter = null,
-				jsonWriter = null;
+		File csvFile = new File(".inspectory", astronomicalMethodsCsvFileName);
+		File jsonFile = new File(".inspectory", astronomicalMethodsJsonFileName);
+		File csvMethodDynamicsFile = new File(".inspectory", astronomicalMethodsDyanmicsCsvFileName);
+
+		FileWriter csvWriter = null, csvMethodDynamicsWriter = null, jsonWriter = null;
 		try {
-			csvWriter = new FileWriter(astronomicalMethodsCsvFileName);
-			jsonWriter = new FileWriter(astronomicalMethodsJsonFileName);
-			csvMethodDynamicsWriter = new FileWriter(astronomicalMethodsDyanmicsCsvFileName);
-			CSVUtils.writeLine(csvWriter, Arrays.asList("File", "Class",
-					"Method", "Initial size", "Actual size",
-					"Number of changes", "Changes List", "isSupernova",
-					"Supernova Severity", "Supernova - Leaps Size",
-					"Supernova - Recent Leaps Size",
-					"Supernova - Subsequent Refactoring",
-					"Supernova - Method Size", "Supernova - Activity State",
-					"isPulsar", "Pulsar Severity", "Pulsar - Recent Cycles",
-					"Pulsar - Average Size Increase", "Pulsar - Method Size",
-					"Pulsar - Activity State"));
-			CSVUtils.writeLine(csvMethodDynamicsWriter,
-					Arrays.asList("File", "Supernova Methods", "Pulsar Methods",
-							"Supernova Severity", "Pulsar Severity"));
-			FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(
-					project, csvWriter, csvMethodDynamicsWriter, jsonWriter);
+			csvWriter = new FileWriter(csvFile);
+			jsonWriter = new FileWriter(jsonFile);
+			csvMethodDynamicsWriter = new FileWriter(csvMethodDynamicsFile);
+			CSVUtils.writeLine(csvWriter, Arrays.asList("File", "Class", "Method", "Initial size", "Actual size",
+					"Number of changes", "Changes List", "isSupernova", "Supernova Severity", "Supernova - Leaps Size",
+					"Supernova - Recent Leaps Size", "Supernova - Subsequent Refactoring", "Supernova - Method Size",
+					"Supernova - Activity State", "isPulsar", "Pulsar Severity", "Pulsar - Recent Cycles",
+					"Pulsar - Average Size Increase", "Pulsar - Method Size", "Pulsar - Activity State"));
+			CSVUtils.writeLine(csvMethodDynamicsWriter, Arrays.asList("File", "Supernova Methods", "Pulsar Methods",
+					"Supernova Severity", "Pulsar Severity"));
+			FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(project, csvWriter, csvMethodDynamicsWriter,
+					jsonWriter);
 			fileHistoryInspect.getHistoryFunctionsAnalyze();
 			csvWriter.flush();
 			csvWriter.close();
