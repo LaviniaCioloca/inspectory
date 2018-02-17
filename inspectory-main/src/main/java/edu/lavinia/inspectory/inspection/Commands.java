@@ -105,9 +105,13 @@ public class Commands {
 	}
 
 	private void astronomicalMethodsMetric() {
-		File csvFile = new File(".inspectory", astronomicalMethodsCsvFileName);
-		File jsonFile = new File(".inspectory", astronomicalMethodsJsonFileName);
-		File csvMethodDynamicsFile = new File(".inspectory", astronomicalMethodsDyanmicsCsvFileName);
+		String directoryPath = System.getProperty("user.dir") + "/.inspectory";
+		
+		File csvFile = new File(directoryPath, astronomicalMethodsCsvFileName);
+		File jsonFile = new File(directoryPath, astronomicalMethodsJsonFileName);
+		File csvMethodDynamicsFile = new File(directoryPath, astronomicalMethodsDyanmicsCsvFileName);
+		
+		csvFile.getParentFile().mkdirs();
 
 		FileWriter csvWriter = null, csvMethodDynamicsWriter = null, jsonWriter = null;
 		try {

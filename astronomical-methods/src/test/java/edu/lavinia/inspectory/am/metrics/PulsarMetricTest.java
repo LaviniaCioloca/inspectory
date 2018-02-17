@@ -22,9 +22,10 @@
 package edu.lavinia.inspectory.am.metrics;
 
 public class PulsarMetricTest {
-	private static PulsarMetric pulsarMetric = new PulsarMetric();
-
 	/*
+	 * private static PulsarMetric pulsarMetric = new PulsarMetric();
+	 * 
+	 * 
 	 * @Before public void setUp() { Commit commit = new Commit();
 	 * ArrayList<Commit> commits = new ArrayList<Commit>(); commits.add(commit);
 	 * MethodMetrics.setAllCommits(commits);
