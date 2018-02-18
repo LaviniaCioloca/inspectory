@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Lavinia Cioloca
+ * Copyright (c) 2017, 2018 Lavinia Cioloca
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -50,8 +50,7 @@ public class EditVisitor extends NodeSetEditVisitor {
 
 	@Override
 	public void visit(Remove remove) {
-		if (remove.getNodeType().getQualifiedName()
-				.equals(Node.Function.class.getCanonicalName())) {
+		if (remove.getNodeType().getQualifiedName().equals(Node.Function.class.getCanonicalName())) {
 			identifier = ((NodeSetEdit.Remove) remove).getIdentifier();
 			total -= 1;
 		}
@@ -59,8 +58,7 @@ public class EditVisitor extends NodeSetEditVisitor {
 
 	@Override
 	public void visit(Change<?> change) {
-		if (change.getNodeType().getQualifiedName()
-				.equals(Node.Function.class.getCanonicalName())) {
+		if (change.getNodeType().getQualifiedName().equals(Node.Function.class.getCanonicalName())) {
 			identifier = ((NodeSetEdit.Change<?>) change).getIdentifier();
 			Transaction<?> transaction = ((NodeSetEdit.Change<?>) change).getTransaction();
 			List<ListEdit<String>> bodyEdits = ((FunctionTransaction) transaction).getBodyEdits();

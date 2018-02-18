@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Lavinia Cioloca
+ * Copyright (c) 2017, 2018 Lavinia Cioloca
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -71,9 +71,8 @@ public class SupernovaCriteria {
 	@Override
 	public String toString() {
 		return "SupernovaCriteria [leapsSizePoints=" + leapsSizePoints + ", recentLeapsSizePoints="
-				+ recentLeapsSizePoints + ", subsequentRefactoringPoints="
-				+ subsequentRefactoringPoints + ", methodSizePoints=" + methodSizePoints
-				+ ", activityStatePoints=" + activityStatePoints + "]";
+				+ recentLeapsSizePoints + ", subsequentRefactoringPoints=" + subsequentRefactoringPoints
+				+ ", methodSizePoints=" + methodSizePoints + ", activityStatePoints=" + activityStatePoints + "]";
 	}
 
 }

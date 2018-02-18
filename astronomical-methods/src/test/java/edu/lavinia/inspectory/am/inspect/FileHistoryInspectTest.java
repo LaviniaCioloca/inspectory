@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Lavinia Cioloca
+ * Copyright (c) 2017, 2018 Lavinia Cioloca
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -36,27 +36,26 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
+import org.metanalysis.core.project.PersistentProject;
 
 import edu.lavinia.inspectory.am.beans.Commit;
 import edu.lavinia.inspectory.am.beans.MethodInformation;
 import edu.lavinia.inspectory.am.beans.PulsarCriteria;
 import edu.lavinia.inspectory.am.beans.SupernovaCriteria;
-import edu.lavinia.inspectory.am.inspect.FileHistoryInspect;
-import edu.lavinia.inspectory.am.inspect.RepoInspect;
 import edu.lavinia.inspectory.am.metrics.MethodMetrics;
 import edu.lavinia.inspectory.am.visitor.GenericVisitor;
 import edu.lavinia.inspectory.am.visitor.NodeVisitor;
 
 public class FileHistoryInspectTest {
 
-	private static File file = new File("./src/test/resources/testFile.csv");
+	private static final File file = new File("./src/test/resources/testFile.csv");
+	private static final PersistentProject project = null;
 
 	@Test(expected = NullPointerException.class)
 	public void testGetHistoryFunctionsAnalyze() throws IOException {
 		file.getParentFile().mkdirs();
 		FileWriter writer = new FileWriter(file);
-		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(RepoInspect.getProject(),
-				writer, writer, writer);
+		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(project, writer, writer, writer);
 		fileHistoryInspect.getHistoryFunctionsAnalyze();
 	}
 
@@ -64,33 +63,30 @@ public class FileHistoryInspectTest {
 	public void testCheckEntryInResultSetIdentifierNull() throws IOException {
 		file.getParentFile().mkdirs();
 		FileWriter writer = new FileWriter(file);
-		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(RepoInspect.getProject(),
-				writer, writer, writer);
+		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(project, writer, writer, writer);
 		String fileName = "testFileName";
 		GenericVisitor visitor = new NodeVisitor(fileName);
-		assertFalse(fileHistoryInspect.checkEntryInResultSet(visitor, new ArrayList<Integer>(),
-				"SimpleClass", new Commit()));
+		assertFalse(fileHistoryInspect.checkEntryInResultSet(visitor, new ArrayList<Integer>(), "SimpleClass",
+				new Commit()));
 	}
 
 	@Test
 	public void testCheckEntryInResultSetMethodNotExists() throws IOException {
 		file.getParentFile().mkdirs();
 		FileWriter writer = new FileWriter(file);
-		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(RepoInspect.getProject(),
-				writer, writer, writer);
+		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(project, writer, writer, writer);
 		String fileName = "testFileName";
 		GenericVisitor visitor = new NodeVisitor(fileName);
 		visitor.setIdentifier("abc");
-		assertTrue(fileHistoryInspect.checkEntryInResultSet(visitor, new ArrayList<Integer>(),
-				"SimpleClass", new Commit()));
+		assertTrue(fileHistoryInspect.checkEntryInResultSet(visitor, new ArrayList<Integer>(), "SimpleClass",
+				new Commit()));
 	}
 
 	@Test
 	public void testCheckEntryInResultSetMethodExists() throws IOException {
 		file.getParentFile().mkdirs();
 		FileWriter writer = new FileWriter(file);
-		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(RepoInspect.getProject(),
-				writer, writer, writer);
+		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(project, writer, writer, writer);
 		String fileName = "testFileName";
 		GenericVisitor visitor = new NodeVisitor(fileName);
 		visitor.setIdentifier("abc");
@@ -100,16 +96,15 @@ public class FileHistoryInspectTest {
 		methodInformation.setCommits(new ArrayList<Commit>());
 		result.put("SimpleClass" + ": " + visitor.getIdentifier(), methodInformation);
 		fileHistoryInspect.setResult(result);
-		assertFalse(fileHistoryInspect.checkEntryInResultSet(visitor, new ArrayList<Integer>(),
-				"SimpleClass", new Commit()));
+		assertFalse(fileHistoryInspect.checkEntryInResultSet(visitor, new ArrayList<Integer>(), "SimpleClass",
+				new Commit()));
 	}
 
 	@Test
 	public void testAddToAllCommits() throws IOException {
 		file.getParentFile().mkdirs();
 		FileWriter writer = new FileWriter(file);
-		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(RepoInspect.getProject(),
-				writer, writer, writer);
+		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(project, writer, writer, writer);
 		Commit commit = new Commit();
 		ArrayList<Commit> commits = new ArrayList<>();
 		commits.add(commit);
@@ -122,8 +117,7 @@ public class FileHistoryInspectTest {
 	public void testSortAllCommits() throws IOException, ParseException {
 		file.getParentFile().mkdirs();
 		FileWriter writer = new FileWriter(file);
-		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(RepoInspect.getProject(),
-				writer, writer, writer);
+		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(project, writer, writer, writer);
 		ArrayList<Commit> commits = new ArrayList<>();
 		Commit commit1 = new Commit();
 		commit1.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2016/08/30"));
@@ -150,8 +144,7 @@ public class FileHistoryInspectTest {
 	public void testCreateAndSortAllCommits() throws ParseException, IOException {
 		file.getParentFile().mkdirs();
 		FileWriter writer = new FileWriter(file);
-		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(RepoInspect.getProject(),
-				writer, writer, writer);
+		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(project, writer, writer, writer);
 		ArrayList<Commit> commits = new ArrayList<>();
 		Commit commit1 = new Commit();
 		commit1.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2016/08/10"));
@@ -182,8 +175,7 @@ public class FileHistoryInspectTest {
 	public void testWriteCSVFileData() throws IOException, ParseException {
 		file.getParentFile().mkdirs();
 		FileWriter writer = new FileWriter(file);
-		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(RepoInspect.getProject(),
-				writer, writer, writer);
+		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(project, writer, writer, writer);
 		ArrayList<Commit> commits = new ArrayList<>();
 		Commit commit1 = new Commit();
 		commit1.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2016/08/10"));
@@ -223,14 +215,12 @@ public class FileHistoryInspectTest {
 	public void testAddDataInCSVList() throws IOException {
 		file.getParentFile().mkdirs();
 		FileWriter writer = new FileWriter(file);
-		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(RepoInspect.getProject(),
-				writer, writer, writer);
+		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(project, writer, writer, writer);
 		MethodInformation methodInformation = new MethodInformation();
 		methodInformation.setFileName("\"test\"");
 		methodInformation.setClassName("\"test\"");
 		methodInformation.setMethodName("\"test\"");
-		ArrayList<MethodInformation> methodInformationList = fileHistoryInspect
-				.getMethodInformationList();
+		ArrayList<MethodInformation> methodInformationList = fileHistoryInspect.getMethodInformationList();
 		methodInformationList.add(methodInformation);
 		fileHistoryInspect.addDataInMethodInformationList("test", "test", "test");
 		assertEquals(methodInformationList, fileHistoryInspect.getMethodInformationList());
@@ -240,8 +230,7 @@ public class FileHistoryInspectTest {
 	public void testGettersAndSetters() throws IOException {
 		file.getParentFile().mkdirs();
 		FileWriter writer = new FileWriter(file);
-		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(RepoInspect.getProject(),
-				writer, writer, writer);
+		FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(project, writer, writer, writer);
 		fileHistoryInspect.setResult(new HashMap<String, MethodInformation>());
 		fileHistoryInspect.getResult();
 		fileHistoryInspect.getAllCommits();

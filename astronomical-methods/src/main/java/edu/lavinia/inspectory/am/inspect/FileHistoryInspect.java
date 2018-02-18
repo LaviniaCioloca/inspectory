@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Lavinia Cioloca
+ * Copyright (c) 2017, 2018 Lavinia Cioloca
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -79,8 +79,8 @@ public class FileHistoryInspect {
 	 * @param csvWriter
 	 *            The writer of result CSV file.
 	 */
-	public FileHistoryInspect(PersistentProject project, FileWriter csvWriter,
-			FileWriter csvMethodDynamicsWriter, FileWriter jsonWriter) {
+	public FileHistoryInspect(PersistentProject project, FileWriter csvWriter, FileWriter csvMethodDynamicsWriter,
+			FileWriter jsonWriter) {
 		this.project = project;
 		result = new HashMap<String, MethodInformation>();
 		deletedNodes = new ArrayList<String>();
@@ -108,14 +108,13 @@ public class FileHistoryInspect {
 	 * @return A boolean: false if the method's identifier is null or if it
 	 *         already exists in result set and true otherwise.
 	 */
-	public boolean checkEntryInResultSet(GenericVisitor visitor, ArrayList<Integer> lineChanges,
-			String className, Commit commit) {
+	public boolean checkEntryInResultSet(GenericVisitor visitor, ArrayList<Integer> lineChanges, String className,
+			Commit commit) {
 		if (visitor.getIdentifier() == null) {
 			return false;
 		}
 		if (result.get(className + ": " + visitor.getIdentifier()) != null) {
-			MethodInformation methodInformation = result
-					.get(className + ": " + visitor.getIdentifier());
+			MethodInformation methodInformation = result.get(className + ": " + visitor.getIdentifier());
 			methodInformation.getChangesList().add(visitor.getTotal());
 			methodInformation.getCommits().add(commit);
 			return false;
@@ -168,10 +167,8 @@ public class FileHistoryInspect {
 	 */
 	public void createAndSortAllCommits(ArrayList<MethodInformation> methodInformationList) {
 		for (MethodInformation methodInformation : methodInformationList) {
-			ArrayList<Commit> commits = result
-					.get(methodInformation.getClassName().replaceAll("\"", "") + ": "
-							+ methodInformation.getMethodName().replaceAll("\"", ""))
-					.getCommits();
+			ArrayList<Commit> commits = result.get(methodInformation.getClassName().replaceAll("\"", "") + ": "
+					+ methodInformation.getMethodName().replaceAll("\"", "")).getCommits();
 			addToAllCommits(commits);
 		}
 		sortAllCommits();
@@ -184,8 +181,8 @@ public class FileHistoryInspect {
 	 * @param actualSize
 	 * @return
 	 */
-	public MethodInformation setMethodInformation(MethodInformation methodInformation,
-			ArrayList<Integer> changesList, ArrayList<Commit> commits, Integer actualSize) {
+	public MethodInformation setMethodInformation(MethodInformation methodInformation, ArrayList<Integer> changesList,
+			ArrayList<Commit> commits, Integer actualSize) {
 		methodInformation.setInitialSize(changesList.get(0));
 		methodInformation.setNumberOfChanges(changesList.size());
 		methodInformation.setActualSize(actualSize);
@@ -194,13 +191,11 @@ public class FileHistoryInspect {
 
 		SupernovaMetric supernovaMetric = new SupernovaMetric();
 		methodInformation.setSupernova(supernovaMetric.isSupernova(methodInformation));
-		methodInformation
-				.setSupernovaSeverity(supernovaMetric.getSupernovaSeverity(methodInformation));
+		methodInformation.setSupernovaSeverity(supernovaMetric.getSupernovaSeverity(methodInformation));
 		SupernovaCriteria supernovaCriteria = new SupernovaCriteria();
 		supernovaCriteria.setLeapsSizePoints(supernovaMetric.getLeapsSizePoints());
 		supernovaCriteria.setRecentLeapsSizePoints(supernovaMetric.getRecentLeapsSizePoints());
-		supernovaCriteria
-				.setSubsequentRefactoringPoints(supernovaMetric.getSubsequentRefactoringPoints());
+		supernovaCriteria.setSubsequentRefactoringPoints(supernovaMetric.getSubsequentRefactoringPoints());
 		supernovaCriteria.setMethodSizePoints(supernovaMetric.getMethodSizePoints());
 		supernovaCriteria.setActivityStatePoints(supernovaMetric.getActivityStatePoints());
 		methodInformation.setSupernovaCriteria(supernovaCriteria);
@@ -240,22 +235,16 @@ public class FileHistoryInspect {
 		MethodMetrics.setNow(latestCommit.getDate());
 		for (MethodInformation methodInformation : methodInformationList) {
 			try {
-				ArrayList<Integer> changesList = result
-						.get(methodInformation.getClassName().replaceAll("\"", "") + ": "
-								+ methodInformation.getMethodName().replaceAll("\"", ""))
-						.getChangesList();
-				ArrayList<Commit> commits = result
-						.get(methodInformation.getClassName().replaceAll("\"", "") + ": "
-								+ methodInformation.getMethodName().replaceAll("\"", ""))
-						.getCommits();
+				ArrayList<Integer> changesList = result.get(methodInformation.getClassName().replaceAll("\"", "") + ": "
+						+ methodInformation.getMethodName().replaceAll("\"", "")).getChangesList();
+				ArrayList<Commit> commits = result.get(methodInformation.getClassName().replaceAll("\"", "") + ": "
+						+ methodInformation.getMethodName().replaceAll("\"", "")).getCommits();
 				Integer actualSize = 0;
 				for (Integer change : changesList) {
 					actualSize += change;
 				}
-				methodInformation = setMethodInformation(methodInformation, changesList, commits,
-						actualSize);
-				CSVUtils.writeLine(csvWriter, methodInformation.getMethodInformationLine(), ',',
-						'"');
+				methodInformation = setMethodInformation(methodInformation, changesList, commits, actualSize);
+				CSVUtils.writeLine(csvWriter, methodInformation.getMethodInformationLine(), ',', '"');
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -272,8 +261,8 @@ public class FileHistoryInspect {
 	 * @param commit
 	 * @param lineChanges
 	 */
-	public void handleNodeSetEditChange(NodeSetEdit edit, GenericVisitor visitor, String fileName,
-			Commit commit, ArrayList<Integer> lineChanges) {
+	public void handleNodeSetEditChange(NodeSetEdit edit, GenericVisitor visitor, String fileName, Commit commit,
+			ArrayList<Integer> lineChanges) {
 		String className = ((NodeSetEdit.Change<?>) edit).getIdentifier();
 		Transaction<?> t = ((NodeSetEdit.Change<?>) edit).getTransaction();
 		List<NodeSetEdit> memberEdits = ((TypeTransaction) t).getMemberEdits();
@@ -300,8 +289,8 @@ public class FileHistoryInspect {
 	 * @param commit
 	 * @param lineChanges
 	 */
-	public void handleNodeSetEditAdd(NodeSetEdit edit, GenericVisitor visitor, String fileName,
-			Commit commit, ArrayList<Integer> lineChanges) {
+	public void handleNodeSetEditAdd(NodeSetEdit edit, GenericVisitor visitor, String fileName, Commit commit,
+			ArrayList<Integer> lineChanges) {
 		Node node = ((NodeSetEdit.Add) edit).getNode();
 		if (node instanceof Node.Type) {
 			String className = ((Node.Type) node).getName();
@@ -312,8 +301,7 @@ public class FileHistoryInspect {
 					if (member instanceof Node.Function) {
 						((NodeVisitor) visitor).visit(member);
 						if (checkEntryInResultSet(visitor, lineChanges, className, commit)) {
-							addDataInMethodInformationList(fileName, className,
-									visitor.getIdentifier());
+							addDataInMethodInformationList(fileName, className, visitor.getIdentifier());
 						}
 					}
 				} catch (Exception e) {
@@ -331,8 +319,7 @@ public class FileHistoryInspect {
 	 * @param className
 	 * @param methodName
 	 */
-	public void addDataInMethodInformationList(String fileName, String className,
-			String methodName) {
+	public void addDataInMethodInformationList(String fileName, String className, String methodName) {
 		MethodInformation methodInformation = new MethodInformation();
 		methodInformation.setFileName("\"" + fileName + "\"");
 		methodInformation.setClassName("\"" + className + "\"");
@@ -367,8 +354,7 @@ public class FileHistoryInspect {
 
 						for (final NodeSetEdit edit : nodeEditList) {
 							if (edit instanceof NodeSetEdit.Change<?>) {
-								handleNodeSetEditChange(edit, visitor, fileName, commit,
-										lineChanges);
+								handleNodeSetEditChange(edit, visitor, fileName, commit, lineChanges);
 							} else if (edit instanceof NodeSetEdit.Add) {
 								handleNodeSetEditAdd(edit, visitor, fileName, commit, lineChanges);
 							} else {
@@ -411,23 +397,20 @@ public class FileHistoryInspect {
 		try {
 			// JsonObject entireJson = new JsonObject();
 			JsonArray jsonArray = new JsonArray();
-			for (HashMap.Entry<String, FileMethodDynamics> entry : methodDynamics
-					.getProjectMethodDynamics().entrySet()) {
+			for (HashMap.Entry<String, FileMethodDynamics> entry : methodDynamics.getProjectMethodDynamics()
+					.entrySet()) {
 				if (entry.getValue().getSupernovaMethods().intValue() > 0) {
-					jsonArray.add(jsonUtils.getSupernovaMethodsJSON(entry.getKey(),
-							entry.getValue().getSupernovaMethods()));
+					jsonArray.add(
+							jsonUtils.getSupernovaMethodsJSON(entry.getKey(), entry.getValue().getSupernovaMethods()));
 					jsonArray.add(jsonUtils.getSupernovaSeverityJSON(entry.getKey(),
 							entry.getValue().getSupernovaSeverity()));
 				}
 				if (entry.getValue().getPulsarMethods().intValue() > 0) {
-					jsonArray.add(jsonUtils.getPulsarMethodsJSON(entry.getKey(),
-							entry.getValue().getPulsarMethods()));
-					jsonArray.add(jsonUtils.getPulsarSeverityJSON(entry.getKey(),
-							entry.getValue().getPulsarMethods()));
+					jsonArray.add(jsonUtils.getPulsarMethodsJSON(entry.getKey(), entry.getValue().getPulsarMethods()));
+					jsonArray.add(jsonUtils.getPulsarSeverityJSON(entry.getKey(), entry.getValue().getPulsarMethods()));
 				}
 				CSVUtils.writeLine(csvMethodDynamicsWriter,
-						Arrays.asList(entry.getKey(),
-								entry.getValue().getSupernovaMethods().toString(),
+						Arrays.asList(entry.getKey(), entry.getValue().getSupernovaMethods().toString(),
 								entry.getValue().getPulsarMethods().toString(),
 								entry.getValue().getSupernovaSeverity().toString(),
 								entry.getValue().getPulsarSeverity().toString()));
@@ -463,6 +446,14 @@ public class FileHistoryInspect {
 
 	public ArrayList<MethodInformation> getMethodInformationList() {
 		return methodInformationList;
+	}
+
+	public PersistentProject getProject() {
+		return project;
+	}
+
+	public void setProject(PersistentProject project) {
+		this.project = project;
 	}
 
 }

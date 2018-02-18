@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Lavinia Cioloca
+ * Copyright (c) 2017, 2018 Lavinia Cioloca
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -47,8 +47,7 @@ public class SupernovaMetric extends MethodMetrics {
 	public Integer getLeapsSizePoints(Integer sumOfAllLeaps) {
 		if (sumOfAllLeaps >= 4 * MAJOR_SIZE_CHANGE) {
 			return 2;
-		} else if (sumOfAllLeaps >= 2 * MAJOR_SIZE_CHANGE
-				&& sumOfAllLeaps < 4 * MAJOR_SIZE_CHANGE) {
+		} else if (sumOfAllLeaps >= 2 * MAJOR_SIZE_CHANGE && sumOfAllLeaps < 4 * MAJOR_SIZE_CHANGE) {
 			return 1;
 		}
 		return 0;
@@ -61,11 +60,9 @@ public class SupernovaMetric extends MethodMetrics {
 	public Integer getRecentLeapsSizePoints(Integer sumRecentLeaps) {
 		if (sumRecentLeaps >= 4 * MAJOR_SIZE_CHANGE) {
 			return 3;
-		} else if (sumRecentLeaps >= 2.5 * MAJOR_SIZE_CHANGE
-				&& sumRecentLeaps < 4 * MAJOR_SIZE_CHANGE) {
+		} else if (sumRecentLeaps >= 2.5 * MAJOR_SIZE_CHANGE && sumRecentLeaps < 4 * MAJOR_SIZE_CHANGE) {
 			return 2;
-		} else if (sumRecentLeaps >= 1.5 * MAJOR_SIZE_CHANGE
-				&& sumRecentLeaps < 2.5 * MAJOR_SIZE_CHANGE) {
+		} else if (sumRecentLeaps >= 1.5 * MAJOR_SIZE_CHANGE && sumRecentLeaps < 2.5 * MAJOR_SIZE_CHANGE) {
 			return 1;
 		}
 		return 0;
@@ -77,8 +74,7 @@ public class SupernovaMetric extends MethodMetrics {
 	 *         Refactoring.
 	 */
 	public Integer getSubsequentRefactoringPoints(Double averageSubsequentCommits) {
-		if (averageSubsequentCommits >= 0 * MAJOR_SIZE_CHANGE
-				&& averageSubsequentCommits < 0.5 * MAJOR_SIZE_CHANGE) {
+		if (averageSubsequentCommits >= 0 * MAJOR_SIZE_CHANGE && averageSubsequentCommits < 0.5 * MAJOR_SIZE_CHANGE) {
 			return 2;
 		} else if (averageSubsequentCommits >= 0.5 * MAJOR_SIZE_CHANGE
 				&& averageSubsequentCommits < 1 * MAJOR_SIZE_CHANGE) {
@@ -102,8 +98,8 @@ public class SupernovaMetric extends MethodMetrics {
 		subsequentRefactoringPoints = getSubsequentRefactoringPoints(averageSubsequentCommits);
 		methodSizePoints = getMethodSizePoints(fileSize);
 		activityStatePoints = getActiveMethodPoints(commit);
-		return 1 + leapsSizePoints + recentLeapsSizePoints + subsequentRefactoringPoints
-				+ methodSizePoints + activityStatePoints;
+		return 1 + leapsSizePoints + recentLeapsSizePoints + subsequentRefactoringPoints + methodSizePoints
+				+ activityStatePoints;
 	}
 
 	/**
@@ -158,8 +154,7 @@ public class SupernovaMetric extends MethodMetrics {
 	 * @return ArrayList with the commits encountered after the
 	 *         {@code MEDIUM_TIMESPAN}.
 	 */
-	public ArrayList<Commit> getCommitsAfterMediumTimespan(
-			HashMap<Commit, Integer> commitsIntoTimeFrames) {
+	public ArrayList<Commit> getCommitsAfterMediumTimespan(HashMap<Commit, Integer> commitsIntoTimeFrames) {
 		Iterator<Map.Entry<Commit, Integer>> entries = commitsIntoTimeFrames.entrySet().iterator();
 		ArrayList<Commit> commitsAfterMediumTimespan = new ArrayList<>();
 		while (entries.hasNext()) {
@@ -180,8 +175,8 @@ public class SupernovaMetric extends MethodMetrics {
 		Integer currentTimeInterval = 0;
 		commitsIntoTimeIntervals.put(commits.get(0), currentTimeInterval);
 		for (int i = 1; i < commits.size(); ++i) {
-			if (getDifferenceInDays(commits.get(i - 1).getDate(),
-					commits.get(i).getDate()) > SHORT_TIMESPAN * TIME_FRAME) {
+			if (getDifferenceInDays(commits.get(i - 1).getDate(), commits.get(i).getDate()) > SHORT_TIMESPAN
+					* TIME_FRAME) {
 				++currentTimeInterval;
 			}
 			commitsIntoTimeIntervals.put(commits.get(i), currentTimeInterval);
@@ -194,8 +189,7 @@ public class SupernovaMetric extends MethodMetrics {
 	 * @param commitsAfterMediumTimespan
 	 * @return Sorted ArrayList of commits after the {@code MEDIUM_TIMESPAN}.
 	 */
-	public ArrayList<Commit> sortAllCommitsAfterMediumTimespan(
-			ArrayList<Commit> commitsAfterMediumTimespan) {
+	public ArrayList<Commit> sortAllCommitsAfterMediumTimespan(ArrayList<Commit> commitsAfterMediumTimespan) {
 		Collections.sort(commitsAfterMediumTimespan, new Comparator<Commit>() {
 			@Override
 			public int compare(Commit commit1, Commit commit2) {
@@ -213,8 +207,7 @@ public class SupernovaMetric extends MethodMetrics {
 	public HashMap<Commit, Integer> divideLifetimeInIntervals(MethodInformation methodInformation) {
 		ArrayList<Commit> commits = methodInformation.getCommits();
 		HashMap<Commit, Integer> commitsIntoTimeFrames = splitCommitsIntoTimeFrames(commits);
-		ArrayList<Commit> commitsAfterMediumTimespan = getCommitsAfterMediumTimespan(
-				commitsIntoTimeFrames);
+		ArrayList<Commit> commitsAfterMediumTimespan = getCommitsAfterMediumTimespan(commitsIntoTimeFrames);
 		commitsAfterMediumTimespan = sortAllCommitsAfterMediumTimespan(commitsAfterMediumTimespan);
 		HashMap<Commit, Integer> lifetimeIntoIntervals = new HashMap<>();
 		if (commitsAfterMediumTimespan.size() > 0) {
@@ -231,8 +224,7 @@ public class SupernovaMetric extends MethodMetrics {
 	 * @return A map for every commit and the number of lines added/deleted in
 	 *         that commit.
 	 */
-	public HashMap<Commit, Integer> getCommitsAndChangesMap(ArrayList<Commit> commits,
-			ArrayList<Integer> changesList) {
+	public HashMap<Commit, Integer> getCommitsAndChangesMap(ArrayList<Commit> commits, ArrayList<Integer> changesList) {
 		HashMap<Commit, Integer> commitsAndTheirChanges = new HashMap<>();
 		for (int i = 0; i < commits.size(); ++i) {
 			commitsAndTheirChanges.put(commits.get(i), changesList.get(i));
@@ -277,23 +269,18 @@ public class SupernovaMetric extends MethodMetrics {
 		Integer deletedRefactoringLines = 0;
 		Integer numberOfSubsequentRefactoring = 0;
 		Double averageSubsequentCommits = 0.0;
-		HashMap<Commit, Integer> commitsIntoTimeIntervals = divideLifetimeInIntervals(
-				methodInformation);
+		HashMap<Commit, Integer> commitsIntoTimeIntervals = divideLifetimeInIntervals(methodInformation);
 		if (methodInformation.getActualSize() >= 0 && maximumTimeInterval > 0) {
-			HashMap<Commit, Integer> commitsAndTheirChanges = getCommitsAndChangesMap(commits,
-					changesList);
+			HashMap<Commit, Integer> commitsAndTheirChanges = getCommitsAndChangesMap(commits, changesList);
 			for (HashMap.Entry<Commit, Integer> entry : commitsIntoTimeIntervals.entrySet()) {
 				sumOfAllLeaps += commitsAndTheirChanges.get(entry.getKey());
 				if (getDifferenceInDays(entry.getKey().getDate(),
-						commits.get(commits.size() - 1).getDate()) <= MEDIUM_TIMESPAN
-								* TIME_FRAME) {
+						commits.get(commits.size() - 1).getDate()) <= MEDIUM_TIMESPAN * TIME_FRAME) {
 					sumRecentLeaps += commitsAndTheirChanges.get(entry.getKey());
 				}
 			}
-			TreeMap<Integer, ArrayList<Commit>> intervalsCommitsMap = getIntervalsCommitsMap(
-					commitsIntoTimeIntervals);
-			for (int timeInterval = 0; timeInterval < maximumTimeInterval
-					- MEDIUM_TIMESPAN; ++timeInterval) {
+			TreeMap<Integer, ArrayList<Commit>> intervalsCommitsMap = getIntervalsCommitsMap(commitsIntoTimeIntervals);
+			for (int timeInterval = 0; timeInterval < maximumTimeInterval - MEDIUM_TIMESPAN; ++timeInterval) {
 				for (int nextTimeInterval = timeInterval + 1; nextTimeInterval <= timeInterval
 						+ MEDIUM_TIMESPAN; ++nextTimeInterval) {
 					for (Commit commit : intervalsCommitsMap.get(nextTimeInterval)) {
@@ -318,8 +305,7 @@ public class SupernovaMetric extends MethodMetrics {
 			}
 		}
 		if (numberOfSubsequentRefactoring > 0) {
-			averageSubsequentCommits = (double) -deletedRefactoringLines
-					/ (double) numberOfSubsequentRefactoring;
+			averageSubsequentCommits = (double) -deletedRefactoringLines / (double) numberOfSubsequentRefactoring;
 		}
 		supernovaCriterionValues.put("sumOfAllLeaps", sumOfAllLeaps);
 		supernovaCriterionValues.put("sumRecentLeaps", sumRecentLeaps);
@@ -337,12 +323,10 @@ public class SupernovaMetric extends MethodMetrics {
 	 */
 	public Integer getSupernovaSeverity(MethodInformation methodInformation) {
 		ArrayList<Commit> commits = methodInformation.getCommits();
-		Map<String, Object> supernovaCriterionValues = getSupernovaCriterionValues(
-				methodInformation);
+		Map<String, Object> supernovaCriterionValues = getSupernovaCriterionValues(methodInformation);
 		Integer sumOfAllLeaps = (Integer) supernovaCriterionValues.get("sumOfAllLeaps");
 		Integer sumRecentLeaps = (Integer) supernovaCriterionValues.get("sumRecentLeaps");
-		Double averageSubsequentCommits = (Double) supernovaCriterionValues
-				.get("averageSubsequentCommits");
+		Double averageSubsequentCommits = (Double) supernovaCriterionValues.get("averageSubsequentCommits");
 		/*
 		 * System.out.println("\nSupernovaMetric - Method: " +
 		 * methodInformation.getFileName() + methodInformation.getMethodName());

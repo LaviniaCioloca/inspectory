@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Lavinia Cioloca
+ * Copyright (c) 2017, 2018 Lavinia Cioloca
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,15 +22,15 @@
 package edu.lavinia.inspectory.am.inspect;
 
 import org.junit.Test;
-
-import edu.lavinia.inspectory.am.inspect.FileModelInspect;
-import edu.lavinia.inspectory.am.inspect.RepoInspect;
+import org.metanalysis.core.project.PersistentProject;
 
 public class FileModelInspectTest {
 
+	private static final PersistentProject project = null;
+
 	@Test(expected = NullPointerException.class)
 	public void testGetModelFunctionsAnalyze() {
-		FileModelInspect fileModelInspect = new FileModelInspect(RepoInspect.getProject());
+		FileModelInspect fileModelInspect = new FileModelInspect(project);
 		fileModelInspect.getModelFunctionsAnalyze();
 	}
 

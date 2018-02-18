@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Lavinia Cioloca
+ * Copyright (c) 2017, 2018 Lavinia Cioloca
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -68,14 +68,12 @@ public abstract class MethodMetrics {
 	 * @return A HashMap for every commit in the {@code commits} list with the
 	 *         number of the time-frame in which it is.
 	 */
-	protected static HashMap<Commit, Integer> splitCommitsIntoTimeFrames(
-			ArrayList<Commit> commits) {
+	protected static HashMap<Commit, Integer> splitCommitsIntoTimeFrames(ArrayList<Commit> commits) {
 		HashMap<Commit, Integer> commitsIntoTimeFrames = new HashMap<>();
 		Integer currentTimeFrame = 0;
 		commitsIntoTimeFrames.put(commits.get(0), currentTimeFrame);
 		for (int i = 1; i < commits.size(); ++i) {
-			if (getDifferenceInDays(commits.get(i - 1).getDate(),
-					commits.get(i).getDate()) > TIME_FRAME) {
+			if (getDifferenceInDays(commits.get(i - 1).getDate(), commits.get(i).getDate()) > TIME_FRAME) {
 				++currentTimeFrame;
 			}
 			commitsIntoTimeFrames.put(commits.get(i), currentTimeFrame);
@@ -98,8 +96,7 @@ public abstract class MethodMetrics {
 		for (int i = 0; i < changesList.size(); ++i) {
 			if (changesList.get(i) < MIN_REFINE_LINES) {
 				commitsTypes.add("refactor");
-			} else if (changesList.get(i) >= MIN_REFINE_LINES
-					&& changesList.get(i) <= MAX_REFINE_LINES) {
+			} else if (changesList.get(i) >= MIN_REFINE_LINES && changesList.get(i) <= MAX_REFINE_LINES) {
 				commitsTypes.add("refine");
 			} else {
 				commitsTypes.add("develop");
