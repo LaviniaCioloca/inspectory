@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2018 Lavinia Cioloca
+	 * Copyright (c) 2017, 2018 Lavinia Cioloca
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,7 +23,9 @@ package edu.lavinia.inspectory.am.beans;
 
 import java.util.ArrayList;
 
-public class MethodInformation {
+import edu.lavinia.inspectory.beans.Commit;
+
+public class MethodChangesInformation {
 	private ArrayList<Commit> commits;
 	private String fileName;
 	private String className;

@@ -19,7 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *******************************************************************************/
-package edu.lavinia.inspectory.am.inspect;
+package edu.lavinia.inspectory.am.inspection;
 
 import java.io.IOException;
 import java.util.Map;
@@ -33,10 +33,10 @@ import org.metanalysis.core.project.PersistentProject;
 
 import edu.lavinia.inspectory.am.visitor.NodeVisitor;
 
-public class FileModelInspect {
+public class FileModelInspection {
 	private PersistentProject project = null;
 
-	public FileModelInspect(PersistentProject project) {
+	public FileModelInspection(PersistentProject project) {
 		this.project = project;
 	}
 

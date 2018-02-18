@@ -59,12 +59,12 @@
             <artifactId>metanalysis-core</artifactId>
             <version>0.1.5</version>
             <scope>compile</scope>
-            <exclusions>
+            <!--  <exclusions>
                 <exclusion>
                     <groupId>com.fasterxml.jackson.core</groupId>
                     <artifactId>jackson-annotations</artifactId>
                 </exclusion>
-            </exclusions>
+            </exclusions> -->
         </dependency>
 
         <dependency>
@@ -72,7 +72,7 @@
             <artifactId>metanalysis-test</artifactId>
             <version>0.1.5</version>
             <scope>test</scope>
-            <exclusions>
+            <!-- <exclusions>
                 <exclusion>
                     <groupId>org.jetbrains.kotlin</groupId>
                     <artifactId>kotlin-stdlib</artifactId>
@@ -82,14 +82,14 @@
                     <groupId>com.github.andrei-heidelbacher.metanalysis</groupId>
                     <artifactId>metanalysis-core</artifactId>
                 </exclusion>
-            </exclusions>
+            </exclusions> -->
         </dependency>
 
         <dependency>
             <groupId>com.github.ekryd.sortpom</groupId>
             <artifactId>sortpom-maven-plugin</artifactId>
             <version>2.8.0</version>
-            <exclusions>
+            <!-- <exclusions>
                 <exclusion>
                     <groupId>org.codehaus.plexus</groupId>
                     <artifactId>plexus-utils</artifactId>
@@ -99,7 +99,7 @@
                     <groupId>org.apache.commons</groupId>
                     <artifactId>commons-lang3</artifactId>
                 </exclusion>
-            </exclusions>
+            </exclusions> -->
         </dependency>
 
         <dependency>

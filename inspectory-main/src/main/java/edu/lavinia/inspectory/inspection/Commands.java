@@ -26,7 +26,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.metanalysis.core.project.PersistentProject;
 
-import edu.lavinia.inspectory.am.inspect.FileHistoryInspect;
+import edu.lavinia.inspectory.am.inspection.AstronomicalMethodsInspection;
+import edu.lavinia.inspectory.op.inspection.OwnershipProblemsInspection;
 import edu.lavinia.inspectory.utils.CSVUtils;
 
 public class Commands {
@@ -40,6 +41,8 @@ public class Commands {
 	private final static String astronomicalMethodsCsvFileName = "astronomical-methods-result.csv";
 	private final static String astronomicalMethodsJsonFileName = "astronomical-methods-result.json";
 	private final static String astronomicalMethodsDyanmicsCsvFileName = "astronomical-methods-dynamics-result.csv";
+
+	private final static String ownershipProblemsCsvFileName = "ownership-problems-result.csv";
 
 	public Commands(String[] args, PersistentProject project) {
 		this.args = args;
@@ -82,7 +85,7 @@ public class Commands {
 			} else if (cmd.hasOption("amm")) {
 				astronomicalMethodsMetric();
 			} else if (cmd.hasOption("opm")) {
-				System.out.println("Using cli argument -amm");
+				ownershipProblemsMetric();
 			} else {
 				System.out.println("Missing valid option");
 				help();
@@ -116,11 +119,11 @@ public class Commands {
 
 	private void astronomicalMethodsMetric() {
 		String directoryPath = System.getProperty("user.dir") + "/.inspectory";
-		
+
 		File csvFile = new File(directoryPath, astronomicalMethodsCsvFileName);
 		File jsonFile = new File(directoryPath, astronomicalMethodsJsonFileName);
 		File csvMethodDynamicsFile = new File(directoryPath, astronomicalMethodsDyanmicsCsvFileName);
-		
+
 		csvFile.getParentFile().mkdirs();
 
 		FileWriter csvWriter = null, csvMethodDynamicsWriter = null, jsonWriter = null;
@@ -135,15 +138,36 @@ public class Commands {
 					"Pulsar - Average Size Increase", "Pulsar - Method Size", "Pulsar - Activity State"));
 			CSVUtils.writeLine(csvMethodDynamicsWriter, Arrays.asList("File", "Supernova Methods", "Pulsar Methods",
 					"Supernova Severity", "Pulsar Severity"));
-			FileHistoryInspect fileHistoryInspect = new FileHistoryInspect(project, csvWriter, csvMethodDynamicsWriter,
-					jsonWriter);
-			fileHistoryInspect.getHistoryFunctionsAnalyze();
+			AstronomicalMethodsInspection astronomicalMethodsInspection = new AstronomicalMethodsInspection(project,
+					csvWriter, csvMethodDynamicsWriter, jsonWriter);
+			astronomicalMethodsInspection.getHistoryFunctionsAnalyze();
 			csvWriter.flush();
 			csvWriter.close();
 			csvMethodDynamicsWriter.flush();
 			csvMethodDynamicsWriter.close();
 			jsonWriter.flush();
 			jsonWriter.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void ownershipProblemsMetric() {
+		String directoryPath = System.getProperty("user.dir") + "/.inspectory";
+
+		File csvFile = new File(directoryPath, ownershipProblemsCsvFileName);
+		csvFile.getParentFile().mkdirs();
+
+		FileWriter csvWriter = null;
+		try {
+			csvWriter = new FileWriter(csvFile);
+			CSVUtils.writeLine(csvWriter,
+					Arrays.asList("File", "File Owner", "Number of changes", "Authors - Number of changes made"));
+			OwnershipProblemsInspection ownershipProblemsInspection = new OwnershipProblemsInspection(project,
+					csvWriter);
+			ownershipProblemsInspection.writeFileResults();
+			csvWriter.flush();
+			csvWriter.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

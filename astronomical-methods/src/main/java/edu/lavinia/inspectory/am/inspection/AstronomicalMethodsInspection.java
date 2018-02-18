@@ -19,7 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *******************************************************************************/
-package edu.lavinia.inspectory.am.inspect;
+package edu.lavinia.inspectory.am.inspection;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -44,9 +44,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 
-import edu.lavinia.inspectory.am.beans.Commit;
 import edu.lavinia.inspectory.am.beans.FileMethodDynamics;
-import edu.lavinia.inspectory.am.beans.MethodInformation;
+import edu.lavinia.inspectory.am.beans.MethodChangesInformation;
 import edu.lavinia.inspectory.am.beans.PulsarCriteria;
 import edu.lavinia.inspectory.am.beans.SupernovaCriteria;
 import edu.lavinia.inspectory.am.metrics.MethodMetrics;
@@ -58,31 +57,32 @@ import edu.lavinia.inspectory.am.utils.MethodDynamicsUtils;
 import edu.lavinia.inspectory.am.visitor.EditVisitor;
 import edu.lavinia.inspectory.am.visitor.GenericVisitor;
 import edu.lavinia.inspectory.am.visitor.NodeVisitor;
+import edu.lavinia.inspectory.beans.Commit;
 
-public class FileHistoryInspect {
+public class AstronomicalMethodsInspection {
 	private PersistentProject project = null;
-	private Map<String, MethodInformation> result = null;
+	private Map<String, MethodChangesInformation> result = null;
 	private ArrayList<String> deletedNodes = null;
 	private FileWriter csvWriter = null;
 	private FileWriter csvMethodDynamicsWriter = null;
 	private FileWriter jsonWriter = null;
-	private ArrayList<MethodInformation> methodInformationList = null;
+	private ArrayList<MethodChangesInformation> methodInformationList = null;
 	private ArrayList<Commit> allCommits = null;
 	private MethodDynamicsUtils methodDynamics = null;
 
 	/**
-	 * FileHistoryInspect Constructor that initializes the result map and CSV
-	 * writer to file.
+	 * AstronomicalMethodsInspection Constructor that initializes the result map
+	 * and CSV writer to file.
 	 * 
 	 * @param project
 	 *            The project of the repository to inspect.
 	 * @param csvWriter
 	 *            The writer of result CSV file.
 	 */
-	public FileHistoryInspect(PersistentProject project, FileWriter csvWriter, FileWriter csvMethodDynamicsWriter,
-			FileWriter jsonWriter) {
+	public AstronomicalMethodsInspection(PersistentProject project, FileWriter csvWriter,
+			FileWriter csvMethodDynamicsWriter, FileWriter jsonWriter) {
 		this.project = project;
-		result = new HashMap<String, MethodInformation>();
+		result = new HashMap<String, MethodChangesInformation>();
 		deletedNodes = new ArrayList<String>();
 		this.csvWriter = csvWriter;
 		this.csvMethodDynamicsWriter = csvMethodDynamicsWriter;
@@ -114,21 +114,21 @@ public class FileHistoryInspect {
 			return false;
 		}
 		if (result.get(className + ": " + visitor.getIdentifier()) != null) {
-			MethodInformation methodInformation = result.get(className + ": " + visitor.getIdentifier());
-			methodInformation.getChangesList().add(visitor.getTotal());
-			methodInformation.getCommits().add(commit);
+			MethodChangesInformation methodChangesInformation = result.get(className + ": " + visitor.getIdentifier());
+			methodChangesInformation.getChangesList().add(visitor.getTotal());
+			methodChangesInformation.getCommits().add(commit);
 			return false;
 		} else {
 			lineChanges = new ArrayList<Integer>();
 			lineChanges.add(visitor.getTotal());
 			ArrayList<Commit> commits = new ArrayList<>();
 			commits.add(commit);
-			MethodInformation methodInformation = new MethodInformation();
-			methodInformation.setChangesList(lineChanges);
-			methodInformation.setCommits(commits);
-			methodInformation.setClassName(className);
-			methodInformation.setMethodName(visitor.getIdentifier());
-			result.put(className + ": " + visitor.getIdentifier(), methodInformation);
+			MethodChangesInformation methodChangesInformation = new MethodChangesInformation();
+			methodChangesInformation.setChangesList(lineChanges);
+			methodChangesInformation.setCommits(commits);
+			methodChangesInformation.setClassName(className);
+			methodChangesInformation.setMethodName(visitor.getIdentifier());
+			result.put(className + ": " + visitor.getIdentifier(), methodChangesInformation);
 			return true;
 		}
 	}
@@ -165,59 +165,59 @@ public class FileHistoryInspect {
 	 * 
 	 * @param methodInformationList
 	 */
-	public void createAndSortAllCommits(ArrayList<MethodInformation> methodInformationList) {
-		for (MethodInformation methodInformation : methodInformationList) {
-			ArrayList<Commit> commits = result.get(methodInformation.getClassName().replaceAll("\"", "") + ": "
-					+ methodInformation.getMethodName().replaceAll("\"", "")).getCommits();
+	public void createAndSortAllCommits(ArrayList<MethodChangesInformation> methodInformationList) {
+		for (MethodChangesInformation methodChangesInformation : methodInformationList) {
+			ArrayList<Commit> commits = result.get(methodChangesInformation.getClassName().replaceAll("\"", "") + ": "
+					+ methodChangesInformation.getMethodName().replaceAll("\"", "")).getCommits();
 			addToAllCommits(commits);
 		}
 		sortAllCommits();
 	}
 
 	/**
-	 * @param methodInformation
+	 * @param methodChangesInformation
 	 * @param changesList
 	 * @param commits
 	 * @param actualSize
 	 * @return
 	 */
-	public MethodInformation setMethodInformation(MethodInformation methodInformation, ArrayList<Integer> changesList,
+	public MethodChangesInformation setMethodInformation(MethodChangesInformation methodChangesInformation, ArrayList<Integer> changesList,
 			ArrayList<Commit> commits, Integer actualSize) {
-		methodInformation.setInitialSize(changesList.get(0));
-		methodInformation.setNumberOfChanges(changesList.size());
-		methodInformation.setActualSize(actualSize);
-		methodInformation.setChangesList(changesList);
-		methodInformation.setCommits(commits);
+		methodChangesInformation.setInitialSize(changesList.get(0));
+		methodChangesInformation.setNumberOfChanges(changesList.size());
+		methodChangesInformation.setActualSize(actualSize);
+		methodChangesInformation.setChangesList(changesList);
+		methodChangesInformation.setCommits(commits);
 
 		SupernovaMetric supernovaMetric = new SupernovaMetric();
-		methodInformation.setSupernova(supernovaMetric.isSupernova(methodInformation));
-		methodInformation.setSupernovaSeverity(supernovaMetric.getSupernovaSeverity(methodInformation));
+		methodChangesInformation.setSupernova(supernovaMetric.isSupernova(methodChangesInformation));
+		methodChangesInformation.setSupernovaSeverity(supernovaMetric.getSupernovaSeverity(methodChangesInformation));
 		SupernovaCriteria supernovaCriteria = new SupernovaCriteria();
 		supernovaCriteria.setLeapsSizePoints(supernovaMetric.getLeapsSizePoints());
 		supernovaCriteria.setRecentLeapsSizePoints(supernovaMetric.getRecentLeapsSizePoints());
 		supernovaCriteria.setSubsequentRefactoringPoints(supernovaMetric.getSubsequentRefactoringPoints());
 		supernovaCriteria.setMethodSizePoints(supernovaMetric.getMethodSizePoints());
 		supernovaCriteria.setActivityStatePoints(supernovaMetric.getActivityStatePoints());
-		methodInformation.setSupernovaCriteria(supernovaCriteria);
+		methodChangesInformation.setSupernovaCriteria(supernovaCriteria);
 
 		PulsarMetric pulsarMetric = new PulsarMetric();
-		methodInformation.setPulsar(pulsarMetric.isPulsar(methodInformation));
-		methodInformation.setPulsarSeverity(pulsarMetric.getPulsarSeverity(methodInformation));
+		methodChangesInformation.setPulsar(pulsarMetric.isPulsar(methodChangesInformation));
+		methodChangesInformation.setPulsarSeverity(pulsarMetric.getPulsarSeverity(methodChangesInformation));
 		PulsarCriteria pulsarCriteria = new PulsarCriteria();
 		pulsarCriteria.setRecentCyclesPoints(pulsarMetric.getRecentCyclesPoints());
 		pulsarCriteria.setAverageSizeIncreasePoints(pulsarMetric.getAverageSizeIncreasePoints());
 		pulsarCriteria.setMethodSizePoints(pulsarMetric.getMethodSizePoints());
 		pulsarCriteria.setActivityStatePoints(pulsarMetric.getActivityStatePoints());
-		methodInformation.setPulsarCriteria(pulsarCriteria);
-		if (methodInformation.isSupernova()) {
-			methodDynamics.addSupernovaMethodDynamics(methodInformation.getFileName(),
-					methodInformation.getSupernovaSeverity());
+		methodChangesInformation.setPulsarCriteria(pulsarCriteria);
+		if (methodChangesInformation.isSupernova()) {
+			methodDynamics.addSupernovaMethodDynamics(methodChangesInformation.getFileName(),
+					methodChangesInformation.getSupernovaSeverity());
 		}
-		if (methodInformation.isPulsar()) {
-			methodDynamics.addPulsarMethodDynamics(methodInformation.getFileName(),
-					methodInformation.getPulsarSeverity());
+		if (methodChangesInformation.isPulsar()) {
+			methodDynamics.addPulsarMethodDynamics(methodChangesInformation.getFileName(),
+					methodChangesInformation.getPulsarSeverity());
 		}
-		return methodInformation;
+		return methodChangesInformation;
 	}
 
 	/**
@@ -227,24 +227,24 @@ public class FileHistoryInspect {
 	 *            List with every {@code methodInformation} line, of every
 	 *            method, to be written in the inspectory result CSV file.
 	 */
-	public void writeCSVFileData(ArrayList<MethodInformation> methodInformationList) {
+	public void writeCSVFileData(ArrayList<MethodChangesInformation> methodInformationList) {
 		createAndSortAllCommits(methodInformationList);
 		Commit latestCommit = allCommits.get(allCommits.size() - 1);
 		MethodMetrics.setAllCommits(allCommits);
 		MethodMetrics.setAllCommitsIntoTimeFrames();
 		MethodMetrics.setNow(latestCommit.getDate());
-		for (MethodInformation methodInformation : methodInformationList) {
+		for (MethodChangesInformation methodChangesInformation : methodInformationList) {
 			try {
-				ArrayList<Integer> changesList = result.get(methodInformation.getClassName().replaceAll("\"", "") + ": "
-						+ methodInformation.getMethodName().replaceAll("\"", "")).getChangesList();
-				ArrayList<Commit> commits = result.get(methodInformation.getClassName().replaceAll("\"", "") + ": "
-						+ methodInformation.getMethodName().replaceAll("\"", "")).getCommits();
+				ArrayList<Integer> changesList = result.get(methodChangesInformation.getClassName().replaceAll("\"", "") + ": "
+						+ methodChangesInformation.getMethodName().replaceAll("\"", "")).getChangesList();
+				ArrayList<Commit> commits = result.get(methodChangesInformation.getClassName().replaceAll("\"", "") + ": "
+						+ methodChangesInformation.getMethodName().replaceAll("\"", "")).getCommits();
 				Integer actualSize = 0;
 				for (Integer change : changesList) {
 					actualSize += change;
 				}
-				methodInformation = setMethodInformation(methodInformation, changesList, commits, actualSize);
-				CSVUtils.writeLine(csvWriter, methodInformation.getMethodInformationLine(), ',', '"');
+				methodChangesInformation = setMethodInformation(methodChangesInformation, changesList, commits, actualSize);
+				CSVUtils.writeLine(csvWriter, methodChangesInformation.getMethodInformationLine(), ',', '"');
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -320,11 +320,11 @@ public class FileHistoryInspect {
 	 * @param methodName
 	 */
 	public void addDataInMethodInformationList(String fileName, String className, String methodName) {
-		MethodInformation methodInformation = new MethodInformation();
-		methodInformation.setFileName("\"" + fileName + "\"");
-		methodInformation.setClassName("\"" + className + "\"");
-		methodInformation.setMethodName("\"" + methodName + "\"");
-		methodInformationList.add(methodInformation);
+		MethodChangesInformation methodChangesInformation = new MethodChangesInformation();
+		methodChangesInformation.setFileName("\"" + fileName + "\"");
+		methodChangesInformation.setClassName("\"" + className + "\"");
+		methodChangesInformation.setMethodName("\"" + methodName + "\"");
+		methodInformationList.add(methodChangesInformation);
 	}
 
 	/**
@@ -334,7 +334,7 @@ public class FileHistoryInspect {
 	public void createResults() {
 		try {
 			Set<String> filesList = project.listFiles();
-			methodInformationList = new ArrayList<MethodInformation>();
+			methodInformationList = new ArrayList<MethodChangesInformation>();
 			for (String fileName : filesList) {
 				if (fileName.startsWith(".") || !fileName.endsWith(".java")) {
 					continue;
@@ -432,11 +432,11 @@ public class FileHistoryInspect {
 		writeMethodDynamicsData();
 	}
 
-	public Map<String, MethodInformation> getResult() {
+	public Map<String, MethodChangesInformation> getResult() {
 		return result;
 	}
 
-	public void setResult(Map<String, MethodInformation> result) {
+	public void setResult(Map<String, MethodChangesInformation> result) {
 		this.result = result;
 	}
 
@@ -444,7 +444,7 @@ public class FileHistoryInspect {
 		return allCommits;
 	}
 
-	public ArrayList<MethodInformation> getMethodInformationList() {
+	public ArrayList<MethodChangesInformation> getMethodInformationList() {
 		return methodInformationList;
 	}
 

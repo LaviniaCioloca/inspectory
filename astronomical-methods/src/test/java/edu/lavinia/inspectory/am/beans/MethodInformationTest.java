@@ -17,7 +17,7 @@ import java.util.Arrays;
 import org.junit.Assert;
 import org.junit.Test;
 
-import edu.lavinia.inspectory.am.beans.MethodInformation;
+import edu.lavinia.inspectory.am.beans.MethodChangesInformation;
 import edu.lavinia.inspectory.am.beans.PulsarCriteria;
 import edu.lavinia.inspectory.am.beans.SupernovaCriteria;
 import net.codebox.javabeantester.JavaBeanTester;
@@ -25,26 +25,26 @@ import net.codebox.javabeantester.JavaBeanTester;
 public class MethodInformationTest {
 	@Test
 	public void testBeanProperties() throws IntrospectionException {
-		JavaBeanTester.test(MethodInformation.class);
+		JavaBeanTester.test(MethodChangesInformation.class);
 	}
 
 	@Test
 	public void testGetMethodInformationLine() {
-		MethodInformation methodInformation = new MethodInformation();
+		MethodChangesInformation methodChangesInformation = new MethodChangesInformation();
 		ArrayList<String> expected = new ArrayList<>();
-		methodInformation.setInitialSize(10);
-		methodInformation.setActualSize(100);
-		methodInformation.setNumberOfChanges(10);
+		methodChangesInformation.setInitialSize(10);
+		methodChangesInformation.setActualSize(100);
+		methodChangesInformation.setNumberOfChanges(10);
 		ArrayList<Integer> changesList = new ArrayList<>(Arrays.asList(1, 2, 3));
-		methodInformation.setChangesList(changesList);
-		methodInformation.setSupernova(false);
-		methodInformation.setPulsar(false);
-		methodInformation.setSupernovaSeverity(5);
-		methodInformation.setPulsarSeverity(5);
+		methodChangesInformation.setChangesList(changesList);
+		methodChangesInformation.setSupernova(false);
+		methodChangesInformation.setPulsar(false);
+		methodChangesInformation.setSupernovaSeverity(5);
+		methodChangesInformation.setPulsarSeverity(5);
 		SupernovaCriteria supernovaCriteria = new SupernovaCriteria();
 		PulsarCriteria pulsarCriteria = new PulsarCriteria();
-		methodInformation.setSupernovaCriteria(supernovaCriteria);
-		methodInformation.setPulsarCriteria(pulsarCriteria);
+		methodChangesInformation.setSupernovaCriteria(supernovaCriteria);
+		methodChangesInformation.setPulsarCriteria(pulsarCriteria);
 
 		for (int i = 0; i < 3; ++i) {
 			expected.add(null);
@@ -53,19 +53,19 @@ public class MethodInformationTest {
 		expected.add("100");
 		expected.add("10");
 		expected.add(changesList.toString());
-		expected.add(methodInformation.isSupernova().toString());
+		expected.add(methodChangesInformation.isSupernova().toString());
 		expected.add("5");
 		expected.add("0");
 		expected.add("0");
 		expected.add("0");
 		expected.add("0");
 		expected.add("0");
-		expected.add(methodInformation.isPulsar().toString());
+		expected.add(methodChangesInformation.isPulsar().toString());
 		expected.add("5");
 		expected.add("0");
 		expected.add("0");
 		expected.add("0");
 		expected.add("0");
-		Assert.assertEquals(expected, methodInformation.getMethodInformationLine());
+		Assert.assertEquals(expected, methodChangesInformation.getMethodInformationLine());
 	}
 }

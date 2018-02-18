@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
-import edu.lavinia.inspectory.am.beans.Commit;
+import edu.lavinia.inspectory.beans.Commit;
 
 public abstract class MethodMetrics {
 	protected final static Integer MIN_REFINE_LINES = -3; // lines

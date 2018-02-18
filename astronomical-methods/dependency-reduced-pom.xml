@@ -23,14 +23,6 @@
       <scope>test</scope>
       <exclusions>
         <exclusion>
-          <artifactId>kotlin-stdlib</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>metanalysis-core</artifactId>
-          <groupId>com.github.andrei-heidelbacher.metanalysis</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>kotlin-test</artifactId>
           <groupId>org.jetbrains.kotlin</groupId>
         </exclusion>

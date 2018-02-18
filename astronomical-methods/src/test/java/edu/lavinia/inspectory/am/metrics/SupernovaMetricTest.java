@@ -29,7 +29,7 @@ public class SupernovaMetricTest {
 	 * ArrayList<Commit>()); MethodMetrics.setNow(new Date()); }
 	 * 
 	 * @Test public void testIsSupernovaTrue() throws ParseException {
-	 * MethodInformation methodInformation = new MethodInformation();
+	 * MethodChangesInformation methodInformation = new MethodChangesInformation();
 	 * ArrayList<Integer> changesList = new ArrayList<Integer>(
 	 * Arrays.asList(210, 110, 50, -250, -40, 25, -10, 15, -10, 5, -15, 50,
 	 * 15)); ArrayList<Commit> commits = new ArrayList<>(); Commit commit = new
@@ -77,7 +77,7 @@ public class SupernovaMetricTest {
 	 * assertTrue(supernovaMetric.isSupernova(methodInformation)); }
 	 * 
 	 * @Test public void testIsSupernovaFalse() throws ParseException {
-	 * MethodInformation methodInformation = new MethodInformation();
+	 * MethodChangesInformation methodInformation = new MethodChangesInformation();
 	 * ArrayList<Integer> changesList = new ArrayList<Integer>(
 	 * Arrays.asList(200, -10, 50, 250, -40)); ArrayList<Commit> commits = new
 	 * ArrayList<>(); Commit commit = new Commit(); commit.setDate(new
@@ -181,7 +181,7 @@ public class SupernovaMetricTest {
 	 * 10, commit) == 1); }
 	 * 
 	 * @Test public void testGetSupernovaSeverity() throws ParseException {
-	 * MethodInformation methodInformation = new MethodInformation();
+	 * MethodChangesInformation methodInformation = new MethodChangesInformation();
 	 * ArrayList<Commit> commits = new ArrayList<>(); Commit commit = new
 	 * Commit(); commit.setDate(new
 	 * SimpleDateFormat("yyyy/MM/dd").parse("2017/01/01")); commits.add(commit);
@@ -216,7 +216,7 @@ public class SupernovaMetricTest {
 	 * 10); }
 	 * 
 	 * @Test public void testGetSupernovaCriterionValues() throws ParseException
-	 * { MethodInformation methodInformation = new MethodInformation();
+	 * { MethodChangesInformation methodInformation = new MethodChangesInformation();
 	 * methodInformation.setActualSize(250); ArrayList<Integer> changesList =
 	 * new ArrayList<>(); changesList.add(-10); changesList.add(50);
 	 * changesList.add(-20); changesList.add(2); changesList.add(2);
@@ -276,7 +276,7 @@ public class SupernovaMetricTest {
 	 * methodInformation), supernovaCriterionValues); }
 	 * 
 	 * @Test public void testDivideLifetimeInIntervals() throws ParseException {
-	 * MethodInformation methodInformation = new MethodInformation();
+	 * MethodChangesInformation methodInformation = new MethodChangesInformation();
 	 * methodInformation.setActualSize(250); ArrayList<Integer> changesList =
 	 * new ArrayList<>(); changesList.add(-10); changesList.add(50);
 	 * changesList.add(-20); changesList.add(2); changesList.add(2);

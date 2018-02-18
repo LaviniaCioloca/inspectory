@@ -8,14 +8,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package edu.lavinia.inspectory.am.beans;
+package edu.lavinia.inspectory.beans;
 
 import java.beans.IntrospectionException;
 
 import org.junit.Assert;
 import org.junit.Test;
 
-import edu.lavinia.inspectory.am.beans.Commit;
 import net.codebox.javabeantester.JavaBeanTester;
 
 public class CommitTest {

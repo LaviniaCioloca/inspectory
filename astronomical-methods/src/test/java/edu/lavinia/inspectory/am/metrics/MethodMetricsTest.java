@@ -32,10 +32,8 @@ import java.util.HashMap;
 
 import org.junit.Test;
 
-import edu.lavinia.inspectory.am.beans.Commit;
-import edu.lavinia.inspectory.am.beans.MethodInformation;
-import edu.lavinia.inspectory.am.metrics.MethodMetrics;
-import edu.lavinia.inspectory.am.metrics.PulsarMetric;
+import edu.lavinia.inspectory.am.beans.MethodChangesInformation;
+import edu.lavinia.inspectory.beans.Commit;
 
 public class MethodMetricsTest {
 	private static MethodMetrics methodMetric = new PulsarMetric();
@@ -62,7 +60,7 @@ public class MethodMetricsTest {
 
 	@Test
 	public void testSplitCommitsIntoTimeFrames() throws ParseException {
-		MethodInformation methodInformation = new MethodInformation();
+		MethodChangesInformation methodChangesInformation = new MethodChangesInformation();
 		ArrayList<Commit> commits = new ArrayList<>();
 		Commit commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2016/08/01"));
@@ -95,7 +93,7 @@ public class MethodMetricsTest {
 		commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/11/08"));
 		commits.add(commit);
-		methodInformation.setCommits(commits);
+		methodChangesInformation.setCommits(commits);
 		HashMap<Commit, Integer> expected = new HashMap<>();
 		expected.put(commits.get(0), 0);
 		expected.put(commits.get(1), 0);

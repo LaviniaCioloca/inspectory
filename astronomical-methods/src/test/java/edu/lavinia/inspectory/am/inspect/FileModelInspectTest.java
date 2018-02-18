@@ -24,14 +24,16 @@ package edu.lavinia.inspectory.am.inspect;
 import org.junit.Test;
 import org.metanalysis.core.project.PersistentProject;
 
+import edu.lavinia.inspectory.am.inspection.FileModelInspection;
+
 public class FileModelInspectTest {
 
 	private static final PersistentProject project = null;
 
 	@Test(expected = NullPointerException.class)
 	public void testGetModelFunctionsAnalyze() {
-		FileModelInspect fileModelInspect = new FileModelInspect(project);
-		fileModelInspect.getModelFunctionsAnalyze();
+		FileModelInspection fileModelInspection = new FileModelInspection(project);
+		fileModelInspection.getModelFunctionsAnalyze();
 	}
 
 }
