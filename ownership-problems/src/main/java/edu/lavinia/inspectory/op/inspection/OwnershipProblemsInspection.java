@@ -109,4 +109,9 @@ public class OwnershipProblemsInspection {
 			e.printStackTrace();
 		}
 	}
+
+	public HashMap<String, FileOwnershipInformation> getFileOwnershipResult() {
+		return fileOwnershipResult;
+	}
+
 }
