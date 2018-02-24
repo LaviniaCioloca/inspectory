@@ -181,8 +181,8 @@ public class AstronomicalMethodsInspection {
 	 * @param actualSize
 	 * @return
 	 */
-	public MethodChangesInformation setMethodInformation(MethodChangesInformation methodChangesInformation, ArrayList<Integer> changesList,
-			ArrayList<Commit> commits, Integer actualSize) {
+	public MethodChangesInformation setMethodInformation(MethodChangesInformation methodChangesInformation,
+			ArrayList<Integer> changesList, ArrayList<Commit> commits, Integer actualSize) {
 		methodChangesInformation.setInitialSize(changesList.get(0));
 		methodChangesInformation.setNumberOfChanges(changesList.size());
 		methodChangesInformation.setActualSize(actualSize);
@@ -235,15 +235,16 @@ public class AstronomicalMethodsInspection {
 		MethodMetrics.setNow(latestCommit.getDate());
 		for (MethodChangesInformation methodChangesInformation : methodInformationList) {
 			try {
-				ArrayList<Integer> changesList = result.get(methodChangesInformation.getClassName().replaceAll("\"", "") + ": "
-						+ methodChangesInformation.getMethodName().replaceAll("\"", "")).getChangesList();
-				ArrayList<Commit> commits = result.get(methodChangesInformation.getClassName().replaceAll("\"", "") + ": "
-						+ methodChangesInformation.getMethodName().replaceAll("\"", "")).getCommits();
+				ArrayList<Integer> changesList = result.get(methodChangesInformation.getClassName().replaceAll("\"", "")
+						+ ": " + methodChangesInformation.getMethodName().replaceAll("\"", "")).getChangesList();
+				ArrayList<Commit> commits = result.get(methodChangesInformation.getClassName().replaceAll("\"", "")
+						+ ": " + methodChangesInformation.getMethodName().replaceAll("\"", "")).getCommits();
 				Integer actualSize = 0;
 				for (Integer change : changesList) {
 					actualSize += change;
 				}
-				methodChangesInformation = setMethodInformation(methodChangesInformation, changesList, commits, actualSize);
+				methodChangesInformation = setMethodInformation(methodChangesInformation, changesList, commits,
+						actualSize);
 				CSVUtils.writeLine(csvWriter, methodChangesInformation.getMethodInformationLine(), ',', '"');
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -343,13 +344,13 @@ public class AstronomicalMethodsInspection {
 
 				for (HistoryEntry historyEntry : fileHistory) {
 					try {
-						Commit commit = new Commit();
+						final Commit commit = new Commit();
 						commit.setRevision(historyEntry.getRevision());
 						commit.setAuthor(historyEntry.getAuthor());
 						commit.setDate(historyEntry.getDate());
-						ArrayList<Integer> lineChanges = null;
-						SourceFileTransaction sourceFileTransaction = historyEntry.getTransaction();
-						List<NodeSetEdit> nodeEditList = sourceFileTransaction.getNodeEdits();
+						final ArrayList<Integer> lineChanges = null;
+						final SourceFileTransaction sourceFileTransaction = historyEntry.getTransaction();
+						final List<NodeSetEdit> nodeEditList = sourceFileTransaction.getNodeEdits();
 						GenericVisitor visitor = null;
 
 						for (final NodeSetEdit edit : nodeEditList) {
