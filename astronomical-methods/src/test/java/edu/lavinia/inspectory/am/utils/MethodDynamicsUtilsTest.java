@@ -27,9 +27,12 @@ public class MethodDynamicsUtilsTest {
 	private static Map<String, FileMethodDynamics> projectMethodDynamics = new HashMap<>();
 	private static FileMethodDynamics fileMethodDynamics = new FileMethodDynamics();
 
+	private final static String FILE_NAME_QUOTES = "\"testFileName\"";
+	private final static String FILE_NAME = "testFileName";
+
 	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-		projectMethodDynamics.put("testFileName", fileMethodDynamics);
+	public static void setUpBeforeClass() {
+		projectMethodDynamics.put(FILE_NAME, fileMethodDynamics);
 		methodDynamicUtils.setProjectMethodDynamics(projectMethodDynamics);
 	}
 
@@ -37,16 +40,18 @@ public class MethodDynamicsUtilsTest {
 	public void testAddSupernovaMethodDynamics() {
 		fileMethodDynamics.setSupernovaMethods(1);
 		fileMethodDynamics.setSupernovaSeverity(10);
-		methodDynamicUtils.addSupernovaMethodDynamics("\"testFileName\"", 10);
-		assertEquals(fileMethodDynamics, methodDynamicUtils.getProjectMethodDynamics().get("testFileName"));
+		methodDynamicUtils.addSupernovaMethodDynamics(FILE_NAME_QUOTES, 10);
+		assertEquals(fileMethodDynamics,
+				methodDynamicUtils.getProjectMethodDynamics().get(FILE_NAME));
 	}
 
 	@Test
 	public void testAddPulsarMethodDynamics() {
 		fileMethodDynamics.setPulsarMethods(1);
 		fileMethodDynamics.setPulsarSeverity(10);
-		methodDynamicUtils.addPulsarMethodDynamics("\"testFileName\"", 10);
-		assertEquals(fileMethodDynamics, methodDynamicUtils.getProjectMethodDynamics().get("testFileName"));
+		methodDynamicUtils.addPulsarMethodDynamics(FILE_NAME_QUOTES, 10);
+		assertEquals(fileMethodDynamics,
+				methodDynamicUtils.getProjectMethodDynamics().get(FILE_NAME));
 	}
 
 	@Test
@@ -55,8 +60,9 @@ public class MethodDynamicsUtilsTest {
 		fileMethodDynamics.setPulsarSeverity(0);
 		fileMethodDynamics.setSupernovaMethods(0);
 		fileMethodDynamics.setSupernovaSeverity(0);
-		methodDynamicUtils.addDefaultMethodDynamics("\"testFileName\"");
-		assertEquals(fileMethodDynamics, methodDynamicUtils.getProjectMethodDynamics().get("testFileName"));
+		methodDynamicUtils.addDefaultMethodDynamics(FILE_NAME_QUOTES);
+		assertEquals(fileMethodDynamics,
+				methodDynamicUtils.getProjectMethodDynamics().get(FILE_NAME));
 	}
 
 }

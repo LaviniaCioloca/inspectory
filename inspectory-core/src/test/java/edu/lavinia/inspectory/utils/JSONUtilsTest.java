@@ -8,15 +8,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package edu.lavinia.inspectory.am.utils;
+package edu.lavinia.inspectory.utils;
 
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
 import com.google.gson.JsonObject;
-
-import edu.lavinia.inspectory.am.utils.JSONUtils;
 
 public class JSONUtilsTest {
 

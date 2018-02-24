@@ -34,16 +34,16 @@ import org.metanalysis.core.model.Node;
 
 public class EditVisitor extends NodeSetEditVisitor {
 
-	public EditVisitor(String fileName) {
+	public EditVisitor(final String fileName) {
 		this.fileName = fileName;
 	}
 
 	@Override
 	public void visit(Add add) {
-		Node n = ((NodeSetEdit.Add) add).getNode();
-		if (n instanceof Node.Function) {
-			identifier = ((Node.Function) n).getIdentifier();
-			List<String> body = ((Node.Function) n).getBody();
+		final Node node = ((NodeSetEdit.Add) add).getNode();
+		if (node instanceof Node.Function) {
+			identifier = ((Node.Function) node).getIdentifier();
+			final List<String> body = ((Node.Function) node).getBody();
 			total += body.size();
 		}
 	}
@@ -60,9 +60,9 @@ public class EditVisitor extends NodeSetEditVisitor {
 	public void visit(Change<?> change) {
 		if (change.getNodeType().getQualifiedName().equals(Node.Function.class.getCanonicalName())) {
 			identifier = ((NodeSetEdit.Change<?>) change).getIdentifier();
-			Transaction<?> transaction = ((NodeSetEdit.Change<?>) change).getTransaction();
-			List<ListEdit<String>> bodyEdits = ((FunctionTransaction) transaction).getBodyEdits();
-			for (ListEdit<String> listEdit : bodyEdits) {
+			final Transaction<?> transaction = ((NodeSetEdit.Change<?>) change).getTransaction();
+			final List<ListEdit<String>> bodyEdits = ((FunctionTransaction) transaction).getBodyEdits();
+			for (final ListEdit<String> listEdit : bodyEdits) {
 				if (listEdit instanceof ListEdit.Add<?>) {
 					total += 1;
 				} else if (listEdit instanceof ListEdit.Remove<?>) {

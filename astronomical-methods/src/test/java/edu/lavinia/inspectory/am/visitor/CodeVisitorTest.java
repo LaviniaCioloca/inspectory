@@ -22,15 +22,17 @@ import edu.lavinia.inspectory.am.visitor.NodeVisitor;
 public class CodeVisitorTest {
 	@Test
 	public void testVisitNode() {
-		CodeVisitor codeVisitor = new NodeVisitor(null);
+		final CodeVisitor codeVisitor = new NodeVisitor(null);
 
-		Node node = new Node.Type("test", new HashSet<>(), new HashSet<>(), new HashSet<>());
+		Node node = new Node.Type("test", new HashSet<>(), new HashSet<>(),
+				new HashSet<>());
 		codeVisitor.visit(node);
 
 		node = new Node.Variable("test", new HashSet<>(), new ArrayList<>());
 		codeVisitor.visit(node);
 
-		node = new Node.Function("test", new ArrayList<>(), new HashSet<>(), new ArrayList<>());
+		node = new Node.Function("test", new ArrayList<>(), new HashSet<>(),
+				new ArrayList<>());
 		codeVisitor.visit(node);
 	}
 }

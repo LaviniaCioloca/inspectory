@@ -31,5 +31,10 @@ public class RepoInspectTest {
 	public void testGetProject() {
 		assertNull(RepoInspect.getProject());
 	}
+	
+	@Test
+	public void testMain() {
+		RepoInspect.main(null);
+	}
 
 }

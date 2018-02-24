@@ -49,70 +49,75 @@ import edu.lavinia.inspectory.beans.Commit;
 
 public class FileHistoryInspectTest {
 
-	private static final File file = new File("./src/test/resources/testFile.csv");
-	private static final PersistentProject project = null;
+	private static final File FILE = new File(
+			"./src/test/resources/testFile.csv");
+	private static final PersistentProject PROJECT = null;
+
+	private static final String DATE_FORMAT = "yyyy/MM/dd";
+	private final String className = "SimpleClass";
 
 	@Test(expected = NullPointerException.class)
 	public void testGetHistoryFunctionsAnalyze() throws IOException {
-		file.getParentFile().mkdirs();
-		FileWriter writer = new FileWriter(file);
-		AstronomicalMethodsInspection astronomicalMethodsInspection = new AstronomicalMethodsInspection(project, writer,
-				writer, writer);
+		FILE.getParentFile().mkdirs();
+		final FileWriter writer = new FileWriter(FILE);
+		final AstronomicalMethodsInspection astronomicalMethodsInspection = new AstronomicalMethodsInspection(
+				PROJECT, writer, writer, writer);
 		astronomicalMethodsInspection.getHistoryFunctionsAnalyze();
 	}
 
 	@Test
 	public void testCheckEntryInResultSetIdentifierNull() throws IOException {
-		file.getParentFile().mkdirs();
-		FileWriter writer = new FileWriter(file);
-		AstronomicalMethodsInspection astronomicalMethodsInspection = new AstronomicalMethodsInspection(project, writer,
-				writer, writer);
-		String fileName = "testFileName";
-		GenericVisitor visitor = new NodeVisitor(fileName);
-		assertFalse(astronomicalMethodsInspection.checkEntryInResultSet(visitor, new ArrayList<Integer>(),
-				"SimpleClass", new Commit()));
+		FILE.getParentFile().mkdirs();
+		final FileWriter writer = new FileWriter(FILE);
+		final AstronomicalMethodsInspection astronomicalMethodsInspection = new AstronomicalMethodsInspection(
+				PROJECT, writer, writer, writer);
+		final String fileName = "testFileName";
+		final GenericVisitor visitor = new NodeVisitor(fileName);
+		assertFalse(astronomicalMethodsInspection.checkEntryInResultSet(visitor,
+				new ArrayList<Integer>(), className, new Commit()));
 	}
 
 	@Test
 	public void testCheckEntryInResultSetMethodNotExists() throws IOException {
-		file.getParentFile().mkdirs();
-		FileWriter writer = new FileWriter(file);
-		AstronomicalMethodsInspection astronomicalMethodsInspection = new AstronomicalMethodsInspection(project, writer,
-				writer, writer);
-		String fileName = "testFileName";
-		GenericVisitor visitor = new NodeVisitor(fileName);
+		FILE.getParentFile().mkdirs();
+		final FileWriter writer = new FileWriter(FILE);
+		final AstronomicalMethodsInspection astronomicalMethodsInspection = new AstronomicalMethodsInspection(
+				PROJECT, writer, writer, writer);
+		final String fileName = "testFileName";
+		final GenericVisitor visitor = new NodeVisitor(fileName);
 		visitor.setIdentifier("abc");
-		assertTrue(astronomicalMethodsInspection.checkEntryInResultSet(visitor, new ArrayList<Integer>(), "SimpleClass",
-				new Commit()));
+		assertTrue(astronomicalMethodsInspection.checkEntryInResultSet(visitor,
+				new ArrayList<Integer>(), className, new Commit()));
 	}
 
 	@Test
 	public void testCheckEntryInResultSetMethodExists() throws IOException {
-		file.getParentFile().mkdirs();
-		FileWriter writer = new FileWriter(file);
-		AstronomicalMethodsInspection astronomicalMethodsInspection = new AstronomicalMethodsInspection(project, writer,
-				writer, writer);
-		String fileName = "testFileName";
-		GenericVisitor visitor = new NodeVisitor(fileName);
+		FILE.getParentFile().mkdirs();
+		final FileWriter writer = new FileWriter(FILE);
+		final AstronomicalMethodsInspection astronomicalMethodsInspection = new AstronomicalMethodsInspection(
+				PROJECT, writer, writer, writer);
+		final String fileName = "testFileName";
+		final GenericVisitor visitor = new NodeVisitor(fileName);
 		visitor.setIdentifier("abc");
-		Map<String, MethodChangesInformation> result = new HashMap<String, MethodChangesInformation>();
-		MethodChangesInformation methodChangesInformation = new MethodChangesInformation();
+		final Map<String, MethodChangesInformation> result = new HashMap<String, MethodChangesInformation>();
+		final MethodChangesInformation methodChangesInformation = new MethodChangesInformation();
 		methodChangesInformation.setChangesList(new ArrayList<Integer>());
 		methodChangesInformation.setCommits(new ArrayList<Commit>());
-		result.put("SimpleClass" + ": " + visitor.getIdentifier(), methodChangesInformation);
+		result.put(className + ": " + visitor.getIdentifier(),
+				methodChangesInformation);
 		astronomicalMethodsInspection.setResult(result);
-		assertFalse(astronomicalMethodsInspection.checkEntryInResultSet(visitor, new ArrayList<Integer>(),
-				"SimpleClass", new Commit()));
+		assertFalse(astronomicalMethodsInspection.checkEntryInResultSet(visitor,
+				new ArrayList<Integer>(), className, new Commit()));
 	}
 
 	@Test
 	public void testAddToAllCommits() throws IOException {
-		file.getParentFile().mkdirs();
-		FileWriter writer = new FileWriter(file);
-		AstronomicalMethodsInspection astronomicalMethodsInspection = new AstronomicalMethodsInspection(project, writer,
-				writer, writer);
-		Commit commit = new Commit();
-		ArrayList<Commit> commits = new ArrayList<>();
+		FILE.getParentFile().mkdirs();
+		final FileWriter writer = new FileWriter(FILE);
+		final AstronomicalMethodsInspection astronomicalMethodsInspection = new AstronomicalMethodsInspection(
+				PROJECT, writer, writer, writer);
+		final Commit commit = new Commit();
+		final ArrayList<Commit> commits = new ArrayList<>();
 		commits.add(commit);
 		commits.add(commit);
 		astronomicalMethodsInspection.addToAllCommits(commits);
@@ -121,21 +126,21 @@ public class FileHistoryInspectTest {
 
 	@Test
 	public void testSortAllCommits() throws IOException, ParseException {
-		file.getParentFile().mkdirs();
-		FileWriter writer = new FileWriter(file);
-		AstronomicalMethodsInspection astronomicalMethodsInspection = new AstronomicalMethodsInspection(project, writer,
-				writer, writer);
+		FILE.getParentFile().mkdirs();
+		final FileWriter writer = new FileWriter(FILE);
+		final AstronomicalMethodsInspection astronomicalMethodsInspection = new AstronomicalMethodsInspection(
+				PROJECT, writer, writer, writer);
 		ArrayList<Commit> commits = new ArrayList<>();
-		Commit commit1 = new Commit();
-		commit1.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2016/08/30"));
+		final Commit commit1 = new Commit();
+		commit1.setDate(new SimpleDateFormat(DATE_FORMAT).parse("2016/08/30"));
 		commits.add(commit1);
 
-		Commit commit2 = new Commit();
-		commit2.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2016/08/20"));
+		final Commit commit2 = new Commit();
+		commit2.setDate(new SimpleDateFormat(DATE_FORMAT).parse("2016/08/20"));
 		commits.add(commit2);
 
-		Commit commit3 = new Commit();
-		commit3.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/10/01"));
+		final Commit commit3 = new Commit();
+		commit3.setDate(new SimpleDateFormat(DATE_FORMAT).parse("2017/10/01"));
 		commits.add(commit3);
 
 		astronomicalMethodsInspection.addToAllCommits(commits);
@@ -148,71 +153,74 @@ public class FileHistoryInspectTest {
 	}
 
 	@Test
-	public void testCreateAndSortAllCommits() throws ParseException, IOException {
-		file.getParentFile().mkdirs();
-		FileWriter writer = new FileWriter(file);
-		AstronomicalMethodsInspection astronomicalMethodsInspection = new AstronomicalMethodsInspection(project, writer,
-				writer, writer);
-		ArrayList<Commit> commits = new ArrayList<>();
-		Commit commit1 = new Commit();
-		commit1.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2016/08/10"));
+	public void testCreateAndSortAllCommits()
+			throws ParseException, IOException {
+		FILE.getParentFile().mkdirs();
+		final FileWriter writer = new FileWriter(FILE);
+		final AstronomicalMethodsInspection astronomicalMethodsInspection = new AstronomicalMethodsInspection(
+				PROJECT, writer, writer, writer);
+		final ArrayList<Commit> commits = new ArrayList<>();
+		final Commit commit1 = new Commit();
+		commit1.setDate(new SimpleDateFormat(DATE_FORMAT).parse("2016/08/10"));
 		commits.add(commit1);
 
-		Commit commit2 = new Commit();
-		commit2.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2016/08/20"));
+		final Commit commit2 = new Commit();
+		commit2.setDate(new SimpleDateFormat(DATE_FORMAT).parse("2016/08/20"));
 		commits.add(commit2);
 
-		Commit commit3 = new Commit();
-		commit3.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/10/01"));
+		final Commit commit3 = new Commit();
+		commit3.setDate(new SimpleDateFormat(DATE_FORMAT).parse("2017/10/01"));
 		commits.add(commit3);
 
-		Map<String, MethodChangesInformation> result = new HashMap<String, MethodChangesInformation>();
-		MethodChangesInformation methodChangesInformation = new MethodChangesInformation();
+		final Map<String, MethodChangesInformation> result = new HashMap<String, MethodChangesInformation>();
+		final MethodChangesInformation methodChangesInformation = new MethodChangesInformation();
 		methodChangesInformation.setClassName("test");
 		methodChangesInformation.setMethodName("test");
 		result.put("test: test", methodChangesInformation);
 		methodChangesInformation.setCommits(commits);
 		astronomicalMethodsInspection.setResult(result);
-		ArrayList<MethodChangesInformation> methodInformationList = new ArrayList<>();
+		final ArrayList<MethodChangesInformation> methodInformationList = new ArrayList<>();
 		methodInformationList.add(methodChangesInformation);
-		astronomicalMethodsInspection.createAndSortAllCommits(methodInformationList);
+		astronomicalMethodsInspection
+				.createAndSortAllCommits(methodInformationList);
 		assertEquals(commits, astronomicalMethodsInspection.getAllCommits());
 	}
 
 	@Test
 	public void testWriteCSVFileData() throws IOException, ParseException {
-		file.getParentFile().mkdirs();
-		FileWriter writer = new FileWriter(file);
-		AstronomicalMethodsInspection astronomicalMethodsInspection = new AstronomicalMethodsInspection(project, writer,
-				writer, writer);
-		ArrayList<Commit> commits = new ArrayList<>();
-		Commit commit1 = new Commit();
-		commit1.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2016/08/10"));
+		FILE.getParentFile().mkdirs();
+		final FileWriter writer = new FileWriter(FILE);
+		final AstronomicalMethodsInspection astronomicalMethodsInspection = new AstronomicalMethodsInspection(
+				PROJECT, writer, writer, writer);
+		final ArrayList<Commit> commits = new ArrayList<>();
+		final Commit commit1 = new Commit();
+		commit1.setDate(new SimpleDateFormat(DATE_FORMAT).parse("2016/08/10"));
 		commits.add(commit1);
 
-		Commit commit2 = new Commit();
-		commit2.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2016/08/20"));
+		final Commit commit2 = new Commit();
+		commit2.setDate(new SimpleDateFormat(DATE_FORMAT).parse("2016/08/20"));
 		commits.add(commit2);
 
-		Commit commit3 = new Commit();
-		commit3.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/10/01"));
+		final Commit commit3 = new Commit();
+		commit3.setDate(new SimpleDateFormat(DATE_FORMAT).parse("2017/10/01"));
 		commits.add(commit3);
 
-		Map<String, MethodChangesInformation> result = new HashMap<String, MethodChangesInformation>();
-		ArrayList<Integer> changesList = new ArrayList<Integer>(Arrays.asList(210, -10, 50));
-		MethodChangesInformation methodChangesInformation = new MethodChangesInformation();
+		final Map<String, MethodChangesInformation> result = new HashMap<String, MethodChangesInformation>();
+		final ArrayList<Integer> changesList = new ArrayList<Integer>(
+				Arrays.asList(210, -10, 50));
+		final MethodChangesInformation methodChangesInformation = new MethodChangesInformation();
 		methodChangesInformation.setChangesList(changesList);
 		methodChangesInformation.setFileName("test");
 		methodChangesInformation.setClassName("test");
 		methodChangesInformation.setMethodName("test");
 		result.put("test: test", methodChangesInformation);
 		methodChangesInformation.setCommits(commits);
-		SupernovaCriteria supernovaCriteria = new SupernovaCriteria();
-		PulsarCriteria pulsarCriteria = new PulsarCriteria();
+		final SupernovaCriteria supernovaCriteria = new SupernovaCriteria();
+		final PulsarCriteria pulsarCriteria = new PulsarCriteria();
 		methodChangesInformation.setSupernovaCriteria(supernovaCriteria);
 		methodChangesInformation.setPulsarCriteria(pulsarCriteria);
 		astronomicalMethodsInspection.setResult(result);
-		ArrayList<MethodChangesInformation> methodInformationList = new ArrayList<>();
+		final ArrayList<MethodChangesInformation> methodInformationList = new ArrayList<>();
 		methodInformationList.add(methodChangesInformation);
 		MethodMetrics.setAllCommits(commits);
 		MethodMetrics.setAllCommitsIntoTimeFrames();
@@ -222,27 +230,31 @@ public class FileHistoryInspectTest {
 
 	@Test
 	public void testAddDataInCSVList() throws IOException {
-		file.getParentFile().mkdirs();
-		FileWriter writer = new FileWriter(file);
-		AstronomicalMethodsInspection astronomicalMethodsInspection = new AstronomicalMethodsInspection(project, writer,
-				writer, writer);
-		MethodChangesInformation methodChangesInformation = new MethodChangesInformation();
+		FILE.getParentFile().mkdirs();
+		final FileWriter writer = new FileWriter(FILE);
+		final AstronomicalMethodsInspection astronomicalMethodsInspection = new AstronomicalMethodsInspection(
+				PROJECT, writer, writer, writer);
+		final MethodChangesInformation methodChangesInformation = new MethodChangesInformation();
 		methodChangesInformation.setFileName("\"test\"");
 		methodChangesInformation.setClassName("\"test\"");
 		methodChangesInformation.setMethodName("\"test\"");
-		ArrayList<MethodChangesInformation> methodInformationList = astronomicalMethodsInspection.getMethodInformationList();
+		final ArrayList<MethodChangesInformation> methodInformationList = astronomicalMethodsInspection
+				.getMethodInformationList();
 		methodInformationList.add(methodChangesInformation);
-		astronomicalMethodsInspection.addDataInMethodInformationList("test", "test", "test");
-		assertEquals(methodInformationList, astronomicalMethodsInspection.getMethodInformationList());
+		astronomicalMethodsInspection.addDataInMethodInformationList("test",
+				"test", "test");
+		assertEquals(methodInformationList,
+				astronomicalMethodsInspection.getMethodInformationList());
 	}
 
 	@Test
 	public void testGettersAndSetters() throws IOException {
-		file.getParentFile().mkdirs();
-		FileWriter writer = new FileWriter(file);
-		AstronomicalMethodsInspection astronomicalMethodsInspection = new AstronomicalMethodsInspection(project, writer,
-				writer, writer);
-		astronomicalMethodsInspection.setResult(new HashMap<String, MethodChangesInformation>());
+		FILE.getParentFile().mkdirs();
+		final FileWriter writer = new FileWriter(FILE);
+		final AstronomicalMethodsInspection astronomicalMethodsInspection = new AstronomicalMethodsInspection(
+				PROJECT, writer, writer, writer);
+		astronomicalMethodsInspection
+				.setResult(new HashMap<String, MethodChangesInformation>());
 		astronomicalMethodsInspection.getResult();
 		astronomicalMethodsInspection.getAllCommits();
 		astronomicalMethodsInspection.getMethodInformationList();

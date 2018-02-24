@@ -51,24 +51,24 @@ import edu.lavinia.inspectory.am.beans.SupernovaCriteria;
 import edu.lavinia.inspectory.am.metrics.MethodMetrics;
 import edu.lavinia.inspectory.am.metrics.PulsarMetric;
 import edu.lavinia.inspectory.am.metrics.SupernovaMetric;
-import edu.lavinia.inspectory.am.utils.CSVUtils;
-import edu.lavinia.inspectory.am.utils.JSONUtils;
 import edu.lavinia.inspectory.am.utils.MethodDynamicsUtils;
 import edu.lavinia.inspectory.am.visitor.EditVisitor;
 import edu.lavinia.inspectory.am.visitor.GenericVisitor;
 import edu.lavinia.inspectory.am.visitor.NodeVisitor;
 import edu.lavinia.inspectory.beans.Commit;
+import edu.lavinia.inspectory.utils.CSVUtils;
+import edu.lavinia.inspectory.utils.JSONUtils;
 
 public class AstronomicalMethodsInspection {
-	private PersistentProject project = null;
-	private Map<String, MethodChangesInformation> result = null;
+	private PersistentProject project;
+	private Map<String, MethodChangesInformation> result;
 	private ArrayList<String> deletedNodes = null;
-	private FileWriter csvWriter = null;
-	private FileWriter csvMethodDynamicsWriter = null;
-	private FileWriter jsonWriter = null;
-	private ArrayList<MethodChangesInformation> methodInformationList = null;
-	private ArrayList<Commit> allCommits = null;
-	private MethodDynamicsUtils methodDynamics = null;
+	private final FileWriter csvWriter;
+	private final FileWriter csvMethodDynamicsWriter;
+	private final FileWriter jsonWriter;
+	private ArrayList<MethodChangesInformation> methodInformationList;
+	private final ArrayList<Commit> allCommits;
+	private final MethodDynamicsUtils methodDynamics;
 
 	/**
 	 * AstronomicalMethodsInspection Constructor that initializes the result map
@@ -119,12 +119,12 @@ public class AstronomicalMethodsInspection {
 			methodChangesInformation.getCommits().add(commit);
 			return false;
 		} else {
-			lineChanges = new ArrayList<Integer>();
-			lineChanges.add(visitor.getTotal());
+			ArrayList<Integer> changesList = new ArrayList<Integer>();
+			changesList.add(visitor.getTotal());
 			ArrayList<Commit> commits = new ArrayList<>();
 			commits.add(commit);
 			MethodChangesInformation methodChangesInformation = new MethodChangesInformation();
-			methodChangesInformation.setChangesList(lineChanges);
+			methodChangesInformation.setChangesList(changesList);
 			methodChangesInformation.setCommits(commits);
 			methodChangesInformation.setClassName(className);
 			methodChangesInformation.setMethodName(visitor.getIdentifier());

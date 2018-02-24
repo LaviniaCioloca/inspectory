@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package edu.lavinia.inspectory.am.utils;
+package edu.lavinia.inspectory.utils;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -20,8 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
-
-import edu.lavinia.inspectory.am.utils.CSVUtils;
 
 public class CSVUtilsTest {
 

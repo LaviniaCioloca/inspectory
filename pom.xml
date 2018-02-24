@@ -59,12 +59,8 @@
             <artifactId>metanalysis-core</artifactId>
             <version>0.1.5</version>
             <scope>compile</scope>
-            <!--  <exclusions>
-                <exclusion>
-                    <groupId>com.fasterxml.jackson.core</groupId>
-                    <artifactId>jackson-annotations</artifactId>
-                </exclusion>
-            </exclusions> -->
+            <!-- <exclusions> <exclusion> <groupId>com.fasterxml.jackson.core</groupId> 
+				<artifactId>jackson-annotations</artifactId> </exclusion> </exclusions> -->
         </dependency>
 
         <dependency>
@@ -72,34 +68,18 @@
             <artifactId>metanalysis-test</artifactId>
             <version>0.1.5</version>
             <scope>test</scope>
-            <!-- <exclusions>
-                <exclusion>
-                    <groupId>org.jetbrains.kotlin</groupId>
-                    <artifactId>kotlin-stdlib</artifactId>
-                </exclusion>
-
-                <exclusion>
-                    <groupId>com.github.andrei-heidelbacher.metanalysis</groupId>
-                    <artifactId>metanalysis-core</artifactId>
-                </exclusion>
-            </exclusions> -->
+            <!-- <exclusions> <exclusion> <groupId>org.jetbrains.kotlin</groupId> 
+				<artifactId>kotlin-stdlib</artifactId> </exclusion> <exclusion> <groupId>com.github.andrei-heidelbacher.metanalysis</groupId> 
+				<artifactId>metanalysis-core</artifactId> </exclusion> </exclusions> -->
         </dependency>
 
         <dependency>
             <groupId>com.github.ekryd.sortpom</groupId>
             <artifactId>sortpom-maven-plugin</artifactId>
             <version>2.8.0</version>
-            <!-- <exclusions>
-                <exclusion>
-                    <groupId>org.codehaus.plexus</groupId>
-                    <artifactId>plexus-utils</artifactId>
-                </exclusion>
-
-                <exclusion>
-                    <groupId>org.apache.commons</groupId>
-                    <artifactId>commons-lang3</artifactId>
-                </exclusion>
-            </exclusions> -->
+            <!-- <exclusions> <exclusion> <groupId>org.codehaus.plexus</groupId> <artifactId>plexus-utils</artifactId> 
+				</exclusion> <exclusion> <groupId>org.apache.commons</groupId> <artifactId>commons-lang3</artifactId> 
+				</exclusion> </exclusions> -->
         </dependency>
 
         <dependency>
@@ -240,8 +220,13 @@
                     <version>${maven.surefire.plugin.version}</version>
 
                     <configuration>
-                        <parallel>methods</parallel>
-                        <threadCount>4</threadCount>
+                        <reuseForks>false</reuseForks>
+                        <forkCount>1</forkCount>
+                        <!--
+						<parallel>methods</parallel>
+						<threadCount>4</threadCount>
+						 -->
+
                         <!-- Force alphabetical order to have a reproducible build -->
                         <runOrder>alphabetical</runOrder>
                     </configuration>
