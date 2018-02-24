@@ -22,7 +22,7 @@ public class JSONUtilsTest {
 
 	@Test
 	public void testGetSupernovaMethodsJSON() {
-		JsonObject expectedJSONObject = new JsonObject();
+		final JsonObject expectedJSONObject = new JsonObject();
 		expectedJSONObject.addProperty("file", "testFileName");
 		expectedJSONObject.addProperty("name", "Supernova Methods");
 		expectedJSONObject.addProperty("category", "Method Dynamics");
@@ -32,7 +32,7 @@ public class JSONUtilsTest {
 
 	@Test
 	public void testGetPulsarMethodsJSON() {
-		JsonObject expectedJSONObject = new JsonObject();
+		final JsonObject expectedJSONObject = new JsonObject();
 		expectedJSONObject.addProperty("file", "testFileName");
 		expectedJSONObject.addProperty("name", "Pulsar Methods");
 		expectedJSONObject.addProperty("category", "Method Dynamics");
@@ -42,7 +42,7 @@ public class JSONUtilsTest {
 
 	@Test
 	public void testGetSupernovaSeverityJSON() {
-		JsonObject expectedJSONObject = new JsonObject();
+		final JsonObject expectedJSONObject = new JsonObject();
 		expectedJSONObject.addProperty("file", "testFileName");
 		expectedJSONObject.addProperty("name", "Supernova Severity");
 		expectedJSONObject.addProperty("category", "Method Dynamics");
@@ -52,7 +52,7 @@ public class JSONUtilsTest {
 
 	@Test
 	public void testGetPulsarSeverityJSON() {
-		JsonObject expectedJSONObject = new JsonObject();
+		final JsonObject expectedJSONObject = new JsonObject();
 		expectedJSONObject.addProperty("file", "testFileName");
 		expectedJSONObject.addProperty("name", "Pulsar Severity");
 		expectedJSONObject.addProperty("category", "Method Dynamics");

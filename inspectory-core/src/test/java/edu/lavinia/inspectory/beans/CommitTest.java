@@ -25,8 +25,8 @@ public class CommitTest {
 
 	@Test
 	public void testToString() {
-		Commit commit = new Commit();
-		String expected = "Commit [revision=null, date=null, author=null]";
+		final Commit commit = new Commit();
+		final String expected = "Commit [revision=null, date=null, author=null]";
 		Assert.assertEquals(expected, commit.toString());
 	}
 }

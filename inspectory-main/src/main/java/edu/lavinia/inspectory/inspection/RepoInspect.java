@@ -28,7 +28,7 @@ import org.metanalysis.core.project.PersistentProject;
 
 public class RepoInspect {
 
-	public final static Logger logger = Logger.getLogger(RepoInspect.class.getName());
+	public final static Logger LOGGER = Logger.getLogger(RepoInspect.class.getName());
 
 	/**
 	 * Static method that loads the .metanalysis persistent project for the
@@ -55,12 +55,12 @@ public class RepoInspect {
 	 */
 	public static void main(String[] args) {
 		final PersistentProject project = getProject();
-		if (project != null) {
-			Commands commands = new Commands(args, project);
-			commands.parse();
-		} else {
+		if (project == null) {
 			System.out.println(
 					"Error! Project persistency not found: .metanalysis folder! Use metanalysis to generate the model first!");
+		} else {
+			final Commands commands = new Commands(args, project);
+			commands.parse();
 		}
 	}
 }

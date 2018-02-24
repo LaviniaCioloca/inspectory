@@ -37,15 +37,15 @@ public class CSVUtilsTest {
 
 	@Test
 	public void testWriteLineTwoArgs() throws IOException {
-		Writer w = new FileWriter(fileName);
-		List<String> values = new ArrayList<>();
+		final Writer w = new FileWriter(fileName);
+		final List<String> values = new ArrayList<>();
 		CSVUtils.writeLine(w, values);
 	}
 
 	@Test
 	public void testWriteLineFourArgsSpace() throws IOException {
-		Writer w = new FileWriter(fileName);
-		List<String> values = new ArrayList<>();
+		final Writer w = new FileWriter(fileName);
+		final List<String> values = new ArrayList<>();
 		values.add("test1");
 		values.add("test2\"");
 		CSVUtils.writeLine(w, values, ',', ' ');
@@ -53,8 +53,8 @@ public class CSVUtilsTest {
 
 	@Test
 	public void testWriteLineFourArgsNotSpace() throws IOException {
-		Writer w = new FileWriter(fileName);
-		List<String> values = new ArrayList<>();
+		final Writer w = new FileWriter(fileName);
+		final List<String> values = new ArrayList<>();
 		values.add("test1");
 		values.add("test2\"");
 		values.add("\'test3\'");
@@ -63,7 +63,7 @@ public class CSVUtilsTest {
 
 	@Test
 	public void testInstantiation() throws IOException {
-		CSVUtils csvUtils = new CSVUtils();
+		final CSVUtils csvUtils = new CSVUtils();
 		assertFalse(csvUtils == null);
 	}
 }

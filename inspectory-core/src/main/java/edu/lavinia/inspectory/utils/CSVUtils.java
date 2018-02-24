@@ -29,11 +29,11 @@ public class CSVUtils {
 
 	private static final char DEFAULT_SEPARATOR = ',';
 
-	public static void writeLine(Writer w, List<String> values) throws IOException {
-		writeLine(w, values, DEFAULT_SEPARATOR, ' ');
+	public static void writeLine(Writer writer, List<String> values) throws IOException {
+		writeLine(writer, values, DEFAULT_SEPARATOR, ' ');
 	}
 
-	public static String followCVSformat(String value) {
+	public static String followCVSformat(final String value) {
 		String result = value;
 		if (result.contains("\"")) {
 			result = result.replace("\"", "\"\"");
@@ -44,7 +44,7 @@ public class CSVUtils {
 	/**
 	 * Writes String values separated using a separator in a CSV format file.
 	 * 
-	 * @param w
+	 * @param writer
 	 *            The writer of the CSV file.
 	 * @param values
 	 *            List of String values to be written.
@@ -54,25 +54,27 @@ public class CSVUtils {
 	 *            Custom quote for the values: can be empty.
 	 * @throws IOException
 	 */
-	public static void writeLine(Writer w, List<String> values, char separator, char customQuote)
+	public static void writeLine(final Writer writer, final List<String> values, char separator, char customQuote)
 			throws IOException {
 		boolean first = true;
 		if (separator == ' ') {
 			separator = DEFAULT_SEPARATOR;
 		}
-		StringBuilder sb = new StringBuilder();
-		for (String value : values) {
+		final StringBuilder stringBuilder = new StringBuilder();
+		for (final String value : values) {
 			if (!first) {
-				sb.append(separator);
+				stringBuilder.append(separator);
 			}
+
 			if (customQuote == ' ') {
-				sb.append(followCVSformat(value));
+				stringBuilder.append(followCVSformat(value));
 			} else {
-				sb.append(customQuote).append(followCVSformat(value)).append(customQuote);
+				stringBuilder.append(customQuote).append(followCVSformat(value)).append(customQuote);
 			}
+
 			first = false;
 		}
-		sb.append("\n");
-		w.append(sb.toString());
+		stringBuilder.append("\n");
+		writer.append(stringBuilder.toString());
 	}
 }

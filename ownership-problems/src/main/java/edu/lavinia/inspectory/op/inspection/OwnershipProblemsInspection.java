@@ -15,9 +15,9 @@ import edu.lavinia.inspectory.op.beans.FileOwnershipInformation;
 import edu.lavinia.inspectory.utils.CSVUtils;
 
 public class OwnershipProblemsInspection {
-	private PersistentProject project = null;
-	private FileWriter csvWriter = null;
-	private HashMap<String, FileOwnershipInformation> fileOwnershipResult = null;
+	private final PersistentProject project;
+	private final FileWriter csvWriter;
+	private final HashMap<String, FileOwnershipInformation> fileOwnershipResult = new HashMap<>();
 
 	/**
 	 * OwnershipProblemsInspection Constructor that receives the persistent
@@ -33,24 +33,24 @@ public class OwnershipProblemsInspection {
 		this.csvWriter = csvWriter;
 	}
 
-	public void writeFileResults() {
+	public void createResults() {
 		try {
-			Set<String> filesList = project.listFiles();
-			fileOwnershipResult = new HashMap<>();
+			final Set<String> filesList = project.listFiles();
 
-			for (String fileName : filesList) {
+			for (final String fileName : filesList) {
 				if (fileName.startsWith(".") || !fileName.endsWith(".java")) {
 					continue;
 				}
-				List<HistoryEntry> fileHistory = project.getFileHistory(fileName);
+
+				final List<HistoryEntry> fileHistory = project.getFileHistory(fileName);
 
 				int numberOfChanges = 0;
 				String fileOwner = null;
-				HashMap<String, Integer> authorsChanges = new HashMap<>();
+				final HashMap<String, Integer> authorsChanges = new HashMap<>();
 
-				for (HistoryEntry historyEntry : fileHistory) {
+				for (final HistoryEntry historyEntry : fileHistory) {
 					try {
-						Commit commit = new Commit();
+						final Commit commit = new Commit();
 						commit.setRevision(historyEntry.getRevision());
 						commit.setAuthor(historyEntry.getAuthor());
 						commit.setDate(historyEntry.getDate());
@@ -71,24 +71,7 @@ public class OwnershipProblemsInspection {
 					}
 				}
 
-				FileOwnershipInformation fileOwnershipInformation = new FileOwnershipInformation();
-				fileOwnershipInformation.setNumberOfChanges(numberOfChanges);
-				fileOwnershipInformation.setFileOwner(fileOwner);
-				fileOwnershipInformation.setAuthorsChanges(authorsChanges);
-
-				fileOwnershipResult.put(fileName, fileOwnershipInformation);
-			}
-
-			for (HashMap.Entry<String, FileOwnershipInformation> entry : fileOwnershipResult.entrySet()) {
-				ArrayList<String> fileOwnershipInformationLine = new ArrayList<>();
-				String fileName = entry.getKey();
-				FileOwnershipInformation fileOwnershipInformation = entry.getValue();
-				fileOwnershipInformationLine.add(fileName);
-				fileOwnershipInformationLine.add(fileOwnershipInformation.getFileOwner());
-				fileOwnershipInformationLine.add(fileOwnershipInformation.getNumberOfChanges().toString());
-				fileOwnershipInformationLine.add(fileOwnershipInformation.getAuthorsChanges().toString());
-
-				CSVUtils.writeLine(csvWriter, fileOwnershipInformationLine, ',', '"');
+				addFileInformation(fileName, numberOfChanges, fileOwner, authorsChanges);
 			}
 		} catch (IOException e) {
 			/*
@@ -99,4 +82,31 @@ public class OwnershipProblemsInspection {
 		}
 	}
 
+	public void addFileInformation(String fileName, Integer numberOfChanges, String fileOwner,
+			HashMap<String, Integer> authorsChanges) {
+		final FileOwnershipInformation fileOwnershipInformation = new FileOwnershipInformation();
+		fileOwnershipInformation.setNumberOfChanges(numberOfChanges);
+		fileOwnershipInformation.setFileOwner(fileOwner);
+		fileOwnershipInformation.setAuthorsChanges(authorsChanges);
+
+		fileOwnershipResult.put(fileName, fileOwnershipInformation);
+	}
+
+	public void writeFileResults() {
+		try {
+			for (final HashMap.Entry<String, FileOwnershipInformation> entry : fileOwnershipResult.entrySet()) {
+				final ArrayList<String> fileOwnershipInformationLine = new ArrayList<>();
+				final String fileName = entry.getKey();
+				final FileOwnershipInformation fileOwnershipInformation = entry.getValue();
+				fileOwnershipInformationLine.add(fileName);
+				fileOwnershipInformationLine.add(fileOwnershipInformation.getFileOwner());
+				fileOwnershipInformationLine.add(fileOwnershipInformation.getNumberOfChanges().toString());
+				fileOwnershipInformationLine.add(fileOwnershipInformation.getAuthorsChanges().toString());
+
+				CSVUtils.writeLine(csvWriter, fileOwnershipInformationLine, ',', '"');
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 }

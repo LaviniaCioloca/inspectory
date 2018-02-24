@@ -32,19 +32,19 @@ import edu.lavinia.inspectory.utils.CSVUtils;
 
 public class Commands {
 
-	public final static Logger logger = Logger.getLogger(Commands.class.getName());
-	private String[] args = null;
-	private Options options = new Options();
+	public final static Logger LOGGER = Logger.getLogger(Commands.class.getName());
+	private final String[] args;
+	private final Options options = new Options();
 
 	private PersistentProject project;
 
-	private final static String astronomicalMethodsCsvFileName = "astronomical-methods-result.csv";
-	private final static String astronomicalMethodsJsonFileName = "astronomical-methods-result.json";
-	private final static String astronomicalMethodsDyanmicsCsvFileName = "astronomical-methods-dynamics-result.csv";
+	private final static String ASTRONOMICAL_METHODS_CSV_FILE_NAME = "astronomical-methods-result.csv";
+	private final static String ASTRONOMICAL_METHODS_JSON_FILE_NAME = "astronomical-methods-result.json";
+	private final static String ASTRONOMICAL_METHODS_DYNAMICS_CSV_FILE_NAME = "astronomical-methods-dynamics-result.csv";
 
-	private final static String ownershipProblemsCsvFileName = "ownership-problems-result.csv";
+	private final static String OWNERSHIP_PROBLEMS_CSV_FILE_NAME = "ownership-problems-result.csv";
 
-	public Commands(String[] args, PersistentProject project) {
+	public Commands(final String[] args, final PersistentProject project) {
 		this.args = args;
 		this.project = project;
 
@@ -72,9 +72,9 @@ public class Commands {
 	}
 
 	public void parse() {
-		CommandLineParser parser = new DefaultParser();
+		final CommandLineParser parser = new DefaultParser();
 
-		CommandLine cmd = null;
+		final CommandLine cmd;
 		try {
 			cmd = parser.parse(options, args);
 
@@ -90,22 +90,21 @@ public class Commands {
 				System.out.println("Missing valid option");
 				help();
 			}
-
 		} catch (ParseException e) {
 			help();
 		}
 	}
 
 	private void help() {
-		HelpFormatter formater = new HelpFormatter();
+		final HelpFormatter formater = new HelpFormatter();
 
 		formater.printHelp("java -jar inspectory-<version>.jar <command>", options);
 		System.exit(0);
 	}
 
 	private void clean() {
-		String directoryPath = System.getProperty("user.dir") + "/.inspectory";
-		File file = new File(directoryPath);
+		final String directoryPath = System.getProperty("user.dir") + "/.inspectory";
+		final File file = new File(directoryPath);
 
 		try {
 			// Deleting the directory recursively using FileUtils.
@@ -118,15 +117,17 @@ public class Commands {
 	}
 
 	private void astronomicalMethodsMetric() {
-		String directoryPath = System.getProperty("user.dir") + "/.inspectory";
+		final String directoryPath = System.getProperty("user.dir") + "/.inspectory";
 
-		File csvFile = new File(directoryPath, astronomicalMethodsCsvFileName);
-		File jsonFile = new File(directoryPath, astronomicalMethodsJsonFileName);
-		File csvMethodDynamicsFile = new File(directoryPath, astronomicalMethodsDyanmicsCsvFileName);
+		final File csvFile = new File(directoryPath, ASTRONOMICAL_METHODS_CSV_FILE_NAME);
+		final File jsonFile = new File(directoryPath, ASTRONOMICAL_METHODS_JSON_FILE_NAME);
+		final File csvMethodDynamicsFile = new File(directoryPath, ASTRONOMICAL_METHODS_DYNAMICS_CSV_FILE_NAME);
 
 		csvFile.getParentFile().mkdirs();
 
-		FileWriter csvWriter = null, csvMethodDynamicsWriter = null, jsonWriter = null;
+		final FileWriter csvWriter;
+		final FileWriter csvMethodDynamicsWriter;
+		final FileWriter jsonWriter;
 		try {
 			csvWriter = new FileWriter(csvFile);
 			jsonWriter = new FileWriter(jsonFile);
@@ -138,8 +139,8 @@ public class Commands {
 					"Pulsar - Average Size Increase", "Pulsar - Method Size", "Pulsar - Activity State"));
 			CSVUtils.writeLine(csvMethodDynamicsWriter, Arrays.asList("File", "Supernova Methods", "Pulsar Methods",
 					"Supernova Severity", "Pulsar Severity"));
-			AstronomicalMethodsInspection astronomicalMethodsInspection = new AstronomicalMethodsInspection(project,
-					csvWriter, csvMethodDynamicsWriter, jsonWriter);
+			final AstronomicalMethodsInspection astronomicalMethodsInspection = new AstronomicalMethodsInspection(
+					project, csvWriter, csvMethodDynamicsWriter, jsonWriter);
 			astronomicalMethodsInspection.getHistoryFunctionsAnalyze();
 			csvWriter.flush();
 			csvWriter.close();
@@ -153,17 +154,17 @@ public class Commands {
 	}
 
 	private void ownershipProblemsMetric() {
-		String directoryPath = System.getProperty("user.dir") + "/.inspectory";
+		final String directoryPath = System.getProperty("user.dir") + "/.inspectory";
 
-		File csvFile = new File(directoryPath, ownershipProblemsCsvFileName);
+		final File csvFile = new File(directoryPath, OWNERSHIP_PROBLEMS_CSV_FILE_NAME);
 		csvFile.getParentFile().mkdirs();
 
-		FileWriter csvWriter = null;
+		final FileWriter csvWriter;
 		try {
 			csvWriter = new FileWriter(csvFile);
 			CSVUtils.writeLine(csvWriter,
 					Arrays.asList("File", "File Owner", "Number of changes", "Authors - Number of changes made"));
-			OwnershipProblemsInspection ownershipProblemsInspection = new OwnershipProblemsInspection(project,
+			final OwnershipProblemsInspection ownershipProblemsInspection = new OwnershipProblemsInspection(project,
 					csvWriter);
 			ownershipProblemsInspection.writeFileResults();
 			csvWriter.flush();
