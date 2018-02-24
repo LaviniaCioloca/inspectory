@@ -28,11 +28,12 @@ import edu.lavinia.inspectory.am.inspection.FileModelInspection;
 
 public class FileModelInspectTest {
 
-	private static final PersistentProject project = null;
+	private static final PersistentProject PROJECT = null;
 
 	@Test(expected = NullPointerException.class)
 	public void testGetModelFunctionsAnalyze() {
-		FileModelInspection fileModelInspection = new FileModelInspection(project);
+		final FileModelInspection fileModelInspection = new FileModelInspection(
+				PROJECT);
 		fileModelInspection.getModelFunctionsAnalyze();
 	}
 

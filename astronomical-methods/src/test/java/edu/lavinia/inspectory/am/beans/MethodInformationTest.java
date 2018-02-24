@@ -23,6 +23,13 @@ import edu.lavinia.inspectory.am.beans.SupernovaCriteria;
 import net.codebox.javabeantester.JavaBeanTester;
 
 public class MethodInformationTest {
+
+	/**
+	 * JavaBeanTester tests bean class MethodChangesInformation and might throw
+	 * {@code IntrospectionException} if any error appears.
+	 * 
+	 * @throws IntrospectionException
+	 */
 	@Test
 	public void testBeanProperties() throws IntrospectionException {
 		JavaBeanTester.test(MethodChangesInformation.class);
@@ -35,7 +42,8 @@ public class MethodInformationTest {
 		methodChangesInformation.setInitialSize(10);
 		methodChangesInformation.setActualSize(100);
 		methodChangesInformation.setNumberOfChanges(10);
-		ArrayList<Integer> changesList = new ArrayList<>(Arrays.asList(1, 2, 3));
+		ArrayList<Integer> changesList = new ArrayList<>(
+				Arrays.asList(1, 2, 3));
 		methodChangesInformation.setChangesList(changesList);
 		methodChangesInformation.setSupernova(false);
 		methodChangesInformation.setPulsar(false);
@@ -66,6 +74,7 @@ public class MethodInformationTest {
 		expected.add("0");
 		expected.add("0");
 		expected.add("0");
-		Assert.assertEquals(expected, methodChangesInformation.getMethodInformationLine());
+		Assert.assertEquals(expected,
+				methodChangesInformation.getMethodInformationLine());
 	}
 }

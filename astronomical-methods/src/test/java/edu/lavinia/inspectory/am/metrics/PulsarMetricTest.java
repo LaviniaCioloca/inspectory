@@ -527,7 +527,7 @@ public class PulsarMetricTest {
 
 	@Test
 	public void testIsMethodTimeFrameActivelyChangedFalse()
-			throws 	ParseException {
+			throws ParseException {
 		ArrayList<Commit> allCommits = new ArrayList<>();
 		Date dateNow = new SimpleDateFormat("yyyy/MM/dd").parse("2018/01/01");
 		Commit commit1 = new Commit();

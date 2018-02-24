@@ -36,65 +36,69 @@ import edu.lavinia.inspectory.am.beans.MethodChangesInformation;
 import edu.lavinia.inspectory.beans.Commit;
 
 public class MethodMetricsTest {
-	private static MethodMetrics methodMetric = new PulsarMetric();
+	private final MethodMetrics methodMetric = new PulsarMetric();
+
+	private static final String DATE_FORMAT = "yyyy/MM/dd";
 
 	@Test
 	public void testGetDifferenceInDays() throws ParseException {
-		Date start = new SimpleDateFormat("yyyy/MM/dd").parse("2010/01/01");
-		Date end = new SimpleDateFormat("yyyy/MM/dd").parse("2010/01/05");
+		final Date start = new SimpleDateFormat(DATE_FORMAT)
+				.parse("2010/01/01");
+		final Date end = new SimpleDateFormat(DATE_FORMAT).parse("2010/01/05");
 		assertTrue(MethodMetrics.getDifferenceInDays(start, end) == 4.0);
 	}
 
 	@Test
 	public void testGetCommitsTypes() {
-		ArrayList<Integer> changesList = new ArrayList<>();
+		final ArrayList<Integer> changesList = new ArrayList<>();
 		changesList.add(-10);
 		changesList.add(1);
 		changesList.add(10);
-		ArrayList<String> expectedResultList = new ArrayList<>();
+		final ArrayList<String> expectedResultList = new ArrayList<>();
 		expectedResultList.add("refactor");
 		expectedResultList.add("refine");
 		expectedResultList.add("develop");
-		assertEquals(methodMetric.getCommitsTypes(changesList), expectedResultList);
+		assertEquals(methodMetric.getCommitsTypes(changesList),
+				expectedResultList);
 	}
 
 	@Test
 	public void testSplitCommitsIntoTimeFrames() throws ParseException {
-		MethodChangesInformation methodChangesInformation = new MethodChangesInformation();
-		ArrayList<Commit> commits = new ArrayList<>();
+		final MethodChangesInformation methodChangesInformation = new MethodChangesInformation();
+		final ArrayList<Commit> commits = new ArrayList<>();
 		Commit commit = new Commit();
-		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2016/08/01"));
+		commit.setDate(new SimpleDateFormat(DATE_FORMAT).parse("2016/08/01"));
 		commits.add(commit);
 
 		commit = new Commit();
-		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2016/08/20"));
+		commit.setDate(new SimpleDateFormat(DATE_FORMAT).parse("2016/08/20"));
 		commits.add(commit);
 
 		commit = new Commit();
-		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/10/01"));
+		commit.setDate(new SimpleDateFormat(DATE_FORMAT).parse("2017/10/01"));
 		commits.add(commit);
 
 		commit = new Commit();
-		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/10/03"));
+		commit.setDate(new SimpleDateFormat(DATE_FORMAT).parse("2017/10/03"));
 		commits.add(commit);
 
 		commit = new Commit();
-		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/11/05"));
+		commit.setDate(new SimpleDateFormat(DATE_FORMAT).parse("2017/11/05"));
 		commits.add(commit);
 
 		commit = new Commit();
-		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/11/06"));
+		commit.setDate(new SimpleDateFormat(DATE_FORMAT).parse("2017/11/06"));
 		commits.add(commit);
 
 		commit = new Commit();
-		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/11/07"));
+		commit.setDate(new SimpleDateFormat(DATE_FORMAT).parse("2017/11/07"));
 		commits.add(commit);
 
 		commit = new Commit();
-		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/11/08"));
+		commit.setDate(new SimpleDateFormat(DATE_FORMAT).parse("2017/11/08"));
 		commits.add(commit);
 		methodChangesInformation.setCommits(commits);
-		HashMap<Commit, Integer> expected = new HashMap<>();
+		final HashMap<Commit, Integer> expected = new HashMap<>();
 		expected.put(commits.get(0), 0);
 		expected.put(commits.get(1), 0);
 		expected.put(commits.get(2), 1);
@@ -103,17 +107,18 @@ public class MethodMetricsTest {
 		expected.put(commits.get(5), 2);
 		expected.put(commits.get(6), 2);
 		expected.put(commits.get(7), 2);
-		assertEquals(expected, MethodMetrics.splitCommitsIntoTimeFrames(commits));
+		assertEquals(expected,
+				MethodMetrics.splitCommitsIntoTimeFrames(commits));
 	}
 	/*
 	 * @Test public void getActiveTimeFrameMethodPointsOne() throws
 	 * ParseException { CSVData methodInformation = new CSVData();
 	 * ArrayList<Commit> commits = new ArrayList<>(); Commit commit = new
 	 * Commit(); commit.setDate(new
-	 * SimpleDateFormat("yyyy/MM/dd").parse("2016/08/01")); commits.add(commit);
+	 * SimpleDateFormat(DATE_FORMAT).parse("2016/08/01")); commits.add(commit);
 	 * 
 	 * Commit lastCommit = new Commit(); lastCommit.setDate(new
-	 * SimpleDateFormat("yyyy/MM/dd").parse("2016/08/20"));
+	 * SimpleDateFormat(DATE_FORMAT).parse("2016/08/20"));
 	 * commits.add(lastCommit);
 	 * 
 	 * methodInformation.setCommits(commits); HashMap<Commit, Integer>
@@ -125,10 +130,10 @@ public class MethodMetricsTest {
 	 * ParseException { CSVData methodInformation = new CSVData();
 	 * ArrayList<Commit> commits = new ArrayList<>(); Commit commit = new
 	 * Commit(); commit.setDate(new
-	 * SimpleDateFormat("yyyy/MM/dd").parse("2016/08/01")); commits.add(commit);
+	 * SimpleDateFormat(DATE_FORMAT).parse("2016/08/01")); commits.add(commit);
 	 * 
 	 * Commit lastCommit = new Commit(); lastCommit.setDate(new
-	 * SimpleDateFormat("yyyy/MM/dd").parse("2010/08/20"));
+	 * SimpleDateFormat(DATE_FORMAT).parse("2010/08/20"));
 	 * commits.add(lastCommit);
 	 * 
 	 * methodInformation.setCommits(commits); HashMap<Commit, Integer>

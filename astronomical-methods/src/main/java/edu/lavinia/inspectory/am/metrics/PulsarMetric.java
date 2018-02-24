@@ -44,9 +44,11 @@ public class PulsarMetric extends MethodMetrics {
 	public Integer getRecentCyclesPoints(Integer countRecentPulsarCycles) {
 		if (countRecentPulsarCycles >= 6) {
 			return 3;
-		} else if (countRecentPulsarCycles >= 3 && countRecentPulsarCycles <= 5) {
+		} else if (countRecentPulsarCycles >= 3
+				&& countRecentPulsarCycles <= 5) {
 			return 2;
-		} else if (countRecentPulsarCycles >= 1 && countRecentPulsarCycles <= 2) {
+		} else if (countRecentPulsarCycles >= 1
+				&& countRecentPulsarCycles <= 2) {
 			return 1;
 		}
 		return 0;
@@ -58,12 +60,14 @@ public class PulsarMetric extends MethodMetrics {
 	 *         {@code averageSizeIncrease}.
 	 */
 	public Integer getAverageSizeIncrease(Double averageSizeIncrease) {
-		if (averageSizeIncrease >= 0.0 && averageSizeIncrease < (1.0 / 3.0) * MAJOR_SIZE_CHANGE) {
+		if (averageSizeIncrease >= 0.0
+				&& averageSizeIncrease < (1.0 / 3.0) * MAJOR_SIZE_CHANGE) {
 			return 3;
 		} else if (averageSizeIncrease >= (1.0 / 3.0) * MAJOR_SIZE_CHANGE
 				&& averageSizeIncrease < (2.0 / 3.0) * MAJOR_SIZE_CHANGE) {
 			return 2;
-		} else if (averageSizeIncrease >= (2.0 / 3.0) * MAJOR_SIZE_CHANGE && averageSizeIncrease < MAJOR_SIZE_CHANGE) {
+		} else if (averageSizeIncrease >= (2.0 / 3.0) * MAJOR_SIZE_CHANGE
+				&& averageSizeIncrease < MAJOR_SIZE_CHANGE) {
 			return 1;
 		}
 		return 0;
@@ -86,18 +90,24 @@ public class PulsarMetric extends MethodMetrics {
 	 * @param methodChangesInformation
 	 * @return A Boolean: true if the method is actively changed.
 	 */
-	public Boolean isMethodActivelyChanged(MethodChangesInformation methodChangesInformation) {
+	public Boolean isMethodActivelyChanged(
+			MethodChangesInformation methodChangesInformation) {
 		Integer countActiveChanges = 0;
-		ArrayList<Commit> commits = methodChangesInformation.getCommits();
-		ArrayList<Commit> latestCommits = new ArrayList<>();
+		final ArrayList<Commit> commits = methodChangesInformation.getCommits();
+		final ArrayList<Commit> latestCommits = new ArrayList<>();
 		if (commits.size() < ACTIVELY_CHANGED) {
 			return false;
 		}
-		for (int i = commits.size() - 1; i > commits.size() - 1 - ACTIVELY_CHANGED; --i) {
+
+		for (int i = commits.size() - 1; i > commits.size() - 1
+				- ACTIVELY_CHANGED; --i) {
 			latestCommits.add(commits.get(i));
 		}
+
 		for (int i = allCommits.size() - 1; i >= 0; --i) {
-			if ((allCommitsIntoTimeFrames.get(allCommits.get(i)) >= maximumTimeFrameNumber - LONG_TIMESPAN)) {
+			if ((allCommitsIntoTimeFrames
+					.get(allCommits.get(i)) >= maximumTimeFrameNumber
+							- LONG_TIMESPAN)) {
 				for (int j = 0; j < latestCommits.size(); ++j) {
 					if (allCommits.get(i).equals(latestCommits.get(j))) {
 						++countActiveChanges;
@@ -107,6 +117,7 @@ public class PulsarMetric extends MethodMetrics {
 				break;
 			}
 		}
+
 		return countActiveChanges >= ACTIVELY_CHANGED;
 	}
 
@@ -117,13 +128,15 @@ public class PulsarMetric extends MethodMetrics {
 	 * @param commit
 	 * @return An Integer representing the total points of Pulsar severity.
 	 */
-	public Integer countPulsarSeverityPoints(Integer countRecentPulsarCycles, Double averageSizeIncrease,
-			Integer fileSize, Commit commit) {
+	public Integer countPulsarSeverityPoints(final Integer countRecentPulsarCycles,
+			final Double averageSizeIncrease, Integer fileSize, Commit commit) {
 		recentCyclesPoints = getRecentCyclesPoints(countRecentPulsarCycles);
 		averageSizeIncreasePoints = getAverageSizeIncrease(averageSizeIncrease);
 		methodSizePoints = getMethodSizePoints(fileSize);
 		activityStatePoints = getActiveMethodPoints(commit);
-		return 1 + recentCyclesPoints + averageSizeIncreasePoints + methodSizePoints + activityStatePoints;
+		
+		return 1 + recentCyclesPoints + averageSizeIncreasePoints
+				+ methodSizePoints + activityStatePoints;
 	}
 
 	/**
@@ -131,10 +144,12 @@ public class PulsarMetric extends MethodMetrics {
 	 * @param sumOfSizeIncrease
 	 * @return The {@code averageSizeIncrease} criterion for Pulsar methods.
 	 */
-	public Double calculateAverageSizeIncrease(Integer countPulsarCycles, Integer sumOfSizeIncrease) {
+	public Double calculateAverageSizeIncrease(final Integer countPulsarCycles,
+			final Integer sumOfSizeIncrease) {
 		Double averageSizeIncrease = 0.0;
 		if (countPulsarCycles > 0) {
-			averageSizeIncrease = (double) sumOfSizeIncrease / (double) countPulsarCycles;
+			averageSizeIncrease = (double) sumOfSizeIncrease
+					/ (double) countPulsarCycles;
 		}
 		return averageSizeIncrease;
 	}
@@ -147,11 +162,15 @@ public class PulsarMetric extends MethodMetrics {
 	 * @return An Integer that represents the Pulsar severity of the given
 	 *         method.
 	 */
-	public Integer getPulsarSeverity(MethodChangesInformation methodChangesInformation) {
-		ArrayList<Commit> commits = methodChangesInformation.getCommits();
-		Map<String, Object> pulsarCriterionValues = getPulsarCriterionValues(methodChangesInformation);
-		Integer countRecentPulsarCycles = (Integer) pulsarCriterionValues.get("countRecentPulsarCycles");
-		Double averageSizeIncrease = (Double) pulsarCriterionValues.get("averageSizeIncrease");
+	public Integer getPulsarSeverity(
+			MethodChangesInformation methodChangesInformation) {
+		final ArrayList<Commit> commits = methodChangesInformation.getCommits();
+		final Map<String, Object> pulsarCriterionValues = getPulsarCriterionValues(
+				methodChangesInformation);
+		final Integer countRecentPulsarCycles = (Integer) pulsarCriterionValues
+				.get("countRecentPulsarCycles");
+		final Double averageSizeIncrease = (Double) pulsarCriterionValues
+				.get("averageSizeIncrease");
 		/*
 		 * System.out.println("\nPulsarMetric - Method: " +
 		 * csvData.getFileName() + csvData.getMethodName() + ": ");
@@ -159,8 +178,9 @@ public class PulsarMetric extends MethodMetrics {
 		 * countPulsarCycles + "; avg: " + averageSizeIncrease +
 		 * "; last commit: " + commits.get(commits.size() - 1));
 		 */
-		return countPulsarSeverityPoints(countRecentPulsarCycles, averageSizeIncrease,
-				methodChangesInformation.getActualSize(), commits.get(commits.size() - 1));
+		return countPulsarSeverityPoints(countRecentPulsarCycles,
+				averageSizeIncrease, methodChangesInformation.getActualSize(),
+				commits.get(commits.size() - 1));
 	}
 
 	/**
@@ -183,9 +203,11 @@ public class PulsarMetric extends MethodMetrics {
 	 * @param commitDate
 	 * @return An Integer: 1 if Pulsar cycle is recent and 0 if false.
 	 */
-	public Integer checkIfRecentPulsarCycle(Date commitDate) {
+	public Integer checkIfRecentPulsarCycle(final Date commitDate) {
 		for (int i = allCommits.size() - 1; i >= 0; --i) {
-			if ((allCommitsIntoTimeFrames.get(allCommits.get(i)) >= maximumTimeFrameNumber - MEDIUM_TIMESPAN)) {
+			if ((allCommitsIntoTimeFrames
+					.get(allCommits.get(i)) >= maximumTimeFrameNumber
+							- MEDIUM_TIMESPAN)) {
 				if (allCommits.get(i).getDate().compareTo(commitDate) <= 0) {
 					return 1;
 				} else {
@@ -240,9 +262,10 @@ public class PulsarMetric extends MethodMetrics {
 	 *         averageSizeIncrease; countPulsarCycles; countRecentPulsarCycles;
 	 *         isPulsar.
 	 */
-	public Map<String, Object> getPulsarCriterionValues(MethodChangesInformation methodChangesInformation) {
-		ArrayList<Commit> commits = methodChangesInformation.getCommits();
-		Map<String, Object> pulsarCriterionValues = new HashMap<>();
+	public Map<String, Object> getPulsarCriterionValues(
+			MethodChangesInformation methodChangesInformation) {
+		final ArrayList<Commit> commits = methodChangesInformation.getCommits();
+		final Map<String, Object> pulsarCriterionValues = new HashMap<>();
 		pulsarCriterionValues.put("isPulsar", false);
 		Integer sumOfSizeIncrease = 0;
 		Double averageSizeIncrease = 0.0;
@@ -251,34 +274,47 @@ public class PulsarMetric extends MethodMetrics {
 		Integer methodGrowth = 0;
 		if (methodChangesInformation.getActualSize() >= SIGNIFICANT_METHOD_SIZE
 				&& isMethodActivelyChanged(methodChangesInformation)) {
-			ArrayList<Integer> changesList = methodChangesInformation.getChangesList();
-			ArrayList<String> commitsTypes = getCommitsTypes(changesList);
+			final ArrayList<Integer> changesList = methodChangesInformation
+					.getChangesList();
+			final ArrayList<String> commitsTypes = getCommitsTypes(changesList);
 			for (int i = 0; i < commitsTypes.size() - 1; ++i) {
-				if (commitsTypes.get(i).equals("refactor") && commitsTypes.get(i + 1).equals("develop")) {
+				if (commitsTypes.get(i).equals("refactor")
+						&& commitsTypes.get(i + 1).equals("develop")) {
 					++countPulsarCycles;
-					countRecentPulsarCycles += checkIfRecentPulsarCycle(commits.get(i).getDate());
+					countRecentPulsarCycles += checkIfRecentPulsarCycle(
+							commits.get(i).getDate());
 				}
+				
 				if (commitsTypes.get(i).equals("refine")) {
 					methodGrowth += changesList.get(i);
 					if (methodGrowth >= SMALL_SIZE_CHANGE) {
 						++countPulsarCycles;
-						countRecentPulsarCycles += checkIfRecentPulsarCycle(commits.get(i).getDate());
+						countRecentPulsarCycles += checkIfRecentPulsarCycle(
+								commits.get(i).getDate());
 					}
 				} else {
 					methodGrowth = 0;
 				}
-				if (!commitsTypes.get(i).equals("refactor") && commitsTypes.get(i + 1).equals("refactor")) {
+				
+				if (!commitsTypes.get(i).equals("refactor")
+						&& commitsTypes.get(i + 1).equals("refactor")) {
 					sumOfSizeIncrease += changesList.get(i);
 				}
-				if (countPulsarCycles >= MANY_PULSAR_CYCLES && !pulsarCriterionValues.get("isPulsar").equals(true)) {
+				
+				if (countPulsarCycles >= MANY_PULSAR_CYCLES
+						&& !pulsarCriterionValues.get("isPulsar")
+								.equals(true)) {
 					pulsarCriterionValues.put("isPulsar", true);
 				}
 			}
 		}
-		averageSizeIncrease = calculateAverageSizeIncrease(countPulsarCycles, sumOfSizeIncrease);
+		
+		averageSizeIncrease = calculateAverageSizeIncrease(countPulsarCycles,
+				sumOfSizeIncrease);
 		pulsarCriterionValues.put("averageSizeIncrease", averageSizeIncrease);
 		pulsarCriterionValues.put("countPulsarCycles", countPulsarCycles);
-		pulsarCriterionValues.put("countRecentPulsarCycles", countRecentPulsarCycles);
+		pulsarCriterionValues.put("countRecentPulsarCycles",
+				countRecentPulsarCycles);
 		/*
 		 * for (Map.Entry<String, Object> entry :
 		 * pulsarCriterionValues.entrySet()) { System.out.println(entry.getKey()
@@ -299,8 +335,9 @@ public class PulsarMetric extends MethodMetrics {
 	 *            The information of the current method
 	 * @return True if the method is Pulsar, false otherwise.
 	 */
-	public Boolean isPulsar(MethodChangesInformation methodChangesInformation) {
-		return (Boolean) getPulsarCriterionValues(methodChangesInformation).get("isPulsar");
+	public Boolean isPulsar(final MethodChangesInformation methodChangesInformation) {
+		return (Boolean) getPulsarCriterionValues(methodChangesInformation)
+				.get("isPulsar");
 	}
 
 	public Integer getRecentCyclesPoints() {

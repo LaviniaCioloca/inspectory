@@ -46,9 +46,9 @@ public class NodeVisitor extends CodeVisitor {
 
 	@Override
 	public void visit(Type type) {
-		Set<Node> members = type.getMembers();
-		for (Node n : members) {
-			this.visit(n);
+		final Set<Node> members = type.getMembers();
+		for (final Node node : members) {
+			this.visit(node);
 		}
 	}
 
@@ -59,7 +59,7 @@ public class NodeVisitor extends CodeVisitor {
 	@Override
 	public void visit(Function function) {
 		total = 0;
-		List<String> body = function.getBody();
+		final List<String> body = function.getBody();
 		functionSize.put(function.getIdentifier(), body.size());
 		identifier = function.getSignature();
 		total += function.getBody().size();

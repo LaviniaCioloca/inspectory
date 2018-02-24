@@ -54,9 +54,9 @@ public abstract class MethodMetrics {
 	 *         and {@code end} date.
 	 */
 	protected static Long getDifferenceInDays(Date start, Date end) {
-		Long startTime = start.getTime();
-		Long endTime = end.getTime();
-		Long diffTime = endTime - startTime;
+		final Long startTime = start.getTime();
+		final Long endTime = end.getTime();
+		final Long diffTime = endTime - startTime;
 		if (diffTime < 0) {
 			return -diffTime / (1000 * 60 * 60 * 24);
 		}
@@ -69,7 +69,7 @@ public abstract class MethodMetrics {
 	 *         number of the time-frame in which it is.
 	 */
 	protected static HashMap<Commit, Integer> splitCommitsIntoTimeFrames(ArrayList<Commit> commits) {
-		HashMap<Commit, Integer> commitsIntoTimeFrames = new HashMap<>();
+		final HashMap<Commit, Integer> commitsIntoTimeFrames = new HashMap<>();
 		Integer currentTimeFrame = 0;
 		commitsIntoTimeFrames.put(commits.get(0), currentTimeFrame);
 		for (int i = 1; i < commits.size(); ++i) {
@@ -92,7 +92,7 @@ public abstract class MethodMetrics {
 	 *         refactor/refine/develop commits.
 	 */
 	protected ArrayList<String> getCommitsTypes(ArrayList<Integer> changesList) {
-		ArrayList<String> commitsTypes = new ArrayList<String>();
+		final ArrayList<String> commitsTypes = new ArrayList<String>();
 		for (int i = 0; i < changesList.size(); ++i) {
 			if (changesList.get(i) < MIN_REFINE_LINES) {
 				commitsTypes.add("refactor");
