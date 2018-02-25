@@ -19,7 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *******************************************************************************/
-package edu.lavinia.inspectory.am.visitor;
+package edu.lavinia.inspectory.op.visitor;
 
 import java.util.HashMap;
 import java.util.List;

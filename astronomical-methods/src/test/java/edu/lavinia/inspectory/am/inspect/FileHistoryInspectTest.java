@@ -43,9 +43,9 @@ import edu.lavinia.inspectory.am.beans.PulsarCriteria;
 import edu.lavinia.inspectory.am.beans.SupernovaCriteria;
 import edu.lavinia.inspectory.am.inspection.AstronomicalMethodsInspection;
 import edu.lavinia.inspectory.am.metrics.MethodMetrics;
-import edu.lavinia.inspectory.am.visitor.GenericVisitor;
 import edu.lavinia.inspectory.am.visitor.NodeVisitor;
 import edu.lavinia.inspectory.beans.Commit;
+import edu.lavinia.inspectory.visitor.GenericVisitor;
 
 public class FileHistoryInspectTest {
 

@@ -19,9 +19,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *******************************************************************************/
-package edu.lavinia.inspectory.am.visitor;
+package edu.lavinia.inspectory.op.visitor;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.metanalysis.core.delta.FunctionTransaction;
 import org.metanalysis.core.delta.ListEdit;
@@ -36,6 +38,9 @@ import edu.lavinia.inspectory.visitor.NodeSetEditVisitor;
 
 public class EditVisitor extends NodeSetEditVisitor {
 
+	private Set<Node> members = new HashSet<>();
+	private Integer numberOfLines = 0;
+	
 	public EditVisitor(final String fileName) {	
 		this.fileName = fileName;
 	}
@@ -43,10 +48,29 @@ public class EditVisitor extends NodeSetEditVisitor {
 	@Override
 	public void visit(Add add) {
 		final Node node = ((NodeSetEdit.Add) add).getNode();
-		if (node instanceof Node.Function) {
+		if (node instanceof Node.Type) {
+			++numberOfLines; // for the identifier, supertype and modifiers
+			identifier = ((Node.Type) node).getIdentifier();
+			members = ((Node.Type) node).getMembers();
+			
+			for (final Node memberNode : members) {
+				if (memberNode instanceof Node.Type) {
+					NodeVisitor nodeVisitor = new NodeVisitor(fileName);
+					nodeVisitor.visit(memberNode);
+				} else if (memberNode instanceof Node.Function) {
+					++numberOfLines; // for signature, modifiers and parameters
+					final List<String> body = ((Node.Function) node).getBody();
+					numberOfLines += body.size();
+				} else if (memberNode instanceof Node.Variable) {
+					++numberOfLines;
+				}
+			}
+		} else  if (node instanceof Node.Function) {
 			identifier = ((Node.Function) node).getIdentifier();
 			final List<String> body = ((Node.Function) node).getBody();
 			total += body.size();
+		} else if (node instanceof Node.Variable) {
+			
 		}
 	}
 

@@ -53,11 +53,11 @@ import edu.lavinia.inspectory.am.metrics.PulsarMetric;
 import edu.lavinia.inspectory.am.metrics.SupernovaMetric;
 import edu.lavinia.inspectory.am.utils.MethodDynamicsUtils;
 import edu.lavinia.inspectory.am.visitor.EditVisitor;
-import edu.lavinia.inspectory.am.visitor.GenericVisitor;
 import edu.lavinia.inspectory.am.visitor.NodeVisitor;
 import edu.lavinia.inspectory.beans.Commit;
 import edu.lavinia.inspectory.utils.CSVUtils;
 import edu.lavinia.inspectory.utils.JSONUtils;
+import edu.lavinia.inspectory.visitor.GenericVisitor;
 
 public class AstronomicalMethodsInspection {
 	private PersistentProject project;

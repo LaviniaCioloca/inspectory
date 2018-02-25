@@ -19,28 +19,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *******************************************************************************/
-package edu.lavinia.inspectory.am.visitor;
+package edu.lavinia.inspectory.visitor;
 
-import org.metanalysis.core.model.Node;
-import org.metanalysis.core.model.SourceFile;
+import org.metanalysis.core.delta.NodeSetEdit;
+import org.metanalysis.core.delta.NodeSetEdit.Change;
 
-abstract class CodeVisitor extends GenericVisitor {
-	public abstract void visit(SourceFile sourceFile);
+public abstract class NodeSetEditVisitor extends GenericVisitor {
+	public abstract void visit(NodeSetEdit.Add add);
 
-	public abstract void visit(Node.Type type);
+	public abstract void visit(NodeSetEdit.Remove remove);
 
-	public abstract void visit(Node.Variable variable);
+	public abstract void visit(NodeSetEdit.Change<?> change);
 
-	public abstract void visit(Node.Function function);
-
-	public final void visit(Node node) {
+	public final void visit(NodeSetEdit nodeSetEdit) {
 		// safe to use 'instanceof' because the class hierarchy is sealed
-		if (node instanceof Node.Type) {
-			visit((Node.Type) node);
-		} else if (node instanceof Node.Variable) {
-			visit((Node.Variable) node);
-		} else if (node instanceof Node.Function) {
-			visit((Node.Function) node);
+		if (nodeSetEdit instanceof NodeSetEdit.Add) {
+			visit((NodeSetEdit.Add) nodeSetEdit);
+		} else if (nodeSetEdit instanceof NodeSetEdit.Remove) {
+			visit((NodeSetEdit.Remove) nodeSetEdit);
+		} else if (nodeSetEdit instanceof NodeSetEdit.Change) {
+			visit((Change<?>) nodeSetEdit);
 		}
 	}
 }

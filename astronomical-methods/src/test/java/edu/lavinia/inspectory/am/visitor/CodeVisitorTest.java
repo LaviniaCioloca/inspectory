@@ -16,8 +16,7 @@ import java.util.HashSet;
 import org.junit.Test;
 import org.metanalysis.core.model.Node;
 
-import edu.lavinia.inspectory.am.visitor.CodeVisitor;
-import edu.lavinia.inspectory.am.visitor.NodeVisitor;
+import edu.lavinia.inspectory.visitor.CodeVisitor;
 
 public class CodeVisitorTest {
 	@Test

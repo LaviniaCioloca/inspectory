@@ -19,27 +19,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *******************************************************************************/
-package edu.lavinia.inspectory.am.visitor;
+package edu.lavinia.inspectory.visitor;
 
-public abstract class GenericVisitor {
-	protected String fileName = null;
-	protected String identifier = null;
-	protected Integer total = 0;
+import org.metanalysis.core.model.Node;
+import org.metanalysis.core.model.SourceFile;
 
-	public String getIdentifier() {
-		return identifier;
+public abstract class CodeVisitor extends GenericVisitor {
+	public abstract void visit(SourceFile sourceFile);
+
+	public abstract void visit(Node.Type type);
+
+	public abstract void visit(Node.Variable variable);
+
+	public abstract void visit(Node.Function function);
+
+	public final void visit(Node node) {
+		// safe to use 'instanceof' because the class hierarchy is sealed
+		if (node instanceof Node.Type) {
+			visit((Node.Type) node);
+		} else if (node instanceof Node.Variable) {
+			visit((Node.Variable) node);
+		} else if (node instanceof Node.Function) {
+			visit((Node.Function) node);
+		}
 	}
-
-	public void setIdentifier(String identifier) {
-		this.identifier = identifier;
-	}
-
-	public Integer getTotal() {
-		return total;
-	}
-
-	public void setTotal(Integer total) {
-		this.total = total;
-	}
-
 }

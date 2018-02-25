@@ -19,26 +19,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *******************************************************************************/
-package edu.lavinia.inspectory.am.visitor;
+package edu.lavinia.inspectory.visitor;
 
-import org.metanalysis.core.delta.NodeSetEdit;
-import org.metanalysis.core.delta.NodeSetEdit.Change;
+public abstract class GenericVisitor {
+	protected String fileName = null;
+	protected String identifier = null;
+	protected Integer total = 0;
 
-abstract class NodeSetEditVisitor extends GenericVisitor {
-	public abstract void visit(NodeSetEdit.Add add);
-
-	public abstract void visit(NodeSetEdit.Remove remove);
-
-	public abstract void visit(NodeSetEdit.Change<?> change);
-
-	public final void visit(NodeSetEdit nodeSetEdit) {
-		// safe to use 'instanceof' because the class hierarchy is sealed
-		if (nodeSetEdit instanceof NodeSetEdit.Add) {
-			visit((NodeSetEdit.Add) nodeSetEdit);
-		} else if (nodeSetEdit instanceof NodeSetEdit.Remove) {
-			visit((NodeSetEdit.Remove) nodeSetEdit);
-		} else if (nodeSetEdit instanceof NodeSetEdit.Change) {
-			visit((Change<?>) nodeSetEdit);
-		}
+	public String getIdentifier() {
+		return identifier;
 	}
+
+	public void setIdentifier(String identifier) {
+		this.identifier = identifier;
+	}
+
+	public Integer getTotal() {
+		return total;
+	}
+
+	public void setTotal(Integer total) {
+		this.total = total;
+	}
+
 }

@@ -18,8 +18,7 @@ import org.metanalysis.core.delta.TypeTransaction;
 import org.metanalysis.core.model.Node;
 import org.metanalysis.core.model.Node.Type;
 
-import edu.lavinia.inspectory.am.visitor.EditVisitor;
-import edu.lavinia.inspectory.am.visitor.NodeSetEditVisitor;
+import edu.lavinia.inspectory.visitor.NodeSetEditVisitor;
 import kotlin.reflect.KClass;
 import kotlin.reflect.jvm.internal.KClassImpl;
 
