@@ -19,7 +19,7 @@ public class MethodDynamicsUtils {
 	private Map<String, FileMethodDynamics> projectMethodDynamics = new HashMap<String, FileMethodDynamics>();
 
 	public void addSupernovaMethodDynamics(String fileName, Integer supernovaSeverity) {
-		fileName = fileName.substring(1, fileName.length() - 1);
+		// fileName = fileName.substring(1, fileName.length() - 1);
 		final FileMethodDynamics fileMethodDynamics = projectMethodDynamics.get(fileName);
 		Integer currentNumberOfSupernovaMethods = fileMethodDynamics.getSupernovaMethods();
 		final Integer currentSupernovaSeverityPoints = fileMethodDynamics.getSupernovaSeverity();
@@ -28,7 +28,7 @@ public class MethodDynamicsUtils {
 	}
 
 	public void addPulsarMethodDynamics(String fileName, Integer pulsarSeverity) {
-		fileName = fileName.substring(1, fileName.length() - 1);
+		// fileName = fileName.substring(1, fileName.length() - 1);
 		final FileMethodDynamics fileMethodDynamics = projectMethodDynamics.get(fileName);
 		Integer currentNumberOfPulsarMethods = fileMethodDynamics.getPulsarMethods();
 		final Integer currentPulsarSeverityPoints = fileMethodDynamics.getPulsarSeverity();

@@ -213,10 +213,12 @@ public class AstronomicalMethodsInspection {
 			methodDynamics.addSupernovaMethodDynamics(methodChangesInformation.getFileName(),
 					methodChangesInformation.getSupernovaSeverity());
 		}
+
 		if (methodChangesInformation.isPulsar()) {
 			methodDynamics.addPulsarMethodDynamics(methodChangesInformation.getFileName(),
 					methodChangesInformation.getPulsarSeverity());
 		}
+
 		return methodChangesInformation;
 	}
 
@@ -322,9 +324,15 @@ public class AstronomicalMethodsInspection {
 	 */
 	public void addDataInMethodInformationList(String fileName, String className, String methodName) {
 		MethodChangesInformation methodChangesInformation = new MethodChangesInformation();
-		methodChangesInformation.setFileName("\"" + fileName + "\"");
-		methodChangesInformation.setClassName("\"" + className + "\"");
-		methodChangesInformation.setMethodName("\"" + methodName + "\"");
+		/*
+		 * methodChangesInformation.setFileName("\"" + fileName + "\"");
+		 * methodChangesInformation.setClassName("\"" + className + "\"");
+		 * methodChangesInformation.setMethodName("\"" + methodName + "\"");
+		 */
+
+		methodChangesInformation.setFileName(fileName);
+		methodChangesInformation.setClassName(className);
+		methodChangesInformation.setMethodName(methodName);
 		methodInformationList.add(methodChangesInformation);
 	}
 

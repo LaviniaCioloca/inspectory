@@ -10,6 +10,8 @@
  *******************************************************************************/
 package edu.lavinia.inspectory.am.beans;
 
+import java.util.Objects;
+
 public class FileMethodDynamics {
 
 	private Integer supernovaMethods;
@@ -55,4 +57,24 @@ public class FileMethodDynamics {
 				+ ", supernovaSeverity=" + supernovaSeverity + ", pulsarSeverity=" + pulsarSeverity + "]";
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == this)
+			return true;
+
+		if (!(obj instanceof FileMethodDynamics)) {
+			return false;
+		}
+
+		FileMethodDynamics fileMethodDynamics = (FileMethodDynamics) obj;
+		return supernovaMethods == fileMethodDynamics.supernovaMethods
+				&& pulsarMethods == fileMethodDynamics.pulsarMethods
+				&& supernovaSeverity == fileMethodDynamics.supernovaSeverity
+				&& pulsarSeverity == fileMethodDynamics.pulsarSeverity;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(supernovaMethods, pulsarMethods, supernovaSeverity, pulsarSeverity);
+	}
 }

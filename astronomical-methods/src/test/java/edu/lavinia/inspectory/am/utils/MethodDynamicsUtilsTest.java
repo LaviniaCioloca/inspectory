@@ -19,7 +19,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import edu.lavinia.inspectory.am.beans.FileMethodDynamics;
-import edu.lavinia.inspectory.am.utils.MethodDynamicsUtils;
 
 public class MethodDynamicsUtilsTest {
 
@@ -27,7 +26,8 @@ public class MethodDynamicsUtilsTest {
 	private static Map<String, FileMethodDynamics> projectMethodDynamics = new HashMap<>();
 	private static FileMethodDynamics fileMethodDynamics = new FileMethodDynamics();
 
-	private final static String FILE_NAME_QUOTES = "\"testFileName\"";
+	// private final static String FILE_NAME_QUOTES = "\"testFileName\"";
+	private final static String FILE_NAME_QUOTES = "testFileName";
 	private final static String FILE_NAME = "testFileName";
 
 	@BeforeClass
@@ -41,8 +41,7 @@ public class MethodDynamicsUtilsTest {
 		fileMethodDynamics.setSupernovaMethods(1);
 		fileMethodDynamics.setSupernovaSeverity(10);
 		methodDynamicUtils.addSupernovaMethodDynamics(FILE_NAME_QUOTES, 10);
-		assertEquals(fileMethodDynamics,
-				methodDynamicUtils.getProjectMethodDynamics().get(FILE_NAME));
+		assertEquals(fileMethodDynamics, methodDynamicUtils.getProjectMethodDynamics().get(FILE_NAME));
 	}
 
 	@Test
@@ -50,8 +49,7 @@ public class MethodDynamicsUtilsTest {
 		fileMethodDynamics.setPulsarMethods(1);
 		fileMethodDynamics.setPulsarSeverity(10);
 		methodDynamicUtils.addPulsarMethodDynamics(FILE_NAME_QUOTES, 10);
-		assertEquals(fileMethodDynamics,
-				methodDynamicUtils.getProjectMethodDynamics().get(FILE_NAME));
+		assertEquals(fileMethodDynamics, methodDynamicUtils.getProjectMethodDynamics().get(FILE_NAME));
 	}
 
 	@Test
@@ -61,8 +59,7 @@ public class MethodDynamicsUtilsTest {
 		fileMethodDynamics.setSupernovaMethods(0);
 		fileMethodDynamics.setSupernovaSeverity(0);
 		methodDynamicUtils.addDefaultMethodDynamics(FILE_NAME_QUOTES);
-		assertEquals(fileMethodDynamics,
-				methodDynamicUtils.getProjectMethodDynamics().get(FILE_NAME));
+		assertEquals(fileMethodDynamics, methodDynamicUtils.getProjectMethodDynamics().get(FILE_NAME));
 	}
 
 }
