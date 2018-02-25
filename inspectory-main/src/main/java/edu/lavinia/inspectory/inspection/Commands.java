@@ -13,6 +13,9 @@ package edu.lavinia.inspectory.inspection;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 
 import org.apache.commons.cli.CommandLine;
@@ -154,18 +157,35 @@ public class Commands {
 	}
 
 	private void ownershipProblemsMetric() {
-		final String directoryPath = System.getProperty("user.dir") + "/.inspectory";
+		// final String directoryPath = System.getProperty("user.dir") +
+		// "/.inspectory";
 
-		final File csvFile = new File(directoryPath, OWNERSHIP_PROBLEMS_CSV_FILE_NAME);
-		csvFile.getParentFile().mkdirs();
+		// final File csvFile = new File(directoryPath,
+		// OWNERSHIP_PROBLEMS_CSV_FILE_NAME);
+		// csvFile.getParentFile().mkdirs();
+
+		final String home = System.getProperty("user.dir");
+		final Path path = Paths.get(home, ".inspectory");
+
+		final String filePath = home + File.separator + ".inspectory" + File.separator
+				+ OWNERSHIP_PROBLEMS_CSV_FILE_NAME;
+		final File csvFile = new File(filePath);
+		boolean directoryExists = Files.exists(path);
 
 		final FileWriter csvWriter;
 		try {
+			if (directoryExists) {
+				csvFile.delete();
+			} else {
+				Files.createDirectories(path);
+			}
+
 			csvWriter = new FileWriter(csvFile);
-			CSVUtils.writeLine(csvWriter,
-					Arrays.asList("File", "File Owner", "Number of changes", "Authors - Number of changes made"));
+			CSVUtils.writeLine(csvWriter, Arrays.asList("File", "Total Number of changes", "File Creator",
+					"Authors - Number of changes made"));
 			final OwnershipProblemsInspection ownershipProblemsInspection = new OwnershipProblemsInspection(project,
 					csvWriter);
+			ownershipProblemsInspection.createResults();
 			ownershipProblemsInspection.writeFileResults();
 			csvWriter.flush();
 			csvWriter.close();
