@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import org.junit.Test;
 import org.metanalysis.core.project.PersistentProject;
@@ -39,11 +40,11 @@ public class OwnershipProblemsInspectionTest {
 	public void testAddFileInformation() {
 		final HashMap<String, FileOwnershipInformation> expectedFileOwnershipResult = new HashMap<>();
 		final FileOwnershipInformation fileOwnershipInformation = new FileOwnershipInformation();
-		final HashMap<String, Integer> authorsChanges = new HashMap<>();
+		final LinkedHashMap<String, Integer> authorsChanges = new LinkedHashMap<>();
 		authorsChanges.put("test", 1);
 
 		fileOwnershipInformation.setNumberOfChanges(1);
-		fileOwnershipInformation.setFileOwner("test");
+		fileOwnershipInformation.setFileCreator("test");
 		fileOwnershipInformation.setAuthorsChanges(authorsChanges);
 		expectedFileOwnershipResult.put("testFileName", fileOwnershipInformation);
 

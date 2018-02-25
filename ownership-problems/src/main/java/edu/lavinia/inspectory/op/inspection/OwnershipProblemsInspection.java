@@ -4,6 +4,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -45,8 +46,8 @@ public class OwnershipProblemsInspection {
 				final List<HistoryEntry> fileHistory = project.getFileHistory(fileName);
 
 				int numberOfChanges = 0;
-				String fileOwner = null;
-				final HashMap<String, Integer> authorsChanges = new HashMap<>();
+				String fileCreator = null;
+				final LinkedHashMap<String, Integer> authorsChanges = new LinkedHashMap<>();
 
 				for (final HistoryEntry historyEntry : fileHistory) {
 					try {
@@ -56,8 +57,8 @@ public class OwnershipProblemsInspection {
 						commit.setDate(historyEntry.getDate());
 
 						++numberOfChanges;
-						if (fileOwner == null) {
-							fileOwner = historyEntry.getAuthor();
+						if (fileCreator == null) {
+							fileCreator = historyEntry.getAuthor();
 						}
 
 						Integer numberOfChangesAuthorHas = authorsChanges.get(historyEntry.getAuthor());
@@ -71,7 +72,7 @@ public class OwnershipProblemsInspection {
 					}
 				}
 
-				addFileInformation(fileName, numberOfChanges, fileOwner, authorsChanges);
+				addFileInformation(fileName, numberOfChanges, fileCreator, authorsChanges);
 			}
 		} catch (IOException e) {
 			/*
@@ -83,10 +84,10 @@ public class OwnershipProblemsInspection {
 	}
 
 	public void addFileInformation(String fileName, Integer numberOfChanges, String fileOwner,
-			HashMap<String, Integer> authorsChanges) {
+			LinkedHashMap<String, Integer> authorsChanges) {
 		final FileOwnershipInformation fileOwnershipInformation = new FileOwnershipInformation();
 		fileOwnershipInformation.setNumberOfChanges(numberOfChanges);
-		fileOwnershipInformation.setFileOwner(fileOwner);
+		fileOwnershipInformation.setFileCreator(fileOwner);
 		fileOwnershipInformation.setAuthorsChanges(authorsChanges);
 
 		fileOwnershipResult.put(fileName, fileOwnershipInformation);
@@ -99,8 +100,8 @@ public class OwnershipProblemsInspection {
 				final String fileName = entry.getKey();
 				final FileOwnershipInformation fileOwnershipInformation = entry.getValue();
 				fileOwnershipInformationLine.add(fileName);
-				fileOwnershipInformationLine.add(fileOwnershipInformation.getFileOwner());
 				fileOwnershipInformationLine.add(fileOwnershipInformation.getNumberOfChanges().toString());
+				fileOwnershipInformationLine.add(fileOwnershipInformation.getFileCreator());
 				fileOwnershipInformationLine.add(fileOwnershipInformation.getAuthorsChanges().toString());
 
 				CSVUtils.writeLine(csvWriter, fileOwnershipInformationLine, ',', '"');
