@@ -136,7 +136,7 @@ public class Commands {
 			jsonWriter = new FileWriter(jsonFile);
 			csvMethodDynamicsWriter = new FileWriter(csvMethodDynamicsFile);
 			CSVUtils.writeLine(csvWriter, Arrays.asList("File", "Class", "Method", "Initial size", "Actual size",
-					"Number of changes", "Changes List", "isSupernova", "Supernova Severity", "Supernova - Leaps Size",
+					"Number of changes", "Method was deleted", "Changes List", "isSupernova", "Supernova Severity", "Supernova - Leaps Size",
 					"Supernova - Recent Leaps Size", "Supernova - Subsequent Refactoring", "Supernova - Method Size",
 					"Supernova - Activity State", "isPulsar", "Pulsar Severity", "Pulsar - Recent Cycles",
 					"Pulsar - Average Size Increase", "Pulsar - Method Size", "Pulsar - Activity State"));
@@ -151,6 +151,10 @@ public class Commands {
 			csvMethodDynamicsWriter.close();
 			jsonWriter.flush();
 			jsonWriter.close();
+			System.out.println("Deleted nodes are: ");
+			for (final String deletedNode :  astronomicalMethodsInspection.getDeletedNodes()) {
+				System.out.println("- deletedNode: " + deletedNode);
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

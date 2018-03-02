@@ -32,6 +32,7 @@ public class MethodChangesInformation {
 	private String methodName;
 	private Integer initialSize;
 	private Integer actualSize;
+	private Boolean methodDeleted = false;
 	private Integer numberOfChanges;
 	private ArrayList<Integer> changesList;
 	private Boolean isPulsar;
@@ -95,6 +96,14 @@ public class MethodChangesInformation {
 
 	public void setNumberOfChanges(Integer numberOfChanges) {
 		this.numberOfChanges = numberOfChanges;
+	}
+
+	public Boolean getMethodDeleted() {
+		return methodDeleted;
+	}
+
+	public void setMethodDeleted(Boolean methodDeleted) {
+		this.methodDeleted = methodDeleted;
 	}
 
 	public ArrayList<Integer> getChangesList() {
@@ -182,23 +191,46 @@ public class MethodChangesInformation {
 		methodInformationLine.add(this.getInitialSize().toString());
 		methodInformationLine.add(this.getActualSize().toString());
 		methodInformationLine.add(this.getNumberOfChanges().toString());
+		methodInformationLine.add(this.getMethodDeleted().toString());
 		methodInformationLine.add(this.getChangesList().toString());
 
 		methodInformationLine.add(this.isSupernova.toString());
 		methodInformationLine.add(this.getSupernovaSeverity().toString());
-		methodInformationLine.add(supernovaCriteria.getLeapsSizePoints().toString());
-		methodInformationLine.add(supernovaCriteria.getRecentLeapsSizePoints().toString());
-		methodInformationLine.add(supernovaCriteria.getSubsequentRefactoringPoints().toString());
-		methodInformationLine.add(supernovaCriteria.getMethodSizePoints().toString());
-		methodInformationLine.add(supernovaCriteria.getActivityStatePoints().toString());
+		methodInformationLine
+				.add(supernovaCriteria.getLeapsSizePoints().toString());
+		methodInformationLine
+				.add(supernovaCriteria.getRecentLeapsSizePoints().toString());
+		methodInformationLine.add(
+				supernovaCriteria.getSubsequentRefactoringPoints().toString());
+		methodInformationLine
+				.add(supernovaCriteria.getMethodSizePoints().toString());
+		methodInformationLine
+				.add(supernovaCriteria.getActivityStatePoints().toString());
 
 		methodInformationLine.add(this.isPulsar.toString());
 		methodInformationLine.add(this.getPulsarSeverity().toString());
-		methodInformationLine.add(pulsarCriteria.getRecentCyclesPoints().toString());
-		methodInformationLine.add(pulsarCriteria.getAverageSizeIncreasePoints().toString());
-		methodInformationLine.add(pulsarCriteria.getMethodSizePoints().toString());
-		methodInformationLine.add(pulsarCriteria.getActivityStatePoints().toString());
+		methodInformationLine
+				.add(pulsarCriteria.getRecentCyclesPoints().toString());
+		methodInformationLine
+				.add(pulsarCriteria.getAverageSizeIncreasePoints().toString());
+		methodInformationLine
+				.add(pulsarCriteria.getMethodSizePoints().toString());
+		methodInformationLine
+				.add(pulsarCriteria.getActivityStatePoints().toString());
 		return methodInformationLine;
+	}
+
+	@Override
+	public String toString() {
+		return "MethodChangesInformation [commits=" + commits + ", fileName="
+				+ fileName + ", className=" + className + ", methodName="
+				+ methodName + ", initialSize=" + initialSize + ", actualSize="
+				+ actualSize + ", numberOfChanges=" + numberOfChanges
+				+ ", changesList=" + changesList + ", isPulsar=" + isPulsar
+				+ ", isSupernova=" + isSupernova + ", pulsarSeverity="
+				+ pulsarSeverity + ", supernovaSeverity=" + supernovaSeverity
+				+ ", pulsarCriteria=" + pulsarCriteria + ", supernovaCriteria="
+				+ supernovaCriteria + "]";
 	}
 
 }

@@ -225,7 +225,7 @@ public class FileHistoryInspectTest {
 		MethodMetrics.setAllCommits(commits);
 		MethodMetrics.setAllCommitsIntoTimeFrames();
 		MethodMetrics.setNow(commit3.getDate());
-		astronomicalMethodsInspection.writeCSVFileData(methodInformationList);
+		astronomicalMethodsInspection.writeCSVFileData();
 	}
 
 	@Test

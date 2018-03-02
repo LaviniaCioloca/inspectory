@@ -36,13 +36,13 @@ import edu.lavinia.inspectory.visitor.NodeSetEditVisitor;
 
 public class EditVisitor extends NodeSetEditVisitor {
 
-	public EditVisitor(final String fileName) {	
+	public EditVisitor(final String fileName) {
 		this.fileName = fileName;
 	}
 
 	@Override
 	public void visit(Add add) {
-		final Node node = ((NodeSetEdit.Add) add).getNode();
+		final Node node = add.getNode();
 		if (node instanceof Node.Function) {
 			identifier = ((Node.Function) node).getIdentifier();
 			final List<String> body = ((Node.Function) node).getBody();
@@ -52,18 +52,23 @@ public class EditVisitor extends NodeSetEditVisitor {
 
 	@Override
 	public void visit(Remove remove) {
-		if (remove.getNodeType().getQualifiedName().equals(Node.Function.class.getCanonicalName())) {
-			identifier = ((NodeSetEdit.Remove) remove).getIdentifier();
-			total -= 1;
+		if (remove.getNodeType().getQualifiedName()
+				.equals(Node.Function.class.getCanonicalName())) {
+			identifier = remove.getIdentifier();
+			total = -lastMethodSize;
+			methodDeleted = true;
 		}
 	}
 
 	@Override
 	public void visit(Change<?> change) {
-		if (change.getNodeType().getQualifiedName().equals(Node.Function.class.getCanonicalName())) {
+		if (change.getNodeType().getQualifiedName()
+				.equals(Node.Function.class.getCanonicalName())) {
 			identifier = ((NodeSetEdit.Change<?>) change).getIdentifier();
-			final Transaction<?> transaction = ((NodeSetEdit.Change<?>) change).getTransaction();
-			final List<ListEdit<String>> bodyEdits = ((FunctionTransaction) transaction).getBodyEdits();
+			final Transaction<?> transaction = ((NodeSetEdit.Change<?>) change)
+					.getTransaction();
+			final List<ListEdit<String>> bodyEdits = ((FunctionTransaction) transaction)
+					.getBodyEdits();
 			for (final ListEdit<String> listEdit : bodyEdits) {
 				if (listEdit instanceof ListEdit.Add<?>) {
 					total += 1;

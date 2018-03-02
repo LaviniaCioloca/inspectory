@@ -25,6 +25,8 @@ public abstract class GenericVisitor {
 	protected String fileName = null;
 	protected String identifier = null;
 	protected Integer total = 0;
+	protected Integer lastMethodSize = 0;
+	protected boolean methodDeleted = false;
 
 	public String getIdentifier() {
 		return identifier;
@@ -40,6 +42,22 @@ public abstract class GenericVisitor {
 
 	public void setTotal(Integer total) {
 		this.total = total;
+	}
+
+	public Integer getLastMethodSize() {
+		return lastMethodSize;
+	}
+
+	public void setLastMethodSize(Integer lastMethodSize) {
+		this.lastMethodSize = lastMethodSize;
+	}
+
+	public boolean isMethodDeleted() {
+		return methodDeleted;
+	}
+
+	public void setMethodDeleted(boolean methodDeleted) {
+		this.methodDeleted = methodDeleted;
 	}
 
 }

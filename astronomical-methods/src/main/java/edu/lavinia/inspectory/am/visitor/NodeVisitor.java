@@ -25,14 +25,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-//import java.util.logging.Logger;
-import edu.lavinia.inspectory.visitor.*;
 
 import org.metanalysis.core.model.Node;
 import org.metanalysis.core.model.Node.Function;
 import org.metanalysis.core.model.Node.Type;
 import org.metanalysis.core.model.Node.Variable;
 import org.metanalysis.core.model.SourceFile;
+
+//import java.util.logging.Logger;
+import edu.lavinia.inspectory.visitor.CodeVisitor;
 
 public class NodeVisitor extends CodeVisitor {
 	private Map<String, Integer> functionSize = new HashMap<String, Integer>();
@@ -47,6 +48,8 @@ public class NodeVisitor extends CodeVisitor {
 
 	@Override
 	public void visit(Type type) {
+		System.out.println("\tType: " + type.getName() + "; members: " + type.getMembers().size());
+		
 		final Set<Node> members = type.getMembers();
 		for (final Node node : members) {
 			this.visit(node);
@@ -64,6 +67,7 @@ public class NodeVisitor extends CodeVisitor {
 		functionSize.put(function.getIdentifier(), body.size());
 		identifier = function.getSignature();
 		total += function.getBody().size();
+		System.out.println("\tFunction: " + identifier + "; size: " + total);
 	}
 
 	public Map<String, Integer> getFunctionSize() {
