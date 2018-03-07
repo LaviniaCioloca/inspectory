@@ -367,8 +367,8 @@ public class AstronomicalMethodsInspection {
 			String fileName, Commit commit, ArrayList<Integer> lineChanges) {
 		Node node = ((NodeSetEdit.Add) edit).getNode();
 		if (node instanceof Node.Type) {
-			String className = ((Node.Type) node).getName();
 			visitor = new NodeVisitor(fileName);
+			String className = "";
 			final Set<Node> members = ((Node.Type) node).getMembers();
 			for (final Node member : members) {
 				try {
@@ -386,6 +386,7 @@ public class AstronomicalMethodsInspection {
 							}
 						}
 					} else if (member instanceof Node.Function) {
+						className = ((Node.Type) node).getName();
 						((NodeVisitor) visitor).visit(member);
 						if (checkEntryInResultSet(visitor, lineChanges,
 								className, commit)) {
