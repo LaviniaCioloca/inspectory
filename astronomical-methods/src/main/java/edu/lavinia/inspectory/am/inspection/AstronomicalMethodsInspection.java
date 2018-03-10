@@ -116,12 +116,13 @@ public class AstronomicalMethodsInspection {
 		}
 
 		MethodChangesInformation methodChangesInformation = null;
-		if (result.get(className + ": " + visitor.getIdentifier()) != null) {
+		if (result.get(visitor.getFileName() + ":" + className + ": "
+				+ visitor.getIdentifier()) != null) {
 			System.out.println("\tEntry exists in result set: " + className
 					+ ": " + visitor.getIdentifier());
 
-			methodChangesInformation = result
-					.get(className + ": " + visitor.getIdentifier());
+			methodChangesInformation = result.get(visitor.getFileName() + ":"
+					+ className + ": " + visitor.getIdentifier());
 			methodChangesInformation.getChangesList().add(visitor.getTotal());
 			methodChangesInformation.getCommits().add(commit);
 
@@ -148,7 +149,9 @@ public class AstronomicalMethodsInspection {
 				methodChangesInformation.setMethodDeleted(true);
 			}
 
-			result.put(className + ": " + visitor.getIdentifier(),
+			result.put(
+					visitor.getFileName() + ":" + className + ": "
+							+ visitor.getIdentifier(),
 					methodChangesInformation);
 			return true;
 		}
@@ -188,8 +191,10 @@ public class AstronomicalMethodsInspection {
 	 */
 	public void createAndSortAllCommits() {
 		for (final MethodChangesInformation methodChangesInformation : methodInformationList) {
-			ArrayList<Commit> commits = result.get(
-					methodChangesInformation.getClassName().replaceAll("\"", "")
+			ArrayList<Commit> commits = result
+					.get(methodChangesInformation.getFileName() + ":"
+							+ methodChangesInformation.getClassName()
+									.replaceAll("\"", "")
 							+ ": " + methodChangesInformation.getMethodName()
 									.replaceAll("\"", ""))
 					.getCommits();
@@ -278,15 +283,18 @@ public class AstronomicalMethodsInspection {
 		for (MethodChangesInformation methodChangesInformation : methodInformationList) {
 			try {
 				ArrayList<Integer> changesList = result
-						.get(methodChangesInformation.getClassName()
-								.replaceAll("\"", "") + ": "
-								+ methodChangesInformation.getMethodName()
-										.replaceAll("\"", ""))
+						.get(methodChangesInformation.getFileName() + ":"
+								+ methodChangesInformation.getClassName()
+										.replaceAll("\"", "")
+								+ ": " + methodChangesInformation
+										.getMethodName().replaceAll("\"", ""))
 						.getChangesList();
-				ArrayList<Commit> commits = result.get(methodChangesInformation
-						.getClassName().replaceAll("\"", "") + ": "
-						+ methodChangesInformation.getMethodName()
-								.replaceAll("\"", ""))
+				ArrayList<Commit> commits = result
+						.get(methodChangesInformation.getFileName() + ":"
+								+ methodChangesInformation.getClassName()
+										.replaceAll("\"", "")
+								+ ": " + methodChangesInformation
+										.getMethodName().replaceAll("\"", ""))
 						.getCommits();
 				Integer actualSize = 0;
 				for (Integer change : changesList) {
@@ -327,11 +335,10 @@ public class AstronomicalMethodsInspection {
 
 				if (memberEdit instanceof NodeSetEdit.Remove) {
 					Integer lastMethodSize = 0;
-					ArrayList<Integer> changesList = result
-							.get(className.replaceAll("\"", "") + ": "
-									+ ((NodeSetEdit.Remove) memberEdit)
-											.getIdentifier()
-											.replaceAll("\"", ""))
+					ArrayList<Integer> changesList = result.get(fileName + ":"
+							+ className.replaceAll("\"", "")
+							+ ": " + ((NodeSetEdit.Remove) memberEdit)
+									.getIdentifier().replaceAll("\"", ""))
 							.getChangesList();
 
 					for (Integer change : changesList) {
@@ -369,19 +376,25 @@ public class AstronomicalMethodsInspection {
 			visitor = new NodeVisitor(fileName);
 			String className = "";
 			final Set<Node> members = ((Node.Type) node).getMembers();
+
+			System.out.println("\tNumber of members: " + members.size());
+
 			for (final Node member : members) {
 				try {
+					System.out.println("\t\tMember: " + member.getIdentifier());
 					if (member instanceof Node.Type) {
 						className = ((Node.Type) member).getName();
 
 						final Set<Node> typeMembers = ((Node.Type) member)
 								.getMembers();
 						for (final Node typeMember : typeMembers) {
-							((NodeVisitor) visitor).visit(typeMember);
-							if (checkEntryInResultSet(visitor, lineChanges,
-									className, commit)) {
-								addDataInMethodInformationList(fileName,
-										className, visitor.getIdentifier());
+							if (typeMember instanceof Node.Function) {
+								((NodeVisitor) visitor).visit(typeMember);
+								if (checkEntryInResultSet(visitor, lineChanges,
+										className, commit)) {
+									addDataInMethodInformationList(fileName,
+											className, visitor.getIdentifier());
+								}
 							}
 						}
 					} else if (member instanceof Node.Function) {

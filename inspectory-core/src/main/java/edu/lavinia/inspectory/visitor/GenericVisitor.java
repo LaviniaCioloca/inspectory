@@ -60,4 +60,12 @@ public abstract class GenericVisitor {
 		this.methodDeleted = methodDeleted;
 	}
 
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+
 }

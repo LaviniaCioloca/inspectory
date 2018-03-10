@@ -103,7 +103,7 @@ public class FileHistoryInspectTest {
 		final MethodChangesInformation methodChangesInformation = new MethodChangesInformation();
 		methodChangesInformation.setChangesList(new ArrayList<Integer>());
 		methodChangesInformation.setCommits(new ArrayList<Commit>());
-		result.put(className + ": " + visitor.getIdentifier(),
+		result.put(fileName + ":" + className + ": " + visitor.getIdentifier(),
 				methodChangesInformation);
 		astronomicalMethodsInspection.setResult(result);
 		assertFalse(astronomicalMethodsInspection.checkEntryInResultSet(visitor,
@@ -174,9 +174,10 @@ public class FileHistoryInspectTest {
 
 		final Map<String, MethodChangesInformation> result = new HashMap<String, MethodChangesInformation>();
 		final MethodChangesInformation methodChangesInformation = new MethodChangesInformation();
+		methodChangesInformation.setFileName("test");
 		methodChangesInformation.setClassName("test");
 		methodChangesInformation.setMethodName("test");
-		result.put("test: test", methodChangesInformation);
+		result.put("test:test: test", methodChangesInformation);
 		methodChangesInformation.setCommits(commits);
 		astronomicalMethodsInspection.setResult(result);
 		final ArrayList<MethodChangesInformation> methodInformationList = new ArrayList<>();
@@ -215,7 +216,7 @@ public class FileHistoryInspectTest {
 		methodChangesInformation.setFileName("test");
 		methodChangesInformation.setClassName("test");
 		methodChangesInformation.setMethodName("test");
-		result.put("test: test", methodChangesInformation);
+		result.put("test:test: test", methodChangesInformation);
 		methodChangesInformation.setCommits(commits);
 		final SupernovaCriteria supernovaCriteria = new SupernovaCriteria();
 		final PulsarCriteria pulsarCriteria = new PulsarCriteria();
