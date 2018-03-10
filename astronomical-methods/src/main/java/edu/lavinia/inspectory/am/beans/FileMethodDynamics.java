@@ -53,8 +53,10 @@ public class FileMethodDynamics {
 
 	@Override
 	public String toString() {
-		return "FileMethodDynamics [supernovaMethods=" + supernovaMethods + ", pulsarMethods=" + pulsarMethods
-				+ ", supernovaSeverity=" + supernovaSeverity + ", pulsarSeverity=" + pulsarSeverity + "]";
+		return "FileMethodDynamics [supernovaMethods=" + supernovaMethods
+				+ ", pulsarMethods=" + pulsarMethods + ", supernovaSeverity="
+				+ supernovaSeverity + ", pulsarSeverity=" + pulsarSeverity
+				+ "]";
 	}
 
 	@Override
@@ -75,6 +77,7 @@ public class FileMethodDynamics {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(supernovaMethods, pulsarMethods, supernovaSeverity, pulsarSeverity);
+		return Objects.hash(supernovaMethods, pulsarMethods, supernovaSeverity,
+				pulsarSeverity);
 	}
 }

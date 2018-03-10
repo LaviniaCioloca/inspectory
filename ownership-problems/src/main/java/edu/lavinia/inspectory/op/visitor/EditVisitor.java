@@ -40,8 +40,8 @@ public class EditVisitor extends NodeSetEditVisitor {
 
 	private Set<Node> members = new HashSet<>();
 	private Integer numberOfLines = 0;
-	
-	public EditVisitor(final String fileName) {	
+
+	public EditVisitor(final String fileName) {
 		this.fileName = fileName;
 	}
 
@@ -52,7 +52,7 @@ public class EditVisitor extends NodeSetEditVisitor {
 			++numberOfLines; // for the identifier, supertype and modifiers
 			identifier = ((Node.Type) node).getIdentifier();
 			members = ((Node.Type) node).getMembers();
-			
+
 			for (final Node memberNode : members) {
 				if (memberNode instanceof Node.Type) {
 					NodeVisitor nodeVisitor = new NodeVisitor(fileName);
@@ -65,18 +65,19 @@ public class EditVisitor extends NodeSetEditVisitor {
 					++numberOfLines;
 				}
 			}
-		} else  if (node instanceof Node.Function) {
+		} else if (node instanceof Node.Function) {
 			identifier = ((Node.Function) node).getIdentifier();
 			final List<String> body = ((Node.Function) node).getBody();
 			total += body.size();
 		} else if (node instanceof Node.Variable) {
-			
+
 		}
 	}
 
 	@Override
 	public void visit(Remove remove) {
-		if (remove.getNodeType().getQualifiedName().equals(Node.Function.class.getCanonicalName())) {
+		if (remove.getNodeType().getQualifiedName()
+				.equals(Node.Function.class.getCanonicalName())) {
 			identifier = ((NodeSetEdit.Remove) remove).getIdentifier();
 			total -= 1;
 		}
@@ -84,10 +85,13 @@ public class EditVisitor extends NodeSetEditVisitor {
 
 	@Override
 	public void visit(Change<?> change) {
-		if (change.getNodeType().getQualifiedName().equals(Node.Function.class.getCanonicalName())) {
+		if (change.getNodeType().getQualifiedName()
+				.equals(Node.Function.class.getCanonicalName())) {
 			identifier = ((NodeSetEdit.Change<?>) change).getIdentifier();
-			final Transaction<?> transaction = ((NodeSetEdit.Change<?>) change).getTransaction();
-			final List<ListEdit<String>> bodyEdits = ((FunctionTransaction) transaction).getBodyEdits();
+			final Transaction<?> transaction = ((NodeSetEdit.Change<?>) change)
+					.getTransaction();
+			final List<ListEdit<String>> bodyEdits = ((FunctionTransaction) transaction)
+					.getBodyEdits();
 			for (final ListEdit<String> listEdit : bodyEdits) {
 				if (listEdit instanceof ListEdit.Add<?>) {
 					total += 1;

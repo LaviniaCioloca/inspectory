@@ -29,7 +29,8 @@ public class OwnershipProblemsInspection {
 	 * @param csvWriter
 	 *            The writer of result CSV file.
 	 */
-	public OwnershipProblemsInspection(PersistentProject project, FileWriter csvWriter) {
+	public OwnershipProblemsInspection(PersistentProject project,
+			FileWriter csvWriter) {
 		this.project = project;
 		this.csvWriter = csvWriter;
 	}
@@ -43,7 +44,8 @@ public class OwnershipProblemsInspection {
 					continue;
 				}
 
-				final List<HistoryEntry> fileHistory = project.getFileHistory(fileName);
+				final List<HistoryEntry> fileHistory = project
+						.getFileHistory(fileName);
 
 				int numberOfChanges = 0;
 				String fileCreator = null;
@@ -61,9 +63,11 @@ public class OwnershipProblemsInspection {
 							fileCreator = historyEntry.getAuthor();
 						}
 
-						Integer numberOfChangesAuthorHas = authorsChanges.get(historyEntry.getAuthor());
+						Integer numberOfChangesAuthorHas = authorsChanges
+								.get(historyEntry.getAuthor());
 						if (numberOfChangesAuthorHas != null) {
-							authorsChanges.put(historyEntry.getAuthor(), ++numberOfChangesAuthorHas);
+							authorsChanges.put(historyEntry.getAuthor(),
+									++numberOfChangesAuthorHas);
 						} else {
 							authorsChanges.put(historyEntry.getAuthor(), 1);
 						}
@@ -72,7 +76,8 @@ public class OwnershipProblemsInspection {
 					}
 				}
 
-				addFileInformation(fileName, numberOfChanges, fileCreator, authorsChanges);
+				addFileInformation(fileName, numberOfChanges, fileCreator,
+						authorsChanges);
 			}
 		} catch (IOException e) {
 			/*
@@ -83,8 +88,8 @@ public class OwnershipProblemsInspection {
 		}
 	}
 
-	public void addFileInformation(String fileName, Integer numberOfChanges, String fileOwner,
-			LinkedHashMap<String, Integer> authorsChanges) {
+	public void addFileInformation(String fileName, Integer numberOfChanges,
+			String fileOwner, LinkedHashMap<String, Integer> authorsChanges) {
 		final FileOwnershipInformation fileOwnershipInformation = new FileOwnershipInformation();
 		fileOwnershipInformation.setNumberOfChanges(numberOfChanges);
 		fileOwnershipInformation.setFileCreator(fileOwner);
@@ -95,16 +100,22 @@ public class OwnershipProblemsInspection {
 
 	public void writeFileResults() {
 		try {
-			for (final HashMap.Entry<String, FileOwnershipInformation> entry : fileOwnershipResult.entrySet()) {
+			for (final HashMap.Entry<String, FileOwnershipInformation> entry : fileOwnershipResult
+					.entrySet()) {
 				final ArrayList<String> fileOwnershipInformationLine = new ArrayList<>();
 				final String fileName = entry.getKey();
-				final FileOwnershipInformation fileOwnershipInformation = entry.getValue();
+				final FileOwnershipInformation fileOwnershipInformation = entry
+						.getValue();
 				fileOwnershipInformationLine.add(fileName);
-				fileOwnershipInformationLine.add(fileOwnershipInformation.getNumberOfChanges().toString());
-				fileOwnershipInformationLine.add(fileOwnershipInformation.getFileCreator());
-				fileOwnershipInformationLine.add(fileOwnershipInformation.getAuthorsChanges().toString());
+				fileOwnershipInformationLine.add(fileOwnershipInformation
+						.getNumberOfChanges().toString());
+				fileOwnershipInformationLine
+						.add(fileOwnershipInformation.getFileCreator());
+				fileOwnershipInformationLine.add(fileOwnershipInformation
+						.getAuthorsChanges().toString());
 
-				CSVUtils.writeLine(csvWriter, fileOwnershipInformationLine, ',', '"');
+				CSVUtils.writeLine(csvWriter, fileOwnershipInformationLine, ',',
+						'"');
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

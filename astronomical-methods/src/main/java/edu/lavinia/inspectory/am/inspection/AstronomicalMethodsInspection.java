@@ -118,25 +118,17 @@ public class AstronomicalMethodsInspection {
 		MethodChangesInformation methodChangesInformation = null;
 		if (result.get(visitor.getFileName() + ":" + className + ": "
 				+ visitor.getIdentifier()) != null) {
-			System.out.println("\tEntry exists in result set: " + className
-					+ ": " + visitor.getIdentifier());
-
 			methodChangesInformation = result.get(visitor.getFileName() + ":"
 					+ className + ": " + visitor.getIdentifier());
 			methodChangesInformation.getChangesList().add(visitor.getTotal());
 			methodChangesInformation.getCommits().add(commit);
 
 			if (visitor.getMethodDeleted()) {
-				System.out.println("\t" + visitor.getFileName() + ": "
-						+ visitor.getIdentifier() + " DEL");
 				methodChangesInformation.setMethodDeleted(true);
 			}
 
 			return false;
 		} else {
-			System.out.println("\tEntry NEW in result set: " + className + ": "
-					+ visitor.getIdentifier());
-
 			ArrayList<Integer> changesList = new ArrayList<Integer>();
 			changesList.add(visitor.getTotal());
 			ArrayList<Commit> commits = new ArrayList<>();
@@ -148,8 +140,6 @@ public class AstronomicalMethodsInspection {
 			methodChangesInformation.setMethodName(visitor.getIdentifier());
 
 			if (visitor.getMethodDeleted()) {
-				System.out.println("\t" + visitor.getFileName() + ": "
-						+ visitor.getIdentifier() + " DEL");
 				methodChangesInformation.setMethodDeleted(true);
 			}
 
@@ -391,11 +381,8 @@ public class AstronomicalMethodsInspection {
 			String className = "";
 			final Set<Node> members = ((Node.Type) node).getMembers();
 
-			System.out.println("\tNumber of members: " + members.size());
-
 			for (final Node member : members) {
 				try {
-					System.out.println("\t\tMember: " + member.getIdentifier());
 					if (member instanceof Node.Type) {
 						className = ((Node.Type) member).getName();
 
@@ -462,12 +449,10 @@ public class AstronomicalMethodsInspection {
 				if (fileName.startsWith(".") || !fileName.endsWith(".java")) {
 					continue;
 				}
-				System.out.println();
-				System.out.println("- File: " + fileName);
+
 				List<HistoryEntry> fileHistory = project
 						.getFileHistory(fileName);
 
-				System.out.println("\tHistory entries: " + fileHistory.size());
 				for (HistoryEntry historyEntry : fileHistory) {
 					try {
 						final Commit commit = new Commit();
@@ -481,28 +466,14 @@ public class AstronomicalMethodsInspection {
 								.getNodeEdits();
 						GenericVisitor visitor = null;
 
-						System.out.println(
-								"\tNode edits: " + nodeEditList.size());
 						for (final NodeSetEdit edit : nodeEditList) {
 							if (edit instanceof NodeSetEdit.Change<?>) {
-								System.out.println("\tcommit: "
-										+ historyEntry.getRevision()
-										+ "; Edit type: NodeSetEdit.Change");
-
 								handleNodeSetEditChange(edit, visitor, fileName,
 										commit, lineChanges);
 							} else if (edit instanceof NodeSetEdit.Add) {
-								System.out.println("\tcommit: "
-										+ historyEntry.getRevision()
-										+ "; Edit type: NodeSetEdit.Add");
-
 								handleNodeSetEditAdd(edit, visitor, fileName,
 										commit, lineChanges);
 							} else {
-								System.out.println("\tcommit: "
-										+ historyEntry.getRevision()
-										+ "; Edit type: NodeSetEdit.Remove => filename added to deletedNodes");
-
 								deletedNodes.add(fileName);
 							}
 						}

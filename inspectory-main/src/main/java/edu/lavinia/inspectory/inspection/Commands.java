@@ -35,7 +35,8 @@ import edu.lavinia.inspectory.utils.CSVUtils;
 
 public class Commands {
 
-	public final static Logger LOGGER = Logger.getLogger(Commands.class.getName());
+	public final static Logger LOGGER = Logger
+			.getLogger(Commands.class.getName());
 	private final String[] args;
 	private final Options options = new Options();
 
@@ -56,17 +57,23 @@ public class Commands {
 
 	private void generateOptions() {
 
-		final Option helpOption = Option.builder("h").longOpt("help").required(false).hasArg(false)
+		final Option helpOption = Option.builder("h").longOpt("help")
+				.required(false).hasArg(false)
 				.desc("Show usage instructions for every command.").build();
 
-		final Option cleanOption = Option.builder("c").longOpt("clean").required(false)
+		final Option cleanOption = Option.builder("c").longOpt("clean")
+				.required(false)
 				.desc("Clean previously files of inspectory results.").build();
 
-		final Option ammOption = Option.builder("amm").longOpt("astronomical").required(false)
-				.desc("Atronomical Methods - Supernova & Pulsar - Metric applied on the current repository.").build();
+		final Option ammOption = Option.builder("amm").longOpt("astronomical")
+				.required(false)
+				.desc("Atronomical Methods - Supernova & Pulsar - Metric applied on the current repository.")
+				.build();
 
-		final Option opmOption = Option.builder("opm").longOpt("ownership").required(false)
-				.desc("Ownership Problems Metric applied on the current repository.").build();
+		final Option opmOption = Option.builder("opm").longOpt("ownership")
+				.required(false)
+				.desc("Ownership Problems Metric applied on the current repository.")
+				.build();
 
 		options.addOption(helpOption);
 		options.addOption(cleanOption);
@@ -101,30 +108,38 @@ public class Commands {
 	private void help() {
 		final HelpFormatter formater = new HelpFormatter();
 
-		formater.printHelp("java -jar inspectory-<version>.jar <command>", options);
+		formater.printHelp("java -jar inspectory-<version>.jar <command>",
+				options);
 		System.exit(0);
 	}
 
 	private void clean() {
-		final String directoryPath = System.getProperty("user.dir") + "/.inspectory";
+		final String directoryPath = System.getProperty("user.dir")
+				+ "/.inspectory";
 		final File file = new File(directoryPath);
 
 		try {
 			// Deleting the directory recursively using FileUtils.
 			FileUtils.deleteDirectory(file);
-			System.out.println("Directory " + directoryPath + " has been deleted recursively!");
+			System.out.println("Directory " + directoryPath
+					+ " has been deleted recursively!");
 		} catch (IOException e) {
-			System.out.println("Problem occurs when deleting the directory : " + directoryPath);
+			System.out.println("Problem occurs when deleting the directory : "
+					+ directoryPath);
 			e.printStackTrace();
 		}
 	}
 
 	private void astronomicalMethodsMetric() {
-		final String directoryPath = System.getProperty("user.dir") + "/.inspectory";
+		final String directoryPath = System.getProperty("user.dir")
+				+ "/.inspectory";
 
-		final File csvFile = new File(directoryPath, ASTRONOMICAL_METHODS_CSV_FILE_NAME);
-		final File jsonFile = new File(directoryPath, ASTRONOMICAL_METHODS_JSON_FILE_NAME);
-		final File csvMethodDynamicsFile = new File(directoryPath, ASTRONOMICAL_METHODS_DYNAMICS_CSV_FILE_NAME);
+		final File csvFile = new File(directoryPath,
+				ASTRONOMICAL_METHODS_CSV_FILE_NAME);
+		final File jsonFile = new File(directoryPath,
+				ASTRONOMICAL_METHODS_JSON_FILE_NAME);
+		final File csvMethodDynamicsFile = new File(directoryPath,
+				ASTRONOMICAL_METHODS_DYNAMICS_CSV_FILE_NAME);
 
 		csvFile.getParentFile().mkdirs();
 
@@ -135,13 +150,19 @@ public class Commands {
 			csvWriter = new FileWriter(csvFile);
 			jsonWriter = new FileWriter(jsonFile);
 			csvMethodDynamicsWriter = new FileWriter(csvMethodDynamicsFile);
-			CSVUtils.writeLine(csvWriter, Arrays.asList("File", "Class", "Method", "Initial size", "Actual size",
-					"Number of changes", "Method was deleted", "Changes List", "isSupernova", "Supernova Severity", "Supernova - Leaps Size",
-					"Supernova - Recent Leaps Size", "Supernova - Subsequent Refactoring", "Supernova - Method Size",
-					"Supernova - Activity State", "isPulsar", "Pulsar Severity", "Pulsar - Recent Cycles",
-					"Pulsar - Average Size Increase", "Pulsar - Method Size", "Pulsar - Activity State"));
-			CSVUtils.writeLine(csvMethodDynamicsWriter, Arrays.asList("File", "Supernova Methods", "Pulsar Methods",
-					"Supernova Severity", "Pulsar Severity"));
+			CSVUtils.writeLine(csvWriter, Arrays.asList("File", "Class",
+					"Method", "Initial size", "Actual size",
+					"Number of changes", "Method was deleted", "Changes List",
+					"isSupernova", "Supernova Severity",
+					"Supernova - Leaps Size", "Supernova - Recent Leaps Size",
+					"Supernova - Subsequent Refactoring",
+					"Supernova - Method Size", "Supernova - Activity State",
+					"isPulsar", "Pulsar Severity", "Pulsar - Recent Cycles",
+					"Pulsar - Average Size Increase", "Pulsar - Method Size",
+					"Pulsar - Activity State"));
+			CSVUtils.writeLine(csvMethodDynamicsWriter,
+					Arrays.asList("File", "Supernova Methods", "Pulsar Methods",
+							"Supernova Severity", "Pulsar Severity"));
 			final AstronomicalMethodsInspection astronomicalMethodsInspection = new AstronomicalMethodsInspection(
 					project, csvWriter, csvMethodDynamicsWriter, jsonWriter);
 			astronomicalMethodsInspection.getHistoryFunctionsAnalyze();
@@ -151,10 +172,11 @@ public class Commands {
 			csvMethodDynamicsWriter.close();
 			jsonWriter.flush();
 			jsonWriter.close();
-			System.out.println("Deleted nodes are: ");
-			for (final String deletedNode :  astronomicalMethodsInspection.getDeletedNodes()) {
-				System.out.println("- deletedNode: " + deletedNode);
-			}
+			// System.out.println("Deleted nodes are: ");
+			// for (final String deletedNode :
+			// astronomicalMethodsInspection.getDeletedNodes()) {
+			// System.out.println("- deletedNode: " + deletedNode);
+			// }
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -171,8 +193,8 @@ public class Commands {
 		final String home = System.getProperty("user.dir");
 		final Path path = Paths.get(home, ".inspectory");
 
-		final String filePath = home + File.separator + ".inspectory" + File.separator
-				+ OWNERSHIP_PROBLEMS_CSV_FILE_NAME;
+		final String filePath = home + File.separator + ".inspectory"
+				+ File.separator + OWNERSHIP_PROBLEMS_CSV_FILE_NAME;
 		final File csvFile = new File(filePath);
 		boolean directoryExists = Files.exists(path);
 
@@ -185,10 +207,12 @@ public class Commands {
 			}
 
 			csvWriter = new FileWriter(csvFile);
-			CSVUtils.writeLine(csvWriter, Arrays.asList("File", "Total Number of changes", "File Creator",
-					"Authors - Number of changes made"));
-			final OwnershipProblemsInspection ownershipProblemsInspection = new OwnershipProblemsInspection(project,
-					csvWriter);
+			CSVUtils.writeLine(csvWriter,
+					Arrays.asList("File", "Total Number of changes",
+							"File Creator",
+							"Authors - Number of changes made"));
+			final OwnershipProblemsInspection ownershipProblemsInspection = new OwnershipProblemsInspection(
+					project, csvWriter);
 			ownershipProblemsInspection.createResults();
 			ownershipProblemsInspection.writeFileResults();
 			csvWriter.flush();

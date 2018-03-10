@@ -28,14 +28,16 @@ public class FileOwnershipInformation {
 		return authorsChanges;
 	}
 
-	public void setAuthorsChanges(LinkedHashMap<String, Integer> authorsChanges) {
+	public void setAuthorsChanges(
+			LinkedHashMap<String, Integer> authorsChanges) {
 		this.authorsChanges = authorsChanges;
 	}
 
 	@Override
 	public String toString() {
-		return "FileOwnershipInformation [numberOfChanges=" + numberOfChanges + ", fileCreator=" + fileCreator
-				+ ", authorsChanges=" + authorsChanges + "]";
+		return "FileOwnershipInformation [numberOfChanges=" + numberOfChanges
+				+ ", fileCreator=" + fileCreator + ", authorsChanges="
+				+ authorsChanges + "]";
 	}
 
 	@Override
@@ -49,8 +51,10 @@ public class FileOwnershipInformation {
 
 		FileOwnershipInformation fileOwnershipInformation = (FileOwnershipInformation) obj;
 		return numberOfChanges == fileOwnershipInformation.numberOfChanges
-				&& Objects.equals(fileCreator, fileOwnershipInformation.fileCreator)
-				&& Objects.equals(authorsChanges, fileOwnershipInformation.authorsChanges);
+				&& Objects.equals(fileCreator,
+						fileOwnershipInformation.fileCreator)
+				&& Objects.equals(authorsChanges,
+						fileOwnershipInformation.authorsChanges);
 	}
 
 	@Override

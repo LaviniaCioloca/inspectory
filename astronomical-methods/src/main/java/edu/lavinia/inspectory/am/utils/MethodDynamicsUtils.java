@@ -18,22 +18,33 @@ import edu.lavinia.inspectory.am.beans.FileMethodDynamics;
 public class MethodDynamicsUtils {
 	private Map<String, FileMethodDynamics> projectMethodDynamics = new HashMap<String, FileMethodDynamics>();
 
-	public void addSupernovaMethodDynamics(String fileName, Integer supernovaSeverity) {
+	public void addSupernovaMethodDynamics(String fileName,
+			Integer supernovaSeverity) {
 		// fileName = fileName.substring(1, fileName.length() - 1);
-		final FileMethodDynamics fileMethodDynamics = projectMethodDynamics.get(fileName);
-		Integer currentNumberOfSupernovaMethods = fileMethodDynamics.getSupernovaMethods();
-		final Integer currentSupernovaSeverityPoints = fileMethodDynamics.getSupernovaSeverity();
-		fileMethodDynamics.setSupernovaMethods(++currentNumberOfSupernovaMethods);
-		fileMethodDynamics.setSupernovaSeverity(currentSupernovaSeverityPoints + supernovaSeverity);
+		final FileMethodDynamics fileMethodDynamics = projectMethodDynamics
+				.get(fileName);
+		Integer currentNumberOfSupernovaMethods = fileMethodDynamics
+				.getSupernovaMethods();
+		final Integer currentSupernovaSeverityPoints = fileMethodDynamics
+				.getSupernovaSeverity();
+		fileMethodDynamics
+				.setSupernovaMethods(++currentNumberOfSupernovaMethods);
+		fileMethodDynamics.setSupernovaSeverity(
+				currentSupernovaSeverityPoints + supernovaSeverity);
 	}
 
-	public void addPulsarMethodDynamics(String fileName, Integer pulsarSeverity) {
+	public void addPulsarMethodDynamics(String fileName,
+			Integer pulsarSeverity) {
 		// fileName = fileName.substring(1, fileName.length() - 1);
-		final FileMethodDynamics fileMethodDynamics = projectMethodDynamics.get(fileName);
-		Integer currentNumberOfPulsarMethods = fileMethodDynamics.getPulsarMethods();
-		final Integer currentPulsarSeverityPoints = fileMethodDynamics.getPulsarSeverity();
+		final FileMethodDynamics fileMethodDynamics = projectMethodDynamics
+				.get(fileName);
+		Integer currentNumberOfPulsarMethods = fileMethodDynamics
+				.getPulsarMethods();
+		final Integer currentPulsarSeverityPoints = fileMethodDynamics
+				.getPulsarSeverity();
 		fileMethodDynamics.setPulsarMethods(++currentNumberOfPulsarMethods);
-		fileMethodDynamics.setPulsarSeverity(currentPulsarSeverityPoints + pulsarSeverity);
+		fileMethodDynamics.setPulsarSeverity(
+				currentPulsarSeverityPoints + pulsarSeverity);
 	}
 
 	public void addDefaultMethodDynamics(String fileName) {
@@ -45,7 +56,8 @@ public class MethodDynamicsUtils {
 		projectMethodDynamics.put(fileName, fileMethodDynamics);
 	}
 
-	public void setProjectMethodDynamics(Map<String, FileMethodDynamics> projectMethodDynamics) {
+	public void setProjectMethodDynamics(
+			Map<String, FileMethodDynamics> projectMethodDynamics) {
 		this.projectMethodDynamics = projectMethodDynamics;
 	}
 

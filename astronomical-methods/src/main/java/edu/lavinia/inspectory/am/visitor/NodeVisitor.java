@@ -48,8 +48,6 @@ public class NodeVisitor extends CodeVisitor {
 
 	@Override
 	public void visit(Type type) {
-		System.out.println("\tType: " + type.getName() + "; members: " + type.getMembers().size());
-		
 		final Set<Node> members = type.getMembers();
 		for (final Node node : members) {
 			this.visit(node);
@@ -60,14 +58,13 @@ public class NodeVisitor extends CodeVisitor {
 	public void visit(Variable variable) {
 	}
 
-	@Override	
+	@Override
 	public void visit(Function function) {
 		total = 0;
 		final List<String> body = function.getBody();
 		functionSize.put(function.getIdentifier(), body.size());
 		identifier = function.getSignature();
 		total += function.getBody().size();
-		System.out.println("\tFunction: " + identifier + "; size: " + total);
 	}
 
 	public Map<String, Integer> getFunctionSize() {

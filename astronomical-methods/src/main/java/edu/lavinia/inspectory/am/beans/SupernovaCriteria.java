@@ -48,7 +48,8 @@ public class SupernovaCriteria {
 		return subsequentRefactoringPoints;
 	}
 
-	public void setSubsequentRefactoringPoints(Integer subsequentRefactoringPoints) {
+	public void setSubsequentRefactoringPoints(
+			Integer subsequentRefactoringPoints) {
 		this.subsequentRefactoringPoints = subsequentRefactoringPoints;
 	}
 
@@ -70,9 +71,11 @@ public class SupernovaCriteria {
 
 	@Override
 	public String toString() {
-		return "SupernovaCriteria [leapsSizePoints=" + leapsSizePoints + ", recentLeapsSizePoints="
-				+ recentLeapsSizePoints + ", subsequentRefactoringPoints=" + subsequentRefactoringPoints
-				+ ", methodSizePoints=" + methodSizePoints + ", activityStatePoints=" + activityStatePoints + "]";
+		return "SupernovaCriteria [leapsSizePoints=" + leapsSizePoints
+				+ ", recentLeapsSizePoints=" + recentLeapsSizePoints
+				+ ", subsequentRefactoringPoints=" + subsequentRefactoringPoints
+				+ ", methodSizePoints=" + methodSizePoints
+				+ ", activityStatePoints=" + activityStatePoints + "]";
 	}
 
 }

@@ -55,9 +55,11 @@ public class FileModelInspection {
 				}
 				SourceFile fileModel = project.getFileModel(file);
 
-				String logFilePath = "./" + logFolderName + "/" + file + ".model";
+				String logFilePath = "./" + logFolderName + "/" + file
+						+ ".model";
 				Logger logger = Logger.getRootLogger();
-				FileAppender appender = (FileAppender) logger.getAppender("file");
+				FileAppender appender = (FileAppender) logger
+						.getAppender("file");
 				appender.setFile(logFilePath);
 				appender.activateOptions();
 

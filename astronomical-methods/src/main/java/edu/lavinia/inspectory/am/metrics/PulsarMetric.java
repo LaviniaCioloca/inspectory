@@ -128,13 +128,14 @@ public class PulsarMetric extends MethodMetrics {
 	 * @param commit
 	 * @return An Integer representing the total points of Pulsar severity.
 	 */
-	public Integer countPulsarSeverityPoints(final Integer countRecentPulsarCycles,
+	public Integer countPulsarSeverityPoints(
+			final Integer countRecentPulsarCycles,
 			final Double averageSizeIncrease, Integer fileSize, Commit commit) {
 		recentCyclesPoints = getRecentCyclesPoints(countRecentPulsarCycles);
 		averageSizeIncreasePoints = getAverageSizeIncrease(averageSizeIncrease);
 		methodSizePoints = getMethodSizePoints(fileSize);
 		activityStatePoints = getActiveMethodPoints(commit);
-		
+
 		return 1 + recentCyclesPoints + averageSizeIncreasePoints
 				+ methodSizePoints + activityStatePoints;
 	}
@@ -284,7 +285,7 @@ public class PulsarMetric extends MethodMetrics {
 					countRecentPulsarCycles += checkIfRecentPulsarCycle(
 							commits.get(i).getDate());
 				}
-				
+
 				if (commitsTypes.get(i).equals("refine")) {
 					methodGrowth += changesList.get(i);
 					if (methodGrowth >= SMALL_SIZE_CHANGE) {
@@ -295,12 +296,12 @@ public class PulsarMetric extends MethodMetrics {
 				} else {
 					methodGrowth = 0;
 				}
-				
+
 				if (!commitsTypes.get(i).equals("refactor")
 						&& commitsTypes.get(i + 1).equals("refactor")) {
 					sumOfSizeIncrease += changesList.get(i);
 				}
-				
+
 				if (countPulsarCycles >= MANY_PULSAR_CYCLES
 						&& !pulsarCriterionValues.get("isPulsar")
 								.equals(true)) {
@@ -308,7 +309,7 @@ public class PulsarMetric extends MethodMetrics {
 				}
 			}
 		}
-		
+
 		averageSizeIncrease = calculateAverageSizeIncrease(countPulsarCycles,
 				sumOfSizeIncrease);
 		pulsarCriterionValues.put("averageSizeIncrease", averageSizeIncrease);
@@ -335,7 +336,8 @@ public class PulsarMetric extends MethodMetrics {
 	 *            The information of the current method
 	 * @return True if the method is Pulsar, false otherwise.
 	 */
-	public Boolean isPulsar(final MethodChangesInformation methodChangesInformation) {
+	public Boolean isPulsar(
+			final MethodChangesInformation methodChangesInformation) {
 		return (Boolean) getPulsarCriterionValues(methodChangesInformation)
 				.get("isPulsar");
 	}

@@ -39,7 +39,8 @@ public class PulsarCriteria {
 		return averageSizeIncreasePoints;
 	}
 
-	public void setAverageSizeIncreasePoints(Integer averageSizeIncreasePoints) {
+	public void setAverageSizeIncreasePoints(
+			Integer averageSizeIncreasePoints) {
 		this.averageSizeIncreasePoints = averageSizeIncreasePoints;
 	}
 
@@ -61,9 +62,10 @@ public class PulsarCriteria {
 
 	@Override
 	public String toString() {
-		return "PulsarCriteria [recentCyclesPoints=" + recentCyclesPoints + ", averageSizeIncreasePoints="
-				+ averageSizeIncreasePoints + ", methodSizePoints=" + methodSizePoints + ", activityStatePoints="
-				+ activityStatePoints + "]";
+		return "PulsarCriteria [recentCyclesPoints=" + recentCyclesPoints
+				+ ", averageSizeIncreasePoints=" + averageSizeIncreasePoints
+				+ ", methodSizePoints=" + methodSizePoints
+				+ ", activityStatePoints=" + activityStatePoints + "]";
 	}
 
 }

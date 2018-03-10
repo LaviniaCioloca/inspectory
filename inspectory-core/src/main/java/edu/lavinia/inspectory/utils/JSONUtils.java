@@ -13,7 +13,8 @@ package edu.lavinia.inspectory.utils;
 import com.google.gson.JsonObject;
 
 public class JSONUtils {
-	public JsonObject getSupernovaMethodsJSON(String fileName, Integer supernovaMethods) {
+	public JsonObject getSupernovaMethodsJSON(String fileName,
+			Integer supernovaMethods) {
 		final JsonObject jsonArrayElement = new JsonObject();
 		jsonArrayElement.addProperty("file", fileName);
 		jsonArrayElement.addProperty("name", "Supernova Methods");
@@ -22,7 +23,8 @@ public class JSONUtils {
 		return jsonArrayElement;
 	}
 
-	public JsonObject getPulsarMethodsJSON(String fileName, Integer pulsarMethods) {
+	public JsonObject getPulsarMethodsJSON(String fileName,
+			Integer pulsarMethods) {
 		final JsonObject jsonArrayElement = new JsonObject();
 		jsonArrayElement.addProperty("file", fileName);
 		jsonArrayElement.addProperty("name", "Pulsar Methods");
@@ -31,7 +33,8 @@ public class JSONUtils {
 		return jsonArrayElement;
 	}
 
-	public JsonObject getSupernovaSeverityJSON(String fileName, Integer supernovaSeverity) {
+	public JsonObject getSupernovaSeverityJSON(String fileName,
+			Integer supernovaSeverity) {
 		final JsonObject jsonArrayElement = new JsonObject();
 		jsonArrayElement.addProperty("file", fileName);
 		jsonArrayElement.addProperty("name", "Supernova Severity");
@@ -40,7 +43,8 @@ public class JSONUtils {
 		return jsonArrayElement;
 	}
 
-	public JsonObject getPulsarSeverityJSON(String fileName, Integer pulsarSeverity) {
+	public JsonObject getPulsarSeverityJSON(String fileName,
+			Integer pulsarSeverity) {
 		final JsonObject jsonArrayElement = new JsonObject();
 		jsonArrayElement.addProperty("file", fileName);
 		jsonArrayElement.addProperty("name", "Pulsar Severity");

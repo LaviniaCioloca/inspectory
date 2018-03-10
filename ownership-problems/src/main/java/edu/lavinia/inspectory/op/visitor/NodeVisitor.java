@@ -57,7 +57,7 @@ public class NodeVisitor extends CodeVisitor {
 	public void visit(Variable variable) {
 	}
 
-	@Override	
+	@Override
 	public void visit(Function function) {
 		total = 0;
 		final List<String> body = function.getBody();

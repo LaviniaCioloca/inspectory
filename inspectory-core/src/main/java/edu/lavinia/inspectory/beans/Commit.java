@@ -54,7 +54,8 @@ public class Commit {
 
 	@Override
 	public String toString() {
-		return "Commit [revision=" + revision + ", date=" + date + ", author=" + author + "]";
+		return "Commit [revision=" + revision + ", date=" + date + ", author="
+				+ author + "]";
 	}
 
 }

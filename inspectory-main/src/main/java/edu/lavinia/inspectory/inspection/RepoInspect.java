@@ -28,7 +28,8 @@ import org.metanalysis.core.project.PersistentProject;
 
 public class RepoInspect {
 
-	public final static Logger LOGGER = Logger.getLogger(RepoInspect.class.getName());
+	public final static Logger LOGGER = Logger
+			.getLogger(RepoInspect.class.getName());
 
 	/**
 	 * Static method that loads the .metanalysis persistent project for the

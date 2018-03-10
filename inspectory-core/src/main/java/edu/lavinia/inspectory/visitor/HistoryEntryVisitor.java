@@ -30,9 +30,11 @@ import org.metanalysis.core.model.Node;
 public abstract class HistoryEntryVisitor extends GenericVisitor {
 	public abstract void visit(Node.Type type, TypeTransaction transaction);
 
-	public abstract void visit(Node.Variable variable, VariableTransaction transaction);
+	public abstract void visit(Node.Variable variable,
+			VariableTransaction transaction);
 
-	public abstract void visit(Node.Function function, FunctionTransaction transaction);
+	public abstract void visit(Node.Function function,
+			FunctionTransaction transaction);
 
 	public final void visit(Node node, Transaction<?> transaction) {
 		// safe to use 'instanceof' because the class hierarchy is sealed

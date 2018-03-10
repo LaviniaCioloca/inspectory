@@ -29,7 +29,8 @@ public class CSVUtils {
 
 	private static final char DEFAULT_SEPARATOR = ',';
 
-	public static void writeLine(Writer writer, List<String> values) throws IOException {
+	public static void writeLine(Writer writer, List<String> values)
+			throws IOException {
 		writeLine(writer, values, DEFAULT_SEPARATOR, ' ');
 	}
 
@@ -54,8 +55,8 @@ public class CSVUtils {
 	 *            Custom quote for the values: can be empty.
 	 * @throws IOException
 	 */
-	public static void writeLine(final Writer writer, final List<String> values, char separator, char customQuote)
-			throws IOException {
+	public static void writeLine(final Writer writer, final List<String> values,
+			char separator, char customQuote) throws IOException {
 		boolean first = true;
 		if (separator == ' ') {
 			separator = DEFAULT_SEPARATOR;
@@ -69,7 +70,8 @@ public class CSVUtils {
 			if (customQuote == ' ') {
 				stringBuilder.append(followCVSformat(value));
 			} else {
-				stringBuilder.append(customQuote).append(followCVSformat(value)).append(customQuote);
+				stringBuilder.append(customQuote).append(followCVSformat(value))
+						.append(customQuote);
 			}
 
 			first = false;
