@@ -56,6 +56,9 @@ public class EditVisitor extends NodeSetEditVisitor {
 				.equals(Node.Function.class.getCanonicalName())) {
 			identifier = remove.getIdentifier();
 			total = -lastMethodSize;
+
+			System.out
+					.println("\t" + fileName + ": " + identifier + " deleted!");
 			methodDeleted = true;
 		}
 	}

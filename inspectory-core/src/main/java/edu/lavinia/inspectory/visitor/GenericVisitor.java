@@ -26,7 +26,7 @@ public abstract class GenericVisitor {
 	protected String identifier = null;
 	protected Integer total = 0;
 	protected Integer lastMethodSize = 0;
-	protected boolean methodDeleted = false;
+	protected Boolean methodDeleted = false;
 
 	public String getIdentifier() {
 		return identifier;
@@ -52,11 +52,11 @@ public abstract class GenericVisitor {
 		this.lastMethodSize = lastMethodSize;
 	}
 
-	public boolean isMethodDeleted() {
+	public Boolean getMethodDeleted() {
 		return methodDeleted;
 	}
 
-	public void setMethodDeleted(boolean methodDeleted) {
+	public void setMethodDeleted(Boolean methodDeleted) {
 		this.methodDeleted = methodDeleted;
 	}
 

@@ -126,7 +126,9 @@ public class AstronomicalMethodsInspection {
 			methodChangesInformation.getChangesList().add(visitor.getTotal());
 			methodChangesInformation.getCommits().add(commit);
 
-			if (visitor.isMethodDeleted()) {
+			if (visitor.getMethodDeleted()) {
+				System.out.println("\t" + visitor.getFileName() + ": "
+						+ visitor.getIdentifier() + " DEL");
 				methodChangesInformation.setMethodDeleted(true);
 			}
 
@@ -140,12 +142,14 @@ public class AstronomicalMethodsInspection {
 			ArrayList<Commit> commits = new ArrayList<>();
 			commits.add(commit);
 			methodChangesInformation = new MethodChangesInformation();
-			methodChangesInformation.setChangesList(changesList);
 			methodChangesInformation.setCommits(commits);
+			methodChangesInformation.setChangesList(changesList);
 			methodChangesInformation.setClassName(className);
 			methodChangesInformation.setMethodName(visitor.getIdentifier());
 
-			if (visitor.isMethodDeleted()) {
+			if (visitor.getMethodDeleted()) {
+				System.out.println("\t" + visitor.getFileName() + ": "
+						+ visitor.getIdentifier() + " DEL");
 				methodChangesInformation.setMethodDeleted(true);
 			}
 
@@ -212,10 +216,11 @@ public class AstronomicalMethodsInspection {
 	 */
 	public MethodChangesInformation setMethodInformation(
 			MethodChangesInformation methodChangesInformation,
-			ArrayList<Integer> changesList, ArrayList<Commit> commits,
-			Integer actualSize) {
+			Boolean wasDeleted, ArrayList<Integer> changesList,
+			ArrayList<Commit> commits, Integer actualSize) {
 		methodChangesInformation.setInitialSize(changesList.get(0));
 		methodChangesInformation.setNumberOfChanges(changesList.size());
+		methodChangesInformation.setMethodDeleted(wasDeleted);
 		methodChangesInformation.setActualSize(actualSize);
 		methodChangesInformation.setChangesList(changesList);
 		methodChangesInformation.setCommits(commits);
@@ -301,9 +306,18 @@ public class AstronomicalMethodsInspection {
 					actualSize += change;
 				}
 
+				final Boolean wasDeleted = result
+						.get(methodChangesInformation.getFileName() + ":"
+								+ methodChangesInformation.getClassName()
+										.replaceAll("\"", "")
+								+ ": "
+								+ methodChangesInformation.getMethodName()
+										.replaceAll("\"", ""))
+						.getMethodDeleted();
+
 				methodChangesInformation = setMethodInformation(
-						methodChangesInformation, changesList, commits,
-						actualSize);
+						methodChangesInformation, wasDeleted, changesList,
+						commits, actualSize);
 				CSVUtils.writeLine(csvWriter,
 						methodChangesInformation.getMethodInformationLine(),
 						',', '"');
