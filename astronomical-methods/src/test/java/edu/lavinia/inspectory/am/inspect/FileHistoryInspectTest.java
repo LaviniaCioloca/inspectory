@@ -181,8 +181,10 @@ public class FileHistoryInspectTest {
 		astronomicalMethodsInspection.setResult(result);
 		final ArrayList<MethodChangesInformation> methodInformationList = new ArrayList<>();
 		methodInformationList.add(methodChangesInformation);
+
 		astronomicalMethodsInspection
-				.createAndSortAllCommits(methodInformationList);
+				.setMethodInformationList(methodInformationList);
+		astronomicalMethodsInspection.createAndSortAllCommits();
 		assertEquals(commits, astronomicalMethodsInspection.getAllCommits());
 	}
 
@@ -225,6 +227,9 @@ public class FileHistoryInspectTest {
 		MethodMetrics.setAllCommits(commits);
 		MethodMetrics.setAllCommitsIntoTimeFrames();
 		MethodMetrics.setNow(commit3.getDate());
+
+		astronomicalMethodsInspection
+				.setMethodInformationList(methodInformationList);
 		astronomicalMethodsInspection.writeCSVFileData();
 	}
 

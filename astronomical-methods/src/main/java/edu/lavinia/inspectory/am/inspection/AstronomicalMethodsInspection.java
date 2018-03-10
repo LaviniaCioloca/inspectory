@@ -186,9 +186,8 @@ public class AstronomicalMethodsInspection {
 	 * 
 	 * @param methodInformationList
 	 */
-	public void createAndSortAllCommits(
-			ArrayList<MethodChangesInformation> methodInformationList) {
-		for (MethodChangesInformation methodChangesInformation : methodInformationList) {
+	public void createAndSortAllCommits() {
+		for (final MethodChangesInformation methodChangesInformation : methodInformationList) {
 			ArrayList<Commit> commits = result.get(
 					methodChangesInformation.getClassName().replaceAll("\"", "")
 							+ ": " + methodChangesInformation.getMethodName()
@@ -271,7 +270,7 @@ public class AstronomicalMethodsInspection {
 	 *            method, to be written in the inspectory result CSV file.
 	 */
 	public void writeCSVFileData() {
-		createAndSortAllCommits(methodInformationList);
+		createAndSortAllCommits();
 		Commit latestCommit = allCommits.get(allCommits.size() - 1);
 		MethodMetrics.setAllCommits(allCommits);
 		MethodMetrics.setAllCommitsIntoTimeFrames();
@@ -571,6 +570,11 @@ public class AstronomicalMethodsInspection {
 
 	public ArrayList<MethodChangesInformation> getMethodInformationList() {
 		return methodInformationList;
+	}
+
+	public void setMethodInformationList(
+			ArrayList<MethodChangesInformation> methodInformationList) {
+		this.methodInformationList = methodInformationList;
 	}
 
 	public PersistentProject getProject() {

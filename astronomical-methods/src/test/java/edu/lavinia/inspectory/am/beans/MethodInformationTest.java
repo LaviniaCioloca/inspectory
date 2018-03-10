@@ -68,6 +68,7 @@ public class MethodInformationTest {
 		expected.add("10");
 		expected.add("100");
 		expected.add("10");
+		expected.add("false");
 		expected.add(changesList.toString());
 		expected.add(methodChangesInformation.isSupernova().toString());
 		expected.add("5");
