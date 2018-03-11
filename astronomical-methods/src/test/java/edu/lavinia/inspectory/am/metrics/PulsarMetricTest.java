@@ -23,8 +23,10 @@ package edu.lavinia.inspectory.am.metrics;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,7 +34,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import java.text.ParseException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -46,8 +47,8 @@ public class PulsarMetricTest {
 
 	@Before
 	public void setUp() {
-		Commit commit = new Commit();
-		ArrayList<Commit> commits = new ArrayList<Commit>();
+		final Commit commit = new Commit();
+		final ArrayList<Commit> commits = new ArrayList<Commit>();
 		commits.add(commit);
 		MethodMetrics.setAllCommits(commits);
 		MethodMetrics.setAllCommitsIntoTimeFrames();
@@ -56,8 +57,8 @@ public class PulsarMetricTest {
 
 	@After
 	public void tearDown() {
-		Commit commit = new Commit();
-		ArrayList<Commit> commits = new ArrayList<Commit>();
+		final Commit commit = new Commit();
+		final ArrayList<Commit> commits = new ArrayList<Commit>();
 		commits.add(commit);
 		MethodMetrics.setAllCommits(commits);
 		MethodMetrics.setAllCommitsIntoTimeFrames();
@@ -66,10 +67,11 @@ public class PulsarMetricTest {
 
 	@Test
 	public void testIsPulsarTrue() throws ParseException {
-		MethodChangesInformation methodInformation = new MethodChangesInformation();
-		ArrayList<Integer> changesList = new ArrayList<Integer>(Arrays.asList(
-				210, -10, 50, -40, 250, -40, 100, -10, 15, -11, 100, -20));
-		ArrayList<Commit> commits = new ArrayList<>();
+		final MethodChangesInformation methodInformation = new MethodChangesInformation();
+		final ArrayList<Integer> changesList = new ArrayList<Integer>(
+				Arrays.asList(210, -10, 50, -40, 250, -40, 100, -10, 15, -11,
+						100, -20));
+		final ArrayList<Commit> commits = new ArrayList<>();
 		Commit commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2013/01/01"));
 		commits.add(commit);
@@ -107,15 +109,17 @@ public class PulsarMetricTest {
 		methodInformation.setActualSize(520);
 		MethodMetrics.setAllCommits(commits);
 		MethodMetrics.setAllCommitsIntoTimeFrames();
+
 		assertTrue(pulsarMetric.isPulsar(methodInformation));
 	}
 
 	@Test
 	public void testIsPulsarSmallSizeTrue() throws ParseException {
-		MethodChangesInformation methodInformation = new MethodChangesInformation();
-		ArrayList<Integer> changesList = new ArrayList<Integer>(Arrays.asList(
-				210, 3, 3, 3, 3, -10, 10, 3, 3, 3, 3, -10, 30, 3, 3, 3, 3, 3));
-		ArrayList<Commit> commits = new ArrayList<>();
+		final MethodChangesInformation methodInformation = new MethodChangesInformation();
+		final ArrayList<Integer> changesList = new ArrayList<Integer>(
+				Arrays.asList(210, 3, 3, 3, 3, -10, 10, 3, 3, 3, 3, -10, 30, 3,
+						3, 3, 3, 3));
+		final ArrayList<Commit> commits = new ArrayList<>();
 		Commit commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/07/01"));
 		commits.add(commit);
@@ -140,22 +144,24 @@ public class PulsarMetricTest {
 		methodInformation.setActualSize(500);
 		MethodMetrics.setAllCommits(commits);
 		MethodMetrics.setAllCommitsIntoTimeFrames();
+
 		assertTrue(pulsarMetric.isPulsar(methodInformation));
 	}
 
 	@Test
 	public void testIsPulsarSizeFalse() throws ParseException {
-		MethodChangesInformation methodInformation = new MethodChangesInformation();
+		final MethodChangesInformation methodInformation = new MethodChangesInformation();
 		methodInformation.setActualSize(20);
+
 		assertFalse(pulsarMetric.isPulsar(methodInformation));
 	}
 
 	@Test
 	public void testIsPulsarFalse() throws ParseException {
-		MethodChangesInformation methodInformation = new MethodChangesInformation();
-		ArrayList<Integer> changesList = new ArrayList<Integer>(
+		final MethodChangesInformation methodInformation = new MethodChangesInformation();
+		final ArrayList<Integer> changesList = new ArrayList<Integer>(
 				Arrays.asList(210, -10, 50, -40, 250, -40, 100));
-		ArrayList<Commit> commits = new ArrayList<>();
+		final ArrayList<Commit> commits = new ArrayList<>();
 		Commit commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/01/01"));
 		commits.add(commit);
@@ -168,42 +174,43 @@ public class PulsarMetricTest {
 		methodInformation.setChangesList(changesList);
 		methodInformation.setCommits(commits);
 		methodInformation.setActualSize(520);
+
 		assertFalse(pulsarMetric.isPulsar(methodInformation));
 	}
 
 	@Test
 	public void testGetRecentCyclesPointsThree() {
-		assertTrue(pulsarMetric.getRecentCyclesPoints(6) == 3);
+		assertSame(pulsarMetric.getRecentCyclesPoints(6), 3);
 	}
 
 	@Test
 	public void testGetRecentCyclesPointsTwo() {
-		assertTrue(pulsarMetric.getRecentCyclesPoints(4) == 2);
+		assertSame(pulsarMetric.getRecentCyclesPoints(4), 2);
 	}
 
 	@Test
 	public void testGetRecentCyclesPointsOne() {
-		assertTrue(pulsarMetric.getRecentCyclesPoints(2) == 1);
+		assertSame(pulsarMetric.getRecentCyclesPoints(2), 1);
 	}
 
 	@Test
 	public void testGetRecentCyclesPointsZero() {
-		assertTrue(pulsarMetric.getRecentCyclesPoints(0) == 0);
+		assertSame(pulsarMetric.getRecentCyclesPoints(0), 0);
 	}
 
 	@Test
 	public void testGetAverageSizeIncreaseThree() {
-		assertTrue(pulsarMetric.getAverageSizeIncrease(0.0) == 3);
+		assertSame(pulsarMetric.getAverageSizeIncrease(0.0), 3);
 	}
 
 	@Test
 	public void testGetAverageSizeIncreaseTwo() {
-		assertTrue(pulsarMetric.getAverageSizeIncrease(16.7) == 2);
+		assertSame(pulsarMetric.getAverageSizeIncrease(16.7), 2);
 	}
 
 	@Test
 	public void testGetAverageSizeIncreaseOne() {
-		assertTrue(pulsarMetric.getAverageSizeIncrease(25.0) == 1);
+		assertSame(pulsarMetric.getAverageSizeIncrease(25.0), 1);
 	}
 
 	@Test
@@ -213,22 +220,22 @@ public class PulsarMetricTest {
 
 	@Test
 	public void testGetFileSizePointsTwo() {
-		assertTrue(pulsarMetric.getMethodSizePoints(150) == 2);
+		assertSame(pulsarMetric.getMethodSizePoints(150), 2);
 	}
 
 	@Test
 	public void testGetFileSizePointsOne() {
-		assertTrue(pulsarMetric.getMethodSizePoints(70) == 1);
+		assertSame(pulsarMetric.getMethodSizePoints(70), 1);
 	}
 
 	@Test
 	public void testGetFileSizePointsZero() {
-		assertTrue(pulsarMetric.getMethodSizePoints(50) == 0);
+		assertSame(pulsarMetric.getMethodSizePoints(50), 0);
 	}
 
 	@Test
 	public void testGetActiveFilePointsOne() throws ParseException {
-		ArrayList<Commit> commits = new ArrayList<>();
+		final ArrayList<Commit> commits = new ArrayList<>();
 		Commit commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/01/01"));
 		commits.add(commit);
@@ -246,43 +253,48 @@ public class PulsarMetricTest {
 		commits.add(commit);
 		MethodMetrics.setAllCommits(commits);
 		MethodMetrics.setAllCommitsIntoTimeFrames();
-		assertTrue(pulsarMetric.getActiveMethodPoints(commit) == 1);
+
+		assertSame(pulsarMetric.getActiveMethodPoints(commit), 1);
 	}
 
 	@Test
 	public void testGetActiveFilePointsZero() throws ParseException {
-		Commit commit = new Commit();
+		final Commit commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/09/01"));
-		assertTrue(pulsarMetric.getActiveMethodPoints(commit) == 0);
+
+		assertSame(pulsarMetric.getActiveMethodPoints(commit), 0);
 	}
 
 	@Test
 	public void testCountPulsarSeverityPointsMax() throws ParseException {
-		Commit commit = new Commit();
+		final Commit commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/09/01"));
-		Date dateNow = new SimpleDateFormat("yyyy/MM/dd").parse("2017/09/06");
+		final Date dateNow = new SimpleDateFormat("yyyy/MM/dd")
+				.parse("2017/09/06");
 		MethodMetrics
 				.setAllCommits(new ArrayList<Commit>(Arrays.asList(commit)));
 		MethodMetrics.setAllCommitsIntoTimeFrames();
 		MethodMetrics.setNow(dateNow);
-		assertTrue(pulsarMetric.countPulsarSeverityPoints(6, 0.0, 150,
-				commit) == 10);
+
+		assertSame(pulsarMetric.countPulsarSeverityPoints(6, 0.0, 150, commit),
+				10);
 	}
 
 	@Test
 	public void testCountPulsarSeverityPointsMin() throws ParseException {
-		Commit commit = new Commit();
+		final Commit commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/09/01"));
-		assertTrue(pulsarMetric.countPulsarSeverityPoints(0, 50.0, 10,
-				commit) == 1);
+
+		assertSame(pulsarMetric.countPulsarSeverityPoints(0, 50.0, 10, commit),
+				1);
 	}
 
 	@Test
 	public void testGetPulsarSeveritySeven() throws ParseException {
-		MethodChangesInformation methodInformation = new MethodChangesInformation();
+		final MethodChangesInformation methodInformation = new MethodChangesInformation();
 		methodInformation.setActualSize(200);
-		ArrayList<Commit> commits = new ArrayList<>();
-		ArrayList<Integer> changesList = new ArrayList<>();
+		final ArrayList<Commit> commits = new ArrayList<>();
+		final ArrayList<Integer> changesList = new ArrayList<>();
 		changesList.add(-5);
 		changesList.add(5);
 		changesList.add(1);
@@ -308,37 +320,40 @@ public class PulsarMetricTest {
 		MethodMetrics.setAllCommits(commits);
 		MethodMetrics.setAllCommitsIntoTimeFrames();
 		MethodMetrics.setNow(dateNow);
-		assertTrue(pulsarMetric.getPulsarSeverity(methodInformation) == 7);
+
+		assertSame(pulsarMetric.getPulsarSeverity(methodInformation), 7);
 	}
 
 	@Test
 	public void testGetPulsarSeverityFour() throws ParseException {
-		MethodChangesInformation methodInformation = new MethodChangesInformation();
+		final MethodChangesInformation methodInformation = new MethodChangesInformation();
 		methodInformation.setActualSize(10);
-		ArrayList<Commit> commits = new ArrayList<>();
-		ArrayList<Integer> changesList = new ArrayList<>();
+		final ArrayList<Commit> commits = new ArrayList<>();
+		final ArrayList<Integer> changesList = new ArrayList<>();
 		changesList.add(-5);
+
 		Commit commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/01/01"));
 		commits.add(commit);
 		methodInformation.setCommits(commits);
 		methodInformation.setChangesList(changesList);
-		assertTrue(pulsarMetric.getPulsarSeverity(methodInformation) == 4);
+
+		assertSame(pulsarMetric.getPulsarSeverity(methodInformation), 4);
 	}
 
 	@Test
 	public void testIsMethodActivelyChangedFalse() {
-		MethodChangesInformation methodInformation = new MethodChangesInformation();
-		ArrayList<Commit> commits = new ArrayList<>();
+		final MethodChangesInformation methodInformation = new MethodChangesInformation();
+		final ArrayList<Commit> commits = new ArrayList<>();
 		methodInformation.setCommits(commits);
-		assertTrue(pulsarMetric
-				.isMethodActivelyChanged(methodInformation) == false);
+
+		assertFalse(pulsarMetric.isMethodActivelyChanged(methodInformation));
 	}
 
 	@Test
 	public void testIsMethodActivelyChangedTrue() throws ParseException {
-		MethodChangesInformation methodInformation = new MethodChangesInformation();
-		ArrayList<Commit> commits = new ArrayList<>();
+		final MethodChangesInformation methodInformation = new MethodChangesInformation();
+		final ArrayList<Commit> commits = new ArrayList<>();
 		Commit commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/08/01"));
 		commits.add(commit);
@@ -357,8 +372,8 @@ public class PulsarMetricTest {
 		methodInformation.setCommits(commits);
 		MethodMetrics.setAllCommits(commits);
 		MethodMetrics.setAllCommitsIntoTimeFrames();
-		assertTrue(pulsarMetric
-				.isMethodActivelyChanged(methodInformation) == true);
+
+		assertTrue(pulsarMetric.isMethodActivelyChanged(methodInformation));
 	}
 
 	@Test
@@ -373,32 +388,36 @@ public class PulsarMetricTest {
 
 	@Test
 	public void testCheckIfRecentPulsarCycleZero() throws ParseException {
-		Commit commit = new Commit();
+		final Commit commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/08/01"));
 		MethodMetrics
 				.setAllCommits(new ArrayList<Commit>(Arrays.asList(commit)));
 		MethodMetrics.setAllCommitsIntoTimeFrames();
 		Date date = new SimpleDateFormat("yyyy/MM/dd").parse("2010/01/01");
-		assertTrue(pulsarMetric.checkIfRecentPulsarCycle(date) == 0);
+
+		assertSame(pulsarMetric.checkIfRecentPulsarCycle(date), 0);
 	}
 
 	@Test
 	public void testCheckIfRecentPulsarCycleOne() throws ParseException {
-		Date date = new SimpleDateFormat("yyyy/MM/dd").parse("2017/09/10");
-		Commit commit = new Commit();
+		final Date date = new SimpleDateFormat("yyyy/MM/dd")
+				.parse("2017/09/10");
+		final Commit commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/08/01"));
 		MethodMetrics
 				.setAllCommits(new ArrayList<Commit>(Arrays.asList(commit)));
 		MethodMetrics.setAllCommitsIntoTimeFrames();
-		assertTrue(pulsarMetric.checkIfRecentPulsarCycle(date) == 1);
+
+		assertSame(pulsarMetric.checkIfRecentPulsarCycle(date), 1);
 	}
 
 	@Test
 	public void testGetPulsarCriterionValues() throws ParseException {
-		MethodChangesInformation methodInformation = new MethodChangesInformation();
+		final MethodChangesInformation methodInformation = new MethodChangesInformation();
 		methodInformation.setActualSize(250);
-		Date dateNow = new SimpleDateFormat("yyyy/MM/dd").parse("2017/07/01");
-		ArrayList<Integer> changesList = new ArrayList<>();
+		final Date dateNow = new SimpleDateFormat("yyyy/MM/dd")
+				.parse("2017/07/01");
+		final ArrayList<Integer> changesList = new ArrayList<>();
 		changesList.add(-10);
 		changesList.add(-10);
 		changesList.add(50);
@@ -408,7 +427,7 @@ public class PulsarMetricTest {
 		changesList.add(20);
 		changesList.add(-10);
 		changesList.add(60);
-		ArrayList<Commit> commits = new ArrayList<>();
+		final ArrayList<Commit> commits = new ArrayList<>();
 		Commit commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/08/01"));
 		commits.add(commit);
@@ -442,7 +461,7 @@ public class PulsarMetricTest {
 		commits.add(commit);
 		methodInformation.setChangesList(changesList);
 		methodInformation.setCommits(commits);
-		Map<String, Object> expectedPulsarCriterionValues = new HashMap<>();
+		final Map<String, Object> expectedPulsarCriterionValues = new HashMap<>();
 		expectedPulsarCriterionValues.put("isPulsar", true);
 		expectedPulsarCriterionValues.put("averageSizeIncrease", 20.0 / 3.0);
 		expectedPulsarCriterionValues.put("countPulsarCycles", 3);
@@ -450,6 +469,7 @@ public class PulsarMetricTest {
 		MethodMetrics.setAllCommits(commits);
 		MethodMetrics.setAllCommitsIntoTimeFrames();
 		MethodMetrics.setNow(dateNow);
+
 		assertEquals(expectedPulsarCriterionValues,
 				pulsarMetric.getPulsarCriterionValues(methodInformation));
 	}
@@ -457,8 +477,9 @@ public class PulsarMetricTest {
 	@Test
 	public void testIsMethodTimeFrameActivelyChangedTrue()
 			throws ParseException {
-		ArrayList<Commit> allCommits = new ArrayList<>();
-		Date dateNow = new SimpleDateFormat("yyyy/MM/dd").parse("2017/01/01");
+		final ArrayList<Commit> allCommits = new ArrayList<>();
+		final Date dateNow = new SimpleDateFormat("yyyy/MM/dd")
+				.parse("2017/01/01");
 		Commit commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2015/08/01"));
 		allCommits.add(commit);
@@ -493,50 +514,51 @@ public class PulsarMetricTest {
 		MethodMetrics.setAllCommits(allCommits);
 		MethodMetrics.setAllCommitsIntoTimeFrames();
 		MethodMetrics.setNow(dateNow);
-		PulsarMetric pulsarMetric = new PulsarMetric();
-		ArrayList<Commit> commits = new ArrayList<>();
+		final PulsarMetric pulsarMetric = new PulsarMetric();
+		final ArrayList<Commit> commits = new ArrayList<>();
 		commits.add(commit1);
 		commits.add(commit2);
 		commits.add(commit3);
-		MethodChangesInformation methodInformation = new MethodChangesInformation();
+		final MethodChangesInformation methodInformation = new MethodChangesInformation();
 		methodInformation.setCommits(commits);
-		assertEquals(pulsarMetric.isMethodActivelyChanged(methodInformation),
-				true);
+
+		assertTrue(pulsarMetric.isMethodActivelyChanged(methodInformation));
 	}
 
 	@Test
 	public void testIsMethodTimeFrameActivelyChangedSmallSizeFalse()
 			throws ParseException {
-		Commit commit1 = new Commit();
+		final Commit commit1 = new Commit();
 		commit1.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/08/30"));
 
-		Commit commit2 = new Commit();
+		final Commit commit2 = new Commit();
 		commit2.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/09/01"));
 
-		Commit commit3 = new Commit();
+		final Commit commit3 = new Commit();
 		commit3.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/09/02"));
 
-		ArrayList<Commit> commits = new ArrayList<>();
+		final ArrayList<Commit> commits = new ArrayList<>();
 		commits.add(commit1);
 		commits.add(commit2);
-		MethodChangesInformation methodInformation = new MethodChangesInformation();
+		final MethodChangesInformation methodInformation = new MethodChangesInformation();
 		methodInformation.setCommits(commits);
-		assertEquals(pulsarMetric.isMethodActivelyChanged(methodInformation),
-				false);
+
+		assertFalse(pulsarMetric.isMethodActivelyChanged(methodInformation));
 	}
 
 	@Test
 	public void testIsMethodTimeFrameActivelyChangedFalse()
 			throws ParseException {
-		ArrayList<Commit> allCommits = new ArrayList<>();
-		Date dateNow = new SimpleDateFormat("yyyy/MM/dd").parse("2018/01/01");
-		Commit commit1 = new Commit();
+		final ArrayList<Commit> allCommits = new ArrayList<>();
+		final Date dateNow = new SimpleDateFormat("yyyy/MM/dd")
+				.parse("2018/01/01");
+		final Commit commit1 = new Commit();
 		commit1.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2016/05/30"));
 
-		Commit commit2 = new Commit();
+		final Commit commit2 = new Commit();
 		commit2.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2016/07/01"));
 
-		Commit commit3 = new Commit();
+		final Commit commit3 = new Commit();
 		commit3.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2016/09/02"));
 
 		Commit commit = new Commit();
@@ -557,15 +579,15 @@ public class PulsarMetricTest {
 		MethodMetrics.setAllCommits(allCommits);
 		MethodMetrics.setAllCommitsIntoTimeFrames();
 		MethodMetrics.setNow(dateNow);
-		PulsarMetric pulsarMetric = new PulsarMetric();
-		ArrayList<Commit> commits = new ArrayList<>();
+		final PulsarMetric pulsarMetric = new PulsarMetric();
+		final ArrayList<Commit> commits = new ArrayList<>();
 		commits.add(commit1);
 		commits.add(commit2);
 		commits.add(commit3);
-		MethodChangesInformation methodInformation = new MethodChangesInformation();
+		final MethodChangesInformation methodInformation = new MethodChangesInformation();
 		methodInformation.setCommits(commits);
-		assertEquals(pulsarMetric.isMethodActivelyChanged(methodInformation),
-				false);
+
+		assertFalse(pulsarMetric.isMethodActivelyChanged(methodInformation));
 	}
 
 }

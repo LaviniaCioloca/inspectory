@@ -21,6 +21,12 @@
  *******************************************************************************/
 package edu.lavinia.inspectory.am.beans;
 
+/**
+ * Bean class having values of Supernova metric.
+ * 
+ * @author Lavinia Cioloca
+ *
+ */
 public class SupernovaCriteria {
 	private Integer leapsSizePoints = 0;
 	private Integer recentLeapsSizePoints = 0;

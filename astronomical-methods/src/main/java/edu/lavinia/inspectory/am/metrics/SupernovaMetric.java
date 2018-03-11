@@ -32,6 +32,14 @@ import java.util.TreeMap;
 import edu.lavinia.inspectory.am.beans.MethodChangesInformation;
 import edu.lavinia.inspectory.beans.Commit;
 
+/**
+ * Implementation of {@link edu.lavinia.inspectory.am.metrics.MethodMetrics
+ * MethodMetrics} class for Supernova methods identification.
+ * 
+ * @author Lavinia Cioloca
+ * @see {@link edu.lavinia.inspectory.am.metrics.PulsarMetric PulsarMetric}
+ *
+ */
 public class SupernovaMetric extends MethodMetrics {
 	private Integer maximumTimeInterval = 0;
 	private Integer leapsSizePoints = 0;
@@ -42,7 +50,7 @@ public class SupernovaMetric extends MethodMetrics {
 
 	/**
 	 * @param sumOfAllLeaps
-	 * @return An Integer: 0 - 2 representing the points of leaps size.
+	 * @return An Integer between 0 and 2 representing the points of leaps size.
 	 */
 	public Integer getLeapsSizePoints(Integer sumOfAllLeaps) {
 		if (sumOfAllLeaps >= 4 * MAJOR_SIZE_CHANGE) {
@@ -51,12 +59,14 @@ public class SupernovaMetric extends MethodMetrics {
 				&& sumOfAllLeaps < 4 * MAJOR_SIZE_CHANGE) {
 			return 1;
 		}
+
 		return 0;
 	}
 
 	/**
 	 * @param sumRecentLeaps
-	 * @return An Integer: 0 - 3 representing the points of recent leaps size.
+	 * @return An Integer between 0 and 3 representing the points of recent
+	 *         leaps size.
 	 */
 	public Integer getRecentLeapsSizePoints(Integer sumRecentLeaps) {
 		if (sumRecentLeaps >= 4 * MAJOR_SIZE_CHANGE) {
@@ -68,12 +78,13 @@ public class SupernovaMetric extends MethodMetrics {
 				&& sumRecentLeaps < 2.5 * MAJOR_SIZE_CHANGE) {
 			return 1;
 		}
+
 		return 0;
 	}
 
 	/**
 	 * @param averageSubsequentCommits
-	 * @return An Integer: 0 - 2 representing the points of Subsequent
+	 * @return An Integer between 0 and 2 representing the points of Subsequent
 	 *         Refactoring.
 	 */
 	public Integer getSubsequentRefactoringPoints(
@@ -85,6 +96,7 @@ public class SupernovaMetric extends MethodMetrics {
 				&& averageSubsequentCommits < 1 * MAJOR_SIZE_CHANGE) {
 			return 1;
 		}
+
 		return 0;
 	}
 
@@ -105,6 +117,7 @@ public class SupernovaMetric extends MethodMetrics {
 				averageSubsequentCommits);
 		methodSizePoints = getMethodSizePoints(fileSize);
 		activityStatePoints = getActiveMethodPoints(commit);
+
 		return 1 + leapsSizePoints + recentLeapsSizePoints
 				+ subsequentRefactoringPoints + methodSizePoints
 				+ activityStatePoints;
@@ -164,15 +177,17 @@ public class SupernovaMetric extends MethodMetrics {
 	 */
 	public ArrayList<Commit> getCommitsAfterMediumTimespan(
 			HashMap<Commit, Integer> commitsIntoTimeFrames) {
-		Iterator<Map.Entry<Commit, Integer>> entries = commitsIntoTimeFrames
+		final Iterator<Map.Entry<Commit, Integer>> entries = commitsIntoTimeFrames
 				.entrySet().iterator();
-		ArrayList<Commit> commitsAfterMediumTimespan = new ArrayList<>();
+		final ArrayList<Commit> commitsAfterMediumTimespan = new ArrayList<>();
+
 		while (entries.hasNext()) {
 			Map.Entry<Commit, Integer> currentEntry = entries.next();
 			if (currentEntry.getValue() >= MEDIUM_TIMESPAN) {
 				commitsAfterMediumTimespan.add(currentEntry.getKey());
 			}
 		}
+
 		return commitsAfterMediumTimespan;
 	}
 
@@ -182,9 +197,10 @@ public class SupernovaMetric extends MethodMetrics {
 	 */
 	public HashMap<Commit, Integer> splitCommitsIntoTimeIntervals(
 			ArrayList<Commit> commits) {
-		HashMap<Commit, Integer> commitsIntoTimeIntervals = new HashMap<>();
+		final HashMap<Commit, Integer> commitsIntoTimeIntervals = new HashMap<>();
 		Integer currentTimeInterval = 0;
 		commitsIntoTimeIntervals.put(commits.get(0), currentTimeInterval);
+
 		for (int i = 1; i < commits.size(); ++i) {
 			if (getDifferenceInDays(commits.get(i - 1).getDate(),
 					commits.get(i).getDate()) > SHORT_TIMESPAN * TIME_FRAME) {
@@ -200,7 +216,9 @@ public class SupernovaMetric extends MethodMetrics {
 
 	/**
 	 * @param commitsAfterMediumTimespan
-	 * @return Sorted ArrayList of commits after the {@code MEDIUM_TIMESPAN}.
+	 * @return Sorted ArrayList of commits after the
+	 *         {@link edu.lavinia.inspectory.am.metrics.MethodMetrics.MEDIUM_TIMESPAN
+	 *         MEDIUM_TIMESPAN}.
 	 */
 	public ArrayList<Commit> sortAllCommitsAfterMediumTimespan(
 			final ArrayList<Commit> commitsAfterMediumTimespan) {
@@ -249,6 +267,7 @@ public class SupernovaMetric extends MethodMetrics {
 	public HashMap<Commit, Integer> getCommitsAndChangesMap(
 			ArrayList<Commit> commits, ArrayList<Integer> changesList) {
 		final HashMap<Commit, Integer> commitsAndTheirChanges = new HashMap<>();
+
 		for (int i = 0; i < commits.size(); ++i) {
 			commitsAndTheirChanges.put(commits.get(i), changesList.get(i));
 		}
@@ -264,7 +283,8 @@ public class SupernovaMetric extends MethodMetrics {
 	 */
 	public Map<Integer, ArrayList<Commit>> getIntervalsCommitsMap(
 			HashMap<Commit, Integer> commitsIntoTimeIntervals) {
-		TreeMap<Integer, ArrayList<Commit>> intervalsCommitsList = new TreeMap<>();
+		final TreeMap<Integer, ArrayList<Commit>> intervalsCommitsList = new TreeMap<>();
+
 		for (HashMap.Entry<Commit, Integer> entry : commitsIntoTimeIntervals
 				.entrySet()) {
 			if (intervalsCommitsList.get(entry.getValue()) == null) {
@@ -292,17 +312,20 @@ public class SupernovaMetric extends MethodMetrics {
 		final ArrayList<Commit> commits = methodChangesInformation.getCommits();
 		final ArrayList<Integer> changesList = methodChangesInformation
 				.getChangesList();
+
 		Integer sumOfAllLeaps = 0;
 		Integer sumRecentLeaps = 0;
 		Integer deletedRefactoringLines = 0;
 		Integer numberOfSubsequentRefactoring = 0;
 		Double averageSubsequentCommits = 0.0;
-		HashMap<Commit, Integer> commitsIntoTimeIntervals = divideLifetimeInIntervals(
+		final HashMap<Commit, Integer> commitsIntoTimeIntervals = divideLifetimeInIntervals(
 				methodChangesInformation);
+
 		if (methodChangesInformation.getActualSize() >= 0
 				&& maximumTimeInterval > 0) {
-			HashMap<Commit, Integer> commitsAndTheirChanges = getCommitsAndChangesMap(
+			final HashMap<Commit, Integer> commitsAndTheirChanges = getCommitsAndChangesMap(
 					commits, changesList);
+
 			for (HashMap.Entry<Commit, Integer> entry : commitsIntoTimeIntervals
 					.entrySet()) {
 				sumOfAllLeaps += commitsAndTheirChanges.get(entry.getKey());
@@ -314,8 +337,9 @@ public class SupernovaMetric extends MethodMetrics {
 				}
 			}
 
-			Map<Integer, ArrayList<Commit>> intervalsCommitsMap = getIntervalsCommitsMap(
+			final Map<Integer, ArrayList<Commit>> intervalsCommitsMap = getIntervalsCommitsMap(
 					commitsIntoTimeIntervals);
+
 			for (int timeInterval = 0; timeInterval < maximumTimeInterval
 					- MEDIUM_TIMESPAN; ++timeInterval) {
 				for (int nextTimeInterval = timeInterval
@@ -334,6 +358,7 @@ public class SupernovaMetric extends MethodMetrics {
 			}
 
 			Integer methodGrowthInInterval = 0;
+
 			for (int timeInterval = 0; timeInterval <= maximumTimeInterval; ++timeInterval) {
 				methodGrowthInInterval = 0;
 				for (final Commit commit : intervalsCommitsMap
@@ -402,17 +427,19 @@ public class SupernovaMetric extends MethodMetrics {
 
 	/**
 	 * To detect Supernova methods, we divide its lifetime in time intervals of
-	 * SHORT_TIMESPAN; then, for each time interval we compute the growth of
+	 * {@link edu.lavinia.inspectory.am.metrics.MethodMetrics.SHORT_TIMESPAN
+	 * SHORT_TIMESPAN}; then, for each time interval we compute the growth of
 	 * method's size during that period. If there is at least one time interval
 	 * during which the file size has grown significantly, i.e. with at least
-	 * MAJOR_SIZE_CHANGE lines the files is classified as Supernova.
+	 * {@link edu.lavinia.inspectory.am.metrics.MethodMetrics.MAJOR_SIZE_CHANGE
+	 * MAJOR_SIZE_CHANGE} lines the files is classified as Supernova.
 	 * 
 	 * @param methodChangesInformation
 	 *            The information of the current method
-	 * @return True if the method is Supernova, false otherwise.
+	 * @return {@code True} if the method is Supernova, {@code false} otherwise.
 	 */
 	public Boolean isSupernova(
-			MethodChangesInformation methodChangesInformation) {
+			final MethodChangesInformation methodChangesInformation) {
 		return (Boolean) getSupernovaCriterionValues(methodChangesInformation)
 				.get("isSupernova");
 	}

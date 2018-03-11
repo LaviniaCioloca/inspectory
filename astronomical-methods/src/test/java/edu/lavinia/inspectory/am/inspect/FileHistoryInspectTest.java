@@ -54,7 +54,7 @@ public class FileHistoryInspectTest {
 	private static final PersistentProject PROJECT = null;
 
 	private static final String DATE_FORMAT = "yyyy/MM/dd";
-	private final String className = "SimpleClass";
+	private static final String className = "SimpleClass";
 
 	@Test(expected = NullPointerException.class)
 	public void testGetHistoryFunctionsAnalyze() throws IOException {
@@ -62,7 +62,7 @@ public class FileHistoryInspectTest {
 		final FileWriter writer = new FileWriter(FILE);
 		final AstronomicalMethodsInspection astronomicalMethodsInspection = new AstronomicalMethodsInspection(
 				PROJECT, writer, writer, writer);
-		astronomicalMethodsInspection.getHistoryFunctionsAnalyze();
+		astronomicalMethodsInspection.analyzeAstronomicalMethods();
 	}
 
 	@Test
@@ -73,6 +73,7 @@ public class FileHistoryInspectTest {
 				PROJECT, writer, writer, writer);
 		final String fileName = "testFileName";
 		final GenericVisitor visitor = new NodeVisitor(fileName);
+
 		assertFalse(astronomicalMethodsInspection.checkEntryInResultSet(visitor,
 				new ArrayList<Integer>(), className, new Commit()));
 	}
@@ -86,6 +87,7 @@ public class FileHistoryInspectTest {
 		final String fileName = "testFileName";
 		final GenericVisitor visitor = new NodeVisitor(fileName);
 		visitor.setIdentifier("abc");
+
 		assertTrue(astronomicalMethodsInspection.checkEntryInResultSet(visitor,
 				new ArrayList<Integer>(), className, new Commit()));
 	}
@@ -106,6 +108,7 @@ public class FileHistoryInspectTest {
 		result.put(fileName + ":" + className + ": " + visitor.getIdentifier(),
 				methodChangesInformation);
 		astronomicalMethodsInspection.setResult(result);
+
 		assertFalse(astronomicalMethodsInspection.checkEntryInResultSet(visitor,
 				new ArrayList<Integer>(), className, new Commit()));
 	}
@@ -121,6 +124,7 @@ public class FileHistoryInspectTest {
 		commits.add(commit);
 		commits.add(commit);
 		astronomicalMethodsInspection.addToAllCommits(commits);
+
 		assertEquals(commits, astronomicalMethodsInspection.getAllCommits());
 	}
 
@@ -149,6 +153,7 @@ public class FileHistoryInspectTest {
 		commits.add(commit2);
 		commits.add(commit1);
 		commits.add(commit3);
+
 		assertEquals(commits, astronomicalMethodsInspection.getAllCommits());
 	}
 
@@ -249,6 +254,7 @@ public class FileHistoryInspectTest {
 		methodInformationList.add(methodChangesInformation);
 		astronomicalMethodsInspection.addDataInMethodInformationList("test",
 				"test", "test");
+
 		assertEquals(methodInformationList,
 				astronomicalMethodsInspection.getMethodInformationList());
 	}

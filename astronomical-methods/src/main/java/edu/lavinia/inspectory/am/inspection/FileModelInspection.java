@@ -34,7 +34,7 @@ import org.metanalysis.core.project.PersistentProject;
 import edu.lavinia.inspectory.am.visitor.NodeVisitor;
 
 public class FileModelInspection {
-	private PersistentProject project = null;
+	private PersistentProject project;
 
 	public FileModelInspection(PersistentProject project) {
 		this.project = project;
@@ -47,30 +47,31 @@ public class FileModelInspection {
 	public void getModelFunctionsAnalyze() {
 
 		try {
-			String logFolderName = ".inspectory_results";
-			Set<String> filesList = project.listFiles();
-			for (String file : filesList) {
+			final String logFolderName = ".inspectory_results";
+			final Set<String> filesList = project.listFiles();
+			for (final String file : filesList) {
 				if (file.startsWith(".") || !file.endsWith(".java")) {
 					continue;
 				}
-				SourceFile fileModel = project.getFileModel(file);
 
-				String logFilePath = "./" + logFolderName + "/" + file
+				final SourceFile fileModel = project.getFileModel(file);
+				final String logFilePath = "./" + logFolderName + "/" + file
 						+ ".model";
-				Logger logger = Logger.getRootLogger();
-				FileAppender appender = (FileAppender) logger
+				final Logger logger = Logger.getRootLogger();
+				final FileAppender appender = (FileAppender) logger
 						.getAppender("file");
 				appender.setFile(logFilePath);
 				appender.activateOptions();
 
-				Set<Node> fileModelNodes = fileModel.getNodes();
-				NodeVisitor visitor = new NodeVisitor(file);
-				for (Node n : fileModelNodes) {
+				final Set<Node> fileModelNodes = fileModel.getNodes();
+				final NodeVisitor visitor = new NodeVisitor(file);
+
+				for (final Node n : fileModelNodes) {
 					visitor.visit(n);
 				}
 
-				Map<String, Integer> map = visitor.getFunctionSize();
-				for (Map.Entry<String, Integer> entry : map.entrySet()) {
+				final Map<String, Integer> map = visitor.getFunctionSize();
+				for (final Map.Entry<String, Integer> entry : map.entrySet()) {
 					logger.info(entry.getKey() + " - " + entry.getValue());
 				}
 			}

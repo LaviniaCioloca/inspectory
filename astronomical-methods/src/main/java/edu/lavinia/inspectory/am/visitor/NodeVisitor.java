@@ -35,6 +35,13 @@ import org.metanalysis.core.model.SourceFile;
 //import java.util.logging.Logger;
 import edu.lavinia.inspectory.visitor.CodeVisitor;
 
+/**
+ * Implementation of {@link edu.lavinia.inspectory.visitor.CodeVisitor
+ * CodeVisitor} for visiting nodes of types: Type and Function.
+ * 
+ * @author Lavinia Cioloca
+ *
+ */
 public class NodeVisitor extends CodeVisitor {
 	private Map<String, Integer> functionSize = new HashMap<String, Integer>();
 

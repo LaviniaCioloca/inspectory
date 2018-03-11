@@ -45,26 +45,27 @@ public class MethodInformationTest {
 
 	@Test
 	public void testGetMethodInformationLine() {
-		MethodChangesInformation methodChangesInformation = new MethodChangesInformation();
-		ArrayList<String> expected = new ArrayList<>();
+		final MethodChangesInformation methodChangesInformation = new MethodChangesInformation();
+		final ArrayList<String> expected = new ArrayList<>();
 		methodChangesInformation.setInitialSize(10);
 		methodChangesInformation.setActualSize(100);
 		methodChangesInformation.setNumberOfChanges(10);
-		ArrayList<Integer> changesList = new ArrayList<>(
+		final ArrayList<Integer> changesList = new ArrayList<>(
 				Arrays.asList(1, 2, 3));
 		methodChangesInformation.setChangesList(changesList);
 		methodChangesInformation.setSupernova(false);
 		methodChangesInformation.setPulsar(false);
 		methodChangesInformation.setSupernovaSeverity(5);
 		methodChangesInformation.setPulsarSeverity(5);
-		SupernovaCriteria supernovaCriteria = new SupernovaCriteria();
-		PulsarCriteria pulsarCriteria = new PulsarCriteria();
+		final SupernovaCriteria supernovaCriteria = new SupernovaCriteria();
+		final PulsarCriteria pulsarCriteria = new PulsarCriteria();
 		methodChangesInformation.setSupernovaCriteria(supernovaCriteria);
 		methodChangesInformation.setPulsarCriteria(pulsarCriteria);
 
 		for (int i = 0; i < 3; ++i) {
 			expected.add(null);
 		}
+
 		expected.add("10");
 		expected.add("100");
 		expected.add("10");
@@ -83,6 +84,7 @@ public class MethodInformationTest {
 		expected.add("0");
 		expected.add("0");
 		expected.add("0");
+
 		Assert.assertEquals(expected,
 				methodChangesInformation.getMethodInformationLine());
 	}

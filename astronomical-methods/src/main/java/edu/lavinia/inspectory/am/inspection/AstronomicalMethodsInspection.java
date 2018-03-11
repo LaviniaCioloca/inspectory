@@ -115,20 +115,10 @@ public class AstronomicalMethodsInspection {
 			return false;
 		}
 
-		MethodChangesInformation methodChangesInformation = null;
+		final MethodChangesInformation methodChangesInformation;
+
 		if (result.get(visitor.getFileName() + ":" + className + ": "
-				+ visitor.getIdentifier()) != null) {
-			methodChangesInformation = result.get(visitor.getFileName() + ":"
-					+ className + ": " + visitor.getIdentifier());
-			methodChangesInformation.getChangesList().add(visitor.getTotal());
-			methodChangesInformation.getCommits().add(commit);
-
-			if (visitor.getMethodDeleted()) {
-				methodChangesInformation.setMethodDeleted(true);
-			}
-
-			return false;
-		} else {
+				+ visitor.getIdentifier()) == null) {
 			ArrayList<Integer> changesList = new ArrayList<Integer>();
 			changesList.add(visitor.getTotal());
 			ArrayList<Commit> commits = new ArrayList<>();
@@ -148,6 +138,17 @@ public class AstronomicalMethodsInspection {
 							+ visitor.getIdentifier(),
 					methodChangesInformation);
 			return true;
+		} else {
+			methodChangesInformation = result.get(visitor.getFileName() + ":"
+					+ className + ": " + visitor.getIdentifier());
+			methodChangesInformation.getChangesList().add(visitor.getTotal());
+			methodChangesInformation.getCommits().add(commit);
+
+			if (visitor.getMethodDeleted()) {
+				methodChangesInformation.setMethodDeleted(true);
+			}
+
+			return false;
 		}
 	}
 
@@ -157,8 +158,8 @@ public class AstronomicalMethodsInspection {
 	 * 
 	 * @param commits
 	 */
-	public void addToAllCommits(ArrayList<Commit> commits) {
-		for (Commit commit : commits) {
+	public void addToAllCommits(List<Commit> commits) {
+		for (final Commit commit : commits) {
 			allCommits.add(commit);
 		}
 	}
@@ -185,7 +186,7 @@ public class AstronomicalMethodsInspection {
 	 */
 	public void createAndSortAllCommits() {
 		for (final MethodChangesInformation methodChangesInformation : methodInformationList) {
-			ArrayList<Commit> commits = result
+			final ArrayList<Commit> commits = result
 					.get(methodChangesInformation.getFileName() + ":"
 							+ methodChangesInformation.getClassName()
 									.replaceAll("\"", "")
@@ -194,6 +195,7 @@ public class AstronomicalMethodsInspection {
 					.getCommits();
 			addToAllCommits(commits);
 		}
+
 		sortAllCommits();
 	}
 
@@ -215,12 +217,13 @@ public class AstronomicalMethodsInspection {
 		methodChangesInformation.setChangesList(changesList);
 		methodChangesInformation.setCommits(commits);
 
-		SupernovaMetric supernovaMetric = new SupernovaMetric();
+		final SupernovaMetric supernovaMetric = new SupernovaMetric();
 		methodChangesInformation.setSupernova(
 				supernovaMetric.isSupernova(methodChangesInformation));
 		methodChangesInformation.setSupernovaSeverity(
 				supernovaMetric.getSupernovaSeverity(methodChangesInformation));
-		SupernovaCriteria supernovaCriteria = new SupernovaCriteria();
+
+		final SupernovaCriteria supernovaCriteria = new SupernovaCriteria();
 		supernovaCriteria
 				.setLeapsSizePoints(supernovaMetric.getLeapsSizePoints());
 		supernovaCriteria.setRecentLeapsSizePoints(
@@ -233,12 +236,13 @@ public class AstronomicalMethodsInspection {
 				supernovaMetric.getActivityStatePoints());
 		methodChangesInformation.setSupernovaCriteria(supernovaCriteria);
 
-		PulsarMetric pulsarMetric = new PulsarMetric();
+		final PulsarMetric pulsarMetric = new PulsarMetric();
 		methodChangesInformation
 				.setPulsar(pulsarMetric.isPulsar(methodChangesInformation));
 		methodChangesInformation.setPulsarSeverity(
 				pulsarMetric.getPulsarSeverity(methodChangesInformation));
-		PulsarCriteria pulsarCriteria = new PulsarCriteria();
+
+		final PulsarCriteria pulsarCriteria = new PulsarCriteria();
 		pulsarCriteria
 				.setRecentCyclesPoints(pulsarMetric.getRecentCyclesPoints());
 		pulsarCriteria.setAverageSizeIncreasePoints(
@@ -247,6 +251,7 @@ public class AstronomicalMethodsInspection {
 		pulsarCriteria
 				.setActivityStatePoints(pulsarMetric.getActivityStatePoints());
 		methodChangesInformation.setPulsarCriteria(pulsarCriteria);
+
 		if (methodChangesInformation.isSupernova()) {
 			methodDynamics.addSupernovaMethodDynamics(
 					methodChangesInformation.getFileName(),
@@ -271,20 +276,20 @@ public class AstronomicalMethodsInspection {
 	 */
 	public void writeCSVFileData() {
 		createAndSortAllCommits();
-		Commit latestCommit = allCommits.get(allCommits.size() - 1);
+		final Commit latestCommit = allCommits.get(allCommits.size() - 1);
 		MethodMetrics.setAllCommits(allCommits);
 		MethodMetrics.setAllCommitsIntoTimeFrames();
 		MethodMetrics.setNow(latestCommit.getDate());
 		for (MethodChangesInformation methodChangesInformation : methodInformationList) {
 			try {
-				ArrayList<Integer> changesList = result
+				final ArrayList<Integer> changesList = result
 						.get(methodChangesInformation.getFileName() + ":"
 								+ methodChangesInformation.getClassName()
 										.replaceAll("\"", "")
 								+ ": " + methodChangesInformation
 										.getMethodName().replaceAll("\"", ""))
 						.getChangesList();
-				ArrayList<Commit> commits = result
+				final ArrayList<Commit> commits = result
 						.get(methodChangesInformation.getFileName() + ":"
 								+ methodChangesInformation.getClassName()
 										.replaceAll("\"", "")
@@ -292,6 +297,7 @@ public class AstronomicalMethodsInspection {
 										.getMethodName().replaceAll("\"", ""))
 						.getCommits();
 				Integer actualSize = 0;
+
 				for (Integer change : changesList) {
 					actualSize += change;
 				}
@@ -330,24 +336,28 @@ public class AstronomicalMethodsInspection {
 	public void handleNodeSetEditChange(NodeSetEdit edit,
 			GenericVisitor visitor, String fileName, Commit commit,
 			ArrayList<Integer> lineChanges) {
-		String className = ((NodeSetEdit.Change<?>) edit).getIdentifier();
-		Transaction<?> t = ((NodeSetEdit.Change<?>) edit).getTransaction();
-		List<NodeSetEdit> memberEdits = ((TypeTransaction) t).getMemberEdits();
+		final String className = ((NodeSetEdit.Change<?>) edit).getIdentifier();
+		final Transaction<?> t = ((NodeSetEdit.Change<?>) edit)
+				.getTransaction();
+		final List<NodeSetEdit> memberEdits = ((TypeTransaction) t)
+				.getMemberEdits();
+
 		for (NodeSetEdit memberEdit : memberEdits) {
 			try {
 				visitor = new EditVisitor(fileName);
 
 				if (memberEdit instanceof NodeSetEdit.Remove) {
 					Integer lastMethodSize = 0;
-					ArrayList<Integer> changesList = result.get(fileName + ":"
-							+ className.replaceAll("\"", "")
+					final ArrayList<Integer> changesList = result.get(fileName
+							+ ":" + className.replaceAll("\"", "")
 							+ ": " + ((NodeSetEdit.Remove) memberEdit)
 									.getIdentifier().replaceAll("\"", ""))
 							.getChangesList();
 
-					for (Integer change : changesList) {
+					for (final Integer change : changesList) {
 						lastMethodSize += change;
 					}
+
 					visitor.setLastMethodSize(lastMethodSize);
 				}
 
@@ -375,10 +385,11 @@ public class AstronomicalMethodsInspection {
 	 */
 	public void handleNodeSetEditAdd(NodeSetEdit edit, GenericVisitor visitor,
 			String fileName, Commit commit, ArrayList<Integer> lineChanges) {
-		Node node = ((NodeSetEdit.Add) edit).getNode();
+		final Node node = ((NodeSetEdit.Add) edit).getNode();
+
 		if (node instanceof Node.Type) {
 			visitor = new NodeVisitor(fileName);
-			String className = "";
+			String className;
 			final Set<Node> members = ((Node.Type) node).getMembers();
 
 			for (final Node member : members) {
@@ -424,7 +435,7 @@ public class AstronomicalMethodsInspection {
 	 */
 	public void addDataInMethodInformationList(String fileName,
 			String className, String methodName) {
-		MethodChangesInformation methodChangesInformation = new MethodChangesInformation();
+		final MethodChangesInformation methodChangesInformation = new MethodChangesInformation();
 		/*
 		 * methodChangesInformation.setFileName("\"" + fileName + "\"");
 		 * methodChangesInformation.setClassName("\"" + className + "\"");
@@ -443,17 +454,17 @@ public class AstronomicalMethodsInspection {
 	 */
 	public void createResults() {
 		try {
-			Set<String> filesList = project.listFiles();
+			final Set<String> filesList = project.listFiles();
 			methodInformationList = new ArrayList<MethodChangesInformation>();
-			for (String fileName : filesList) {
+			for (final String fileName : filesList) {
 				if (fileName.startsWith(".") || !fileName.endsWith(".java")) {
 					continue;
 				}
 
-				List<HistoryEntry> fileHistory = project
+				final List<HistoryEntry> fileHistory = project
 						.getFileHistory(fileName);
 
-				for (HistoryEntry historyEntry : fileHistory) {
+				for (final HistoryEntry historyEntry : fileHistory) {
 					try {
 						final Commit commit = new Commit();
 						commit.setRevision(historyEntry.getRevision());
@@ -464,7 +475,7 @@ public class AstronomicalMethodsInspection {
 								.getTransaction();
 						final List<NodeSetEdit> nodeEditList = sourceFileTransaction
 								.getNodeEdits();
-						GenericVisitor visitor = null;
+						final GenericVisitor visitor = null;
 
 						for (final NodeSetEdit edit : nodeEditList) {
 							if (edit instanceof NodeSetEdit.Change<?>) {
@@ -496,11 +507,12 @@ public class AstronomicalMethodsInspection {
 	 * method properties values.
 	 */
 	public void createDefaultMethodInformation() {
-		Set<String> filesList = project.listFiles();
-		for (String fileName : filesList) {
+		final Set<String> filesList = project.listFiles();
+		for (final String fileName : filesList) {
 			if (fileName.startsWith(".") || !fileName.endsWith(".java")) {
 				continue;
 			}
+
 			methodDynamics.addDefaultMethodDynamics(fileName);
 		}
 	}
@@ -509,11 +521,11 @@ public class AstronomicalMethodsInspection {
 	 * Writes data from method dynamics analysis into a JSON and a CSV file.
 	 */
 	public void writeMethodDynamicsData() {
-		JSONUtils jsonUtils = new JSONUtils();
+		final JSONUtils jsonUtils = new JSONUtils();
 		try {
 			// JsonObject entireJson = new JsonObject();
-			JsonArray jsonArray = new JsonArray();
-			for (HashMap.Entry<String, FileMethodDynamics> entry : methodDynamics
+			final JsonArray jsonArray = new JsonArray();
+			for (final HashMap.Entry<String, FileMethodDynamics> entry : methodDynamics
 					.getProjectMethodDynamics().entrySet()) {
 				if (entry.getValue().getSupernovaMethods().intValue() > 0) {
 					jsonArray.add(
@@ -523,6 +535,7 @@ public class AstronomicalMethodsInspection {
 							jsonUtils.getSupernovaSeverityJSON(entry.getKey(),
 									entry.getValue().getSupernovaSeverity()));
 				}
+
 				if (entry.getValue().getPulsarMethods().intValue() > 0) {
 					jsonArray.add(jsonUtils.getPulsarMethodsJSON(entry.getKey(),
 							entry.getValue().getPulsarMethods()));
@@ -530,6 +543,7 @@ public class AstronomicalMethodsInspection {
 							.add(jsonUtils.getPulsarSeverityJSON(entry.getKey(),
 									entry.getValue().getPulsarMethods()));
 				}
+
 				CSVUtils.writeLine(csvMethodDynamicsWriter, Arrays.asList(
 						entry.getKey(),
 						entry.getValue().getSupernovaMethods().toString(),
@@ -537,6 +551,7 @@ public class AstronomicalMethodsInspection {
 						entry.getValue().getSupernovaSeverity().toString(),
 						entry.getValue().getPulsarSeverity().toString()));
 			}
+
 			// entireJson.add("repository result", jsonArray);
 			Gson gson = new GsonBuilder().setPrettyPrinting().create();
 			jsonWriter.write(gson.toJson(jsonArray));
@@ -546,14 +561,17 @@ public class AstronomicalMethodsInspection {
 		}
 	}
 
-	// Getters and setters
-	public void getHistoryFunctionsAnalyze() {
+	/**
+	 * Method used to create the results and write the CSV and JSON files.
+	 */
+	public void analyzeAstronomicalMethods() {
 		createResults();
 		createDefaultMethodInformation();
 		writeCSVFileData();
 		writeMethodDynamicsData();
 	}
 
+	// Getters and setters
 	public Map<String, MethodChangesInformation> getResult() {
 		return result;
 	}

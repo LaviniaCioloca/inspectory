@@ -21,6 +21,12 @@
  *******************************************************************************/
 package edu.lavinia.inspectory.am.beans;
 
+/**
+ * Bean class having values of Pulsar metric.
+ * 
+ * @author Lavinia Cioloca
+ *
+ */
 public class PulsarCriteria {
 	private Integer recentCyclesPoints = 0;
 	private Integer averageSizeIncreasePoints = 0;

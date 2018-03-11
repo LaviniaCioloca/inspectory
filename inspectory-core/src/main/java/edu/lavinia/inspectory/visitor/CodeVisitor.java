@@ -25,10 +25,20 @@ import org.metanalysis.core.model.Node;
 import org.metanalysis.core.model.SourceFile;
 
 public abstract class CodeVisitor extends GenericVisitor {
+	/**
+	 * Method not implemented (<b>NOP</b>).
+	 * 
+	 * @param sourceFile
+	 */
 	public abstract void visit(SourceFile sourceFile);
 
 	public abstract void visit(Node.Type type);
 
+	/**
+	 * Method not implemented (<b>NOP</b>).
+	 * 
+	 * @param variable
+	 */
 	public abstract void visit(Node.Variable variable);
 
 	public abstract void visit(Node.Function function);

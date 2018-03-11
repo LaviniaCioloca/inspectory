@@ -29,8 +29,23 @@ import java.util.Map;
 import edu.lavinia.inspectory.am.beans.MethodChangesInformation;
 import edu.lavinia.inspectory.beans.Commit;
 
+/**
+ * Implementation of {@link edu.lavinia.inspectory.am.metrics.MethodMetrics
+ * MethodMetrics} class for Pulsar methods identification.
+ * 
+ * @author Lavinia Cioloca
+ * @see {@link edu.lavinia.inspectory.am.metrics.SupernovaMetric
+ *      SupernovaMetric}
+ *
+ */
 public class PulsarMetric extends MethodMetrics {
-	private final static Integer MANY_PULSAR_CYCLES = 3; // commits
+
+	/**
+	 * It is considered for a method to have <b>many pulsar cycles</b> if it has
+	 * more than 3 commits.
+	 */
+	private final static Integer MANY_PULSAR_CYCLES = 3;
+
 	private Integer recentCyclesPoints = 0;
 	private Integer averageSizeIncreasePoints = 0;
 	private Integer methodSizePoints = 0;
@@ -38,7 +53,7 @@ public class PulsarMetric extends MethodMetrics {
 
 	/**
 	 * @param countRecentPulsarCycles
-	 * @return An Integer: 0 - 3 representing the points from the
+	 * @return An Integer between 0 and 3 representing the points from the
 	 *         {@code recentPulsarCycles}.
 	 */
 	public Integer getRecentCyclesPoints(Integer countRecentPulsarCycles) {
@@ -51,13 +66,14 @@ public class PulsarMetric extends MethodMetrics {
 				&& countRecentPulsarCycles <= 2) {
 			return 1;
 		}
+
 		return 0;
 	}
 
 	/**
 	 * @param averageSizeIncrease
-	 * @return An Integer: 0 - 3 representing the points of the Pulsar method's
-	 *         {@code averageSizeIncrease}.
+	 * @return An Integer between 0 and 3 representing the points of the Pulsar
+	 *         method's {@code averageSizeIncrease}.
 	 */
 	public Integer getAverageSizeIncrease(Double averageSizeIncrease) {
 		if (averageSizeIncrease >= 0.0
@@ -70,6 +86,7 @@ public class PulsarMetric extends MethodMetrics {
 				&& averageSizeIncrease < MAJOR_SIZE_CHANGE) {
 			return 1;
 		}
+
 		return 0;
 	}
 
@@ -80,6 +97,7 @@ public class PulsarMetric extends MethodMetrics {
 		} else if (methodSize >= VERY_LARGE_METHOD) {
 			return 1;
 		}
+
 		return 0;
 	}
 
@@ -95,6 +113,7 @@ public class PulsarMetric extends MethodMetrics {
 		Integer countActiveChanges = 0;
 		final ArrayList<Commit> commits = methodChangesInformation.getCommits();
 		final ArrayList<Commit> latestCommits = new ArrayList<>();
+
 		if (commits.size() < ACTIVELY_CHANGED) {
 			return false;
 		}
@@ -148,10 +167,12 @@ public class PulsarMetric extends MethodMetrics {
 	public Double calculateAverageSizeIncrease(final Integer countPulsarCycles,
 			final Integer sumOfSizeIncrease) {
 		Double averageSizeIncrease = 0.0;
+
 		if (countPulsarCycles > 0) {
 			averageSizeIncrease = (double) sumOfSizeIncrease
 					/ (double) countPulsarCycles;
 		}
+
 		return averageSizeIncrease;
 	}
 
@@ -216,6 +237,7 @@ public class PulsarMetric extends MethodMetrics {
 				}
 			}
 		}
+
 		return 0;
 	}
 
@@ -267,17 +289,20 @@ public class PulsarMetric extends MethodMetrics {
 			MethodChangesInformation methodChangesInformation) {
 		final ArrayList<Commit> commits = methodChangesInformation.getCommits();
 		final Map<String, Object> pulsarCriterionValues = new HashMap<>();
+
 		pulsarCriterionValues.put("isPulsar", false);
 		Integer sumOfSizeIncrease = 0;
 		Double averageSizeIncrease = 0.0;
 		Integer countRecentPulsarCycles = 0;
 		Integer countPulsarCycles = 0;
 		Integer methodGrowth = 0;
+
 		if (methodChangesInformation.getActualSize() >= SIGNIFICANT_METHOD_SIZE
 				&& isMethodActivelyChanged(methodChangesInformation)) {
 			final ArrayList<Integer> changesList = methodChangesInformation
 					.getChangesList();
 			final ArrayList<String> commitsTypes = getCommitsTypes(changesList);
+
 			for (int i = 0; i < commitsTypes.size() - 1; ++i) {
 				if (commitsTypes.get(i).equals("refactor")
 						&& commitsTypes.get(i + 1).equals("develop")) {
@@ -325,16 +350,21 @@ public class PulsarMetric extends MethodMetrics {
 	}
 
 	/**
-	 * To be a Pulsar, a method must: have at least SIGNIFICANT_METHOD_SIZE
-	 * lines, and have been actively changed over the last LONG_TIMESPAN. We
-	 * count the number of refactor commits that are preceded by at least one
-	 * develop commit, or an uninterrupted sequence of refine commits that
-	 * cumulated produce a file growth that is larger than SMALL_SIZE_CHANGE
-	 * lines. A Pulsar needs to have at least MANY_PULSAR_CYCLES.
+	 * To be a Pulsar, a method must: have at least
+	 * {@link edu.lavinia.inspectory.am.metrics.MethodMetrics.SIGNIFICANT_METHOD_SIZE
+	 * SIGNIFICANT_METHOD_SIZE} lines, and have been actively changed over the
+	 * last {@link edu.lavinia.inspectory.am.metrics.MethodMetrics.LONG_TIMESPAN
+	 * LONG_TIMESPAN}. We count the number of refactor commits that are preceded
+	 * by at least one develop commit, or an uninterrupted sequence of refine
+	 * commits that cumulated produce a file growth that is larger than
+	 * {@link edu.lavinia.inspectory.am.metrics.MethodMetrics.SMALL_SIZE_CHANGE
+	 * SMALL_SIZE_CHANGE} lines. A Pulsar needs to have at least
+	 * {@link edu.lavinia.inspectory.am.metrics.MethodMetrics.MANY_PULSAR_CYCLES
+	 * MANY_PULSAR_CYCLES}.
 	 * 
 	 * @param methodChangesInformation
 	 *            The information of the current method
-	 * @return True if the method is Pulsar, false otherwise.
+	 * @return {@code True} if the method is Pulsar, {@code false} otherwise.
 	 */
 	public Boolean isPulsar(
 			final MethodChangesInformation methodChangesInformation) {

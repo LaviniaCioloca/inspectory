@@ -1,5 +1,5 @@
 /*******************************************************************************
-	 * Copyright (c) 2017, 2018 Lavinia Cioloca
+ * Copyright (c) 2017, 2018 Lavinia Cioloca
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,13 @@ import java.util.ArrayList;
 
 import edu.lavinia.inspectory.beans.Commit;
 
+/**
+ * Bean class having the entire result information after applying Astronomical
+ * Methods Metric onto methods.
+ * 
+ * @author Lavinia Cioloca
+ *
+ */
 public class MethodChangesInformation {
 	private ArrayList<Commit> commits;
 	private String fileName;
@@ -179,12 +186,15 @@ public class MethodChangesInformation {
 	}
 
 	/**
-	 * Retrieve the method's line to be written in CSV file.
+	 * Retrieve the method's entire information line to be written in the CSV
+	 * file.
 	 * 
 	 * @return An ArrayList of Strings data type.
 	 */
 	public ArrayList<String> getMethodInformationLine() {
 		ArrayList<String> methodInformationLine = new ArrayList<>();
+
+		// General information
 		methodInformationLine.add(this.getFileName());
 		methodInformationLine.add(this.getClassName());
 		methodInformationLine.add(this.getMethodName());
@@ -194,6 +204,7 @@ public class MethodChangesInformation {
 		methodInformationLine.add(this.getMethodDeleted().toString());
 		methodInformationLine.add(this.getChangesList().toString());
 
+		// Supernova information
 		methodInformationLine.add(this.isSupernova.toString());
 		methodInformationLine.add(this.getSupernovaSeverity().toString());
 		methodInformationLine
@@ -207,6 +218,7 @@ public class MethodChangesInformation {
 		methodInformationLine
 				.add(supernovaCriteria.getActivityStatePoints().toString());
 
+		// Pulsar information
 		methodInformationLine.add(this.isPulsar.toString());
 		methodInformationLine.add(this.getPulsarSeverity().toString());
 		methodInformationLine
@@ -225,10 +237,11 @@ public class MethodChangesInformation {
 		return "MethodChangesInformation [commits=" + commits + ", fileName="
 				+ fileName + ", className=" + className + ", methodName="
 				+ methodName + ", initialSize=" + initialSize + ", actualSize="
-				+ actualSize + ", numberOfChanges=" + numberOfChanges
-				+ ", changesList=" + changesList + ", isPulsar=" + isPulsar
-				+ ", isSupernova=" + isSupernova + ", pulsarSeverity="
-				+ pulsarSeverity + ", supernovaSeverity=" + supernovaSeverity
+				+ actualSize + ", methodDeleted=" + methodDeleted
+				+ ", numberOfChanges=" + numberOfChanges + ", changesList="
+				+ changesList + ", isPulsar=" + isPulsar + ", isSupernova="
+				+ isSupernova + ", pulsarSeverity=" + pulsarSeverity
+				+ ", supernovaSeverity=" + supernovaSeverity
 				+ ", pulsarCriteria=" + pulsarCriteria + ", supernovaCriteria="
 				+ supernovaCriteria + "]";
 	}

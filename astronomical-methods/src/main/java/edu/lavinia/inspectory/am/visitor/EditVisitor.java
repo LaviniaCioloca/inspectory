@@ -34,6 +34,13 @@ import org.metanalysis.core.model.Node;
 
 import edu.lavinia.inspectory.visitor.NodeSetEditVisitor;
 
+/**
+ * Implementation of {@link edu.lavinia.inspectory.visitor.NodeSetEditVisitor
+ * NodeSetEditVisitor} for visiting edits of types: Add, Remove and Change.
+ * 
+ * @author Lavinia Cioloca
+ *
+ */
 public class EditVisitor extends NodeSetEditVisitor {
 
 	public EditVisitor(final String fileName) {
@@ -43,6 +50,7 @@ public class EditVisitor extends NodeSetEditVisitor {
 	@Override
 	public void visit(Add add) {
 		final Node node = add.getNode();
+
 		if (node instanceof Node.Function) {
 			identifier = ((Node.Function) node).getIdentifier();
 			final List<String> body = ((Node.Function) node).getBody();
@@ -69,6 +77,7 @@ public class EditVisitor extends NodeSetEditVisitor {
 					.getTransaction();
 			final List<ListEdit<String>> bodyEdits = ((FunctionTransaction) transaction)
 					.getBodyEdits();
+
 			for (final ListEdit<String> listEdit : bodyEdits) {
 				if (listEdit instanceof ListEdit.Add<?>) {
 					total += 1;
