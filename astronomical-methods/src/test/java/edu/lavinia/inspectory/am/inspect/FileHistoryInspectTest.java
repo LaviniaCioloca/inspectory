@@ -75,7 +75,7 @@ public class FileHistoryInspectTest {
 		final GenericVisitor visitor = new NodeVisitor(fileName);
 
 		assertFalse(astronomicalMethodsInspection.checkEntryInResultSet(visitor,
-				new ArrayList<Integer>(), className, new Commit()));
+				className, new Commit()));
 	}
 
 	@Test
@@ -89,7 +89,7 @@ public class FileHistoryInspectTest {
 		visitor.setIdentifier("abc");
 
 		assertTrue(astronomicalMethodsInspection.checkEntryInResultSet(visitor,
-				new ArrayList<Integer>(), className, new Commit()));
+				className, new Commit()));
 	}
 
 	@Test
@@ -110,7 +110,7 @@ public class FileHistoryInspectTest {
 		astronomicalMethodsInspection.setResult(result);
 
 		assertFalse(astronomicalMethodsInspection.checkEntryInResultSet(visitor,
-				new ArrayList<Integer>(), className, new Commit()));
+				className, new Commit()));
 	}
 
 	@Test

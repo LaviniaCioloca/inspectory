@@ -145,6 +145,7 @@ public abstract class MethodMetrics {
 	 */
 	protected static HashMap<Commit, Integer> splitCommitsIntoTimeFrames(
 			ArrayList<Commit> commits) {
+
 		final HashMap<Commit, Integer> commitsIntoTimeFrames = new HashMap<>();
 		Integer currentTimeFrame = 0;
 		commitsIntoTimeFrames.put(commits.get(0), currentTimeFrame);
@@ -173,6 +174,7 @@ public abstract class MethodMetrics {
 	 */
 	protected ArrayList<String> getCommitsTypes(
 			ArrayList<Integer> changesList) {
+
 		final ArrayList<String> commitsTypes = new ArrayList<String>();
 
 		for (int i = 0; i < changesList.size(); ++i) {

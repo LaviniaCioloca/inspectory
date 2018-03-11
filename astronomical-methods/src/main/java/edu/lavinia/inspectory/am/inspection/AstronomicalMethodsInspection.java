@@ -62,7 +62,7 @@ import edu.lavinia.inspectory.visitor.GenericVisitor;
 public class AstronomicalMethodsInspection {
 	private PersistentProject project;
 	private Map<String, MethodChangesInformation> result;
-	private ArrayList<String> deletedNodes = null;
+	private ArrayList<String> deletedNodes;
 	private final FileWriter csvWriter;
 	private final FileWriter csvMethodDynamicsWriter;
 	private final FileWriter jsonWriter;
@@ -82,6 +82,7 @@ public class AstronomicalMethodsInspection {
 	public AstronomicalMethodsInspection(PersistentProject project,
 			FileWriter csvWriter, FileWriter csvMethodDynamicsWriter,
 			FileWriter jsonWriter) {
+
 		this.project = project;
 		result = new HashMap<String, MethodChangesInformation>();
 		deletedNodes = new ArrayList<String>();
@@ -99,8 +100,6 @@ public class AstronomicalMethodsInspection {
 	 * 
 	 * @param visitor
 	 *            The visitor
-	 * @param lineChanges
-	 *            ArrayList of Integers with the line changes.
 	 * @param className
 	 *            The method's class name in order to identify uniquely the
 	 *            method.
@@ -110,46 +109,63 @@ public class AstronomicalMethodsInspection {
 	 *         already exists in result set and true otherwise.
 	 */
 	public boolean checkEntryInResultSet(GenericVisitor visitor,
-			ArrayList<Integer> lineChanges, String className, Commit commit) {
+			String className, Commit commit) {
+
 		if (visitor.getIdentifier() == null) {
 			return false;
 		}
 
-		final MethodChangesInformation methodChangesInformation;
+		final MethodChangesInformation methodChangesInformation = null;
 
 		if (result.get(visitor.getFileName() + ":" + className + ": "
 				+ visitor.getIdentifier()) == null) {
-			ArrayList<Integer> changesList = new ArrayList<Integer>();
-			changesList.add(visitor.getTotal());
-			ArrayList<Commit> commits = new ArrayList<>();
-			commits.add(commit);
-			methodChangesInformation = new MethodChangesInformation();
-			methodChangesInformation.setCommits(commits);
-			methodChangesInformation.setChangesList(changesList);
-			methodChangesInformation.setClassName(className);
-			methodChangesInformation.setMethodName(visitor.getIdentifier());
-
-			if (visitor.getMethodDeleted()) {
-				methodChangesInformation.setMethodDeleted(true);
-			}
-
-			result.put(
-					visitor.getFileName() + ":" + className + ": "
-							+ visitor.getIdentifier(),
+			treatNewMethodInResultSet(visitor, className, commit,
 					methodChangesInformation);
+
 			return true;
 		} else {
-			methodChangesInformation = result.get(visitor.getFileName() + ":"
-					+ className + ": " + visitor.getIdentifier());
-			methodChangesInformation.getChangesList().add(visitor.getTotal());
-			methodChangesInformation.getCommits().add(commit);
-
-			if (visitor.getMethodDeleted()) {
-				methodChangesInformation.setMethodDeleted(true);
-			}
+			treatExistentMethodInResultSet(visitor, className, commit,
+					methodChangesInformation);
 
 			return false;
 		}
+	}
+
+	private void treatNewMethodInResultSet(GenericVisitor visitor,
+			String className, Commit commit,
+			MethodChangesInformation methodChangesInformation) {
+
+		ArrayList<Integer> changesList = new ArrayList<Integer>();
+		changesList.add(visitor.getTotal());
+		ArrayList<Commit> commits = new ArrayList<>();
+		commits.add(commit);
+		methodChangesInformation = new MethodChangesInformation();
+		methodChangesInformation.setCommits(commits);
+		methodChangesInformation.setChangesList(changesList);
+		methodChangesInformation.setClassName(className);
+		methodChangesInformation.setMethodName(visitor.getIdentifier());
+
+		if (visitor.getMethodDeleted()) {
+			methodChangesInformation.setMethodDeleted(true);
+		}
+
+		result.put(visitor.getFileName() + ":" + className + ": "
+				+ visitor.getIdentifier(), methodChangesInformation);
+	}
+
+	private void treatExistentMethodInResultSet(GenericVisitor visitor,
+			String className, Commit commit,
+			MethodChangesInformation methodChangesInformation) {
+
+		methodChangesInformation = result.get(visitor.getFileName() + ":"
+				+ className + ": " + visitor.getIdentifier());
+		methodChangesInformation.getChangesList().add(visitor.getTotal());
+		methodChangesInformation.getCommits().add(commit);
+
+		if (visitor.getMethodDeleted()) {
+			methodChangesInformation.setMethodDeleted(true);
+		}
+
 	}
 
 	/**
@@ -210,6 +226,49 @@ public class AstronomicalMethodsInspection {
 			MethodChangesInformation methodChangesInformation,
 			Boolean wasDeleted, ArrayList<Integer> changesList,
 			ArrayList<Commit> commits, Integer actualSize) {
+
+		methodChangesInformation = setGeneralInformationValues(
+				methodChangesInformation, wasDeleted, changesList, commits,
+				actualSize);
+
+		final SupernovaMetric supernovaMetric = new SupernovaMetric();
+		methodChangesInformation.setSupernova(
+				supernovaMetric.isSupernova(methodChangesInformation));
+		methodChangesInformation.setSupernovaSeverity(
+				supernovaMetric.getSupernovaSeverity(methodChangesInformation));
+
+		methodChangesInformation = setSupernovaCriteriaValues(
+				methodChangesInformation, supernovaMetric);
+
+		final PulsarMetric pulsarMetric = new PulsarMetric();
+		methodChangesInformation
+				.setPulsar(pulsarMetric.isPulsar(methodChangesInformation));
+		methodChangesInformation.setPulsarSeverity(
+				pulsarMetric.getPulsarSeverity(methodChangesInformation));
+
+		methodChangesInformation = setPulsarCriteriaValues(
+				methodChangesInformation, pulsarMetric);
+
+		if (methodChangesInformation.isSupernova()) {
+			methodDynamics.addSupernovaMethodDynamics(
+					methodChangesInformation.getFileName(),
+					methodChangesInformation.getSupernovaSeverity());
+		}
+
+		if (methodChangesInformation.isPulsar()) {
+			methodDynamics.addPulsarMethodDynamics(
+					methodChangesInformation.getFileName(),
+					methodChangesInformation.getPulsarSeverity());
+		}
+
+		return methodChangesInformation;
+	}
+
+	private MethodChangesInformation setGeneralInformationValues(
+			MethodChangesInformation methodChangesInformation,
+			Boolean wasDeleted, ArrayList<Integer> changesList,
+			ArrayList<Commit> commits, Integer actualSize) {
+
 		methodChangesInformation.setInitialSize(changesList.get(0));
 		methodChangesInformation.setNumberOfChanges(changesList.size());
 		methodChangesInformation.setMethodDeleted(wasDeleted);
@@ -217,11 +276,12 @@ public class AstronomicalMethodsInspection {
 		methodChangesInformation.setChangesList(changesList);
 		methodChangesInformation.setCommits(commits);
 
-		final SupernovaMetric supernovaMetric = new SupernovaMetric();
-		methodChangesInformation.setSupernova(
-				supernovaMetric.isSupernova(methodChangesInformation));
-		methodChangesInformation.setSupernovaSeverity(
-				supernovaMetric.getSupernovaSeverity(methodChangesInformation));
+		return methodChangesInformation;
+	}
+
+	private MethodChangesInformation setSupernovaCriteriaValues(
+			MethodChangesInformation methodChangesInformation,
+			SupernovaMetric supernovaMetric) {
 
 		final SupernovaCriteria supernovaCriteria = new SupernovaCriteria();
 		supernovaCriteria
@@ -236,11 +296,12 @@ public class AstronomicalMethodsInspection {
 				supernovaMetric.getActivityStatePoints());
 		methodChangesInformation.setSupernovaCriteria(supernovaCriteria);
 
-		final PulsarMetric pulsarMetric = new PulsarMetric();
-		methodChangesInformation
-				.setPulsar(pulsarMetric.isPulsar(methodChangesInformation));
-		methodChangesInformation.setPulsarSeverity(
-				pulsarMetric.getPulsarSeverity(methodChangesInformation));
+		return methodChangesInformation;
+	}
+
+	private MethodChangesInformation setPulsarCriteriaValues(
+			MethodChangesInformation methodChangesInformation,
+			PulsarMetric pulsarMetric) {
 
 		final PulsarCriteria pulsarCriteria = new PulsarCriteria();
 		pulsarCriteria
@@ -251,18 +312,6 @@ public class AstronomicalMethodsInspection {
 		pulsarCriteria
 				.setActivityStatePoints(pulsarMetric.getActivityStatePoints());
 		methodChangesInformation.setPulsarCriteria(pulsarCriteria);
-
-		if (methodChangesInformation.isSupernova()) {
-			methodDynamics.addSupernovaMethodDynamics(
-					methodChangesInformation.getFileName(),
-					methodChangesInformation.getSupernovaSeverity());
-		}
-
-		if (methodChangesInformation.isPulsar()) {
-			methodDynamics.addPulsarMethodDynamics(
-					methodChangesInformation.getFileName(),
-					methodChangesInformation.getPulsarSeverity());
-		}
 
 		return methodChangesInformation;
 	}
@@ -280,23 +329,21 @@ public class AstronomicalMethodsInspection {
 		MethodMetrics.setAllCommits(allCommits);
 		MethodMetrics.setAllCommitsIntoTimeFrames();
 		MethodMetrics.setNow(latestCommit.getDate());
+
+		Integer actualSize;
 		for (MethodChangesInformation methodChangesInformation : methodInformationList) {
 			try {
 				final ArrayList<Integer> changesList = result
 						.get(methodChangesInformation.getFileName() + ":"
-								+ methodChangesInformation.getClassName()
-										.replaceAll("\"", "")
-								+ ": " + methodChangesInformation
-										.getMethodName().replaceAll("\"", ""))
+								+ methodChangesInformation.getClassName() + ": "
+								+ methodChangesInformation.getMethodName())
 						.getChangesList();
 				final ArrayList<Commit> commits = result
 						.get(methodChangesInformation.getFileName() + ":"
-								+ methodChangesInformation.getClassName()
-										.replaceAll("\"", "")
-								+ ": " + methodChangesInformation
-										.getMethodName().replaceAll("\"", ""))
+								+ methodChangesInformation.getClassName() + ": "
+								+ methodChangesInformation.getMethodName())
 						.getCommits();
-				Integer actualSize = 0;
+				actualSize = 0;
 
 				for (Integer change : changesList) {
 					actualSize += change;
@@ -304,16 +351,14 @@ public class AstronomicalMethodsInspection {
 
 				final Boolean wasDeleted = result
 						.get(methodChangesInformation.getFileName() + ":"
-								+ methodChangesInformation.getClassName()
-										.replaceAll("\"", "")
-								+ ": "
-								+ methodChangesInformation.getMethodName()
-										.replaceAll("\"", ""))
+								+ methodChangesInformation.getClassName() + ": "
+								+ methodChangesInformation.getMethodName())
 						.getMethodDeleted();
 
 				methodChangesInformation = setMethodInformation(
 						methodChangesInformation, wasDeleted, changesList,
 						commits, actualSize);
+
 				CSVUtils.writeLine(csvWriter,
 						methodChangesInformation.getMethodInformationLine(),
 						',', '"');
@@ -349,9 +394,8 @@ public class AstronomicalMethodsInspection {
 				if (memberEdit instanceof NodeSetEdit.Remove) {
 					Integer lastMethodSize = 0;
 					final ArrayList<Integer> changesList = result.get(fileName
-							+ ":" + className.replaceAll("\"", "")
-							+ ": " + ((NodeSetEdit.Remove) memberEdit)
-									.getIdentifier().replaceAll("\"", ""))
+							+ ":" + className + ": "
+							+ ((NodeSetEdit.Remove) memberEdit).getIdentifier())
 							.getChangesList();
 
 					for (final Integer change : changesList) {
@@ -362,8 +406,8 @@ public class AstronomicalMethodsInspection {
 				}
 
 				((EditVisitor) visitor).visit(memberEdit);
-				if (checkEntryInResultSet(visitor, lineChanges, className,
-						commit)) {
+
+				if (checkEntryInResultSet(visitor, className, commit)) {
 					addDataInMethodInformationList(fileName, className,
 							visitor.getIdentifier());
 				}
@@ -402,8 +446,8 @@ public class AstronomicalMethodsInspection {
 						for (final Node typeMember : typeMembers) {
 							if (typeMember instanceof Node.Function) {
 								((NodeVisitor) visitor).visit(typeMember);
-								if (checkEntryInResultSet(visitor, lineChanges,
-										className, commit)) {
+								if (checkEntryInResultSet(visitor, className,
+										commit)) {
 									addDataInMethodInformationList(fileName,
 											className, visitor.getIdentifier());
 								}
@@ -412,8 +456,8 @@ public class AstronomicalMethodsInspection {
 					} else if (member instanceof Node.Function) {
 						className = ((Node.Type) node).getName();
 						((NodeVisitor) visitor).visit(member);
-						if (checkEntryInResultSet(visitor, lineChanges,
-								className, commit)) {
+
+						if (checkEntryInResultSet(visitor, className, commit)) {
 							addDataInMethodInformationList(fileName, className,
 									visitor.getIdentifier());
 						}
@@ -441,7 +485,6 @@ public class AstronomicalMethodsInspection {
 		 * methodChangesInformation.setClassName("\"" + className + "\"");
 		 * methodChangesInformation.setMethodName("\"" + methodName + "\"");
 		 */
-
 		methodChangesInformation.setFileName(fileName);
 		methodChangesInformation.setClassName(className);
 		methodChangesInformation.setMethodName(methodName);

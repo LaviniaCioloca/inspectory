@@ -110,6 +110,7 @@ public class PulsarMetric extends MethodMetrics {
 	 */
 	public Boolean isMethodActivelyChanged(
 			MethodChangesInformation methodChangesInformation) {
+
 		Integer countActiveChanges = 0;
 		final ArrayList<Commit> commits = methodChangesInformation.getCommits();
 		final ArrayList<Commit> latestCommits = new ArrayList<>();
@@ -150,6 +151,7 @@ public class PulsarMetric extends MethodMetrics {
 	public Integer countPulsarSeverityPoints(
 			final Integer countRecentPulsarCycles,
 			final Double averageSizeIncrease, Integer fileSize, Commit commit) {
+
 		recentCyclesPoints = getRecentCyclesPoints(countRecentPulsarCycles);
 		averageSizeIncreasePoints = getAverageSizeIncrease(averageSizeIncrease);
 		methodSizePoints = getMethodSizePoints(fileSize);
@@ -166,6 +168,7 @@ public class PulsarMetric extends MethodMetrics {
 	 */
 	public Double calculateAverageSizeIncrease(final Integer countPulsarCycles,
 			final Integer sumOfSizeIncrease) {
+
 		Double averageSizeIncrease = 0.0;
 
 		if (countPulsarCycles > 0) {
@@ -186,6 +189,7 @@ public class PulsarMetric extends MethodMetrics {
 	 */
 	public Integer getPulsarSeverity(
 			MethodChangesInformation methodChangesInformation) {
+
 		final ArrayList<Commit> commits = methodChangesInformation.getCommits();
 		final Map<String, Object> pulsarCriterionValues = getPulsarCriterionValues(
 				methodChangesInformation);
@@ -287,6 +291,7 @@ public class PulsarMetric extends MethodMetrics {
 	 */
 	public Map<String, Object> getPulsarCriterionValues(
 			MethodChangesInformation methodChangesInformation) {
+
 		final ArrayList<Commit> commits = methodChangesInformation.getCommits();
 		final Map<String, Object> pulsarCriterionValues = new HashMap<>();
 
@@ -337,15 +342,12 @@ public class PulsarMetric extends MethodMetrics {
 
 		averageSizeIncrease = calculateAverageSizeIncrease(countPulsarCycles,
 				sumOfSizeIncrease);
+
 		pulsarCriterionValues.put("averageSizeIncrease", averageSizeIncrease);
 		pulsarCriterionValues.put("countPulsarCycles", countPulsarCycles);
 		pulsarCriterionValues.put("countRecentPulsarCycles",
 				countRecentPulsarCycles);
-		/*
-		 * for (Map.Entry<String, Object> entry :
-		 * pulsarCriterionValues.entrySet()) { System.out.println(entry.getKey()
-		 * + " = " + entry.getValue()); }
-		 */
+
 		return pulsarCriterionValues;
 	}
 
@@ -368,6 +370,7 @@ public class PulsarMetric extends MethodMetrics {
 	 */
 	public Boolean isPulsar(
 			final MethodChangesInformation methodChangesInformation) {
+
 		return (Boolean) getPulsarCriterionValues(methodChangesInformation)
 				.get("isPulsar");
 	}
