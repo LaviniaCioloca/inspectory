@@ -130,6 +130,8 @@ public class OwnershipProblemsInspection {
 				fileOwnershipInformationLine.add(fileName);
 				fileOwnershipInformationLine.add(fileOwnershipInformation
 						.getNumberOfChanges().toString());
+				fileOwnershipInformationLine.add(String.valueOf(
+						fileOwnershipInformation.getAuthorsChanges().size()));
 				fileOwnershipInformationLine
 						.add(fileOwnershipInformation.getFileCreator());
 				fileOwnershipInformationLine.add(fileOwnershipInformation
