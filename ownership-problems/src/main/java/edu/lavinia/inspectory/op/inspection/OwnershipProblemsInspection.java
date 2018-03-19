@@ -72,6 +72,8 @@ public class OwnershipProblemsInspection {
 				final List<HistoryEntry> fileHistory = project
 						.getFileHistory(fileName);
 
+				final GenericVisitor visitor = new EditVisitor(fileName);
+
 				int numberOfChanges = 0;
 				String fileCreator = null;
 				final LinkedHashMap<String, Integer> authorsChanges = new LinkedHashMap<>();
@@ -83,6 +85,8 @@ public class OwnershipProblemsInspection {
 						commit.setRevision(historyEntry.getRevision());
 						commit.setAuthor(historyEntry.getAuthor());
 						commit.setDate(historyEntry.getDate());
+
+						((EditVisitor) visitor).setNumberOfLines(0);
 
 						++numberOfChanges;
 						if (fileCreator == null) {
@@ -102,34 +106,16 @@ public class OwnershipProblemsInspection {
 								.getTransaction();
 						final List<NodeSetEdit> nodeEditList = sourceFileTransaction
 								.getNodeEdits();
-						final GenericVisitor visitor = new EditVisitor(
-								fileName);
 
+						System.out.println(
+								"NodeEditList size: " + nodeEditList.size());
 						for (final NodeSetEdit edit : nodeEditList) {
-							if (edit instanceof NodeSetEdit.Add) {
-								System.out.println("\tEdit: Add; " + fileName
-										+ "; author: "
-										+ historyEntry.getAuthor()
-										+ "; line changes: "
-										+ ((EditVisitor) visitor)
-												.getNumberOfLines());
-							} else if (edit instanceof NodeSetEdit.Change<?>) {
-								System.out.println("\tEdit: Change; " + fileName
-										+ "; author: "
-										+ historyEntry.getAuthor()
-										+ "; line changes: "
-										+ ((EditVisitor) visitor)
-												.getNumberOfLines());
-							} else {
-								System.out.println("\tEdit: Remove; " + fileName
-										+ "; author: "
-										+ historyEntry.getAuthor()
-										+ "; line changes: "
-										+ ((EditVisitor) visitor)
-												.getNumberOfLines());
-							}
-
 							((EditVisitor) visitor).visit(edit);
+
+							System.out.println("\tFile: " + fileName
+									+ "; Line changes after visit: "
+									+ ((EditVisitor) visitor)
+											.getNumberOfLines());
 
 							Integer numberOfLineChanges = authorsLineChanges
 									.get(historyEntry.getAuthor());
@@ -137,11 +123,20 @@ public class OwnershipProblemsInspection {
 								authorsLineChanges.put(historyEntry.getAuthor(),
 										((EditVisitor) visitor)
 												.getNumberOfLines());
+								System.out.println(
+										"\t\tNew entry => add entry for: "
+												+ historyEntry.getAuthor()
+												+ " - "
+												+ ((EditVisitor) visitor)
+														.getNumberOfLines());
 							} else {
 								numberOfLineChanges += ((EditVisitor) visitor)
 										.getNumberOfLines();
 								authorsLineChanges.put(historyEntry.getAuthor(),
 										numberOfLineChanges);
+								System.out.println("\t\tExisting entry => for: "
+										+ historyEntry.getAuthor() + " - "
+										+ numberOfLineChanges);
 							}
 						}
 					} catch (Exception e) {

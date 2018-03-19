@@ -53,37 +53,27 @@ public class EditVisitor extends NodeSetEditVisitor {
 			identifier = ((Node.Type) node).getIdentifier();
 			members = ((Node.Type) node).getMembers();
 
-			System.out.println("\t\tNode Type & number of lines: "
-					+ numberOfLines + "; members: " + members.size());
 			for (final Node memberNode : members) {
 				if (memberNode instanceof Node.Type) {
-					System.out.println("\t\t-memberNode of type Node.Type");
-
 					NodeVisitor nodeVisitor = new NodeVisitor(fileName);
 					nodeVisitor.visit(memberNode);
 				} else if (memberNode instanceof Node.Function) {
-					System.out.println("\t\t-memberNode of type Node.Function");
-
 					++numberOfLines; // for signature, modifiers and parameters
-					final List<String> body = ((Node.Function) node).getBody();
+					final List<String> body = ((Node.Function) memberNode)
+							.getBody();
 					numberOfLines += body.size();
 				} else if (memberNode instanceof Node.Variable) {
-					System.out.println("\t\t-memberNode of type Node.Variable");
-
 					++numberOfLines;
 				}
 			}
 		} else if (node instanceof Node.Function) {
 			identifier = ((Node.Function) node).getIdentifier();
+			++numberOfLines; // for signature, modifiers and parameters
 			final List<String> body = ((Node.Function) node).getBody();
 			total += body.size();
 			numberOfLines += body.size();
-			System.out.println(
-					"\t\tNode Function & number of lines: " + numberOfLines);
 		} else if (node instanceof Node.Variable) {
 			++numberOfLines;
-			System.out.println(
-					"\t\tNode Variable & number of lines: " + numberOfLines);
 		}
 	}
 
