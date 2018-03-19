@@ -29,12 +29,16 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 
+import org.metanalysis.core.delta.NodeSetEdit;
+import org.metanalysis.core.delta.SourceFileTransaction;
 import org.metanalysis.core.project.PersistentProject;
 import org.metanalysis.core.project.Project.HistoryEntry;
 
 import edu.lavinia.inspectory.beans.Commit;
 import edu.lavinia.inspectory.op.beans.FileOwnershipInformation;
+import edu.lavinia.inspectory.op.visitor.EditVisitor;
 import edu.lavinia.inspectory.utils.CSVUtils;
+import edu.lavinia.inspectory.visitor.GenericVisitor;
 
 public class OwnershipProblemsInspection {
 	private final PersistentProject project;
@@ -71,6 +75,7 @@ public class OwnershipProblemsInspection {
 				int numberOfChanges = 0;
 				String fileCreator = null;
 				final LinkedHashMap<String, Integer> authorsChanges = new LinkedHashMap<>();
+				final LinkedHashMap<String, Integer> authorsLineChanges = new LinkedHashMap<>();
 
 				for (final HistoryEntry historyEntry : fileHistory) {
 					try {
@@ -86,11 +91,58 @@ public class OwnershipProblemsInspection {
 
 						Integer numberOfChangesAuthorHas = authorsChanges
 								.get(historyEntry.getAuthor());
-						if (numberOfChangesAuthorHas != null) {
+						if (numberOfChangesAuthorHas == null) {
+							authorsChanges.put(historyEntry.getAuthor(), 1);
+						} else {
 							authorsChanges.put(historyEntry.getAuthor(),
 									++numberOfChangesAuthorHas);
-						} else {
-							authorsChanges.put(historyEntry.getAuthor(), 1);
+						}
+
+						final SourceFileTransaction sourceFileTransaction = historyEntry
+								.getTransaction();
+						final List<NodeSetEdit> nodeEditList = sourceFileTransaction
+								.getNodeEdits();
+						final GenericVisitor visitor = new EditVisitor(
+								fileName);
+
+						for (final NodeSetEdit edit : nodeEditList) {
+							if (edit instanceof NodeSetEdit.Add) {
+								System.out.println("\tEdit: Add; " + fileName
+										+ "; author: "
+										+ historyEntry.getAuthor()
+										+ "; line changes: "
+										+ ((EditVisitor) visitor)
+												.getNumberOfLines());
+							} else if (edit instanceof NodeSetEdit.Change<?>) {
+								System.out.println("\tEdit: Change; " + fileName
+										+ "; author: "
+										+ historyEntry.getAuthor()
+										+ "; line changes: "
+										+ ((EditVisitor) visitor)
+												.getNumberOfLines());
+							} else {
+								System.out.println("\tEdit: Remove; " + fileName
+										+ "; author: "
+										+ historyEntry.getAuthor()
+										+ "; line changes: "
+										+ ((EditVisitor) visitor)
+												.getNumberOfLines());
+							}
+
+							((EditVisitor) visitor).visit(edit);
+
+							Integer numberOfLineChanges = authorsLineChanges
+									.get(historyEntry.getAuthor());
+							if (numberOfLineChanges == null) {
+								authorsLineChanges.put(historyEntry.getAuthor(),
+										((EditVisitor) visitor)
+												.getNumberOfLines());
+							} else {
+								numberOfLineChanges += ((EditVisitor) visitor)
+										.getNumberOfLines();
+								authorsLineChanges.put(historyEntry.getAuthor(),
+										numberOfLineChanges);
+							}
 						}
 					} catch (Exception e) {
 						continue;
@@ -98,7 +150,7 @@ public class OwnershipProblemsInspection {
 				}
 
 				addFileInformation(fileName, numberOfChanges, fileCreator,
-						authorsChanges);
+						authorsChanges, authorsLineChanges);
 			}
 		} catch (IOException e) {
 			/*
@@ -110,11 +162,13 @@ public class OwnershipProblemsInspection {
 	}
 
 	public void addFileInformation(String fileName, Integer numberOfChanges,
-			String fileOwner, LinkedHashMap<String, Integer> authorsChanges) {
+			String fileOwner, LinkedHashMap<String, Integer> authorsChanges,
+			LinkedHashMap<String, Integer> authorsLineChanges) {
 		final FileOwnershipInformation fileOwnershipInformation = new FileOwnershipInformation();
 		fileOwnershipInformation.setNumberOfChanges(numberOfChanges);
 		fileOwnershipInformation.setFileCreator(fileOwner);
 		fileOwnershipInformation.setAuthorsChanges(authorsChanges);
+		fileOwnershipInformation.setAuthorsLineChanges(authorsLineChanges);
 
 		fileOwnershipResult.put(fileName, fileOwnershipInformation);
 	}
@@ -136,6 +190,8 @@ public class OwnershipProblemsInspection {
 						.add(fileOwnershipInformation.getFileCreator());
 				fileOwnershipInformationLine.add(fileOwnershipInformation
 						.getAuthorsChanges().toString());
+				fileOwnershipInformationLine.add(fileOwnershipInformation
+						.getAuthorsLineChanges().toString());
 
 				CSVUtils.writeLine(csvWriter, fileOwnershipInformationLine, ',',
 						'"');

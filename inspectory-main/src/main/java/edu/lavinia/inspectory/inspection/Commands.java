@@ -221,7 +221,8 @@ public class Commands {
 			CSVUtils.writeLine(csvWriter,
 					Arrays.asList("File", "Number of changes",
 							"Number of authors", "File Creator",
-							"Authors - Number of changes made"));
+							"Authors - Total changes made",
+							"Authors - Line changes made"));
 			final OwnershipProblemsInspection ownershipProblemsInspection = new OwnershipProblemsInspection(
 					project, csvWriter);
 			ownershipProblemsInspection.createResults();

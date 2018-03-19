@@ -36,7 +36,8 @@ import edu.lavinia.inspectory.op.beans.FileOwnershipInformation;
 
 public class OwnershipProblemsInspectionTest {
 
-	private static final File FILE = new File("./src/test/resources/testFile.csv");
+	private static final File FILE = new File(
+			"./src/test/resources/testFile.csv");
 	private static final PersistentProject PROJECT = null;
 
 	private FileWriter csvWriter;
@@ -45,7 +46,8 @@ public class OwnershipProblemsInspectionTest {
 	public OwnershipProblemsInspectionTest() {
 		try {
 			csvWriter = new FileWriter(FILE);
-			ownershipProblemsInspection = new OwnershipProblemsInspection(PROJECT, csvWriter);
+			ownershipProblemsInspection = new OwnershipProblemsInspection(
+					PROJECT, csvWriter);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -62,15 +64,20 @@ public class OwnershipProblemsInspectionTest {
 		final HashMap<String, FileOwnershipInformation> expectedFileOwnershipResult = new HashMap<>();
 		final FileOwnershipInformation fileOwnershipInformation = new FileOwnershipInformation();
 		final LinkedHashMap<String, Integer> authorsChanges = new LinkedHashMap<>();
+		final LinkedHashMap<String, Integer> authorsLineChanges = new LinkedHashMap<>();
 		authorsChanges.put("test", 1);
 
 		fileOwnershipInformation.setNumberOfChanges(1);
 		fileOwnershipInformation.setFileCreator("test");
 		fileOwnershipInformation.setAuthorsChanges(authorsChanges);
-		expectedFileOwnershipResult.put("testFileName", fileOwnershipInformation);
+		fileOwnershipInformation.setAuthorsLineChanges(authorsLineChanges);
+		expectedFileOwnershipResult.put("testFileName",
+				fileOwnershipInformation);
 
-		ownershipProblemsInspection.addFileInformation("testFileName", 1, "test", authorsChanges);
+		ownershipProblemsInspection.addFileInformation("testFileName", 1,
+				"test", authorsChanges, authorsLineChanges);
 
-		assertEquals(expectedFileOwnershipResult, ownershipProblemsInspection.getFileOwnershipResult());
+		assertEquals(expectedFileOwnershipResult,
+				ownershipProblemsInspection.getFileOwnershipResult());
 	}
 }
