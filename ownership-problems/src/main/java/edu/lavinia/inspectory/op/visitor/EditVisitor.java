@@ -32,6 +32,7 @@ import org.metanalysis.core.delta.NodeSetEdit.Add;
 import org.metanalysis.core.delta.NodeSetEdit.Change;
 import org.metanalysis.core.delta.NodeSetEdit.Remove;
 import org.metanalysis.core.delta.Transaction;
+import org.metanalysis.core.delta.TypeTransaction;
 import org.metanalysis.core.model.Node;
 
 import edu.lavinia.inspectory.visitor.NodeSetEditVisitor;
@@ -89,20 +90,26 @@ public class EditVisitor extends NodeSetEditVisitor {
 
 	@Override
 	public void visit(Change<?> change) {
-		if (change.getNodeType().getQualifiedName()
-				.equals(Node.Function.class.getCanonicalName())) {
-			identifier = ((NodeSetEdit.Change<?>) change).getIdentifier();
-			final Transaction<?> transaction = ((NodeSetEdit.Change<?>) change)
-					.getTransaction();
-			final List<ListEdit<String>> bodyEdits = ((FunctionTransaction) transaction)
-					.getBodyEdits();
-			for (final ListEdit<String> listEdit : bodyEdits) {
-				if (listEdit instanceof ListEdit.Add<?>) {
-					total += 1;
-					++numberOfLines;
-				} else if (listEdit instanceof ListEdit.Remove<?>) {
-					total -= 1;
-					--numberOfLines;
+		identifier = ((NodeSetEdit.Change<?>) change).getIdentifier();
+		final Transaction<?> transaction = ((NodeSetEdit.Change<?>) change)
+				.getTransaction();
+		final List<NodeSetEdit> memberEdits = ((TypeTransaction) transaction)
+				.getMemberEdits();
+
+		for (final NodeSetEdit memberEdit : memberEdits) {
+			if (memberEdit instanceof NodeSetEdit.Change<?>) {
+				Transaction<?> changeTransaction = ((NodeSetEdit.Change<?>) memberEdit)
+						.getTransaction();
+				List<ListEdit<String>> bodyEdits = ((FunctionTransaction) changeTransaction)
+						.getBodyEdits();
+				for (final ListEdit<String> listEdit : bodyEdits) {
+					if (listEdit instanceof ListEdit.Add<?>) {
+						total += 1;
+						++numberOfLines;
+					} else if (listEdit instanceof ListEdit.Remove<?>) {
+						total -= 1;
+						--numberOfLines;
+					}
 				}
 			}
 		}
