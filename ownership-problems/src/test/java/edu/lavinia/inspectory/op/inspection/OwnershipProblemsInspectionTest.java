@@ -26,6 +26,7 @@ import static org.junit.Assert.assertEquals;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
@@ -64,7 +65,7 @@ public class OwnershipProblemsInspectionTest {
 		final HashMap<String, FileOwnershipInformation> expectedFileOwnershipResult = new HashMap<>();
 		final FileOwnershipInformation fileOwnershipInformation = new FileOwnershipInformation();
 		final LinkedHashMap<String, Integer> authorsChanges = new LinkedHashMap<>();
-		final LinkedHashMap<String, Integer> authorsLineChanges = new LinkedHashMap<>();
+		final LinkedHashMap<String, ArrayList<Integer>> authorsLineChanges = new LinkedHashMap<>();
 		authorsChanges.put("test", 1);
 
 		fileOwnershipInformation.setNumberOfChanges(1);

@@ -21,6 +21,7 @@
  *******************************************************************************/
 package edu.lavinia.inspectory.op.beans;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Objects;
 
@@ -28,7 +29,7 @@ public class FileOwnershipInformation {
 	private Integer numberOfChanges;
 	private String fileCreator;
 	private LinkedHashMap<String, Integer> authorsChanges;
-	private LinkedHashMap<String, Integer> authorsLineChanges;
+	private LinkedHashMap<String, ArrayList<Integer>> authorsLineChanges;
 
 	public Integer getNumberOfChanges() {
 		return numberOfChanges;
@@ -55,12 +56,12 @@ public class FileOwnershipInformation {
 		this.authorsChanges = authorsChanges;
 	}
 
-	public LinkedHashMap<String, Integer> getAuthorsLineChanges() {
+	public LinkedHashMap<String, ArrayList<Integer>> getAuthorsLineChanges() {
 		return authorsLineChanges;
 	}
 
 	public void setAuthorsLineChanges(
-			LinkedHashMap<String, Integer> authorsLineChanges) {
+			LinkedHashMap<String, ArrayList<Integer>> authorsLineChanges) {
 		this.authorsLineChanges = authorsLineChanges;
 	}
 

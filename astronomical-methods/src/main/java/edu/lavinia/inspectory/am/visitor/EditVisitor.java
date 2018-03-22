@@ -80,9 +80,9 @@ public class EditVisitor extends NodeSetEditVisitor {
 
 			for (final ListEdit<String> listEdit : bodyEdits) {
 				if (listEdit instanceof ListEdit.Add<?>) {
-					total += 1;
+					++total;
 				} else if (listEdit instanceof ListEdit.Remove<?>) {
-					total -= 1;
+					--total;
 				}
 			}
 		}

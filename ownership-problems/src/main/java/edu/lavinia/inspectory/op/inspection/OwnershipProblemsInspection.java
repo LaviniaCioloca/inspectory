@@ -24,6 +24,7 @@ package edu.lavinia.inspectory.op.inspection;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -60,6 +61,31 @@ public class OwnershipProblemsInspection {
 		this.csvWriter = csvWriter;
 	}
 
+	private LinkedHashMap<String, ArrayList<Integer>> checkChangedLinesInMap(
+			ArrayList<Integer> changedLines,
+			LinkedHashMap<String, ArrayList<Integer>> authorsLineChanges,
+			String author, Integer visitorAddedLines,
+			Integer visitorDeletedLines) {
+
+		if (changedLines == null) {
+			changedLines = new ArrayList<>(
+					Arrays.asList(visitorAddedLines, visitorDeletedLines));
+
+			authorsLineChanges.put(author, changedLines);
+		} else {
+			final ArrayList<Integer> newChangedLines = new ArrayList<>();
+
+			newChangedLines.add(changedLines.get(0) + visitorAddedLines);
+			newChangedLines.add(changedLines.get(1) + visitorDeletedLines);
+
+			changedLines = newChangedLines;
+
+			authorsLineChanges.put(author, changedLines);
+		}
+
+		return authorsLineChanges;
+	}
+
 	public void createResults() {
 		try {
 			final Set<String> filesList = project.listFiles();
@@ -77,7 +103,7 @@ public class OwnershipProblemsInspection {
 				int numberOfChanges = 0;
 				String fileCreator = null;
 				final LinkedHashMap<String, Integer> authorsChanges = new LinkedHashMap<>();
-				final LinkedHashMap<String, Integer> authorsLineChanges = new LinkedHashMap<>();
+				LinkedHashMap<String, ArrayList<Integer>> authorsLineChanges = new LinkedHashMap<>();
 
 				for (final HistoryEntry historyEntry : fileHistory) {
 					try {
@@ -86,7 +112,8 @@ public class OwnershipProblemsInspection {
 						commit.setAuthor(historyEntry.getAuthor());
 						commit.setDate(historyEntry.getDate());
 
-						((EditVisitor) visitor).setNumberOfLines(0);
+						((EditVisitor) visitor).setAddedLines(0);
+						((EditVisitor) visitor).setDeletedLines(0);
 
 						++numberOfChanges;
 						if (fileCreator == null) {
@@ -107,37 +134,27 @@ public class OwnershipProblemsInspection {
 						final List<NodeSetEdit> nodeEditList = sourceFileTransaction
 								.getNodeEdits();
 
-						System.out.println(
-								"NodeEditList size: " + nodeEditList.size());
 						for (final NodeSetEdit edit : nodeEditList) {
+							System.out.println("Before visit");
 							((EditVisitor) visitor).visit(edit);
+							System.out.println("After visit");
 
-							System.out.println("\tFile: " + fileName
-									+ "; Line changes after visit: "
-									+ ((EditVisitor) visitor)
-											.getNumberOfLines());
-
-							Integer numberOfLineChanges = authorsLineChanges
+							final ArrayList<Integer> changedLines = authorsLineChanges
 									.get(historyEntry.getAuthor());
-							if (numberOfLineChanges == null) {
-								authorsLineChanges.put(historyEntry.getAuthor(),
-										((EditVisitor) visitor)
-												.getNumberOfLines());
-								System.out.println(
-										"\t\tNew entry => add entry for: "
-												+ historyEntry.getAuthor()
-												+ " - "
-												+ ((EditVisitor) visitor)
-														.getNumberOfLines());
-							} else {
-								numberOfLineChanges += ((EditVisitor) visitor)
-										.getNumberOfLines();
-								authorsLineChanges.put(historyEntry.getAuthor(),
-										numberOfLineChanges);
-								System.out.println("\t\tExisting entry => for: "
-										+ historyEntry.getAuthor() + " - "
-										+ numberOfLineChanges);
-							}
+
+							System.out.println("\n\tFile: " + fileName
+									+ "; author: " + historyEntry.getAuthor()
+									+ "; visitorAddedLines: "
+									+ ((EditVisitor) visitor).getAddedLines()
+									+ "; visitorDeletedLines: "
+									+ ((EditVisitor) visitor)
+											.getDeletedLines());
+
+							authorsLineChanges = checkChangedLinesInMap(
+									changedLines, authorsLineChanges,
+									historyEntry.getAuthor(),
+									((EditVisitor) visitor).getAddedLines(),
+									((EditVisitor) visitor).getDeletedLines());
 						}
 					} catch (Exception e) {
 						continue;
@@ -158,7 +175,8 @@ public class OwnershipProblemsInspection {
 
 	public void addFileInformation(String fileName, Integer numberOfChanges,
 			String fileOwner, LinkedHashMap<String, Integer> authorsChanges,
-			LinkedHashMap<String, Integer> authorsLineChanges) {
+			LinkedHashMap<String, ArrayList<Integer>> authorsLineChanges) {
+
 		final FileOwnershipInformation fileOwnershipInformation = new FileOwnershipInformation();
 		fileOwnershipInformation.setNumberOfChanges(numberOfChanges);
 		fileOwnershipInformation.setFileCreator(fileOwner);

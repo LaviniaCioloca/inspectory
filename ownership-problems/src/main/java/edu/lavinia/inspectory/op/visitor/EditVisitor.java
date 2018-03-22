@@ -40,7 +40,8 @@ import edu.lavinia.inspectory.visitor.NodeSetEditVisitor;
 public class EditVisitor extends NodeSetEditVisitor {
 
 	private Set<Node> members = new HashSet<>();
-	private Integer numberOfLines = 0;
+	private Integer addedLines = 0;
+	private Integer deletedLines = 0;
 
 	public EditVisitor(final String fileName) {
 		this.fileName = fileName;
@@ -50,7 +51,7 @@ public class EditVisitor extends NodeSetEditVisitor {
 	public void visit(Add add) {
 		final Node node = add.getNode();
 		if (node instanceof Node.Type) {
-			++numberOfLines; // for the identifier, supertype and modifiers
+			++addedLines; // for the identifier, supertype and modifiers
 			identifier = ((Node.Type) node).getIdentifier();
 			members = ((Node.Type) node).getMembers();
 
@@ -59,22 +60,22 @@ public class EditVisitor extends NodeSetEditVisitor {
 					NodeVisitor nodeVisitor = new NodeVisitor(fileName);
 					nodeVisitor.visit(memberNode);
 				} else if (memberNode instanceof Node.Function) {
-					++numberOfLines; // for signature, modifiers and parameters
+					++addedLines; // for signature, modifiers and parameters
 					final List<String> body = ((Node.Function) memberNode)
 							.getBody();
-					numberOfLines += body.size();
+					addedLines += body.size();
 				} else if (memberNode instanceof Node.Variable) {
-					++numberOfLines;
+					++addedLines;
 				}
 			}
 		} else if (node instanceof Node.Function) {
 			identifier = ((Node.Function) node).getIdentifier();
-			++numberOfLines; // for signature, modifiers and parameters
+			++addedLines; // for signature, modifiers and parameters
 			final List<String> body = ((Node.Function) node).getBody();
 			total += body.size();
-			numberOfLines += body.size();
+			addedLines += body.size();
 		} else if (node instanceof Node.Variable) {
-			++numberOfLines;
+			++addedLines;
 		}
 	}
 
@@ -84,7 +85,7 @@ public class EditVisitor extends NodeSetEditVisitor {
 				.equals(Node.Function.class.getCanonicalName())) {
 			identifier = remove.getIdentifier();
 			total -= 1;
-			--numberOfLines;
+			++deletedLines;
 		}
 	}
 
@@ -104,23 +105,31 @@ public class EditVisitor extends NodeSetEditVisitor {
 						.getBodyEdits();
 				for (final ListEdit<String> listEdit : bodyEdits) {
 					if (listEdit instanceof ListEdit.Add<?>) {
-						total += 1;
-						++numberOfLines;
+						++addedLines;
 					} else if (listEdit instanceof ListEdit.Remove<?>) {
-						total -= 1;
-						--numberOfLines;
+						++deletedLines;
 					}
 				}
+			} else if (memberEdit instanceof NodeSetEdit.Add) {
+				visit(memberEdit);
 			}
 		}
 	}
 
-	public Integer getNumberOfLines() {
-		return numberOfLines;
+	public Integer getAddedLines() {
+		return addedLines;
 	}
 
-	public void setNumberOfLines(Integer numberOfLines) {
-		this.numberOfLines = numberOfLines;
+	public void setAddedLines(Integer addedLines) {
+		this.addedLines = addedLines;
+	}
+
+	public Integer getDeletedLines() {
+		return deletedLines;
+	}
+
+	public void setDeletedLines(Integer deletedLines) {
+		this.deletedLines = deletedLines;
 	}
 
 }
