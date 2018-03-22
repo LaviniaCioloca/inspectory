@@ -112,6 +112,12 @@ public class EditVisitor extends NodeSetEditVisitor {
 				}
 			} else if (memberEdit instanceof NodeSetEdit.Add) {
 				visit(memberEdit);
+			} else if (memberEdit instanceof NodeSetEdit.Remove) {
+				/*
+				 * To change and remove the number of line the method has, not
+				 * -1!
+				 */
+				visit(memberEdit);
 			}
 		}
 	}
