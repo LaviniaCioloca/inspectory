@@ -21,8 +21,10 @@
  *******************************************************************************/
 package edu.lavinia.inspectory.op.visitor;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.metanalysis.core.delta.FunctionTransaction;
@@ -42,6 +44,8 @@ public class EditVisitor extends NodeSetEditVisitor {
 	private Set<Node> members = new HashSet<>();
 	private Integer addedLines = 0;
 	private Integer deletedLines = 0;
+
+	private Map<String, Integer> methodSize = new HashMap<>();
 
 	public EditVisitor(final String fileName) {
 		this.fileName = fileName;
@@ -64,6 +68,9 @@ public class EditVisitor extends NodeSetEditVisitor {
 					final List<String> body = ((Node.Function) memberNode)
 							.getBody();
 					addedLines += body.size();
+
+					methodSize.put(((Node.Function) memberNode).getSignature(),
+							body.size());
 				} else if (memberNode instanceof Node.Variable) {
 					++addedLines;
 				}
@@ -72,8 +79,9 @@ public class EditVisitor extends NodeSetEditVisitor {
 			identifier = ((Node.Function) node).getIdentifier();
 			++addedLines; // for signature, modifiers and parameters
 			final List<String> body = ((Node.Function) node).getBody();
-			total += body.size();
 			addedLines += body.size();
+
+			methodSize.put(identifier, body.size());
 		} else if (node instanceof Node.Variable) {
 			++addedLines;
 		}
@@ -84,8 +92,15 @@ public class EditVisitor extends NodeSetEditVisitor {
 		if (remove.getNodeType().getQualifiedName()
 				.equals(Node.Function.class.getCanonicalName())) {
 			identifier = remove.getIdentifier();
-			total -= 1;
-			++deletedLines;
+
+			Integer currentMethodSize = methodSize.get(identifier);
+			++deletedLines; // remove signature, modifiers and parameters
+			deletedLines += currentMethodSize;
+			methodSize.put(identifier, 0);
+
+			System.out.println("\t\tMethod deleted: " + identifier
+					+ "; currentMethodSize: " + currentMethodSize
+					+ "; deletedLines: " + deletedLines);
 		}
 	}
 
@@ -103,11 +118,23 @@ public class EditVisitor extends NodeSetEditVisitor {
 						.getTransaction();
 				List<ListEdit<String>> bodyEdits = ((FunctionTransaction) changeTransaction)
 						.getBodyEdits();
+
+				Integer currentMethodSize = methodSize.get(
+						((NodeSetEdit.Change<?>) memberEdit).getIdentifier());
+
 				for (final ListEdit<String> listEdit : bodyEdits) {
 					if (listEdit instanceof ListEdit.Add<?>) {
 						++addedLines;
+
+						++currentMethodSize;
+						methodSize.put(((NodeSetEdit.Change<?>) memberEdit)
+								.getIdentifier(), currentMethodSize);
 					} else if (listEdit instanceof ListEdit.Remove<?>) {
 						++deletedLines;
+
+						--currentMethodSize;
+						methodSize.put(((NodeSetEdit.Change<?>) memberEdit)
+								.getIdentifier(), currentMethodSize);
 					}
 				}
 			} else if (memberEdit instanceof NodeSetEdit.Add) {

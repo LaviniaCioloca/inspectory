@@ -135,9 +135,7 @@ public class OwnershipProblemsInspection {
 								.getNodeEdits();
 
 						for (final NodeSetEdit edit : nodeEditList) {
-							System.out.println("Before visit");
 							((EditVisitor) visitor).visit(edit);
-							System.out.println("After visit");
 
 							final ArrayList<Integer> changedLines = authorsLineChanges
 									.get(historyEntry.getAuthor());
