@@ -98,9 +98,11 @@ public class EditVisitor extends NodeSetEditVisitor {
 			deletedLines += currentMethodSize;
 			methodSize.put(identifier, 0);
 
-			System.out.println("\t\tMethod deleted: " + identifier
-					+ "; currentMethodSize: " + currentMethodSize
-					+ "; deletedLines: " + deletedLines);
+			/*
+			 * System.out.println("\t\tMethod deleted: " + identifier +
+			 * "; currentMethodSize: " + currentMethodSize + "; deletedLines: "
+			 * + deletedLines);
+			 */
 		}
 	}
 

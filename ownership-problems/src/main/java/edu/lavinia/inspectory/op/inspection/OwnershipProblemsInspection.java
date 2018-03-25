@@ -23,12 +23,16 @@ package edu.lavinia.inspectory.op.inspection;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.metanalysis.core.delta.NodeSetEdit;
 import org.metanalysis.core.delta.SourceFileTransaction;
@@ -86,6 +90,55 @@ public class OwnershipProblemsInspection {
 		return authorsLineChanges;
 	}
 
+	private LinkedHashMap<String, Double> calculateFileOwnership(
+			LinkedHashMap<String, ArrayList<Integer>> authorsLineChanges) {
+		final LinkedHashMap<String, Double> ownershipPercentages = new LinkedHashMap<>();
+		Integer fileCurrentSize = 0;
+		Integer authorLineChanges;
+		Double authorPercentage;
+		final DecimalFormat twoDecimalsFormat = new DecimalFormat(".##");
+
+		for (final Map.Entry<String, ArrayList<Integer>> entry : authorsLineChanges
+				.entrySet()) {
+			final ArrayList<Integer> lineChanges = entry.getValue();
+
+			fileCurrentSize += lineChanges.get(0);
+			fileCurrentSize -= lineChanges.get(1);
+		}
+
+		for (final Map.Entry<String, ArrayList<Integer>> entry : authorsLineChanges
+				.entrySet()) {
+			final ArrayList<Integer> lineChanges = entry.getValue();
+
+			authorLineChanges = (lineChanges.get(0) - lineChanges.get(1));
+
+			/*
+			 * Calculate the percentage of added lines the current author has:
+			 * 
+			 * (x / 100) * fileCurrentSize = authorLineChanges => x = (100 *
+			 * authorLineChanges) / fileCurrentSize
+			 */
+			authorPercentage = (100 * (double) authorLineChanges)
+					/ (double) fileCurrentSize;
+			authorPercentage = Double
+					.parseDouble(twoDecimalsFormat.format(authorPercentage));
+
+			ownershipPercentages.put(entry.getKey(), authorPercentage);
+		}
+
+		return ownershipPercentages;
+	}
+
+	private LinkedHashMap<String, Double> sortPercentagesMap(
+			LinkedHashMap<String, Double> ownershipPercentages) {
+		return ownershipPercentages.entrySet().stream()
+				.sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+				.collect(Collectors.toMap(Map.Entry::getKey,
+						Map.Entry::getValue, (x, y) -> {
+							throw new AssertionError();
+						}, LinkedHashMap::new));
+	}
+
 	public void createResults() {
 		try {
 			final Set<String> filesList = project.listFiles();
@@ -140,13 +193,14 @@ public class OwnershipProblemsInspection {
 							final ArrayList<Integer> changedLines = authorsLineChanges
 									.get(historyEntry.getAuthor());
 
-							System.out.println("\n\tFile: " + fileName
-									+ "; author: " + historyEntry.getAuthor()
-									+ "; visitorAddedLines: "
-									+ ((EditVisitor) visitor).getAddedLines()
-									+ "; visitorDeletedLines: "
-									+ ((EditVisitor) visitor)
-											.getDeletedLines());
+							/*
+							 * System.out.println("\n\tFile: " + fileName +
+							 * "; author: " + historyEntry.getAuthor() +
+							 * "; visitorAddedLines: " + ((EditVisitor)
+							 * visitor).getAddedLines() +
+							 * "; visitorDeletedLines: " + ((EditVisitor)
+							 * visitor) .getDeletedLines());
+							 */
 
 							authorsLineChanges = checkChangedLinesInMap(
 									changedLines, authorsLineChanges,
@@ -159,8 +213,13 @@ public class OwnershipProblemsInspection {
 					}
 				}
 
+				LinkedHashMap<String, Double> ownershipPercentages = calculateFileOwnership(
+						authorsLineChanges);
+				ownershipPercentages = sortPercentagesMap(ownershipPercentages);
+
 				addFileInformation(fileName, numberOfChanges, fileCreator,
-						authorsChanges, authorsLineChanges);
+						authorsChanges, authorsLineChanges,
+						ownershipPercentages);
 			}
 		} catch (IOException e) {
 			/*
@@ -173,13 +232,15 @@ public class OwnershipProblemsInspection {
 
 	public void addFileInformation(String fileName, Integer numberOfChanges,
 			String fileOwner, LinkedHashMap<String, Integer> authorsChanges,
-			LinkedHashMap<String, ArrayList<Integer>> authorsLineChanges) {
+			LinkedHashMap<String, ArrayList<Integer>> authorsLineChanges,
+			LinkedHashMap<String, Double> ownershipPercentages) {
 
 		final FileOwnershipInformation fileOwnershipInformation = new FileOwnershipInformation();
 		fileOwnershipInformation.setNumberOfChanges(numberOfChanges);
 		fileOwnershipInformation.setFileCreator(fileOwner);
 		fileOwnershipInformation.setAuthorsChanges(authorsChanges);
 		fileOwnershipInformation.setAuthorsLineChanges(authorsLineChanges);
+		fileOwnershipInformation.setOwnershipPercentages(ownershipPercentages);
 
 		fileOwnershipResult.put(fileName, fileOwnershipInformation);
 	}
@@ -201,6 +262,8 @@ public class OwnershipProblemsInspection {
 						.add(fileOwnershipInformation.getFileCreator());
 				fileOwnershipInformationLine.add(fileOwnershipInformation
 						.getAuthorsChanges().toString());
+				fileOwnershipInformationLine.add(fileOwnershipInformation
+						.getOwnershipPercentages().toString());
 				fileOwnershipInformationLine.add(fileOwnershipInformation
 						.getAuthorsLineChanges().toString());
 

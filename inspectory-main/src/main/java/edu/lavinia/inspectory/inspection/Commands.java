@@ -222,6 +222,7 @@ public class Commands {
 					Arrays.asList("File", "Number of changes",
 							"Number of authors", "File Creator",
 							"Authors - Total changes made",
+							"Authors Ownership Percentages",
 							"Authors - Line changes made"));
 			final OwnershipProblemsInspection ownershipProblemsInspection = new OwnershipProblemsInspection(
 					project, csvWriter);

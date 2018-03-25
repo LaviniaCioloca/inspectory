@@ -66,6 +66,7 @@ public class OwnershipProblemsInspectionTest {
 		final FileOwnershipInformation fileOwnershipInformation = new FileOwnershipInformation();
 		final LinkedHashMap<String, Integer> authorsChanges = new LinkedHashMap<>();
 		final LinkedHashMap<String, ArrayList<Integer>> authorsLineChanges = new LinkedHashMap<>();
+		final LinkedHashMap<String, Double> ownershipPercentages = new LinkedHashMap<>();
 		authorsChanges.put("test", 1);
 
 		fileOwnershipInformation.setNumberOfChanges(1);
@@ -76,7 +77,8 @@ public class OwnershipProblemsInspectionTest {
 				fileOwnershipInformation);
 
 		ownershipProblemsInspection.addFileInformation("testFileName", 1,
-				"test", authorsChanges, authorsLineChanges);
+				"test", authorsChanges, authorsLineChanges,
+				ownershipPercentages);
 
 		assertEquals(expectedFileOwnershipResult,
 				ownershipProblemsInspection.getFileOwnershipResult());
