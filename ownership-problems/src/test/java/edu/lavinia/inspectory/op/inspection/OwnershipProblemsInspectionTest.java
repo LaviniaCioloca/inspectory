@@ -73,6 +73,7 @@ public class OwnershipProblemsInspectionTest {
 		fileOwnershipInformation.setFileCreator("test");
 		fileOwnershipInformation.setAuthorsChanges(authorsChanges);
 		fileOwnershipInformation.setAuthorsLineChanges(authorsLineChanges);
+		fileOwnershipInformation.setOwnershipPercentages(ownershipPercentages);
 		expectedFileOwnershipResult.put("testFileName",
 				fileOwnershipInformation);
 
