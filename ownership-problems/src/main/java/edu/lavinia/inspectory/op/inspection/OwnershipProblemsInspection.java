@@ -70,21 +70,20 @@ public class OwnershipProblemsInspection {
 			LinkedHashMap<String, ArrayList<Integer>> authorsLineChanges,
 			String author, Integer visitorAddedLines,
 			Integer visitorDeletedLines) {
+		final ArrayList<Integer> newChangedLines;
 
 		if (changedLines == null) {
-			changedLines = new ArrayList<>(
+			newChangedLines = new ArrayList<>(
 					Arrays.asList(visitorAddedLines, visitorDeletedLines));
 
-			authorsLineChanges.put(author, changedLines);
+			authorsLineChanges.put(author, newChangedLines);
 		} else {
-			final ArrayList<Integer> newChangedLines = new ArrayList<>();
+			newChangedLines = new ArrayList<>();
 
 			newChangedLines.add(changedLines.get(0) + visitorAddedLines);
 			newChangedLines.add(changedLines.get(1) + visitorDeletedLines);
 
-			changedLines = newChangedLines;
-
-			authorsLineChanges.put(author, changedLines);
+			authorsLineChanges.put(author, newChangedLines);
 		}
 
 		return authorsLineChanges;

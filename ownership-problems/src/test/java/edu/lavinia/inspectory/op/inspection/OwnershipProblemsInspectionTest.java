@@ -41,8 +41,8 @@ public class OwnershipProblemsInspectionTest {
 			"./src/test/resources/testFile.csv");
 	private static final PersistentProject PROJECT = null;
 
-	private FileWriter csvWriter;
-	private OwnershipProblemsInspection ownershipProblemsInspection;
+	private static FileWriter csvWriter;
+	private static OwnershipProblemsInspection ownershipProblemsInspection;
 
 	public OwnershipProblemsInspectionTest() {
 		try {
