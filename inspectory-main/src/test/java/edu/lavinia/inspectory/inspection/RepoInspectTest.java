@@ -34,7 +34,7 @@ public class RepoInspectTest {
 
 	@Test
 	public void testMain() {
-		String args[] = new String[1];
+		final String args[] = new String[1];
 		RepoInspect.main(args);
 	}
 

@@ -45,7 +45,7 @@ public class EditVisitor extends NodeSetEditVisitor {
 	private Integer addedLines = 0;
 	private Integer deletedLines = 0;
 
-	private Map<String, Integer> methodSize = new HashMap<>();
+	private final Map<String, Integer> methodSize = new HashMap<>();
 
 	public EditVisitor(final String fileName) {
 		this.fileName = fileName;
@@ -61,7 +61,7 @@ public class EditVisitor extends NodeSetEditVisitor {
 
 			for (final Node memberNode : members) {
 				if (memberNode instanceof Node.Type) {
-					NodeVisitor nodeVisitor = new NodeVisitor(fileName);
+					final NodeVisitor nodeVisitor = new NodeVisitor(fileName);
 					nodeVisitor.visit(memberNode);
 				} else if (memberNode instanceof Node.Function) {
 					++addedLines; // for signature, modifiers and parameters
@@ -93,7 +93,7 @@ public class EditVisitor extends NodeSetEditVisitor {
 				.equals(Node.Function.class.getCanonicalName())) {
 			identifier = remove.getIdentifier();
 
-			Integer currentMethodSize = methodSize.get(identifier);
+			final Integer currentMethodSize = methodSize.get(identifier);
 			++deletedLines; // remove signature, modifiers and parameters
 			deletedLines += currentMethodSize;
 			methodSize.put(identifier, 0);
@@ -116,9 +116,9 @@ public class EditVisitor extends NodeSetEditVisitor {
 
 		for (final NodeSetEdit memberEdit : memberEdits) {
 			if (memberEdit instanceof NodeSetEdit.Change<?>) {
-				Transaction<?> changeTransaction = ((NodeSetEdit.Change<?>) memberEdit)
+				final Transaction<?> changeTransaction = ((NodeSetEdit.Change<?>) memberEdit)
 						.getTransaction();
-				List<ListEdit<String>> bodyEdits = ((FunctionTransaction) changeTransaction)
+				final List<ListEdit<String>> bodyEdits = ((FunctionTransaction) changeTransaction)
 						.getBodyEdits();
 
 				Integer currentMethodSize = methodSize.get(

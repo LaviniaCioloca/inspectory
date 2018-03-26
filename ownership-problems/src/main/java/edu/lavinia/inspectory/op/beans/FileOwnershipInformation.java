@@ -85,14 +85,15 @@ public class FileOwnershipInformation {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == this)
+		if (obj == this) {
 			return true;
+		}
 
 		if (!(obj instanceof FileOwnershipInformation)) {
 			return false;
 		}
 
-		FileOwnershipInformation fileOwnershipInformation = (FileOwnershipInformation) obj;
+		final FileOwnershipInformation fileOwnershipInformation = (FileOwnershipInformation) obj;
 		return numberOfChanges == fileOwnershipInformation.numberOfChanges
 				&& Objects.equals(fileCreator,
 						fileOwnershipInformation.fileCreator)

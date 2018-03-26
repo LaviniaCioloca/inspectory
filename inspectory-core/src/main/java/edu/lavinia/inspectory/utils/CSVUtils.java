@@ -28,6 +28,7 @@ import java.util.List;
 public class CSVUtils {
 
 	private static final char DEFAULT_SEPARATOR = ',';
+	private static final char SPACE = ' ';
 
 	public static void writeLine(Writer writer, List<String> values)
 			throws IOException {
@@ -58,16 +59,17 @@ public class CSVUtils {
 	public static void writeLine(final Writer writer, final List<String> values,
 			char separator, char customQuote) throws IOException {
 		boolean first = true;
-		if (separator == ' ') {
+		if (separator == SPACE) {
 			separator = DEFAULT_SEPARATOR;
 		}
+
 		final StringBuilder stringBuilder = new StringBuilder();
 		for (final String value : values) {
 			if (!first) {
 				stringBuilder.append(separator);
 			}
 
-			if (customQuote == ' ') {
+			if (customQuote == SPACE) {
 				stringBuilder.append(followCVSformat(value));
 			} else {
 				stringBuilder.append(customQuote).append(followCVSformat(value))
@@ -76,7 +78,7 @@ public class CSVUtils {
 
 			first = false;
 		}
-		stringBuilder.append("\n");
+		stringBuilder.append('\n');
 		writer.append(stringBuilder.toString());
 	}
 }
