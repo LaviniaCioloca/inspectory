@@ -22,7 +22,6 @@
 package edu.lavinia.inspectory.am.inspection;
 
 import java.io.IOException;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.FileAppender;
@@ -70,10 +69,12 @@ public class FileModelInspection {
 					visitor.visit(n);
 				}
 
-				final Map<String, Integer> map = visitor.getFunctionSize();
-				for (final Map.Entry<String, Integer> entry : map.entrySet()) {
-					logger.info(entry.getKey() + " - " + entry.getValue());
-				}
+				/*
+				 * final Map<String, Integer> map = visitor.getFunctionSize();
+				 * 
+				 * for (final Map.Entry<String, Integer> entry : map.entrySet())
+				 * { logger.info(entry.getKey() + " - " + entry.getValue()); }
+				 */
 			}
 		} catch (IOException e) {
 			/*

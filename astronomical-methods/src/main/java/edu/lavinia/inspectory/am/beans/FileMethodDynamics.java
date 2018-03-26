@@ -87,14 +87,15 @@ public class FileMethodDynamics {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == this)
+		if (obj == this) {
 			return true;
+		}
 
 		if (!(obj instanceof FileMethodDynamics)) {
 			return false;
 		}
 
-		FileMethodDynamics fileMethodDynamics = (FileMethodDynamics) obj;
+		final FileMethodDynamics fileMethodDynamics = (FileMethodDynamics) obj;
 		return supernovaMethods == fileMethodDynamics.supernovaMethods
 				&& pulsarMethods == fileMethodDynamics.pulsarMethods
 				&& supernovaSeverity == fileMethodDynamics.supernovaSeverity

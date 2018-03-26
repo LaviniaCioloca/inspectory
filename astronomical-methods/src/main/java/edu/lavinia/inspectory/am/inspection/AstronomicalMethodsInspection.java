@@ -115,31 +115,27 @@ public class AstronomicalMethodsInspection {
 			return false;
 		}
 
-		final MethodChangesInformation methodChangesInformation = null;
-
 		if (result.get(visitor.getFileName() + ":" + className + ": "
 				+ visitor.getIdentifier()) == null) {
-			treatNewMethodInResultSet(visitor, className, commit,
-					methodChangesInformation);
+			treatNewMethodInResultSet(visitor, className, commit);
 
 			return true;
 		} else {
-			treatExistentMethodInResultSet(visitor, className, commit,
-					methodChangesInformation);
+			treatExistentMethodInResultSet(visitor, className, commit);
 
 			return false;
 		}
 	}
 
 	private void treatNewMethodInResultSet(GenericVisitor visitor,
-			String className, Commit commit,
-			MethodChangesInformation methodChangesInformation) {
+			String className, Commit commit) {
 
-		ArrayList<Integer> changesList = new ArrayList<Integer>();
+		final ArrayList<Integer> changesList = new ArrayList<Integer>();
 		changesList.add(visitor.getTotal());
-		ArrayList<Commit> commits = new ArrayList<>();
+		final ArrayList<Commit> commits = new ArrayList<>();
 		commits.add(commit);
-		methodChangesInformation = new MethodChangesInformation();
+
+		final MethodChangesInformation methodChangesInformation = new MethodChangesInformation();
 		methodChangesInformation.setCommits(commits);
 		methodChangesInformation.setChangesList(changesList);
 		methodChangesInformation.setClassName(className);
@@ -154,11 +150,10 @@ public class AstronomicalMethodsInspection {
 	}
 
 	private void treatExistentMethodInResultSet(GenericVisitor visitor,
-			String className, Commit commit,
-			MethodChangesInformation methodChangesInformation) {
-
-		methodChangesInformation = result.get(visitor.getFileName() + ":"
-				+ className + ": " + visitor.getIdentifier());
+			String className, Commit commit) {
+		final MethodChangesInformation methodChangesInformation = result
+				.get(visitor.getFileName() + ":" + className + ": "
+						+ visitor.getIdentifier());
 		methodChangesInformation.getChangesList().add(visitor.getTotal());
 		methodChangesInformation.getCommits().add(commit);
 
@@ -345,7 +340,7 @@ public class AstronomicalMethodsInspection {
 						.getCommits();
 				actualSize = 0;
 
-				for (Integer change : changesList) {
+				for (final Integer change : changesList) {
 					actualSize += change;
 				}
 
@@ -387,7 +382,7 @@ public class AstronomicalMethodsInspection {
 		final List<NodeSetEdit> memberEdits = ((TypeTransaction) t)
 				.getMemberEdits();
 
-		for (NodeSetEdit memberEdit : memberEdits) {
+		for (final NodeSetEdit memberEdit : memberEdits) {
 			try {
 				visitor = new EditVisitor(fileName);
 
@@ -596,7 +591,7 @@ public class AstronomicalMethodsInspection {
 			}
 
 			// entireJson.add("repository result", jsonArray);
-			Gson gson = new GsonBuilder().setPrettyPrinting().create();
+			final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 			jsonWriter.write(gson.toJson(jsonArray));
 			// jsonWriter.write(gson.toJson(entireJson));
 		} catch (IOException e) {

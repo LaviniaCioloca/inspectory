@@ -192,7 +192,7 @@ public class MethodChangesInformation {
 	 * @return An ArrayList of Strings data type.
 	 */
 	public ArrayList<String> getMethodInformationLine() {
-		ArrayList<String> methodInformationLine = new ArrayList<>();
+		final ArrayList<String> methodInformationLine = new ArrayList<>();
 
 		// General information
 		methodInformationLine.add(this.getFileName());

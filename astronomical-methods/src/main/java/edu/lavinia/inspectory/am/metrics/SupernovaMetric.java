@@ -185,7 +185,7 @@ public class SupernovaMetric extends MethodMetrics {
 		final ArrayList<Commit> commitsAfterMediumTimespan = new ArrayList<>();
 
 		while (entries.hasNext()) {
-			Map.Entry<Commit, Integer> currentEntry = entries.next();
+			final Map.Entry<Commit, Integer> currentEntry = entries.next();
 			if (currentEntry.getValue() >= MEDIUM_TIMESPAN) {
 				commitsAfterMediumTimespan.add(currentEntry.getKey());
 			}
@@ -333,7 +333,7 @@ public class SupernovaMetric extends MethodMetrics {
 			final HashMap<Commit, Integer> commitsAndTheirChanges = getCommitsAndChangesMap(
 					commits, changesList);
 
-			for (HashMap.Entry<Commit, Integer> entry : commitsIntoTimeIntervals
+			for (final HashMap.Entry<Commit, Integer> entry : commitsIntoTimeIntervals
 					.entrySet()) {
 				sumOfAllLeaps += commitsAndTheirChanges.get(entry.getKey());
 				if (getDifferenceInDays(entry.getKey().getDate(), commits

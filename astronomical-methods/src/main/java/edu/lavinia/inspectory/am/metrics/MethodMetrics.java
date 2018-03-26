@@ -218,7 +218,7 @@ public abstract class MethodMetrics {
 	 *         in metrics.
 	 */
 	public Integer getActiveMethodPoints(Commit lastCommit) {
-		for (HashMap.Entry<Commit, Integer> currentEntry : allCommitsIntoTimeFrames
+		for (final HashMap.Entry<Commit, Integer> currentEntry : allCommitsIntoTimeFrames
 				.entrySet()) {
 			if ((currentEntry.getValue() >= maximumTimeFrameNumber
 					- MEDIUM_TIMESPAN)

@@ -54,7 +54,7 @@ public class FileHistoryInspectTest {
 	private static final PersistentProject PROJECT = null;
 
 	private static final String DATE_FORMAT = "yyyy/MM/dd";
-	private static final String className = "SimpleClass";
+	private static final String CLASS_NAME = "SimpleClass";
 
 	@Test(expected = NullPointerException.class)
 	public void testGetHistoryFunctionsAnalyze() throws IOException {
@@ -75,7 +75,7 @@ public class FileHistoryInspectTest {
 		final GenericVisitor visitor = new NodeVisitor(fileName);
 
 		assertFalse(astronomicalMethodsInspection.checkEntryInResultSet(visitor,
-				className, new Commit()));
+				CLASS_NAME, new Commit()));
 	}
 
 	@Test
@@ -89,7 +89,7 @@ public class FileHistoryInspectTest {
 		visitor.setIdentifier("abc");
 
 		assertTrue(astronomicalMethodsInspection.checkEntryInResultSet(visitor,
-				className, new Commit()));
+				CLASS_NAME, new Commit()));
 	}
 
 	@Test
@@ -105,12 +105,12 @@ public class FileHistoryInspectTest {
 		final MethodChangesInformation methodChangesInformation = new MethodChangesInformation();
 		methodChangesInformation.setChangesList(new ArrayList<Integer>());
 		methodChangesInformation.setCommits(new ArrayList<Commit>());
-		result.put(fileName + ":" + className + ": " + visitor.getIdentifier(),
+		result.put(fileName + ":" + CLASS_NAME + ": " + visitor.getIdentifier(),
 				methodChangesInformation);
 		astronomicalMethodsInspection.setResult(result);
 
 		assertFalse(astronomicalMethodsInspection.checkEntryInResultSet(visitor,
-				className, new Commit()));
+				CLASS_NAME, new Commit()));
 	}
 
 	@Test

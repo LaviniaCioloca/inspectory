@@ -162,7 +162,7 @@ public class PulsarMetricTest {
 		final ArrayList<Integer> changesList = new ArrayList<Integer>(
 				Arrays.asList(210, -10, 50, -40, 250, -40, 100));
 		final ArrayList<Commit> commits = new ArrayList<>();
-		Commit commit = new Commit();
+		final Commit commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/01/01"));
 		commits.add(commit);
 		commits.add(commit);
@@ -496,11 +496,11 @@ public class PulsarMetricTest {
 		commit1.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/08/30"));
 		allCommits.add(commit1);
 
-		Commit commit2 = new Commit();
+		final Commit commit2 = new Commit();
 		commit2.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/09/01"));
 		allCommits.add(commit2);
 
-		Commit commit3 = new Commit();
+		final Commit commit3 = new Commit();
 		commit3.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/09/02"));
 		allCommits.add(commit3);
 
