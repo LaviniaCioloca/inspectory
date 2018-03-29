@@ -40,6 +40,7 @@ import org.metanalysis.core.model.Node;
 import edu.lavinia.inspectory.visitor.NodeSetEditVisitor;
 
 public class EditVisitor extends NodeSetEditVisitor {
+	private boolean isFileVisitor = false;
 
 	private Set<Node> members = new HashSet<>();
 	private Integer addedLines = 0;
@@ -47,16 +48,19 @@ public class EditVisitor extends NodeSetEditVisitor {
 
 	private final Map<String, Integer> methodSize = new HashMap<>();
 
-	public EditVisitor(final String fileName) {
+	public EditVisitor(final String fileName, final boolean isFileVisitor) {
 		this.fileName = fileName;
+		this.isFileVisitor = isFileVisitor;
 	}
 
 	@Override
 	public void visit(Add add) {
 		final Node node = add.getNode();
 		if (node instanceof Node.Type) {
-			++addedLines; // for the identifier, supertype and modifiers
-			identifier = ((Node.Type) node).getIdentifier();
+			if (isFileVisitor) {
+				++addedLines; // for the identifier, supertype and modifiers
+				identifier = ((Node.Type) node).getIdentifier();
+			}
 			members = ((Node.Type) node).getMembers();
 
 			for (final Node memberNode : members) {
@@ -65,13 +69,18 @@ public class EditVisitor extends NodeSetEditVisitor {
 					nodeVisitor.visit(memberNode);
 				} else if (memberNode instanceof Node.Function) {
 					++addedLines; // for signature, modifiers and parameters
+
+					if (!isFileVisitor) {
+						identifier = ((Node.Function) node).getIdentifier();
+					}
 					final List<String> body = ((Node.Function) memberNode)
 							.getBody();
 					addedLines += body.size();
 
 					methodSize.put(((Node.Function) memberNode).getSignature(),
 							body.size());
-				} else if (memberNode instanceof Node.Variable) {
+				} else if (memberNode instanceof Node.Variable
+						&& isFileVisitor) {
 					++addedLines;
 				}
 			}
@@ -82,7 +91,7 @@ public class EditVisitor extends NodeSetEditVisitor {
 			addedLines += body.size();
 
 			methodSize.put(identifier, body.size());
-		} else if (node instanceof Node.Variable) {
+		} else if (node instanceof Node.Variable && isFileVisitor) {
 			++addedLines;
 		}
 	}
@@ -142,10 +151,6 @@ public class EditVisitor extends NodeSetEditVisitor {
 			} else if (memberEdit instanceof NodeSetEdit.Add) {
 				visit(memberEdit);
 			} else if (memberEdit instanceof NodeSetEdit.Remove) {
-				/*
-				 * To change and remove the number of line the method has, not
-				 * -1!
-				 */
 				visit(memberEdit);
 			}
 		}

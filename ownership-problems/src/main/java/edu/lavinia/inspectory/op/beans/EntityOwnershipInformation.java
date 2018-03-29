@@ -25,9 +25,9 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Objects;
 
-public class FileOwnershipInformation {
+public class EntityOwnershipInformation {
 	private Integer numberOfChanges;
-	private String fileCreator;
+	private String entityCreator;
 	private LinkedHashMap<String, Integer> authorsChanges;
 	private LinkedHashMap<String, ArrayList<Integer>> authorsLineChanges;
 	private LinkedHashMap<String, Double> ownershipPercentages;
@@ -40,12 +40,12 @@ public class FileOwnershipInformation {
 		this.numberOfChanges = numberOfChanges;
 	}
 
-	public String getFileCreator() {
-		return fileCreator;
+	public String getEntityCreator() {
+		return entityCreator;
 	}
 
-	public void setFileCreator(String fileCreator) {
-		this.fileCreator = fileCreator;
+	public void setEntityCreator(String entityCreator) {
+		this.entityCreator = entityCreator;
 	}
 
 	public LinkedHashMap<String, Integer> getAuthorsChanges() {
@@ -78,7 +78,7 @@ public class FileOwnershipInformation {
 	@Override
 	public String toString() {
 		return "FileOwnershipInformation [numberOfChanges=" + numberOfChanges
-				+ ", fileCreator=" + fileCreator + ", authorsChanges="
+				+ ", fileCreator=" + entityCreator + ", authorsChanges="
 				+ authorsChanges + ", authorsLineChanges=" + authorsLineChanges
 				+ ", ownershipPercentages=" + ownershipPercentages + "]";
 	}
@@ -89,14 +89,14 @@ public class FileOwnershipInformation {
 			return true;
 		}
 
-		if (!(obj instanceof FileOwnershipInformation)) {
+		if (!(obj instanceof EntityOwnershipInformation)) {
 			return false;
 		}
 
-		final FileOwnershipInformation fileOwnershipInformation = (FileOwnershipInformation) obj;
+		final EntityOwnershipInformation fileOwnershipInformation = (EntityOwnershipInformation) obj;
 		return numberOfChanges == fileOwnershipInformation.numberOfChanges
-				&& Objects.equals(fileCreator,
-						fileOwnershipInformation.fileCreator)
+				&& Objects.equals(entityCreator,
+						fileOwnershipInformation.entityCreator)
 				&& Objects.equals(authorsChanges,
 						fileOwnershipInformation.authorsChanges)
 				&& Objects.equals(authorsLineChanges,
@@ -107,7 +107,7 @@ public class FileOwnershipInformation {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(numberOfChanges, fileCreator, authorsChanges,
+		return Objects.hash(numberOfChanges, entityCreator, authorsChanges,
 				authorsLineChanges, ownershipPercentages);
 	}
 }

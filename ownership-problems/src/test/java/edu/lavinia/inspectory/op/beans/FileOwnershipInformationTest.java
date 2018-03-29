@@ -37,6 +37,6 @@ public class FileOwnershipInformationTest {
 	 */
 	@Test
 	public void testBeanProperties() throws IntrospectionException {
-		JavaBeanTester.test(FileOwnershipInformation.class);
+		JavaBeanTester.test(EntityOwnershipInformation.class);
 	}
 }

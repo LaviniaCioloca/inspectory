@@ -41,7 +41,7 @@ import org.apache.log4j.Logger;
 import org.metanalysis.core.project.PersistentProject;
 
 import edu.lavinia.inspectory.am.inspection.AstronomicalMethodsInspection;
-import edu.lavinia.inspectory.op.inspection.OwnershipProblemsInspection;
+import edu.lavinia.inspectory.op.inspection.FileOwnershipInspection;
 import edu.lavinia.inspectory.utils.CSVUtils;
 
 public class Commands {
@@ -224,7 +224,7 @@ public class Commands {
 							"Authors - Total changes made",
 							"Authors Ownership Percentages",
 							"Authors - Line changes made"));
-			final OwnershipProblemsInspection ownershipProblemsInspection = new OwnershipProblemsInspection(
+			final FileOwnershipInspection ownershipProblemsInspection = new FileOwnershipInspection(
 					project, csvWriter);
 			ownershipProblemsInspection.createResults();
 			ownershipProblemsInspection.writeFileResults();

@@ -33,22 +33,22 @@ import java.util.LinkedHashMap;
 import org.junit.Test;
 import org.metanalysis.core.project.PersistentProject;
 
-import edu.lavinia.inspectory.op.beans.FileOwnershipInformation;
+import edu.lavinia.inspectory.op.beans.EntityOwnershipInformation;
 
-public class OwnershipProblemsInspectionTest {
+public class FileOwnershipInspectionTest {
 
 	private static final File FILE = new File(
 			"./src/test/resources/testFile.csv");
 	private static final PersistentProject PROJECT = null;
 
 	private static FileWriter csvWriter;
-	private static OwnershipProblemsInspection ownershipProblemsInspection;
+	private static FileOwnershipInspection ownershipProblemsInspection;
 
-	public OwnershipProblemsInspectionTest() {
+	public FileOwnershipInspectionTest() {
 		try {
 			csvWriter = new FileWriter(FILE);
-			ownershipProblemsInspection = new OwnershipProblemsInspection(
-					PROJECT, csvWriter);
+			ownershipProblemsInspection = new FileOwnershipInspection(PROJECT,
+					csvWriter);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -62,15 +62,15 @@ public class OwnershipProblemsInspectionTest {
 
 	@Test
 	public void testAddFileInformation() {
-		final HashMap<String, FileOwnershipInformation> expectedFileOwnershipResult = new HashMap<>();
-		final FileOwnershipInformation fileOwnershipInformation = new FileOwnershipInformation();
+		final HashMap<String, EntityOwnershipInformation> expectedFileOwnershipResult = new HashMap<>();
+		final EntityOwnershipInformation fileOwnershipInformation = new EntityOwnershipInformation();
 		final LinkedHashMap<String, Integer> authorsChanges = new LinkedHashMap<>();
 		final LinkedHashMap<String, ArrayList<Integer>> authorsLineChanges = new LinkedHashMap<>();
 		final LinkedHashMap<String, Double> ownershipPercentages = new LinkedHashMap<>();
 		authorsChanges.put("test", 1);
 
 		fileOwnershipInformation.setNumberOfChanges(1);
-		fileOwnershipInformation.setFileCreator("test");
+		fileOwnershipInformation.setEntityCreator("test");
 		fileOwnershipInformation.setAuthorsChanges(authorsChanges);
 		fileOwnershipInformation.setAuthorsLineChanges(authorsLineChanges);
 		fileOwnershipInformation.setOwnershipPercentages(ownershipPercentages);
