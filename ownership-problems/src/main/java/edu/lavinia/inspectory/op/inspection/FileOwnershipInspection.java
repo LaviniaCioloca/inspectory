@@ -65,7 +65,7 @@ public class FileOwnershipInspection extends GenericOwnershipInspection {
 				final List<HistoryEntry> fileHistory = project
 						.getFileHistory(fileName);
 
-				final GenericVisitor visitor = new EditVisitor(fileName, true);
+				final GenericVisitor visitor = new EditVisitor(fileName);
 
 				int numberOfChanges = 0;
 				String fileCreator = null;

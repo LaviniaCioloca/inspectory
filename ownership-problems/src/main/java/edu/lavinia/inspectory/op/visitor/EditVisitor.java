@@ -40,7 +40,6 @@ import org.metanalysis.core.model.Node;
 import edu.lavinia.inspectory.visitor.NodeSetEditVisitor;
 
 public class EditVisitor extends NodeSetEditVisitor {
-	private boolean isFileVisitor = false;
 
 	private Set<Node> members = new HashSet<>();
 	private Integer addedLines = 0;
@@ -48,39 +47,49 @@ public class EditVisitor extends NodeSetEditVisitor {
 
 	private final Map<String, Integer> methodSize = new HashMap<>();
 
-	public EditVisitor(final String fileName, final boolean isFileVisitor) {
+	public EditVisitor(final String fileName) {
 		this.fileName = fileName;
-		this.isFileVisitor = isFileVisitor;
+	}
+
+	private void visitTypeMemberNode(Node typeMemberNode) {
+		if (typeMemberNode instanceof Node.Variable) {
+			++addedLines;
+		} else if (typeMemberNode instanceof Node.Function) {
+			++addedLines; // for signature, modifiers and parameters
+			final List<String> body = ((Node.Function) typeMemberNode)
+					.getBody();
+			addedLines += body.size();
+
+			methodSize.put(((Node.Function) typeMemberNode).getSignature(),
+					body.size());
+		}
 	}
 
 	@Override
 	public void visit(Add add) {
 		final Node node = add.getNode();
 		if (node instanceof Node.Type) {
-			if (isFileVisitor) {
-				++addedLines; // for the identifier, supertype and modifiers
-				identifier = ((Node.Type) node).getIdentifier();
-			}
+			++addedLines; // for the identifier, supertype and modifiers
+			identifier = ((Node.Type) node).getIdentifier();
 			members = ((Node.Type) node).getMembers();
 
 			for (final Node memberNode : members) {
+				// @TODO check if Type of Type exist
 				if (memberNode instanceof Node.Type) {
-					final NodeVisitor nodeVisitor = new NodeVisitor(fileName);
-					nodeVisitor.visit(memberNode);
+					final Set<Node> members = ((Node.Type) memberNode)
+							.getMembers();
+					for (final Node typeMemberNode : members) {
+						visitTypeMemberNode(typeMemberNode);
+					}
 				} else if (memberNode instanceof Node.Function) {
 					++addedLines; // for signature, modifiers and parameters
-
-					if (!isFileVisitor) {
-						identifier = ((Node.Function) node).getIdentifier();
-					}
 					final List<String> body = ((Node.Function) memberNode)
 							.getBody();
 					addedLines += body.size();
 
 					methodSize.put(((Node.Function) memberNode).getSignature(),
 							body.size());
-				} else if (memberNode instanceof Node.Variable
-						&& isFileVisitor) {
+				} else if (memberNode instanceof Node.Variable) {
 					++addedLines;
 				}
 			}
@@ -91,7 +100,7 @@ public class EditVisitor extends NodeSetEditVisitor {
 			addedLines += body.size();
 
 			methodSize.put(identifier, body.size());
-		} else if (node instanceof Node.Variable && isFileVisitor) {
+		} else if (node instanceof Node.Variable) {
 			++addedLines;
 		}
 	}
@@ -151,6 +160,10 @@ public class EditVisitor extends NodeSetEditVisitor {
 			} else if (memberEdit instanceof NodeSetEdit.Add) {
 				visit(memberEdit);
 			} else if (memberEdit instanceof NodeSetEdit.Remove) {
+				/*
+				 * To change and remove the number of line the method has, not
+				 * -1!
+				 */
 				visit(memberEdit);
 			}
 		}
