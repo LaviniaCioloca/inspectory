@@ -218,15 +218,17 @@ public class Commands {
 			}
 
 			csvWriter = new FileWriter(csvFile);
-			CSVUtils.writeLine(csvWriter,
-					Arrays.asList("File", "Number of changes",
-							"Number of authors", "File Creator",
-							"Authors - Total changes made",
-							"Authors Ownership Percentages",
-							"Authors - Line changes made"));
+			/*
+			 * CSVUtils.writeLine(csvWriter, Arrays.asList("File",
+			 * "Number of changes", "Number of authors", "File Creator",
+			 * "Authors - Total changes made", "Authors Ownership Percentages",
+			 * "Authors - Line changes made"));
+			 */
 			// final FileOwnershipInspection ownershipProblemsInspection = new
 			// FileOwnershipInspection(project, csvWriter);
 
+			CSVUtils.writeLine(csvWriter, Arrays.asList("Method full path",
+					"Author - Line changes made"));
 			final MethodOwnershipInspection ownershipProblemsInspection = new MethodOwnershipInspection(
 					project, csvWriter);
 			ownershipProblemsInspection.createResults();

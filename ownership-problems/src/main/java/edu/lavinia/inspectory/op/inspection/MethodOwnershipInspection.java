@@ -27,8 +27,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import org.metanalysis.core.delta.FunctionTransaction;
+import org.metanalysis.core.delta.ListEdit;
 import org.metanalysis.core.delta.NodeSetEdit;
 import org.metanalysis.core.delta.SourceFileTransaction;
 import org.metanalysis.core.delta.Transaction;
@@ -39,10 +42,10 @@ import org.metanalysis.core.project.Project.HistoryEntry;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
-import com.google.common.collect.Table.Cell;
 
 import edu.lavinia.inspectory.beans.Commit;
 import edu.lavinia.inspectory.op.visitor.EditVisitor;
+import edu.lavinia.inspectory.utils.CSVUtils;
 import edu.lavinia.inspectory.visitor.GenericVisitor;
 
 public class MethodOwnershipInspection extends GenericOwnershipInspection {
@@ -76,31 +79,71 @@ public class MethodOwnershipInspection extends GenericOwnershipInspection {
 	 * @param lineChanges
 	 */
 	public void handleNodeSetEditChange(NodeSetEdit edit, String fileName,
-			Commit commit, ArrayList<Integer> lineChanges) {
+			Commit commit) {
 		final String className = ((NodeSetEdit.Change<?>) edit).getIdentifier();
-		final Transaction<?> t = ((NodeSetEdit.Change<?>) edit)
+		final Transaction<?> transaction = ((NodeSetEdit.Change<?>) edit)
 				.getTransaction();
-		final List<NodeSetEdit> memberEdits = ((TypeTransaction) t)
+		final List<NodeSetEdit> memberEdits = ((TypeTransaction) transaction)
 				.getMemberEdits();
 
-		/*
-		 * for (final NodeSetEdit memberEdit : memberEdits) { try { if
-		 * (memberEdit instanceof NodeSetEdit.Remove) { Integer lastMethodSize =
-		 * 0; final ArrayList<Integer> changesList = result.get(fileName + ":" +
-		 * className + ": " + ((NodeSetEdit.Remove) memberEdit).getIdentifier())
-		 * .getChangesList();
-		 * 
-		 * for (final Integer change : changesList) { lastMethodSize += change;
-		 * }
-		 * 
-		 * visitor.setLastMethodSize(lastMethodSize); }
-		 * 
-		 * ((EditVisitor) visitor).visit(memberEdit);
-		 * 
-		 * if (checkEntryInResultSet(visitor, className, commit)) {
-		 * addDataInMethodInformationList(fileName, className,
-		 * visitor.getIdentifier()); } } catch (Exception e) { continue; } }
-		 */
+		for (final NodeSetEdit memberEdit : memberEdits) {
+			try {
+				if (memberEdit instanceof NodeSetEdit.Change) {
+					final Transaction<?> functionTransaction = ((NodeSetEdit.Change<?>) memberEdit)
+							.getTransaction();
+
+					if (functionTransaction instanceof FunctionTransaction) {
+						final List<ListEdit<String>> bodyEdits = ((FunctionTransaction) functionTransaction)
+								.getBodyEdits();
+						final String methodSignature = ((NodeSetEdit.Change<?>) memberEdit)
+								.getIdentifier();
+						Integer addedLines = 0;
+						Integer deletedLines = 0;
+
+						for (final ListEdit<String> listEdit : bodyEdits) {
+							if (listEdit instanceof ListEdit.Add<?>) {
+								++addedLines;
+							} else if (listEdit instanceof ListEdit.Remove<?>) {
+								++deletedLines;
+							}
+						}
+
+						final String methodFullPath = fileName + " -> "
+								+ className + " -> " + methodSignature;
+						final List<Integer> authorsNewChanges = new ArrayList<>(
+								Arrays.asList(addedLines, deletedLines));
+						updateExistingMethodsAuthorsChanges(methodFullPath,
+								commit.getAuthor(), authorsNewChanges);
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				continue;
+			}
+		}
+
+	}
+
+	private void updateExistingMethodsAuthorsChanges(String methodFullPath,
+			String author, List<Integer> authorsNewChanges) {
+		final List<Integer> currentAuthorsChanges = methodsAuthorsChanges
+				.get(methodFullPath, author);
+		Integer currentAddedLines;
+		Integer currentDeletedLines;
+
+		if (currentAuthorsChanges == null) {
+			currentAddedLines = authorsNewChanges.get(0);
+			currentDeletedLines = authorsNewChanges.get(1);
+		} else {
+			currentAddedLines = currentAuthorsChanges.get(0);
+			currentAddedLines += authorsNewChanges.get(0);
+			currentDeletedLines = currentAuthorsChanges.get(1);
+			currentDeletedLines += authorsNewChanges.get(1);
+		}
+
+		final List<Integer> newMethodsChanges = new ArrayList<>(
+				Arrays.asList(currentAddedLines, currentDeletedLines));
+		methodsAuthorsChanges.put(methodFullPath, author, newMethodsChanges);
 	}
 
 	private void addNewMethodsAuthorsChanges(Node typeMember, String fileName,
@@ -114,7 +157,7 @@ public class MethodOwnershipInspection extends GenericOwnershipInspection {
 				+ methodSignature;
 		methodSize = body.size();
 
-		List<Integer> authorsLineAdded = new ArrayList<>(
+		final List<Integer> authorsLineAdded = new ArrayList<>(
 				Arrays.asList(methodSize, 0));
 		methodsAuthorsChanges.put(methodFullPath, commit.getAuthor(),
 				authorsLineAdded);
@@ -131,7 +174,7 @@ public class MethodOwnershipInspection extends GenericOwnershipInspection {
 	 * @param lineChanges
 	 */
 	public void handleNodeSetEditAdd(NodeSetEdit edit, String fileName,
-			Commit commit, ArrayList<Integer> lineChanges) {
+			Commit commit) {
 		final Node node = ((NodeSetEdit.Add) edit).getNode();
 
 		if (node instanceof Node.Type) {
@@ -210,21 +253,15 @@ public class MethodOwnershipInspection extends GenericOwnershipInspection {
 								.getTransaction();
 						final List<NodeSetEdit> nodeEditList = sourceFileTransaction
 								.getNodeEdits();
-						final ArrayList<Integer> lineChanges = null;
 
 						for (final NodeSetEdit edit : nodeEditList) {
 							if (edit instanceof NodeSetEdit.Change<?>) {
-								handleNodeSetEditChange(edit, fileName, commit,
-										lineChanges);
+								handleNodeSetEditChange(edit, fileName, commit);
 							} else if (edit instanceof NodeSetEdit.Add) {
-								handleNodeSetEditAdd(edit, fileName, commit,
-										lineChanges);
+								handleNodeSetEditAdd(edit, fileName, commit);
 							} else {
 								deletedNodes.add(fileName);
 							}
-
-							final ArrayList<Integer> changedLines = authorsLineChanges
-									.get(historyEntry.getAuthor());
 						}
 					} catch (Exception e) {
 						continue;
@@ -239,19 +276,52 @@ public class MethodOwnershipInspection extends GenericOwnershipInspection {
 						authorsChanges, authorsLineChanges,
 						ownershipPercentages);
 			}
-
-			for (Cell<String, String, List<Integer>> cell : methodsAuthorsChanges
-					.cellSet()) {
-				System.out.println("\nMethod: " + cell.getRowKey()
-						+ "; author: " + cell.getColumnKey() + "; changes: "
-						+ cell.getValue());
-			}
+			/*
+			 * for (Cell<String, String, List<Integer>> cell :
+			 * methodsAuthorsChanges .cellSet()) {
+			 * System.out.println("\nMethod: " + cell.getRowKey() + "; author: "
+			 * + cell.getColumnKey() + "; changes: " + cell.getValue()); }
+			 * Map<String, Map<String, List<Integer>>> map =
+			 * methodsAuthorsChanges .rowMap();
+			 * 
+			 * for (String row : map.keySet()) { Map<String, List<Integer>> tmp
+			 * = map.get(row); System.out.print(row + " = { "); for
+			 * (Map.Entry<String, List<Integer>> pair : tmp.entrySet()) {
+			 * System.out.print( pair.getKey() + " = " + pair.getValue() +
+			 * ", "); } System.out.print("};\n"); }
+			 */
 		} catch (IOException e) {
 			/*
 			 * Need to have a NOP here because of the files that do not have a
 			 * model -> they have static initializers and getModel(file) throws
 			 * IOException
 			 */
+		}
+	}
+
+	@Override
+	public void writeFileResults() {
+		try {
+			final Map<String, Map<String, List<Integer>>> methodsAuthorsChangesMap = methodsAuthorsChanges
+					.rowMap();
+
+			for (String methodFullPath : methodsAuthorsChangesMap.keySet()) {
+				final ArrayList<String> methodOwnershipInformationLine = new ArrayList<>();
+				final Map<String, List<Integer>> methodData = methodsAuthorsChangesMap
+						.get(methodFullPath);
+				methodOwnershipInformationLine.add(methodFullPath);
+
+				for (Map.Entry<String, List<Integer>> authorChanges : methodData
+						.entrySet()) {
+					methodOwnershipInformationLine.add(authorChanges.getKey()
+							+ " = " + authorChanges.getValue());
+				}
+
+				CSVUtils.writeLine(csvWriter, methodOwnershipInformationLine,
+						',', '"');
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 }

@@ -377,9 +377,9 @@ public class AstronomicalMethodsInspection {
 			GenericVisitor visitor, String fileName, Commit commit,
 			ArrayList<Integer> lineChanges) {
 		final String className = ((NodeSetEdit.Change<?>) edit).getIdentifier();
-		final Transaction<?> t = ((NodeSetEdit.Change<?>) edit)
+		final Transaction<?> transaction = ((NodeSetEdit.Change<?>) edit)
 				.getTransaction();
-		final List<NodeSetEdit> memberEdits = ((TypeTransaction) t)
+		final List<NodeSetEdit> memberEdits = ((TypeTransaction) transaction)
 				.getMemberEdits();
 
 		for (final NodeSetEdit memberEdit : memberEdits) {
