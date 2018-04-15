@@ -25,6 +25,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,7 +51,8 @@ import edu.lavinia.inspectory.visitor.GenericVisitor;
 
 public class MethodOwnershipInspection extends GenericOwnershipInspection {
 	private ArrayList<String> deletedNodes;
-	// private Map<String, Map<String, List<Integer>>> methodsAuthorsChanges;
+	private Map<String, Integer> methodNumberOfChanges = new HashMap<>();
+	private Map<String, Integer> methodSize = new HashMap<>();
 	private Table<String, String, List<Integer>> methodsAuthorsChanges = HashBasedTable
 			.create();
 
@@ -112,7 +114,38 @@ public class MethodOwnershipInspection extends GenericOwnershipInspection {
 								+ className + " -> " + methodSignature;
 						final List<Integer> authorsNewChanges = new ArrayList<>(
 								Arrays.asList(addedLines, deletedLines));
-						updateExistingMethodsAuthorsChanges(methodFullPath,
+
+						updateMethodsAuthorsChanges(methodFullPath,
+								commit.getAuthor(), authorsNewChanges);
+					}
+				} else if (memberEdit instanceof NodeSetEdit.Add) {
+					final Node memberEditNode = ((NodeSetEdit.Add) memberEdit)
+							.getNode();
+
+					if (memberEditNode instanceof Node.Function) {
+						final List<String> methodBody = ((Node.Function) memberEditNode)
+								.getBody();
+						final String methodSignature = ((Node.Function) memberEditNode)
+								.getSignature();
+
+						addMethodsAuthorsChanges(methodBody.size(),
+								methodSignature, fileName, className, commit);
+					}
+				} else if (memberEdit instanceof NodeSetEdit.Remove) {
+					if (((NodeSetEdit.Remove) memberEdit).getNodeType()
+							.getQualifiedName()
+							.equals(Node.Function.class.getCanonicalName())) {
+
+						final String methodSignature = ((NodeSetEdit.Remove) memberEdit)
+								.getIdentifier();
+						final String methodFullPath = fileName + " -> "
+								+ className + " -> " + methodSignature;
+						final Integer deletedLines = methodSize
+								.get(methodFullPath);
+						final List<Integer> authorsNewChanges = new ArrayList<>(
+								Arrays.asList(0, deletedLines));
+
+						updateMethodsAuthorsChanges(methodFullPath,
 								commit.getAuthor(), authorsNewChanges);
 					}
 				}
@@ -124,43 +157,63 @@ public class MethodOwnershipInspection extends GenericOwnershipInspection {
 
 	}
 
-	private void updateExistingMethodsAuthorsChanges(String methodFullPath,
+	private void updateMethodsAuthorsChanges(String methodFullPath,
 			String author, List<Integer> authorsNewChanges) {
 		final List<Integer> currentAuthorsChanges = methodsAuthorsChanges
 				.get(methodFullPath, author);
 		Integer currentAddedLines;
 		Integer currentDeletedLines;
+		final Integer increasedMethodChanges;
 
 		if (currentAuthorsChanges == null) {
 			currentAddedLines = authorsNewChanges.get(0);
 			currentDeletedLines = authorsNewChanges.get(1);
+			increasedMethodChanges = 1;
 		} else {
 			currentAddedLines = currentAuthorsChanges.get(0);
 			currentAddedLines += authorsNewChanges.get(0);
 			currentDeletedLines = currentAuthorsChanges.get(1);
 			currentDeletedLines += authorsNewChanges.get(1);
+			increasedMethodChanges = methodNumberOfChanges.get(methodFullPath)
+					+ 1;
 		}
+
+		System.out.println(
+				"----------------------------------------------------");
 
 		final List<Integer> newMethodsChanges = new ArrayList<>(
 				Arrays.asList(currentAddedLines, currentDeletedLines));
 		methodsAuthorsChanges.put(methodFullPath, author, newMethodsChanges);
+		methodNumberOfChanges.put(methodFullPath, increasedMethodChanges);
+		final Integer currentMethodSize = methodSize.get(methodFullPath);
+
+		final Integer newMethodSize = currentMethodSize
+				+ (currentAddedLines - currentDeletedLines);
+
+		System.out.println(
+				"\nMethodFullPath: " + methodFullPath + "; currentMethodSize: "
+						+ currentMethodSize + "; new size: " + newMethodSize);
+		methodSize.put(methodFullPath, newMethodSize);
+		System.out.println(
+				"----------------------------------------------------");
 	}
 
-	private void addNewMethodsAuthorsChanges(Node typeMember, String fileName,
-			String className, Commit commit) {
-		final String methodSignature;
+	private void addMethodsAuthorsChanges(Integer methodBodySize,
+			String methodSignature, String fileName, String className,
+			Commit commit) {
 		final String methodFullPath;
-		final Integer methodSize;
-		final List<String> body = ((Node.Function) typeMember).getBody();
-		methodSignature = ((Node.Function) typeMember).getSignature();
+		final Integer methodTotalSize;
 		methodFullPath = fileName + " -> " + className + " -> "
 				+ methodSignature;
-		methodSize = body.size();
+		methodTotalSize = methodBodySize + 1; // for signature, modifiers and
+												// parameters
 
 		final List<Integer> authorsLineAdded = new ArrayList<>(
-				Arrays.asList(methodSize, 0));
+				Arrays.asList(methodTotalSize, 0));
 		methodsAuthorsChanges.put(methodFullPath, commit.getAuthor(),
 				authorsLineAdded);
+		methodNumberOfChanges.put(methodFullPath, 1);
+		methodSize.put(methodFullPath, methodBodySize);
 	}
 
 	/**
@@ -190,14 +243,25 @@ public class MethodOwnershipInspection extends GenericOwnershipInspection {
 								.getMembers();
 						for (final Node typeMember : typeMembers) {
 							if (typeMember instanceof Node.Function) {
-								addNewMethodsAuthorsChanges(typeMember,
-										fileName, className, commit);
+								final List<String> methodBody = ((Node.Function) typeMember)
+										.getBody();
+								final String methodSignature = ((Node.Function) typeMember)
+										.getSignature();
+
+								addMethodsAuthorsChanges(methodBody.size(),
+										methodSignature, fileName, className,
+										commit);
 							}
 						}
 					} else if (member instanceof Node.Function) {
 						className = ((Node.Type) node).getName();
-						addNewMethodsAuthorsChanges(member, fileName, className,
-								commit);
+						final List<String> methodBody = ((Node.Function) member)
+								.getBody();
+						final String methodSignature = ((Node.Function) member)
+								.getSignature();
+
+						addMethodsAuthorsChanges(methodBody.size(),
+								methodSignature, fileName, className, commit);
 					}
 				} catch (Exception e) {
 					continue;
