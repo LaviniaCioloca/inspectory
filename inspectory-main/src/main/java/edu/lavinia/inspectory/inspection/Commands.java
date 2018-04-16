@@ -227,8 +227,10 @@ public class Commands {
 			// final FileOwnershipInspection ownershipProblemsInspection = new
 			// FileOwnershipInspection(project, csvWriter);
 
-			CSVUtils.writeLine(csvWriter, Arrays.asList("Method full path",
-					"Author - Line changes made"));
+			CSVUtils.writeLine(csvWriter,
+					Arrays.asList("Method full path", "Number of changes",
+							"Number of authors", "Method current size",
+							"Author - Line changes made"));
 			final MethodOwnershipInspection ownershipProblemsInspection = new MethodOwnershipInspection(
 					project, csvWriter);
 			ownershipProblemsInspection.createResults();

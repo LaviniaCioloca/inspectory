@@ -70,16 +70,55 @@ public class MethodOwnershipInspection extends GenericOwnershipInspection {
 		super(project, csvWriter);
 	}
 
-	/**
-	 * Checks for every Change MemberEdit of the current NodeSetEdit if there is
-	 * in the result set in order to add it to the CSV line.
-	 * 
-	 * @param edit
-	 * @param visitor
-	 * @param fileName
-	 * @param commit
-	 * @param lineChanges
-	 */
+	private void updateMethodsAuthorsChanges(String methodFullPath,
+			String author, List<Integer> authorsNewChanges) {
+		final List<Integer> currentAuthorsChanges = methodsAuthorsChanges
+				.get(methodFullPath, author);
+		Integer currentAddedLines;
+		Integer currentDeletedLines;
+		final Integer increasedMethodChanges = methodNumberOfChanges
+				.get(methodFullPath) + 1;
+
+		if (currentAuthorsChanges == null) {
+			currentAddedLines = authorsNewChanges.get(0);
+			currentDeletedLines = authorsNewChanges.get(1);
+		} else {
+			currentAddedLines = currentAuthorsChanges.get(0);
+			currentAddedLines += authorsNewChanges.get(0);
+			currentDeletedLines = currentAuthorsChanges.get(1);
+			currentDeletedLines += authorsNewChanges.get(1);
+		}
+
+		final List<Integer> newMethodsChanges = new ArrayList<>(
+				Arrays.asList(currentAddedLines, currentDeletedLines));
+		methodsAuthorsChanges.put(methodFullPath, author, newMethodsChanges);
+		methodNumberOfChanges.put(methodFullPath, increasedMethodChanges);
+		final Integer currentMethodSize = methodSize.get(methodFullPath);
+
+		final Integer newMethodSize = currentMethodSize
+				+ (authorsNewChanges.get(0) - authorsNewChanges.get(1));
+
+		methodSize.put(methodFullPath, newMethodSize);
+	}
+
+	private void addMethodsAuthorsChanges(Integer methodBodySize,
+			String methodSignature, String fileName, String className,
+			Commit commit) {
+		final String methodFullPath;
+		final Integer methodTotalSize;
+		methodFullPath = fileName + " -> " + className + " -> "
+				+ methodSignature;
+		methodTotalSize = methodBodySize + 1; // for signature, modifiers and
+												// parameters
+
+		final List<Integer> authorsLineAdded = new ArrayList<>(
+				Arrays.asList(methodTotalSize, 0));
+		methodsAuthorsChanges.put(methodFullPath, commit.getAuthor(),
+				authorsLineAdded);
+		methodNumberOfChanges.put(methodFullPath, 1);
+		methodSize.put(methodFullPath, methodTotalSize);
+	}
+
 	public void handleNodeSetEditChange(NodeSetEdit edit, String fileName,
 			Commit commit) {
 		final String className = ((NodeSetEdit.Change<?>) edit).getIdentifier();
@@ -157,75 +196,6 @@ public class MethodOwnershipInspection extends GenericOwnershipInspection {
 
 	}
 
-	private void updateMethodsAuthorsChanges(String methodFullPath,
-			String author, List<Integer> authorsNewChanges) {
-		final List<Integer> currentAuthorsChanges = methodsAuthorsChanges
-				.get(methodFullPath, author);
-		Integer currentAddedLines;
-		Integer currentDeletedLines;
-		final Integer increasedMethodChanges;
-
-		if (currentAuthorsChanges == null) {
-			currentAddedLines = authorsNewChanges.get(0);
-			currentDeletedLines = authorsNewChanges.get(1);
-			increasedMethodChanges = 1;
-		} else {
-			currentAddedLines = currentAuthorsChanges.get(0);
-			currentAddedLines += authorsNewChanges.get(0);
-			currentDeletedLines = currentAuthorsChanges.get(1);
-			currentDeletedLines += authorsNewChanges.get(1);
-			increasedMethodChanges = methodNumberOfChanges.get(methodFullPath)
-					+ 1;
-		}
-
-		System.out.println(
-				"----------------------------------------------------");
-
-		final List<Integer> newMethodsChanges = new ArrayList<>(
-				Arrays.asList(currentAddedLines, currentDeletedLines));
-		methodsAuthorsChanges.put(methodFullPath, author, newMethodsChanges);
-		methodNumberOfChanges.put(methodFullPath, increasedMethodChanges);
-		final Integer currentMethodSize = methodSize.get(methodFullPath);
-
-		final Integer newMethodSize = currentMethodSize
-				+ (currentAddedLines - currentDeletedLines);
-
-		System.out.println(
-				"\nMethodFullPath: " + methodFullPath + "; currentMethodSize: "
-						+ currentMethodSize + "; new size: " + newMethodSize);
-		methodSize.put(methodFullPath, newMethodSize);
-		System.out.println(
-				"----------------------------------------------------");
-	}
-
-	private void addMethodsAuthorsChanges(Integer methodBodySize,
-			String methodSignature, String fileName, String className,
-			Commit commit) {
-		final String methodFullPath;
-		final Integer methodTotalSize;
-		methodFullPath = fileName + " -> " + className + " -> "
-				+ methodSignature;
-		methodTotalSize = methodBodySize + 1; // for signature, modifiers and
-												// parameters
-
-		final List<Integer> authorsLineAdded = new ArrayList<>(
-				Arrays.asList(methodTotalSize, 0));
-		methodsAuthorsChanges.put(methodFullPath, commit.getAuthor(),
-				authorsLineAdded);
-		methodNumberOfChanges.put(methodFullPath, 1);
-		methodSize.put(methodFullPath, methodBodySize);
-	}
-
-	/**
-	 * Checks for every Add NodeSetEdit if there is in the result set in order
-	 * to add it to the CSV line.
-	 * 
-	 * @param edit
-	 * @param visitor
-	 * @param fileName
-	 * @param commit
-	 * @param lineChanges
-	 */
 	public void handleNodeSetEditAdd(NodeSetEdit edit, String fileName,
 			Commit commit) {
 		final Node node = ((NodeSetEdit.Add) edit).getNode();
@@ -374,6 +344,12 @@ public class MethodOwnershipInspection extends GenericOwnershipInspection {
 				final Map<String, List<Integer>> methodData = methodsAuthorsChangesMap
 						.get(methodFullPath);
 				methodOwnershipInformationLine.add(methodFullPath);
+				methodOwnershipInformationLine.add(
+						methodNumberOfChanges.get(methodFullPath).toString());
+				methodOwnershipInformationLine
+						.add(String.valueOf(methodData.size()));
+				methodOwnershipInformationLine
+						.add(methodSize.get(methodFullPath).toString());
 
 				for (Map.Entry<String, List<Integer>> authorChanges : methodData
 						.entrySet()) {
