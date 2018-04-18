@@ -86,10 +86,16 @@ public class Commands {
 				.desc("Ownership Problems Metric applied on the current repository.")
 				.build();
 
-		options.addOption(helpOption);
-		options.addOption(cleanOption);
+		final Option allOption = Option.builder("all").longOpt("all")
+				.required(false)
+				.desc("Astronomical Methods & Ownership Problems Metrics applied on the current repository.")
+				.build();
+
+		options.addOption(allOption);
 		options.addOption(ammOption);
 		options.addOption(opmOption);
+		options.addOption(helpOption);
+		options.addOption(cleanOption);
 	}
 
 	public void parse() {
@@ -103,6 +109,8 @@ public class Commands {
 				help();
 			} else if (cmd.hasOption("c")) {
 				clean();
+			} else if (cmd.hasOption("all")) {
+				allMetrics();
 			} else if (cmd.hasOption("amm")) {
 				astronomicalMethodsMetric();
 			} else if (cmd.hasOption("opm")) {
@@ -117,9 +125,10 @@ public class Commands {
 	}
 
 	private void help() {
-		final HelpFormatter formater = new HelpFormatter();
+		final HelpFormatter formatter = new HelpFormatter();
 
-		formater.printHelp("java -jar inspectory-<version>.jar <command>",
+		formatter.setOptionComparator(null);
+		formatter.printHelp("java -jar inspectory-<version>.jar <command>",
 				options);
 		System.exit(0);
 	}
@@ -139,6 +148,14 @@ public class Commands {
 					+ directoryPath);
 			e.printStackTrace();
 		}
+	}
+
+	private void allMetrics() {
+		System.out.println("Starting to inspect the repository.....");
+		astronomicalMethodsMetric();
+		ownershipProblemsMetric();
+		System.out.println(
+				"Inspection successful! See results in .inspectory folder in the current repository.");
 	}
 
 	private void astronomicalMethodsMetric() {
