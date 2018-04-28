@@ -24,6 +24,7 @@ package edu.lavinia.inspectory.op.inspection;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
@@ -34,7 +35,9 @@ import org.metanalysis.core.project.PersistentProject;
 import org.metanalysis.core.project.Project.HistoryEntry;
 
 import edu.lavinia.inspectory.beans.Commit;
+import edu.lavinia.inspectory.op.beans.EntityOwnershipInformation;
 import edu.lavinia.inspectory.op.visitor.EditVisitor;
+import edu.lavinia.inspectory.utils.CSVUtils;
 import edu.lavinia.inspectory.visitor.GenericVisitor;
 
 public class FileOwnershipInspection extends GenericOwnershipInspection {
@@ -53,6 +56,7 @@ public class FileOwnershipInspection extends GenericOwnershipInspection {
 		super(project, csvWriter);
 	}
 
+	@Override
 	public void createResults() {
 		try {
 			final Set<String> filesList = project.listFiles();
@@ -141,6 +145,37 @@ public class FileOwnershipInspection extends GenericOwnershipInspection {
 			 * model -> they have static initializers and getModel(file) throws
 			 * IOException
 			 */
+		}
+	}
+
+	@Override
+	public void writeFileResults() {
+		try {
+			for (final HashMap.Entry<String, EntityOwnershipInformation> entry : entityOwnershipResult
+					.entrySet()) {
+				final ArrayList<String> fileOwnershipInformationLine = new ArrayList<>();
+				final String fileName = entry.getKey();
+				final EntityOwnershipInformation fileOwnershipInformation = entry
+						.getValue();
+				fileOwnershipInformationLine.add(fileName);
+				fileOwnershipInformationLine.add(fileOwnershipInformation
+						.getNumberOfChanges().toString());
+				fileOwnershipInformationLine.add(String.valueOf(
+						fileOwnershipInformation.getAuthorsChanges().size()));
+				fileOwnershipInformationLine
+						.add(fileOwnershipInformation.getEntityCreator());
+				fileOwnershipInformationLine.add(fileOwnershipInformation
+						.getAuthorsChanges().toString());
+				fileOwnershipInformationLine.add(fileOwnershipInformation
+						.getOwnershipPercentages().toString());
+				fileOwnershipInformationLine.add(fileOwnershipInformation
+						.getAuthorsLineChanges().toString());
+
+				CSVUtils.writeLine(csvWriter, fileOwnershipInformationLine, ',',
+						'"');
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 }

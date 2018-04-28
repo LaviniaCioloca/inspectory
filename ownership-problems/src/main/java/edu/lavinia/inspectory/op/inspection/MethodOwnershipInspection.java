@@ -240,6 +240,7 @@ public class MethodOwnershipInspection extends GenericOwnershipInspection {
 		}
 	}
 
+	@Override
 	public void createResults() {
 		try {
 			final Set<String> filesList = project.listFiles();

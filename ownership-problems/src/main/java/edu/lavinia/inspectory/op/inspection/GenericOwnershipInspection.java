@@ -22,7 +22,6 @@
 package edu.lavinia.inspectory.op.inspection;
 
 import java.io.FileWriter;
-import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,7 +34,6 @@ import java.util.stream.Collectors;
 import org.metanalysis.core.project.PersistentProject;
 
 import edu.lavinia.inspectory.op.beans.EntityOwnershipInformation;
-import edu.lavinia.inspectory.utils.CSVUtils;
 
 public abstract class GenericOwnershipInspection {
 	protected final PersistentProject project;
@@ -149,35 +147,9 @@ public abstract class GenericOwnershipInspection {
 		entityOwnershipResult.put(fileName, fileOwnershipInformation);
 	}
 
-	public void writeFileResults() {
-		try {
-			for (final HashMap.Entry<String, EntityOwnershipInformation> entry : entityOwnershipResult
-					.entrySet()) {
-				final ArrayList<String> fileOwnershipInformationLine = new ArrayList<>();
-				final String fileName = entry.getKey();
-				final EntityOwnershipInformation fileOwnershipInformation = entry
-						.getValue();
-				fileOwnershipInformationLine.add(fileName);
-				fileOwnershipInformationLine.add(fileOwnershipInformation
-						.getNumberOfChanges().toString());
-				fileOwnershipInformationLine.add(String.valueOf(
-						fileOwnershipInformation.getAuthorsChanges().size()));
-				fileOwnershipInformationLine
-						.add(fileOwnershipInformation.getEntityCreator());
-				fileOwnershipInformationLine.add(fileOwnershipInformation
-						.getAuthorsChanges().toString());
-				fileOwnershipInformationLine.add(fileOwnershipInformation
-						.getOwnershipPercentages().toString());
-				fileOwnershipInformationLine.add(fileOwnershipInformation
-						.getAuthorsLineChanges().toString());
+	public abstract void writeFileResults();
 
-				CSVUtils.writeLine(csvWriter, fileOwnershipInformationLine, ',',
-						'"');
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+	public abstract void createResults();
 
 	public HashMap<String, EntityOwnershipInformation> getFileOwnershipResult() {
 		return entityOwnershipResult;
