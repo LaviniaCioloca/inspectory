@@ -21,19 +21,12 @@
  *******************************************************************************/
 package edu.lavinia.inspectory.op.inspection;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 
 import org.junit.Test;
 import org.metanalysis.core.project.PersistentProject;
-
-import edu.lavinia.inspectory.op.beans.EntityOwnershipInformation;
 
 public class FileOwnershipInspectionTest {
 
@@ -42,12 +35,12 @@ public class FileOwnershipInspectionTest {
 	private static final PersistentProject PROJECT = null;
 
 	private static FileWriter csvWriter;
-	private static FileOwnershipInspection ownershipProblemsInspection;
+	private static FileOwnershipInspection fileOwnershipInspection;
 
 	public FileOwnershipInspectionTest() {
 		try {
 			csvWriter = new FileWriter(FILE);
-			ownershipProblemsInspection = new FileOwnershipInspection(PROJECT,
+			fileOwnershipInspection = new FileOwnershipInspection(PROJECT,
 					csvWriter);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -57,31 +50,7 @@ public class FileOwnershipInspectionTest {
 
 	@Test(expected = NullPointerException.class)
 	public void testCreateResults() {
-		ownershipProblemsInspection.createResults();
+		fileOwnershipInspection.createResults();
 	}
 
-	@Test
-	public void testAddFileInformation() {
-		final HashMap<String, EntityOwnershipInformation> expectedFileOwnershipResult = new HashMap<>();
-		final EntityOwnershipInformation fileOwnershipInformation = new EntityOwnershipInformation();
-		final LinkedHashMap<String, Integer> authorsChanges = new LinkedHashMap<>();
-		final LinkedHashMap<String, ArrayList<Integer>> authorsLineChanges = new LinkedHashMap<>();
-		final LinkedHashMap<String, Double> ownershipPercentages = new LinkedHashMap<>();
-		authorsChanges.put("test", 1);
-
-		fileOwnershipInformation.setNumberOfChanges(1);
-		fileOwnershipInformation.setEntityCreator("test");
-		fileOwnershipInformation.setAuthorsChanges(authorsChanges);
-		fileOwnershipInformation.setAuthorsLineChanges(authorsLineChanges);
-		fileOwnershipInformation.setOwnershipPercentages(ownershipPercentages);
-		expectedFileOwnershipResult.put("testFileName",
-				fileOwnershipInformation);
-
-		ownershipProblemsInspection.addFileInformation("testFileName", 1,
-				"test", authorsChanges, authorsLineChanges,
-				ownershipPercentages);
-
-		assertEquals(expectedFileOwnershipResult,
-				ownershipProblemsInspection.getFileOwnershipResult());
-	}
 }
