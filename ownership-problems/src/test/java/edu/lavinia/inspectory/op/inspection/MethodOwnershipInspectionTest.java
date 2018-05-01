@@ -26,7 +26,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 import org.metanalysis.core.project.PersistentProject;
@@ -65,6 +67,18 @@ public class MethodOwnershipInspectionTest {
 				.create();
 		methodsAuthorsChanges.put("testMethod", "testAuthor",
 				new ArrayList<Integer>(Arrays.asList(10, 5)));
+
+		final Map<String, Integer> methodNumberOfChanges = new HashMap<>();
+		methodNumberOfChanges.put("testMethod", 5);
+
+		final Map<String, Integer> methodSize = new HashMap<>();
+		methodSize.put("testMethod", 10);
+
+		methodOwnershipInspection
+				.setMethodsAuthorsChanges(methodsAuthorsChanges);
+		methodOwnershipInspection
+				.setMethodNumberOfChanges(methodNumberOfChanges);
+		methodOwnershipInspection.setMethodSize(methodSize);
 
 		methodOwnershipInspection.writeFileResults();
 	}

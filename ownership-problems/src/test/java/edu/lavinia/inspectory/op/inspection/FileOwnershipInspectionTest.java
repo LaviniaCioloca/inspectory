@@ -80,6 +80,8 @@ public class FileOwnershipInspectionTest {
 		ownershipPercentages.put("test", 50.0);
 		fileOwnershipInformation.setOwnershipPercentages(ownershipPercentages);
 
+		entityOwnershipResult.put("test", fileOwnershipInformation);
+
 		fileOwnershipInspection.setEntityOwnershipResult(entityOwnershipResult);
 
 		fileOwnershipInspection.writeFileResults();

@@ -77,7 +77,7 @@ public class EntityOwnershipInformation {
 
 	@Override
 	public String toString() {
-		return "FileOwnershipInformation [numberOfChanges=" + numberOfChanges
+		return "EntityOwnershipInformation [numberOfChanges=" + numberOfChanges
 				+ ", fileCreator=" + entityCreator + ", authorsChanges="
 				+ authorsChanges + ", authorsLineChanges=" + authorsLineChanges
 				+ ", ownershipPercentages=" + ownershipPercentages + "]";
