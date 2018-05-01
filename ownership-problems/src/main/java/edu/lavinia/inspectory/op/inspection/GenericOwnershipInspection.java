@@ -38,7 +38,7 @@ import edu.lavinia.inspectory.op.beans.EntityOwnershipInformation;
 public abstract class GenericOwnershipInspection {
 	protected final PersistentProject project;
 	protected final FileWriter csvWriter;
-	protected final HashMap<String, EntityOwnershipInformation> entityOwnershipResult = new HashMap<>();
+	protected HashMap<String, EntityOwnershipInformation> entityOwnershipResult = new HashMap<>();
 
 	/**
 	 * GenericOwnershipInspection Constructor that receives the persistent
@@ -151,8 +151,13 @@ public abstract class GenericOwnershipInspection {
 
 	public abstract void createResults();
 
-	public HashMap<String, EntityOwnershipInformation> getFileOwnershipResult() {
+	public HashMap<String, EntityOwnershipInformation> getEntityOwnershipResult() {
 		return entityOwnershipResult;
+	}
+
+	public void setEntityOwnershipResult(
+			HashMap<String, EntityOwnershipInformation> entityOwnershipResult) {
+		this.entityOwnershipResult = entityOwnershipResult;
 	}
 
 }

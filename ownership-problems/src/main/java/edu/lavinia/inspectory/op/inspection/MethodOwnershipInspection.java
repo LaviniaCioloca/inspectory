@@ -51,8 +51,8 @@ import edu.lavinia.inspectory.visitor.GenericVisitor;
 
 public class MethodOwnershipInspection extends GenericOwnershipInspection {
 	private ArrayList<String> deletedNodes;
-	private Map<String, Integer> methodNumberOfChanges = new HashMap<>();
-	private Map<String, Integer> methodSize = new HashMap<>();
+	private final Map<String, Integer> methodNumberOfChanges = new HashMap<>();
+	private final Map<String, Integer> methodSize = new HashMap<>();
 	private Table<String, String, List<Integer>> methodsAuthorsChanges = HashBasedTable
 			.create();
 
@@ -365,4 +365,14 @@ public class MethodOwnershipInspection extends GenericOwnershipInspection {
 			e.printStackTrace();
 		}
 	}
+
+	public Table<String, String, List<Integer>> getMethodsAuthorsChanges() {
+		return methodsAuthorsChanges;
+	}
+
+	public void setMethodsAuthorsChanges(
+			Table<String, String, List<Integer>> methodsAuthorsChanges) {
+		this.methodsAuthorsChanges = methodsAuthorsChanges;
+	}
+
 }

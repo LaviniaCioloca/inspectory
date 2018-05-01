@@ -27,7 +27,7 @@ import org.junit.Test;
 
 import net.codebox.javabeantester.JavaBeanTester;
 
-public class FileOwnershipInformationTest {
+public class EntityOwnershipInformationTest {
 
 	/**
 	 * JavaBeanTester tests bean class MethodChangesInformation and might throw
