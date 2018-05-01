@@ -21,6 +21,9 @@
  *******************************************************************************/
 package edu.lavinia.inspectory.op.beans;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.beans.IntrospectionException;
 
 import org.junit.Test;
@@ -38,5 +41,39 @@ public class EntityOwnershipInformationTest {
 	@Test
 	public void testBeanProperties() throws IntrospectionException {
 		JavaBeanTester.test(EntityOwnershipInformation.class);
+	}
+
+	@Test
+	public void testEqualsTrue() {
+		EntityOwnershipInformation entityOwnershipInformation = new EntityOwnershipInformation();
+
+		assertTrue(
+				entityOwnershipInformation.equals(entityOwnershipInformation));
+	}
+
+	@Test
+	public void testEqualsFalseNotSameObject() {
+		EntityOwnershipInformation entityOwnershipInformation1 = new EntityOwnershipInformation();
+		EntityOwnershipInformation entityOwnershipInformation2 = new EntityOwnershipInformation();
+		entityOwnershipInformation2.setNumberOfChanges(10);
+
+		assertFalse(entityOwnershipInformation1
+				.equals(entityOwnershipInformation2));
+	}
+
+	@Test
+	public void testEqualsFalseNotInstanceOfEntityBean() {
+		EntityOwnershipInformation entityOwnershipInformation1 = new EntityOwnershipInformation();
+		Object entityOwnershipInformation2 = new Object();
+
+		assertFalse(entityOwnershipInformation1
+				.equals(entityOwnershipInformation2));
+	}
+
+	@Test
+	public void testGetHashCode() {
+		EntityOwnershipInformation entityOwnershipInformation1 = new EntityOwnershipInformation();
+
+		entityOwnershipInformation1.hashCode();
 	}
 }
