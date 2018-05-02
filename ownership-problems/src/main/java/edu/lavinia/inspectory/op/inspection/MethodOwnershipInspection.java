@@ -101,7 +101,7 @@ public class MethodOwnershipInspection extends GenericOwnershipInspection {
 		methodSize.put(methodFullPath, newMethodSize);
 	}
 
-	private void addMethodsAuthorsChanges(Integer methodBodySize,
+	public void addMethodsAuthorsChanges(Integer methodBodySize,
 			String methodSignature, String fileName, String className,
 			Commit commit) {
 		final String methodFullPath;
@@ -113,6 +113,7 @@ public class MethodOwnershipInspection extends GenericOwnershipInspection {
 
 		final List<Integer> authorsLineAdded = new ArrayList<>(
 				Arrays.asList(methodTotalSize, 0));
+
 		methodsAuthorsChanges.put(methodFullPath, commit.getAuthor(),
 				authorsLineAdded);
 		methodNumberOfChanges.put(methodFullPath, 1);

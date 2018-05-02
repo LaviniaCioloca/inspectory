@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>org.lavinia.inspectory</groupId>
 		<artifactId>inspectory</artifactId>
-		<version>0.2.0</version>
+		<version>0.2.1</version>
 	</parent>
 
 	<artifactId>ownership-problems</artifactId>
@@ -55,13 +55,6 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<version>19.0</version>
-		</dependency>
-
 	</dependencies>
 
 	<build>

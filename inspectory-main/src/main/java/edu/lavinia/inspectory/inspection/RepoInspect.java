@@ -22,6 +22,8 @@
 package edu.lavinia.inspectory.inspection;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
 import org.apache.log4j.Logger;
 import org.metanalysis.core.project.PersistentProject;
@@ -55,6 +57,8 @@ public class RepoInspect {
 	 *            to store the results.
 	 */
 	public static void main(String[] args) {
+		final long startTime = System.currentTimeMillis();
+
 		final PersistentProject project = getProject();
 		if (project == null) {
 			System.out.println(
@@ -63,5 +67,12 @@ public class RepoInspect {
 			final Commands commands = new Commands(args, project);
 			commands.parse();
 		}
+
+		final long endTime = System.currentTimeMillis();
+
+		final NumberFormat formatter = new DecimalFormat("#0.00000");
+		System.out.println("Inspectory execution time was: "
+				+ formatter.format((endTime - startTime) / 1000d)
+				+ " seconds.\n");
 	}
 }

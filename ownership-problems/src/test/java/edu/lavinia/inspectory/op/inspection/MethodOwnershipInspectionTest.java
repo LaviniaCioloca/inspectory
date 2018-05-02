@@ -36,6 +36,8 @@ import org.metanalysis.core.project.PersistentProject;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 
+import edu.lavinia.inspectory.beans.Commit;
+
 public class MethodOwnershipInspectionTest {
 
 	private static final File FILE = new File(
@@ -81,5 +83,19 @@ public class MethodOwnershipInspectionTest {
 		methodOwnershipInspection.setMethodSize(methodSize);
 
 		methodOwnershipInspection.writeFileResults();
+	}
+
+	@Test
+	public void testAddMethodsAuthorsChanges() {
+		final Table<String, String, List<Integer>> methodsAuthorsChanges = HashBasedTable
+				.create();
+		methodOwnershipInspection
+				.setMethodsAuthorsChanges(methodsAuthorsChanges);
+
+		final Commit commit = new Commit();
+		commit.setAuthor("testAuthor");
+
+		methodOwnershipInspection.addMethodsAuthorsChanges(10, "test", "test",
+				"test", commit);
 	}
 }

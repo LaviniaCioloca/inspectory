@@ -41,6 +41,7 @@ import org.apache.log4j.Logger;
 import org.metanalysis.core.project.PersistentProject;
 
 import edu.lavinia.inspectory.am.inspection.AstronomicalMethodsInspection;
+import edu.lavinia.inspectory.op.inspection.FileOwnershipInspection;
 import edu.lavinia.inspectory.op.inspection.MethodOwnershipInspection;
 import edu.lavinia.inspectory.utils.CSVUtils;
 
@@ -57,7 +58,8 @@ public class Commands {
 	private final static String ASTRONOMICAL_METHODS_JSON_FILE_NAME = "astronomical-methods-result.json";
 	private final static String ASTRONOMICAL_METHODS_DYNAMICS_CSV_FILE_NAME = "astronomical-methods-dynamics-result.csv";
 
-	private final static String OWNERSHIP_PROBLEMS_CSV_FILE_NAME = "ownership-problems-result.csv";
+	private final static String OWNERSHIP_PROBLEMS_CLASSES_CSV_FILE_NAME = "ownership-problems-classes-result.csv";
+	private final static String OWNERSHIP_PROBLEMS_METHODS_CSV_FILE_NAME = "ownership-problems-methods-result.csv";
 
 	public Commands(final String[] args, final PersistentProject project) {
 		this.args = args;
@@ -151,11 +153,12 @@ public class Commands {
 	}
 
 	private void allMetrics() {
-		System.out.println("Starting to inspect the repository.....");
+		System.out.println("Starting to inspect the repository.....\n");
 		astronomicalMethodsMetric();
 		ownershipProblemsMetric();
+		System.out.println("Inspection successful!\n");
 		System.out.println(
-				"Inspection successful! See results in .inspectory folder in the current repository.");
+				"Check results in .inspectory folder in the current repository.\n");
 	}
 
 	private void astronomicalMethodsMetric() {
@@ -221,39 +224,54 @@ public class Commands {
 		final String home = System.getProperty("user.dir");
 		final Path path = Paths.get(home, ".inspectory");
 
-		final String filePath = home + File.separator + ".inspectory"
-				+ File.separator + OWNERSHIP_PROBLEMS_CSV_FILE_NAME;
-		final File csvFile = new File(filePath);
+		final String methodsFilePath = home + File.separator + ".inspectory"
+				+ File.separator + OWNERSHIP_PROBLEMS_METHODS_CSV_FILE_NAME;
+		final File methodsCsvFile = new File(methodsFilePath);
+
+		final String classesFilePath = home + File.separator + ".inspectory"
+				+ File.separator + OWNERSHIP_PROBLEMS_CLASSES_CSV_FILE_NAME;
+		final File classesCsvFile = new File(classesFilePath);
+
 		boolean directoryExists = Files.exists(path);
 
-		final FileWriter csvWriter;
+		final FileWriter methodsCsvWriter;
+		final FileWriter classesCsvWriter;
 		try {
 			if (directoryExists) {
-				csvFile.delete();
+				classesCsvFile.delete();
+				methodsCsvFile.delete();
 			} else {
 				Files.createDirectories(path);
 			}
 
-			csvWriter = new FileWriter(csvFile);
-			/*
-			 * CSVUtils.writeLine(csvWriter, Arrays.asList("File",
-			 * "Number of changes", "Number of authors", "File Creator",
-			 * "Authors - Total changes made", "Authors Ownership Percentages",
-			 * "Authors - Line changes made"));
-			 */
-			// final FileOwnershipInspection ownershipProblemsInspection = new
-			// FileOwnershipInspection(project, csvWriter);
+			methodsCsvWriter = new FileWriter(methodsCsvFile);
+			classesCsvWriter = new FileWriter(classesCsvFile);
 
-			CSVUtils.writeLine(csvWriter,
+			CSVUtils.writeLine(methodsCsvWriter,
 					Arrays.asList("Method full path", "Number of changes",
 							"Number of authors", "Method current size",
 							"Author - Line changes made"));
-			final MethodOwnershipInspection ownershipProblemsInspection = new MethodOwnershipInspection(
-					project, csvWriter);
-			ownershipProblemsInspection.createResults();
-			ownershipProblemsInspection.writeFileResults();
-			csvWriter.flush();
-			csvWriter.close();
+
+			final MethodOwnershipInspection methodsOwnershipProblemsInspection = new MethodOwnershipInspection(
+					project, methodsCsvWriter);
+			methodsOwnershipProblemsInspection.createResults();
+			methodsOwnershipProblemsInspection.writeFileResults();
+			methodsCsvWriter.flush();
+			methodsCsvWriter.close();
+
+			CSVUtils.writeLine(classesCsvWriter,
+					Arrays.asList("File", "Number of changes",
+							"Number of authors", "File Creator",
+							"Authors - Total changes made",
+							"Authors Ownership Percentages",
+							"Authors - Line changes made"));
+
+			final FileOwnershipInspection classesOwnershipProblemsInspection = new FileOwnershipInspection(
+					project, classesCsvWriter);
+			classesOwnershipProblemsInspection.createResults();
+			classesOwnershipProblemsInspection.writeFileResults();
+			classesCsvWriter.flush();
+			classesCsvWriter.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
