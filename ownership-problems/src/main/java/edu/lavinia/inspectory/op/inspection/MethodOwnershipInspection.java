@@ -366,6 +366,7 @@ public class MethodOwnershipInspection extends GenericOwnershipInspection {
 
 	private void treatEachNodeSetEdit(String fileName, final Commit commit,
 			final List<NodeSetEdit> nodeEditList) {
+
 		for (final NodeSetEdit edit : nodeEditList) {
 			if (edit instanceof NodeSetEdit.Change<?>) {
 				handleNodeSetEditChange(edit, fileName, commit);
@@ -411,7 +412,8 @@ public class MethodOwnershipInspection extends GenericOwnershipInspection {
 		methodOwnershipInformationLine.add(methodFullPath);
 		methodOwnershipInformationLine
 				.add(methodNumberOfChanges.get(methodFullPath).toString());
-		methodOwnershipInformationLine.add(String.valueOf(authorChanges.size()));
+		methodOwnershipInformationLine
+				.add(String.valueOf(authorChanges.size()));
 		methodOwnershipInformationLine
 				.add(methodSize.get(methodFullPath).toString());
 

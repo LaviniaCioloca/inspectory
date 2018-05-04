@@ -154,24 +154,6 @@ public abstract class GenericOwnershipInspection {
 						}, LinkedHashMap::new));
 	}
 
-	public void addFileInformation(String fileName, Integer numberOfChanges,
-			String fileCreator,
-			LinkedHashMap<String, Integer> authorsNumberOfChanges,
-			LinkedHashMap<String, List<Integer>> authorsAddedAndDeletedLines,
-			LinkedHashMap<String, Double> ownershipPercentages) {
-
-		final EntityOwnershipInformation fileOwnershipInformation = new EntityOwnershipInformation();
-		fileOwnershipInformation.setNumberOfChanges(numberOfChanges);
-		fileOwnershipInformation.setEntityCreator(fileCreator);
-		fileOwnershipInformation
-				.setAuthorsNumberOfChanges(authorsNumberOfChanges);
-		fileOwnershipInformation.setAuthorsNumberOfAddedAndDeletedLines(
-				authorsAddedAndDeletedLines);
-		fileOwnershipInformation.setOwnershipPercentages(ownershipPercentages);
-
-		entityOwnershipResult.put(fileName, fileOwnershipInformation);
-	}
-
 	public abstract void writeFileResults();
 
 	public abstract void createResults();

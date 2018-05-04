@@ -56,90 +56,80 @@ public class FileOwnershipInspection extends GenericOwnershipInspection {
 		super(project, csvWriter);
 	}
 
+	public void addFileInformation(String fileName, Integer numberOfChanges,
+			String fileCreator,
+			LinkedHashMap<String, Integer> authorsNumberOfChanges,
+			LinkedHashMap<String, List<Integer>> authorsAddedAndDeletedLines,
+			LinkedHashMap<String, Double> ownershipPercentages) {
+
+		final EntityOwnershipInformation fileOwnershipInformation = new EntityOwnershipInformation();
+		fileOwnershipInformation.setNumberOfChanges(numberOfChanges);
+		fileOwnershipInformation.setEntityCreator(fileCreator);
+		fileOwnershipInformation
+				.setAuthorsNumberOfChanges(authorsNumberOfChanges);
+		fileOwnershipInformation.setAuthorsNumberOfAddedAndDeletedLines(
+				authorsAddedAndDeletedLines);
+		fileOwnershipInformation.setOwnershipPercentages(ownershipPercentages);
+
+		entityOwnershipResult.put(fileName, fileOwnershipInformation);
+	}
+
 	@Override
 	public void createResults() {
-		try {
-			final Set<String> filesList = project.listFiles();
+		final Set<String> filesList = project.listFiles();
 
-			for (final String fileName : filesList) {
-				if (fileName.startsWith(".") || !fileName.endsWith(".java")) {
+		for (final String fileName : filesList) {
+			if (fileName.startsWith(".") || !fileName.endsWith(".java")) {
+				continue;
+			}
+
+			createResultForEachFile(fileName);
+		}
+	}
+
+	public void createResultForEachFile(String fileName) {
+		try {
+			final List<HistoryEntry> fileHistory = project
+					.getFileHistory(fileName);
+
+			final GenericVisitor visitor = new EditVisitor(fileName);
+
+			int numberOfChanges = 0;
+			String fileCreator = null;
+			final LinkedHashMap<String, Integer> authorsNumberOfChanges = new LinkedHashMap<>();
+			LinkedHashMap<String, List<Integer>> authorsAddedAndDeletedLines = new LinkedHashMap<>();
+
+			for (final HistoryEntry historyEntry : fileHistory) {
+				try {
+					final Commit commit = new Commit();
+					setCommitInformation(historyEntry, commit);
+
+					++numberOfChanges;
+					initVisitorAddedAndDeletedLines(visitor);
+					fileCreator = setFileCreator(fileCreator, historyEntry);
+					updateAuthorNumberOfChanges(authorsNumberOfChanges,
+							historyEntry);
+
+					final SourceFileTransaction sourceFileTransaction = historyEntry
+							.getTransaction();
+					final List<NodeSetEdit> nodeEditList = sourceFileTransaction
+							.getNodeEdits();
+
+					authorsAddedAndDeletedLines = treatEachNodeSetEdit(visitor,
+							authorsAddedAndDeletedLines, historyEntry,
+							nodeEditList);
+				} catch (Exception e) {
 					continue;
 				}
-
-				final List<HistoryEntry> fileHistory = project
-						.getFileHistory(fileName);
-
-				final GenericVisitor visitor = new EditVisitor(fileName);
-
-				int numberOfChanges = 0;
-				String fileCreator = null;
-				final LinkedHashMap<String, Integer> authorsNumberOfChanges = new LinkedHashMap<>();
-				LinkedHashMap<String, List<Integer>> authorsAddedAndDeletedLines = new LinkedHashMap<>();
-
-				for (final HistoryEntry historyEntry : fileHistory) {
-					try {
-						final Commit commit = new Commit();
-						commit.setRevision(historyEntry.getRevision());
-						commit.setAuthor(historyEntry.getAuthor());
-						commit.setDate(historyEntry.getDate());
-
-						((EditVisitor) visitor).setAddedLines(0);
-						((EditVisitor) visitor).setDeletedLines(0);
-
-						++numberOfChanges;
-						if (fileCreator == null) {
-							fileCreator = historyEntry.getAuthor();
-						}
-
-						Integer numberOfChangesAuthorHas = authorsNumberOfChanges
-								.get(historyEntry.getAuthor());
-						if (numberOfChangesAuthorHas == null) {
-							authorsNumberOfChanges.put(historyEntry.getAuthor(),
-									1);
-						} else {
-							authorsNumberOfChanges.put(historyEntry.getAuthor(),
-									++numberOfChangesAuthorHas);
-						}
-
-						final SourceFileTransaction sourceFileTransaction = historyEntry
-								.getTransaction();
-						final List<NodeSetEdit> nodeEditList = sourceFileTransaction
-								.getNodeEdits();
-
-						for (final NodeSetEdit edit : nodeEditList) {
-							((EditVisitor) visitor).visit(edit);
-
-							final ArrayList<Integer> changedLines = (ArrayList<Integer>) authorsAddedAndDeletedLines
-									.get(historyEntry.getAuthor());
-
-							/*
-							 * System.out.println("\n\tFile: " + fileName +
-							 * "; author: " + historyEntry.getAuthor() +
-							 * "; visitorAddedLines: " + ((EditVisitor)
-							 * visitor).getAddedLines() +
-							 * "; visitorDeletedLines: " + ((EditVisitor)
-							 * visitor) .getDeletedLines());
-							 */
-
-							authorsAddedAndDeletedLines = checkChangedLinesInMap(
-									changedLines, authorsAddedAndDeletedLines,
-									historyEntry.getAuthor(),
-									((EditVisitor) visitor).getAddedLines(),
-									((EditVisitor) visitor).getDeletedLines());
-						}
-					} catch (Exception e) {
-						continue;
-					}
-				}
-
-				LinkedHashMap<String, Double> ownershipPercentages = calculateEntityOwnership(
-						authorsAddedAndDeletedLines);
-				ownershipPercentages = sortPercentagesMap(ownershipPercentages);
-
-				addFileInformation(fileName, numberOfChanges, fileCreator,
-						authorsNumberOfChanges, authorsAddedAndDeletedLines,
-						ownershipPercentages);
 			}
+
+			LinkedHashMap<String, Double> ownershipPercentages = calculateEntityOwnership(
+					authorsAddedAndDeletedLines);
+			ownershipPercentages = sortPercentagesMap(ownershipPercentages);
+
+			addFileInformation(fileName, numberOfChanges, fileCreator,
+					authorsNumberOfChanges, authorsAddedAndDeletedLines,
+					ownershipPercentages);
 		} catch (IOException e) {
 			/*
 			 * Need to have a NOP here because of the files that do not have a
@@ -149,29 +139,71 @@ public class FileOwnershipInspection extends GenericOwnershipInspection {
 		}
 	}
 
+	private LinkedHashMap<String, List<Integer>> treatEachNodeSetEdit(
+			final GenericVisitor visitor,
+			LinkedHashMap<String, List<Integer>> authorsAddedAndDeletedLines,
+			final HistoryEntry historyEntry,
+			final List<NodeSetEdit> nodeEditList) {
+
+		for (final NodeSetEdit edit : nodeEditList) {
+			((EditVisitor) visitor).visit(edit);
+
+			final ArrayList<Integer> changedLines = (ArrayList<Integer>) authorsAddedAndDeletedLines
+					.get(historyEntry.getAuthor());
+
+			authorsAddedAndDeletedLines = checkChangedLinesInMap(changedLines,
+					authorsAddedAndDeletedLines, historyEntry.getAuthor(),
+					((EditVisitor) visitor).getAddedLines(),
+					((EditVisitor) visitor).getDeletedLines());
+		}
+
+		return authorsAddedAndDeletedLines;
+	}
+
+	private String setFileCreator(String fileCreator,
+			final HistoryEntry historyEntry) {
+
+		if (fileCreator == null) {
+			fileCreator = historyEntry.getAuthor();
+		}
+
+		return fileCreator;
+	}
+
+	private void updateAuthorNumberOfChanges(
+			final LinkedHashMap<String, Integer> authorsNumberOfChanges,
+			final HistoryEntry historyEntry) {
+
+		Integer numberOfChangesAuthorHas = authorsNumberOfChanges
+				.get(historyEntry.getAuthor());
+		if (numberOfChangesAuthorHas == null) {
+			authorsNumberOfChanges.put(historyEntry.getAuthor(), 1);
+		} else {
+			authorsNumberOfChanges.put(historyEntry.getAuthor(),
+					++numberOfChangesAuthorHas);
+		}
+	}
+
+	private void initVisitorAddedAndDeletedLines(final GenericVisitor visitor) {
+		((EditVisitor) visitor).setAddedLines(0);
+		((EditVisitor) visitor).setDeletedLines(0);
+	}
+
+	private void setCommitInformation(final HistoryEntry historyEntry,
+			final Commit commit) {
+
+		commit.setRevision(historyEntry.getRevision());
+		commit.setAuthor(historyEntry.getAuthor());
+		commit.setDate(historyEntry.getDate());
+	}
+
 	@Override
 	public void writeFileResults() {
 		try {
 			for (final HashMap.Entry<String, EntityOwnershipInformation> entry : entityOwnershipResult
 					.entrySet()) {
-				final ArrayList<String> fileOwnershipInformationLine = new ArrayList<>();
-				final String fileName = entry.getKey();
-				final EntityOwnershipInformation fileOwnershipInformation = entry
-						.getValue();
-				fileOwnershipInformationLine.add(fileName);
-				fileOwnershipInformationLine.add(fileOwnershipInformation
-						.getNumberOfChanges().toString());
-				fileOwnershipInformationLine
-						.add(String.valueOf(fileOwnershipInformation
-								.getAuthorsNumberOfChanges().size()));
-				fileOwnershipInformationLine
-						.add(fileOwnershipInformation.getEntityCreator());
-				fileOwnershipInformationLine.add(fileOwnershipInformation
-						.getAuthorsNumberOfChanges().toString());
-				fileOwnershipInformationLine.add(fileOwnershipInformation
-						.getOwnershipPercentages().toString());
-				fileOwnershipInformationLine.add(fileOwnershipInformation
-						.getAuthorsNumberOfAddedAndDeletedLines().toString());
+				final ArrayList<String> fileOwnershipInformationLine = addOwnershipResultLine(
+						entry);
 
 				CSVUtils.writeLine(csvWriter, fileOwnershipInformationLine, ',',
 						'"');
@@ -179,5 +211,29 @@ public class FileOwnershipInspection extends GenericOwnershipInspection {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	private ArrayList<String> addOwnershipResultLine(
+			final HashMap.Entry<String, EntityOwnershipInformation> entry) {
+
+		final ArrayList<String> fileOwnershipInformationLine = new ArrayList<>();
+		final String fileName = entry.getKey();
+		final EntityOwnershipInformation fileOwnershipInformation = entry
+				.getValue();
+		fileOwnershipInformationLine.add(fileName);
+		fileOwnershipInformationLine
+				.add(fileOwnershipInformation.getNumberOfChanges().toString());
+		fileOwnershipInformationLine.add(String.valueOf(
+				fileOwnershipInformation.getAuthorsNumberOfChanges().size()));
+		fileOwnershipInformationLine
+				.add(fileOwnershipInformation.getEntityCreator());
+		fileOwnershipInformationLine.add(fileOwnershipInformation
+				.getAuthorsNumberOfChanges().toString());
+		fileOwnershipInformationLine.add(
+				fileOwnershipInformation.getOwnershipPercentages().toString());
+		fileOwnershipInformationLine.add(fileOwnershipInformation
+				.getAuthorsNumberOfAddedAndDeletedLines().toString());
+
+		return fileOwnershipInformationLine;
 	}
 }
