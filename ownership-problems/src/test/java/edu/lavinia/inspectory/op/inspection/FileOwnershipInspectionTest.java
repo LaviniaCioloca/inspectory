@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 import org.junit.Test;
 import org.metanalysis.core.project.PersistentProject;
@@ -66,15 +67,17 @@ public class FileOwnershipInspectionTest {
 		fileOwnershipInformation.setNumberOfChanges(10);
 		fileOwnershipInformation.setEntityCreator("test");
 
-		final LinkedHashMap<String, Integer> authorsChanges = new LinkedHashMap<>();
-		authorsChanges.put("test", 5);
-		fileOwnershipInformation.setAuthorsChanges(authorsChanges);
+		final LinkedHashMap<String, Integer> authorsNumberOfChanges = new LinkedHashMap<>();
+		authorsNumberOfChanges.put("test", 5);
+		fileOwnershipInformation
+				.setAuthorsNumberOfChanges(authorsNumberOfChanges);
 
-		final LinkedHashMap<String, ArrayList<Integer>> authorsLineChanges = new LinkedHashMap<>();
+		final LinkedHashMap<String, List<Integer>> authorsAddedAndDeletedLines = new LinkedHashMap<>();
 		final ArrayList<Integer> lineChanges = new ArrayList<>(
 				Arrays.asList(10, 5));
-		authorsLineChanges.put("test", lineChanges);
-		fileOwnershipInformation.setAuthorsLineChanges(authorsLineChanges);
+		authorsAddedAndDeletedLines.put("test", lineChanges);
+		fileOwnershipInformation.setAuthorsNumberOfAddedAndDeletedLines(
+				authorsAddedAndDeletedLines);
 
 		final LinkedHashMap<String, Double> ownershipPercentages = new LinkedHashMap<>();
 		ownershipPercentages.put("test", 50.0);

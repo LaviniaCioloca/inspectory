@@ -73,8 +73,8 @@ public class FileOwnershipInspection extends GenericOwnershipInspection {
 
 				int numberOfChanges = 0;
 				String fileCreator = null;
-				final LinkedHashMap<String, Integer> authorsChanges = new LinkedHashMap<>();
-				LinkedHashMap<String, ArrayList<Integer>> authorsLineChanges = new LinkedHashMap<>();
+				final LinkedHashMap<String, Integer> authorsNumberOfChanges = new LinkedHashMap<>();
+				LinkedHashMap<String, List<Integer>> authorsAddedAndDeletedLines = new LinkedHashMap<>();
 
 				for (final HistoryEntry historyEntry : fileHistory) {
 					try {
@@ -91,12 +91,13 @@ public class FileOwnershipInspection extends GenericOwnershipInspection {
 							fileCreator = historyEntry.getAuthor();
 						}
 
-						Integer numberOfChangesAuthorHas = authorsChanges
+						Integer numberOfChangesAuthorHas = authorsNumberOfChanges
 								.get(historyEntry.getAuthor());
 						if (numberOfChangesAuthorHas == null) {
-							authorsChanges.put(historyEntry.getAuthor(), 1);
+							authorsNumberOfChanges.put(historyEntry.getAuthor(),
+									1);
 						} else {
-							authorsChanges.put(historyEntry.getAuthor(),
+							authorsNumberOfChanges.put(historyEntry.getAuthor(),
 									++numberOfChangesAuthorHas);
 						}
 
@@ -108,7 +109,7 @@ public class FileOwnershipInspection extends GenericOwnershipInspection {
 						for (final NodeSetEdit edit : nodeEditList) {
 							((EditVisitor) visitor).visit(edit);
 
-							final ArrayList<Integer> changedLines = authorsLineChanges
+							final ArrayList<Integer> changedLines = (ArrayList<Integer>) authorsAddedAndDeletedLines
 									.get(historyEntry.getAuthor());
 
 							/*
@@ -120,8 +121,8 @@ public class FileOwnershipInspection extends GenericOwnershipInspection {
 							 * visitor) .getDeletedLines());
 							 */
 
-							authorsLineChanges = checkChangedLinesInMap(
-									changedLines, authorsLineChanges,
+							authorsAddedAndDeletedLines = checkChangedLinesInMap(
+									changedLines, authorsAddedAndDeletedLines,
 									historyEntry.getAuthor(),
 									((EditVisitor) visitor).getAddedLines(),
 									((EditVisitor) visitor).getDeletedLines());
@@ -131,12 +132,12 @@ public class FileOwnershipInspection extends GenericOwnershipInspection {
 					}
 				}
 
-				LinkedHashMap<String, Double> ownershipPercentages = calculateFileOwnership(
-						authorsLineChanges);
+				LinkedHashMap<String, Double> ownershipPercentages = calculateEntityOwnership(
+						authorsAddedAndDeletedLines);
 				ownershipPercentages = sortPercentagesMap(ownershipPercentages);
 
 				addFileInformation(fileName, numberOfChanges, fileCreator,
-						authorsChanges, authorsLineChanges,
+						authorsNumberOfChanges, authorsAddedAndDeletedLines,
 						ownershipPercentages);
 			}
 		} catch (IOException e) {
@@ -160,16 +161,17 @@ public class FileOwnershipInspection extends GenericOwnershipInspection {
 				fileOwnershipInformationLine.add(fileName);
 				fileOwnershipInformationLine.add(fileOwnershipInformation
 						.getNumberOfChanges().toString());
-				fileOwnershipInformationLine.add(String.valueOf(
-						fileOwnershipInformation.getAuthorsChanges().size()));
+				fileOwnershipInformationLine
+						.add(String.valueOf(fileOwnershipInformation
+								.getAuthorsNumberOfChanges().size()));
 				fileOwnershipInformationLine
 						.add(fileOwnershipInformation.getEntityCreator());
 				fileOwnershipInformationLine.add(fileOwnershipInformation
-						.getAuthorsChanges().toString());
+						.getAuthorsNumberOfChanges().toString());
 				fileOwnershipInformationLine.add(fileOwnershipInformation
 						.getOwnershipPercentages().toString());
 				fileOwnershipInformationLine.add(fileOwnershipInformation
-						.getAuthorsLineChanges().toString());
+						.getAuthorsNumberOfAddedAndDeletedLines().toString());
 
 				CSVUtils.writeLine(csvWriter, fileOwnershipInformationLine, ',',
 						'"');

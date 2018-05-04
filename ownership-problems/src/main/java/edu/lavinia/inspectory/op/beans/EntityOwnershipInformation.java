@@ -21,23 +21,40 @@
  *******************************************************************************/
 package edu.lavinia.inspectory.op.beans;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Objects;
 
 public class EntityOwnershipInformation {
-	private Integer numberOfChanges;
+	private Integer totalNumberOfChanges;
 	private String entityCreator;
-	private LinkedHashMap<String, Integer> authorsChanges;
-	private LinkedHashMap<String, ArrayList<Integer>> authorsLineChanges;
+	private LinkedHashMap<String, Integer> authorsNumberOfChanges;
+	private LinkedHashMap<String, List<Integer>> authorsNumberOfAddedAndDeletedLines;
 	private LinkedHashMap<String, Double> ownershipPercentages;
 
 	public Integer getNumberOfChanges() {
-		return numberOfChanges;
+		return totalNumberOfChanges;
+	}
+
+	public Integer getTotalNumberOfChanges() {
+		return totalNumberOfChanges;
+	}
+
+	public void setTotalNumberOfChanges(Integer totalNumberOfChanges) {
+		this.totalNumberOfChanges = totalNumberOfChanges;
+	}
+
+	public LinkedHashMap<String, List<Integer>> getAuthorsNumberOfAddedAndDeletedLines() {
+		return authorsNumberOfAddedAndDeletedLines;
+	}
+
+	public void setAuthorsNumberOfAddedAndDeletedLines(
+			LinkedHashMap<String, List<Integer>> authorsNumberOfAddedAndDeletedLines) {
+		this.authorsNumberOfAddedAndDeletedLines = authorsNumberOfAddedAndDeletedLines;
 	}
 
 	public void setNumberOfChanges(Integer numberOfChanges) {
-		this.numberOfChanges = numberOfChanges;
+		this.totalNumberOfChanges = numberOfChanges;
 	}
 
 	public String getEntityCreator() {
@@ -48,22 +65,13 @@ public class EntityOwnershipInformation {
 		this.entityCreator = entityCreator;
 	}
 
-	public LinkedHashMap<String, Integer> getAuthorsChanges() {
-		return authorsChanges;
+	public LinkedHashMap<String, Integer> getAuthorsNumberOfChanges() {
+		return authorsNumberOfChanges;
 	}
 
-	public void setAuthorsChanges(
-			LinkedHashMap<String, Integer> authorsChanges) {
-		this.authorsChanges = authorsChanges;
-	}
-
-	public LinkedHashMap<String, ArrayList<Integer>> getAuthorsLineChanges() {
-		return authorsLineChanges;
-	}
-
-	public void setAuthorsLineChanges(
-			LinkedHashMap<String, ArrayList<Integer>> authorsLineChanges) {
-		this.authorsLineChanges = authorsLineChanges;
+	public void setAuthorsNumberOfChanges(
+			LinkedHashMap<String, Integer> authorsNumberOfChanges) {
+		this.authorsNumberOfChanges = authorsNumberOfChanges;
 	}
 
 	public LinkedHashMap<String, Double> getOwnershipPercentages() {
@@ -77,9 +85,10 @@ public class EntityOwnershipInformation {
 
 	@Override
 	public String toString() {
-		return "EntityOwnershipInformation [numberOfChanges=" + numberOfChanges
-				+ ", fileCreator=" + entityCreator + ", authorsChanges="
-				+ authorsChanges + ", authorsLineChanges=" + authorsLineChanges
+		return "EntityOwnershipInformation [numberOfChanges="
+				+ totalNumberOfChanges + ", fileCreator=" + entityCreator
+				+ ", authorsChanges=" + authorsNumberOfChanges
+				+ ", authorsLineChanges=" + authorsNumberOfAddedAndDeletedLines
 				+ ", ownershipPercentages=" + ownershipPercentages + "]";
 	}
 
@@ -94,20 +103,21 @@ public class EntityOwnershipInformation {
 		}
 
 		final EntityOwnershipInformation fileOwnershipInformation = (EntityOwnershipInformation) obj;
-		return numberOfChanges == fileOwnershipInformation.numberOfChanges
+		return totalNumberOfChanges == fileOwnershipInformation.totalNumberOfChanges
 				&& Objects.equals(entityCreator,
 						fileOwnershipInformation.entityCreator)
-				&& Objects.equals(authorsChanges,
-						fileOwnershipInformation.authorsChanges)
-				&& Objects.equals(authorsLineChanges,
-						fileOwnershipInformation.authorsLineChanges)
+				&& Objects.equals(authorsNumberOfChanges,
+						fileOwnershipInformation.authorsNumberOfChanges)
+				&& Objects.equals(authorsNumberOfAddedAndDeletedLines,
+						fileOwnershipInformation.authorsNumberOfAddedAndDeletedLines)
 				&& Objects.equals(ownershipPercentages,
 						fileOwnershipInformation.ownershipPercentages);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(numberOfChanges, entityCreator, authorsChanges,
-				authorsLineChanges, ownershipPercentages);
+		return Objects.hash(totalNumberOfChanges, entityCreator,
+				authorsNumberOfChanges, authorsNumberOfAddedAndDeletedLines,
+				ownershipPercentages);
 	}
 }

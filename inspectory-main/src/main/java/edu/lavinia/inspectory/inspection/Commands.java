@@ -250,6 +250,7 @@ public class Commands {
 			CSVUtils.writeLine(methodsCsvWriter,
 					Arrays.asList("Method full path", "Number of changes",
 							"Number of authors", "Method current size",
+							"Authors Ownership Percentages",
 							"Author - Line changes made"));
 
 			final MethodOwnershipInspection methodsOwnershipProblemsInspection = new MethodOwnershipInspection(

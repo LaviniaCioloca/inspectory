@@ -26,9 +26,9 @@ import static org.junit.Assert.assertEquals;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 import org.junit.Test;
 import org.metanalysis.core.project.PersistentProject;
@@ -64,21 +64,24 @@ public class GenericOwnershipInspectionTest {
 	public void testAddFileInformation() {
 		final HashMap<String, EntityOwnershipInformation> expectedFileOwnershipResult = new HashMap<>();
 		final EntityOwnershipInformation fileOwnershipInformation = new EntityOwnershipInformation();
-		final LinkedHashMap<String, Integer> authorsChanges = new LinkedHashMap<>();
-		final LinkedHashMap<String, ArrayList<Integer>> authorsLineChanges = new LinkedHashMap<>();
+		final LinkedHashMap<String, Integer> authorsNumberOfChanges = new LinkedHashMap<>();
+		final LinkedHashMap<String, List<Integer>> authorsAddedAndDeletedLines = new LinkedHashMap<>();
 		final LinkedHashMap<String, Double> ownershipPercentages = new LinkedHashMap<>();
-		authorsChanges.put("test", 1);
+		authorsNumberOfChanges.put("test", 1);
 
 		fileOwnershipInformation.setNumberOfChanges(1);
 		fileOwnershipInformation.setEntityCreator("test");
-		fileOwnershipInformation.setAuthorsChanges(authorsChanges);
-		fileOwnershipInformation.setAuthorsLineChanges(authorsLineChanges);
+		fileOwnershipInformation
+				.setAuthorsNumberOfChanges(authorsNumberOfChanges);
+		fileOwnershipInformation.setAuthorsNumberOfAddedAndDeletedLines(
+				authorsAddedAndDeletedLines);
 		fileOwnershipInformation.setOwnershipPercentages(ownershipPercentages);
 		expectedFileOwnershipResult.put("testFileName",
 				fileOwnershipInformation);
 
 		genericOwnershipInspection.addFileInformation("testFileName", 1, "test",
-				authorsChanges, authorsLineChanges, ownershipPercentages);
+				authorsNumberOfChanges, authorsAddedAndDeletedLines,
+				ownershipPercentages);
 
 		assertEquals(expectedFileOwnershipResult,
 				genericOwnershipInspection.getEntityOwnershipResult());

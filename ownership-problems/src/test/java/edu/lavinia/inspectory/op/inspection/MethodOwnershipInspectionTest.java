@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -37,6 +38,7 @@ import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 
 import edu.lavinia.inspectory.beans.Commit;
+import edu.lavinia.inspectory.op.beans.EntityOwnershipInformation;
 
 public class MethodOwnershipInspectionTest {
 
@@ -81,6 +83,17 @@ public class MethodOwnershipInspectionTest {
 		methodOwnershipInspection
 				.setMethodNumberOfChanges(methodNumberOfChanges);
 		methodOwnershipInspection.setMethodSize(methodSize);
+
+		final Map<String, EntityOwnershipInformation> entityOwnershipResult = new HashMap<>();
+		final EntityOwnershipInformation entityOwnershipInformation = new EntityOwnershipInformation();
+		final LinkedHashMap<String, Double> ownershipPercentage = new LinkedHashMap<>();
+		ownershipPercentage.put("testAuthor", 100.0);
+
+		entityOwnershipInformation.setOwnershipPercentages(ownershipPercentage);
+		entityOwnershipResult.put("testMethod", entityOwnershipInformation);
+
+		methodOwnershipInspection
+				.setEntityOwnershipResult(entityOwnershipResult);
 
 		methodOwnershipInspection.writeFileResults();
 	}

@@ -28,7 +28,9 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import org.metanalysis.core.project.PersistentProject;
@@ -38,7 +40,7 @@ import edu.lavinia.inspectory.op.beans.EntityOwnershipInformation;
 public abstract class GenericOwnershipInspection {
 	protected final PersistentProject project;
 	protected final FileWriter csvWriter;
-	protected HashMap<String, EntityOwnershipInformation> entityOwnershipResult = new HashMap<>();
+	protected Map<String, EntityOwnershipInformation> entityOwnershipResult = new HashMap<>();
 
 	/**
 	 * GenericOwnershipInspection Constructor that receives the persistent
@@ -55,9 +57,9 @@ public abstract class GenericOwnershipInspection {
 		this.csvWriter = csvWriter;
 	}
 
-	public LinkedHashMap<String, ArrayList<Integer>> checkChangedLinesInMap(
+	public LinkedHashMap<String, List<Integer>> checkChangedLinesInMap(
 			ArrayList<Integer> changedLines,
-			LinkedHashMap<String, ArrayList<Integer>> authorsLineChanges,
+			LinkedHashMap<String, List<Integer>> authorsLineChanges,
 			String author, Integer visitorAddedLines,
 			Integer visitorDeletedLines) {
 		final ArrayList<Integer> newChangedLines;
@@ -79,47 +81,67 @@ public abstract class GenericOwnershipInspection {
 		return authorsLineChanges;
 	}
 
-	public LinkedHashMap<String, Double> calculateFileOwnership(
-			LinkedHashMap<String, ArrayList<Integer>> authorsLineChanges) {
+	public LinkedHashMap<String, Double> calculateEntityOwnership(
+			LinkedHashMap<String, List<Integer>> authorsLineChanges) {
 		final LinkedHashMap<String, Double> ownershipPercentages = new LinkedHashMap<>();
-		Integer fileCurrentSize = 0;
+
 		Integer authorLineChanges;
 		Double authorPercentage;
-		final DecimalFormat twoDecimalsFormat = new DecimalFormat(".##");
 
-		for (final Map.Entry<String, ArrayList<Integer>> entry : authorsLineChanges
+		final Integer entityCurrentSize = getEntityCurrentSize(
+				authorsLineChanges);
+
+		for (final Entry<String, List<Integer>> entry : authorsLineChanges
 				.entrySet()) {
-			final ArrayList<Integer> lineChanges = entry.getValue();
+			final ArrayList<Integer> addedAndDeletedLines = (ArrayList<Integer>) entry
+					.getValue();
 
-			fileCurrentSize += lineChanges.get(0);
-			fileCurrentSize -= lineChanges.get(1);
-		}
+			authorLineChanges = (addedAndDeletedLines.get(0)
+					- addedAndDeletedLines.get(1));
 
-		for (final Map.Entry<String, ArrayList<Integer>> entry : authorsLineChanges
-				.entrySet()) {
-			final ArrayList<Integer> lineChanges = entry.getValue();
-
-			authorLineChanges = (lineChanges.get(0) - lineChanges.get(1));
-
-			/*
-			 * Calculate the percentage of added lines the current author has:
-			 * 
-			 * (x / 100) * fileCurrentSize = authorLineChanges => x = (100 *
-			 * authorLineChanges) / fileCurrentSize
-			 */
-			if (fileCurrentSize == 0) {
-				authorPercentage = 0.0;
-			} else {
-				authorPercentage = (100 * (double) authorLineChanges)
-						/ (double) fileCurrentSize;
-				authorPercentage = Double.parseDouble(
-						twoDecimalsFormat.format(authorPercentage));
-			}
+			authorPercentage = getAuthorOwnership(authorLineChanges,
+					entityCurrentSize);
 
 			ownershipPercentages.put(entry.getKey(), authorPercentage);
 		}
 
 		return ownershipPercentages;
+	}
+
+	private Double getAuthorOwnership(Integer authorLineChanges,
+			final Integer entityTotalLineChanges) {
+		final DecimalFormat twoDecimalsFormat = new DecimalFormat(".##");
+		Double authorPercentage;
+		/*
+		 * (x / 100) * entityTotalLineChanges = authorLineChanges => x = (100 *
+		 * authorLineChanges) / entityTotalLineChanges
+		 */
+		if (entityTotalLineChanges == 0) {
+			authorPercentage = 0.0;
+		} else {
+			authorPercentage = (100 * (double) authorLineChanges)
+					/ (double) entityTotalLineChanges;
+			authorPercentage = Double
+					.parseDouble(twoDecimalsFormat.format(authorPercentage));
+		}
+
+		return authorPercentage;
+	}
+
+	private Integer getEntityCurrentSize(
+			LinkedHashMap<String, List<Integer>> authorsLineChanges) {
+		Integer fileCurrentSize = 0;
+
+		for (final Map.Entry<String, List<Integer>> entry : authorsLineChanges
+				.entrySet()) {
+			final ArrayList<Integer> addedAndDeletedLines = (ArrayList<Integer>) entry
+					.getValue();
+
+			fileCurrentSize += addedAndDeletedLines.get(0);
+			fileCurrentSize -= addedAndDeletedLines.get(1);
+		}
+
+		return fileCurrentSize;
 	}
 
 	public LinkedHashMap<String, Double> sortPercentagesMap(
@@ -133,15 +155,18 @@ public abstract class GenericOwnershipInspection {
 	}
 
 	public void addFileInformation(String fileName, Integer numberOfChanges,
-			String fileOwner, LinkedHashMap<String, Integer> authorsChanges,
-			LinkedHashMap<String, ArrayList<Integer>> authorsLineChanges,
+			String fileCreator,
+			LinkedHashMap<String, Integer> authorsNumberOfChanges,
+			LinkedHashMap<String, List<Integer>> authorsAddedAndDeletedLines,
 			LinkedHashMap<String, Double> ownershipPercentages) {
 
 		final EntityOwnershipInformation fileOwnershipInformation = new EntityOwnershipInformation();
 		fileOwnershipInformation.setNumberOfChanges(numberOfChanges);
-		fileOwnershipInformation.setEntityCreator(fileOwner);
-		fileOwnershipInformation.setAuthorsChanges(authorsChanges);
-		fileOwnershipInformation.setAuthorsLineChanges(authorsLineChanges);
+		fileOwnershipInformation.setEntityCreator(fileCreator);
+		fileOwnershipInformation
+				.setAuthorsNumberOfChanges(authorsNumberOfChanges);
+		fileOwnershipInformation.setAuthorsNumberOfAddedAndDeletedLines(
+				authorsAddedAndDeletedLines);
 		fileOwnershipInformation.setOwnershipPercentages(ownershipPercentages);
 
 		entityOwnershipResult.put(fileName, fileOwnershipInformation);
@@ -151,8 +176,13 @@ public abstract class GenericOwnershipInspection {
 
 	public abstract void createResults();
 
-	public HashMap<String, EntityOwnershipInformation> getEntityOwnershipResult() {
+	public Map<String, EntityOwnershipInformation> getEntityOwnershipResult() {
 		return entityOwnershipResult;
+	}
+
+	public void setEntityOwnershipResult(
+			Map<String, EntityOwnershipInformation> entityOwnershipResult) {
+		this.entityOwnershipResult = entityOwnershipResult;
 	}
 
 	public void setEntityOwnershipResult(
