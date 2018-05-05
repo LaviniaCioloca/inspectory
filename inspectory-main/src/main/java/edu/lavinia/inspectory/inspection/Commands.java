@@ -28,6 +28,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Optional;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -52,7 +53,7 @@ public class Commands {
 	private final String[] args;
 	private final Options options = new Options();
 
-	private PersistentProject project;
+	private Optional<PersistentProject> project;
 
 	private final static String ASTRONOMICAL_METHODS_CSV_FILE_NAME = "astronomical-methods-result.csv";
 	private final static String ASTRONOMICAL_METHODS_JSON_FILE_NAME = "astronomical-methods-result.json";
@@ -61,7 +62,8 @@ public class Commands {
 	private final static String OWNERSHIP_PROBLEMS_CLASSES_CSV_FILE_NAME = "ownership-problems-classes-result.csv";
 	private final static String OWNERSHIP_PROBLEMS_METHODS_CSV_FILE_NAME = "ownership-problems-methods-result.csv";
 
-	public Commands(final String[] args, final PersistentProject project) {
+	public Commands(final String[] args,
+			final Optional<PersistentProject> project) {
 		this.args = args;
 		this.project = project;
 

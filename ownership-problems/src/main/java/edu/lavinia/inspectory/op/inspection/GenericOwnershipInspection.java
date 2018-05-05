@@ -31,6 +31,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.metanalysis.core.project.PersistentProject;
@@ -38,7 +39,7 @@ import org.metanalysis.core.project.PersistentProject;
 import edu.lavinia.inspectory.op.beans.EntityOwnershipInformation;
 
 public abstract class GenericOwnershipInspection {
-	protected final PersistentProject project;
+	protected final Optional<PersistentProject> project;
 	protected final FileWriter csvWriter;
 	protected Map<String, EntityOwnershipInformation> entityOwnershipResult = new HashMap<>();
 
@@ -51,7 +52,7 @@ public abstract class GenericOwnershipInspection {
 	 * @param csvWriter
 	 *            The writer of result CSV file.
 	 */
-	public GenericOwnershipInspection(PersistentProject project,
+	public GenericOwnershipInspection(Optional<PersistentProject> project,
 			FileWriter csvWriter) {
 		this.project = project;
 		this.csvWriter = csvWriter;

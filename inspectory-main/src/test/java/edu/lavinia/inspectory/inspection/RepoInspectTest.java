@@ -21,18 +21,16 @@
  *******************************************************************************/
 package edu.lavinia.inspectory.inspection;
 
-import static org.junit.Assert.assertNull;
-
 import org.junit.Test;
 
 public class RepoInspectTest {
 
-	@Test
+	@Test(expected = NullPointerException.class)
 	public void testGetProject() {
-		assertNull(RepoInspect.getProject());
+		RepoInspect.getProject();
 	}
 
-	@Test
+	@Test(expected = NullPointerException.class)
 	public void testMain() {
 		final String args[] = new String[1];
 		RepoInspect.main(args);

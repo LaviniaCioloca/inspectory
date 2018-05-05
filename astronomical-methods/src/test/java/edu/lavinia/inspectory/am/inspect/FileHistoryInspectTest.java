@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import org.junit.Test;
 import org.metanalysis.core.project.PersistentProject;
@@ -51,8 +52,7 @@ public class FileHistoryInspectTest {
 
 	private static final File FILE = new File(
 			"./src/test/resources/testFile.csv");
-	private static final PersistentProject PROJECT = null;
-
+	private static Optional<PersistentProject> PROJECT;
 	private static final String DATE_FORMAT = "yyyy/MM/dd";
 	private static final String CLASS_NAME = "SimpleClass";
 

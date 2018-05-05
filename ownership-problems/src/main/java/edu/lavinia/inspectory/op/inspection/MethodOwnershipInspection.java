@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.metanalysis.core.delta.FunctionTransaction;
@@ -63,7 +64,7 @@ public class MethodOwnershipInspection extends GenericOwnershipInspection {
 	 * @param csvWriter
 	 *            The writer of result CSV file.
 	 */
-	public MethodOwnershipInspection(PersistentProject project,
+	public MethodOwnershipInspection(Optional<PersistentProject> project,
 			FileWriter csvWriter) {
 		super(project, csvWriter);
 	}
@@ -159,6 +160,7 @@ public class MethodOwnershipInspection extends GenericOwnershipInspection {
 
 	private void treatGeneralNodeSetEdit(String fileName, Commit commit,
 			final String className, final NodeSetEdit memberEdit) {
+
 		if (memberEdit instanceof NodeSetEdit.Change) {
 			treatNodeSetEditChange(fileName, commit, className, memberEdit);
 		} else if (memberEdit instanceof NodeSetEdit.Add) {
@@ -170,6 +172,7 @@ public class MethodOwnershipInspection extends GenericOwnershipInspection {
 
 	private void treatNodeSetEditRemove(String fileName, Commit commit,
 			final String className, final NodeSetEdit memberEdit) {
+
 		if (((NodeSetEdit.Remove) memberEdit).getNodeType().getQualifiedName()
 				.equals(Node.Function.class.getCanonicalName())) {
 
@@ -188,6 +191,7 @@ public class MethodOwnershipInspection extends GenericOwnershipInspection {
 
 	private void treatNodeSetEditAdd(String fileName, Commit commit,
 			final String className, final NodeSetEdit memberEdit) {
+
 		final Node memberEditNode = ((NodeSetEdit.Add) memberEdit).getNode();
 
 		if (memberEditNode instanceof Node.Function) {
@@ -203,6 +207,7 @@ public class MethodOwnershipInspection extends GenericOwnershipInspection {
 
 	private void treatNodeSetEditChange(String fileName, Commit commit,
 			final String className, final NodeSetEdit memberEdit) {
+
 		final Transaction<?> functionTransaction = ((NodeSetEdit.Change<?>) memberEdit)
 				.getTransaction();
 
@@ -227,6 +232,7 @@ public class MethodOwnershipInspection extends GenericOwnershipInspection {
 
 	public List<Integer> countAddedAndDeletedLines(
 			List<ListEdit<String>> bodyEdits) {
+
 		Integer addedLines = 0;
 		Integer deletedLines = 0;
 
@@ -243,6 +249,7 @@ public class MethodOwnershipInspection extends GenericOwnershipInspection {
 
 	public void handleNodeSetEditAdd(NodeSetEdit edit, String fileName,
 			Commit commit) {
+
 		final Node node = ((NodeSetEdit.Add) edit).getNode();
 
 		if (node instanceof Node.Type) {
@@ -252,6 +259,7 @@ public class MethodOwnershipInspection extends GenericOwnershipInspection {
 
 	private void treatGeneralNodeType(String fileName, Commit commit,
 			final Node node) {
+
 		final Set<Node> members = ((Node.Type) node).getMembers();
 
 		for (final Node member : members) {
@@ -269,6 +277,7 @@ public class MethodOwnershipInspection extends GenericOwnershipInspection {
 
 	private void treatNodeFunction(String fileName, Commit commit,
 			final Node node, final Node member) {
+
 		String className;
 		className = ((Node.Type) node).getName();
 		final List<String> methodBody = ((Node.Function) member).getBody();
@@ -280,6 +289,7 @@ public class MethodOwnershipInspection extends GenericOwnershipInspection {
 
 	private void treatNodeType(String fileName, Commit commit,
 			final Node member) {
+
 		String className;
 		className = ((Node.Type) member).getName();
 
@@ -299,8 +309,7 @@ public class MethodOwnershipInspection extends GenericOwnershipInspection {
 
 	@Override
 	public void createResults() {
-
-		final Set<String> filesList = project.listFiles();
+		final Set<String> filesList = project.get().listFiles();
 
 		for (final String fileName : filesList) {
 			if (fileName.startsWith(".") || !fileName.endsWith(".java")) {
@@ -313,7 +322,7 @@ public class MethodOwnershipInspection extends GenericOwnershipInspection {
 
 	public void createResultForEachMethod(String fileName) {
 		try {
-			final List<HistoryEntry> fileHistory = project
+			final List<HistoryEntry> fileHistory = project.get()
 					.getFileHistory(fileName);
 
 			final LinkedHashMap<String, Integer> authorsChanges = new LinkedHashMap<>();
@@ -334,6 +343,7 @@ public class MethodOwnershipInspection extends GenericOwnershipInspection {
 	private void createResultForEachHistoryEntry(String fileName,
 			final LinkedHashMap<String, Integer> authorsChanges,
 			final HistoryEntry historyEntry) {
+
 		try {
 			final Commit commit = new Commit();
 			setCommitInformation(historyEntry, commit);
@@ -354,8 +364,10 @@ public class MethodOwnershipInspection extends GenericOwnershipInspection {
 	private void updateAuthorNumberOfChanges(
 			final LinkedHashMap<String, Integer> authorsChanges,
 			final HistoryEntry historyEntry) {
+
 		Integer numberOfChangesAuthorHas = authorsChanges
 				.get(historyEntry.getAuthor());
+
 		if (numberOfChangesAuthorHas == null) {
 			authorsChanges.put(historyEntry.getAuthor(), 1);
 		} else {
@@ -380,6 +392,7 @@ public class MethodOwnershipInspection extends GenericOwnershipInspection {
 
 	private void setCommitInformation(final HistoryEntry historyEntry,
 			final Commit commit) {
+
 		commit.setRevision(historyEntry.getRevision());
 		commit.setAuthor(historyEntry.getAuthor());
 		commit.setDate(historyEntry.getDate());
@@ -406,6 +419,7 @@ public class MethodOwnershipInspection extends GenericOwnershipInspection {
 	private ArrayList<String> addMethodOwnershipInformation(
 			final Map<String, Map<String, List<Integer>>> methodsAuthorsChangesMap,
 			String methodFullPath) {
+
 		final ArrayList<String> methodOwnershipInformationLine = new ArrayList<>();
 		final Map<String, List<Integer>> authorChanges = methodsAuthorsChangesMap
 				.get(methodFullPath);
@@ -431,6 +445,7 @@ public class MethodOwnershipInspection extends GenericOwnershipInspection {
 
 	private LinkedHashMap<String, List<Integer>> getMethodLineChangesByAuthor(
 			final Map<String, List<Integer>> methodData) {
+
 		final LinkedHashMap<String, List<Integer>> methodLineChangesByAuthor = new LinkedHashMap<>();
 
 		for (Map.Entry<String, List<Integer>> authorChanges : methodData

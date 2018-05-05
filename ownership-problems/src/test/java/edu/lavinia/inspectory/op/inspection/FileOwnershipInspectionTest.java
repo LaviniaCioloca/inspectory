@@ -31,6 +31,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.Test;
 import org.metanalysis.core.project.PersistentProject;
@@ -41,7 +42,7 @@ public class FileOwnershipInspectionTest {
 
 	private static final File FILE = new File(
 			"./src/test/resources/testFile.csv");
-	private static final PersistentProject PROJECT = null;
+	private static Optional<PersistentProject> PROJECT;
 
 	private static FileWriter csvWriter;
 	private static FileOwnershipInspection fileOwnershipInspection;

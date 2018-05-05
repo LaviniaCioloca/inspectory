@@ -24,6 +24,7 @@ package edu.lavinia.inspectory.inspection;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.Optional;
 
 import org.apache.log4j.Logger;
 import org.metanalysis.core.project.PersistentProject;
@@ -39,14 +40,14 @@ public class RepoInspect {
 	 * 
 	 * @return A PersistentProject instance of the current repository.
 	 */
-	public static PersistentProject getProject() {
+	public static Optional<PersistentProject> getProject() {
 		try {
-			return PersistentProject.load();
+			return Optional.of(PersistentProject.load());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return null;
+
+		return Optional.empty();
 	}
 
 	/**
@@ -59,13 +60,13 @@ public class RepoInspect {
 	public static void main(String[] args) {
 		final long startTime = System.currentTimeMillis();
 
-		final PersistentProject project = getProject();
-		if (project == null) {
-			System.out.println(
-					"Error! Project persistency not found: .metanalysis folder! Use metanalysis to generate the model first!");
-		} else {
+		final Optional<PersistentProject> project = getProject();
+		if (project.isPresent()) {
 			final Commands commands = new Commands(args, project);
 			commands.parse();
+		} else {
+			System.out.println(
+					"Error! Project persistency not found: .metanalysis folder! Use metanalysis to generate the model first!");
 		}
 
 		final long endTime = System.currentTimeMillis();

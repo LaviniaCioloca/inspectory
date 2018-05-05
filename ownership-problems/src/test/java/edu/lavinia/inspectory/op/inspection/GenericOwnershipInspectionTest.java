@@ -24,6 +24,7 @@ package edu.lavinia.inspectory.op.inspection;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Optional;
 
 import org.junit.Test;
 import org.metanalysis.core.project.PersistentProject;
@@ -32,7 +33,7 @@ public class GenericOwnershipInspectionTest {
 
 	private static final File FILE = new File(
 			"./src/test/resources/testFile.csv");
-	private static final PersistentProject PROJECT = null;
+	private static Optional<PersistentProject> PROJECT;
 
 	private static FileWriter csvWriter;
 	private static GenericOwnershipInspection genericOwnershipInspection;

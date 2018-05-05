@@ -30,6 +30,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.metanalysis.core.delta.NodeSetEdit;
@@ -60,7 +61,7 @@ import edu.lavinia.inspectory.utils.JSONUtils;
 import edu.lavinia.inspectory.visitor.GenericVisitor;
 
 public class AstronomicalMethodsInspection {
-	private PersistentProject project;
+	private Optional<PersistentProject> project;
 	private Map<String, MethodChangesInformation> result;
 	private ArrayList<String> deletedNodes;
 	private final FileWriter csvWriter;
@@ -79,7 +80,7 @@ public class AstronomicalMethodsInspection {
 	 * @param csvWriter
 	 *            The writer of result CSV file.
 	 */
-	public AstronomicalMethodsInspection(PersistentProject project,
+	public AstronomicalMethodsInspection(Optional<PersistentProject> project,
 			FileWriter csvWriter, FileWriter csvMethodDynamicsWriter,
 			FileWriter jsonWriter) {
 
@@ -492,14 +493,14 @@ public class AstronomicalMethodsInspection {
 	 */
 	public void createResults() {
 		try {
-			final Set<String> filesList = project.listFiles();
+			final Set<String> filesList = project.get().listFiles();
 			methodInformationList = new ArrayList<MethodChangesInformation>();
 			for (final String fileName : filesList) {
 				if (fileName.startsWith(".") || !fileName.endsWith(".java")) {
 					continue;
 				}
 
-				final List<HistoryEntry> fileHistory = project
+				final List<HistoryEntry> fileHistory = project.get()
 						.getFileHistory(fileName);
 
 				for (final HistoryEntry historyEntry : fileHistory) {
@@ -545,7 +546,7 @@ public class AstronomicalMethodsInspection {
 	 * method properties values.
 	 */
 	public void createDefaultMethodInformation() {
-		final Set<String> filesList = project.listFiles();
+		final Set<String> filesList = project.get().listFiles();
 		for (final String fileName : filesList) {
 			if (fileName.startsWith(".") || !fileName.endsWith(".java")) {
 				continue;
@@ -631,11 +632,11 @@ public class AstronomicalMethodsInspection {
 		this.methodInformationList = methodInformationList;
 	}
 
-	public PersistentProject getProject() {
+	public Optional<PersistentProject> getProject() {
 		return project;
 	}
 
-	public void setProject(PersistentProject project) {
+	public void setProject(Optional<PersistentProject> project) {
 		this.project = project;
 	}
 

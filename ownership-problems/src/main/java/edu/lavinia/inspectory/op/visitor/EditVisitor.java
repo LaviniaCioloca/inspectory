@@ -55,13 +55,7 @@ public class EditVisitor extends NodeSetEditVisitor {
 		if (typeMemberNode instanceof Node.Variable) {
 			++addedLines;
 		} else if (typeMemberNode instanceof Node.Function) {
-			++addedLines; // for signature, modifiers and parameters
-			final List<String> body = ((Node.Function) typeMemberNode)
-					.getBody();
-			addedLines += body.size();
-
-			methodSize.put(((Node.Function) typeMemberNode).getSignature(),
-					body.size());
+			treatMemberNodeFunction(typeMemberNode);
 		}
 	}
 
@@ -73,26 +67,7 @@ public class EditVisitor extends NodeSetEditVisitor {
 			identifier = ((Node.Type) node).getIdentifier();
 			members = ((Node.Type) node).getMembers();
 
-			for (final Node memberNode : members) {
-				// @TODO check if Type of Type exist
-				if (memberNode instanceof Node.Type) {
-					final Set<Node> members = ((Node.Type) memberNode)
-							.getMembers();
-					for (final Node typeMemberNode : members) {
-						visitTypeMemberNode(typeMemberNode);
-					}
-				} else if (memberNode instanceof Node.Function) {
-					++addedLines; // for signature, modifiers and parameters
-					final List<String> body = ((Node.Function) memberNode)
-							.getBody();
-					addedLines += body.size();
-
-					methodSize.put(((Node.Function) memberNode).getSignature(),
-							body.size());
-				} else if (memberNode instanceof Node.Variable) {
-					++addedLines;
-				}
-			}
+			visitEachMemberNode();
 		} else if (node instanceof Node.Function) {
 			identifier = ((Node.Function) node).getIdentifier();
 			++addedLines; // for signature, modifiers and parameters
@@ -102,6 +77,36 @@ public class EditVisitor extends NodeSetEditVisitor {
 			methodSize.put(identifier, body.size());
 		} else if (node instanceof Node.Variable) {
 			++addedLines;
+		}
+	}
+
+	private void visitEachMemberNode() {
+		for (final Node memberNode : members) {
+			// @TODO check if Type of Type exist
+			if (memberNode instanceof Node.Type) {
+				treatMemberNodeType(memberNode);
+			} else if (memberNode instanceof Node.Function) {
+				treatMemberNodeFunction(memberNode);
+			} else if (memberNode instanceof Node.Variable) {
+				++addedLines;
+			}
+		}
+	}
+
+	private void treatMemberNodeFunction(final Node memberNode) {
+		++addedLines; // for signature, modifiers and parameters
+		final List<String> body = ((Node.Function) memberNode).getBody();
+		addedLines += body.size();
+
+		methodSize.put(((Node.Function) memberNode).getSignature(),
+				body.size());
+	}
+
+	private void treatMemberNodeType(final Node memberNode) {
+		final Set<Node> members = ((Node.Type) memberNode).getMembers();
+
+		for (final Node typeMemberNode : members) {
+			visitTypeMemberNode(typeMemberNode);
 		}
 	}
 
@@ -115,12 +120,6 @@ public class EditVisitor extends NodeSetEditVisitor {
 			++deletedLines; // remove signature, modifiers and parameters
 			deletedLines += currentMethodSize;
 			methodSize.put(identifier, 0);
-
-			/*
-			 * System.out.println("\t\tMethod deleted: " + identifier +
-			 * "; currentMethodSize: " + currentMethodSize + "; deletedLines: "
-			 * + deletedLines);
-			 */
 		}
 	}
 
@@ -132,39 +131,50 @@ public class EditVisitor extends NodeSetEditVisitor {
 		final List<NodeSetEdit> memberEdits = ((TypeTransaction) transaction)
 				.getMemberEdits();
 
+		treatEachNodeSetEdit(memberEdits);
+	}
+
+	private void treatEachNodeSetEdit(final List<NodeSetEdit> memberEdits) {
 		for (final NodeSetEdit memberEdit : memberEdits) {
 			if (memberEdit instanceof NodeSetEdit.Change<?>) {
-				final Transaction<?> changeTransaction = ((NodeSetEdit.Change<?>) memberEdit)
-						.getTransaction();
-				final List<ListEdit<String>> bodyEdits = ((FunctionTransaction) changeTransaction)
-						.getBodyEdits();
-
-				Integer currentMethodSize = methodSize.get(
-						((NodeSetEdit.Change<?>) memberEdit).getIdentifier());
-
-				for (final ListEdit<String> listEdit : bodyEdits) {
-					if (listEdit instanceof ListEdit.Add<?>) {
-						++addedLines;
-
-						++currentMethodSize;
-						methodSize.put(((NodeSetEdit.Change<?>) memberEdit)
-								.getIdentifier(), currentMethodSize);
-					} else if (listEdit instanceof ListEdit.Remove<?>) {
-						++deletedLines;
-
-						--currentMethodSize;
-						methodSize.put(((NodeSetEdit.Change<?>) memberEdit)
-								.getIdentifier(), currentMethodSize);
-					}
-				}
+				treatNodeSetEditChange(memberEdit);
 			} else if (memberEdit instanceof NodeSetEdit.Add) {
 				visit(memberEdit);
 			} else if (memberEdit instanceof NodeSetEdit.Remove) {
-				/*
-				 * To change and remove the number of line the method has, not
-				 * -1!
-				 */
 				visit(memberEdit);
+			}
+		}
+	}
+
+	private void treatNodeSetEditChange(final NodeSetEdit memberEdit) {
+		final Transaction<?> changeTransaction = ((NodeSetEdit.Change<?>) memberEdit)
+				.getTransaction();
+		final List<ListEdit<String>> bodyEdits = ((FunctionTransaction) changeTransaction)
+				.getBodyEdits();
+
+		treatEachListEdit(memberEdit, bodyEdits);
+	}
+
+	private void treatEachListEdit(final NodeSetEdit memberEdit,
+			final List<ListEdit<String>> bodyEdits) {
+		Integer currentMethodSize = methodSize
+				.get(((NodeSetEdit.Change<?>) memberEdit).getIdentifier());
+
+		for (final ListEdit<String> listEdit : bodyEdits) {
+			if (listEdit instanceof ListEdit.Add<?>) {
+				++addedLines;
+
+				++currentMethodSize;
+				methodSize.put(
+						((NodeSetEdit.Change<?>) memberEdit).getIdentifier(),
+						currentMethodSize);
+			} else if (listEdit instanceof ListEdit.Remove<?>) {
+				++deletedLines;
+
+				--currentMethodSize;
+				methodSize.put(
+						((NodeSetEdit.Change<?>) memberEdit).getIdentifier(),
+						currentMethodSize);
 			}
 		}
 	}

@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.metanalysis.core.delta.NodeSetEdit;
@@ -51,7 +52,7 @@ public class FileOwnershipInspection extends GenericOwnershipInspection {
 	 * @param csvWriter
 	 *            The writer of result CSV file.
 	 */
-	public FileOwnershipInspection(PersistentProject project,
+	public FileOwnershipInspection(Optional<PersistentProject> project,
 			FileWriter csvWriter) {
 		super(project, csvWriter);
 	}
@@ -76,7 +77,7 @@ public class FileOwnershipInspection extends GenericOwnershipInspection {
 
 	@Override
 	public void createResults() {
-		final Set<String> filesList = project.listFiles();
+		final Set<String> filesList = project.get().listFiles();
 
 		for (final String fileName : filesList) {
 			if (fileName.startsWith(".") || !fileName.endsWith(".java")) {
@@ -89,47 +90,12 @@ public class FileOwnershipInspection extends GenericOwnershipInspection {
 
 	public void createResultForEachFile(String fileName) {
 		try {
-			final List<HistoryEntry> fileHistory = project
+			final List<HistoryEntry> fileHistory = project.get()
 					.getFileHistory(fileName);
 
 			final GenericVisitor visitor = new EditVisitor(fileName);
 
-			int numberOfChanges = 0;
-			String fileCreator = null;
-			final LinkedHashMap<String, Integer> authorsNumberOfChanges = new LinkedHashMap<>();
-			LinkedHashMap<String, List<Integer>> authorsAddedAndDeletedLines = new LinkedHashMap<>();
-
-			for (final HistoryEntry historyEntry : fileHistory) {
-				try {
-					final Commit commit = new Commit();
-					setCommitInformation(historyEntry, commit);
-
-					++numberOfChanges;
-					initVisitorAddedAndDeletedLines(visitor);
-					fileCreator = setFileCreator(fileCreator, historyEntry);
-					updateAuthorNumberOfChanges(authorsNumberOfChanges,
-							historyEntry);
-
-					final SourceFileTransaction sourceFileTransaction = historyEntry
-							.getTransaction();
-					final List<NodeSetEdit> nodeEditList = sourceFileTransaction
-							.getNodeEdits();
-
-					authorsAddedAndDeletedLines = treatEachNodeSetEdit(visitor,
-							authorsAddedAndDeletedLines, historyEntry,
-							nodeEditList);
-				} catch (Exception e) {
-					continue;
-				}
-			}
-
-			LinkedHashMap<String, Double> ownershipPercentages = calculateEntityOwnership(
-					authorsAddedAndDeletedLines);
-			ownershipPercentages = sortPercentagesMap(ownershipPercentages);
-
-			addFileInformation(fileName, numberOfChanges, fileCreator,
-					authorsNumberOfChanges, authorsAddedAndDeletedLines,
-					ownershipPercentages);
+			treatEachHistoryEntry(fileName, fileHistory, visitor);
 		} catch (IOException e) {
 			/*
 			 * Need to have a NOP here because of the files that do not have a
@@ -137,6 +103,48 @@ public class FileOwnershipInspection extends GenericOwnershipInspection {
 			 * IOException
 			 */
 		}
+	}
+
+	private void treatEachHistoryEntry(String fileName,
+			final List<HistoryEntry> fileHistory,
+			final GenericVisitor visitor) {
+
+		int numberOfChanges = 0;
+		String fileCreator = null;
+		final LinkedHashMap<String, Integer> authorsNumberOfChanges = new LinkedHashMap<>();
+		LinkedHashMap<String, List<Integer>> authorsAddedAndDeletedLines = new LinkedHashMap<>();
+
+		for (final HistoryEntry historyEntry : fileHistory) {
+			try {
+				final Commit commit = new Commit();
+				setCommitInformation(historyEntry, commit);
+
+				++numberOfChanges;
+				initVisitorAddedAndDeletedLines(visitor);
+				fileCreator = setFileCreator(fileCreator, historyEntry);
+				updateAuthorNumberOfChanges(authorsNumberOfChanges,
+						historyEntry);
+
+				final SourceFileTransaction sourceFileTransaction = historyEntry
+						.getTransaction();
+				final List<NodeSetEdit> nodeEditList = sourceFileTransaction
+						.getNodeEdits();
+
+				authorsAddedAndDeletedLines = treatEachNodeSetEdit(visitor,
+						authorsAddedAndDeletedLines, historyEntry,
+						nodeEditList);
+			} catch (Exception e) {
+				continue;
+			}
+		}
+
+		LinkedHashMap<String, Double> ownershipPercentages = calculateEntityOwnership(
+				authorsAddedAndDeletedLines);
+		ownershipPercentages = sortPercentagesMap(ownershipPercentages);
+
+		addFileInformation(fileName, numberOfChanges, fileCreator,
+				authorsNumberOfChanges, authorsAddedAndDeletedLines,
+				ownershipPercentages);
 	}
 
 	private LinkedHashMap<String, List<Integer>> treatEachNodeSetEdit(
