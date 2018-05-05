@@ -71,7 +71,6 @@ public class Commands {
 	}
 
 	private void generateOptions() {
-
 		final Option helpOption = Option.builder("h").longOpt("help")
 				.required(false).hasArg(false)
 				.desc("Show usage instructions for every command.").build();
@@ -95,6 +94,14 @@ public class Commands {
 				.desc("Astronomical Methods & Ownership Problems Metrics applied on the current repository.")
 				.build();
 
+		addOptionsToMenu(helpOption, cleanOption, ammOption, opmOption,
+				allOption);
+	}
+
+	private void addOptionsToMenu(final Option helpOption,
+			final Option cleanOption, final Option ammOption,
+			final Option opmOption, final Option allOption) {
+
 		options.addOption(allOption);
 		options.addOption(ammOption);
 		options.addOption(opmOption);
@@ -104,8 +111,8 @@ public class Commands {
 
 	public void parse() {
 		final CommandLineParser parser = new DefaultParser();
-
 		final CommandLine cmd;
+
 		try {
 			cmd = parser.parse(options, args);
 
@@ -134,6 +141,7 @@ public class Commands {
 		formatter.setOptionComparator(null);
 		formatter.printHelp("java -jar inspectory-<version>.jar <command>",
 				options);
+
 		System.exit(0);
 	}
 
@@ -156,8 +164,10 @@ public class Commands {
 
 	private void allMetrics() {
 		System.out.println("Starting to inspect the repository.....\n");
+
 		astronomicalMethodsMetric();
 		ownershipProblemsMetric();
+
 		System.out.println("Inspection successful!\n");
 		System.out.println(
 				"Check results in .inspectory folder in the current repository.\n");
@@ -176,53 +186,56 @@ public class Commands {
 
 		csvFile.getParentFile().mkdirs();
 
-		final FileWriter csvWriter;
-		final FileWriter csvMethodDynamicsWriter;
-		final FileWriter jsonWriter;
 		try {
-			csvWriter = new FileWriter(csvFile);
-			jsonWriter = new FileWriter(jsonFile);
-			csvMethodDynamicsWriter = new FileWriter(csvMethodDynamicsFile);
-			CSVUtils.writeLine(csvWriter, Arrays.asList("File", "Class",
-					"Method", "Initial size", "Actual size",
-					"Number of changes", "Method was deleted", "Changes List",
-					"isSupernova", "Supernova Severity",
-					"Supernova - Leaps Size", "Supernova - Recent Leaps Size",
-					"Supernova - Subsequent Refactoring",
-					"Supernova - Method Size", "Supernova - Activity State",
-					"isPulsar", "Pulsar Severity", "Pulsar - Recent Cycles",
-					"Pulsar - Average Size Increase", "Pulsar - Method Size",
-					"Pulsar - Activity State"));
-			CSVUtils.writeLine(csvMethodDynamicsWriter,
-					Arrays.asList("File", "Supernova Methods", "Pulsar Methods",
-							"Supernova Severity", "Pulsar Severity"));
+			final FileWriter csvWriter = new FileWriter(csvFile);
+			final FileWriter jsonWriter = new FileWriter(jsonFile);
+			final FileWriter csvMethodDynamicsWriter = new FileWriter(
+					csvMethodDynamicsFile);
+
+			writeCSVFilesHeaderLine(csvWriter, csvMethodDynamicsWriter);
+
 			final AstronomicalMethodsInspection astronomicalMethodsInspection = new AstronomicalMethodsInspection(
 					project, csvWriter, csvMethodDynamicsWriter, jsonWriter);
 			astronomicalMethodsInspection.analyzeAstronomicalMethods();
-			csvWriter.flush();
-			csvWriter.close();
-			csvMethodDynamicsWriter.flush();
-			csvMethodDynamicsWriter.close();
-			jsonWriter.flush();
-			jsonWriter.close();
-			// System.out.println("Deleted nodes are: ");
-			// for (final String deletedNode :
-			// astronomicalMethodsInspection.getDeletedNodes()) {
-			// System.out.println("- deletedNode: " + deletedNode);
-			// }
+
+			flushAndCloseWriters(csvWriter, jsonWriter,
+					csvMethodDynamicsWriter);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
+	private void flushAndCloseWriters(final FileWriter csvWriter,
+			final FileWriter jsonWriter,
+			final FileWriter csvMethodDynamicsWriter) throws IOException {
+
+		csvWriter.flush();
+		csvWriter.close();
+		csvMethodDynamicsWriter.flush();
+		csvMethodDynamicsWriter.close();
+		jsonWriter.flush();
+		jsonWriter.close();
+	}
+
+	private void writeCSVFilesHeaderLine(final FileWriter csvWriter,
+			final FileWriter csvMethodDynamicsWriter) throws IOException {
+
+		CSVUtils.writeLine(csvWriter, Arrays.asList("File", "Class", "Method",
+				"Initial size", "Actual size", "Number of changes",
+				"Method was deleted", "Changes List", "isSupernova",
+				"Supernova Severity", "Supernova - Leaps Size",
+				"Supernova - Recent Leaps Size",
+				"Supernova - Subsequent Refactoring", "Supernova - Method Size",
+				"Supernova - Activity State", "isPulsar", "Pulsar Severity",
+				"Pulsar - Recent Cycles", "Pulsar - Average Size Increase",
+				"Pulsar - Method Size", "Pulsar - Activity State"));
+
+		CSVUtils.writeLine(csvMethodDynamicsWriter,
+				Arrays.asList("File", "Supernova Methods", "Pulsar Methods",
+						"Supernova Severity", "Pulsar Severity"));
+	}
+
 	private void ownershipProblemsMetric() {
-		// final String directoryPath = System.getProperty("user.dir") +
-		// "/.inspectory";
-
-		// final File csvFile = new File(directoryPath,
-		// OWNERSHIP_PROBLEMS_CSV_FILE_NAME);
-		// csvFile.getParentFile().mkdirs();
-
 		final String home = System.getProperty("user.dir");
 		final Path path = Paths.get(home, ".inspectory");
 
@@ -236,47 +249,63 @@ public class Commands {
 
 		boolean directoryExists = Files.exists(path);
 
-		final FileWriter methodsCsvWriter;
-		final FileWriter classesCsvWriter;
 		try {
-			if (directoryExists) {
-				classesCsvFile.delete();
-				methodsCsvFile.delete();
-			} else {
-				Files.createDirectories(path);
-			}
+			checkDirectoryExistance(path, methodsCsvFile, classesCsvFile,
+					directoryExists);
 
-			methodsCsvWriter = new FileWriter(methodsCsvFile);
-			classesCsvWriter = new FileWriter(classesCsvFile);
+			writeMethodsOwnershipResult(methodsCsvFile);
 
-			CSVUtils.writeLine(methodsCsvWriter,
-					Arrays.asList("Method full path", "Number of changes",
-							"Number of authors", "Method current size",
-							"Authors Ownership Percentages",
-							"Author - Line changes made"));
-
-			final MethodOwnershipInspection methodsOwnershipProblemsInspection = new MethodOwnershipInspection(
-					project, methodsCsvWriter);
-			methodsOwnershipProblemsInspection.createResults();
-			methodsOwnershipProblemsInspection.writeFileResults();
-			methodsCsvWriter.flush();
-			methodsCsvWriter.close();
-
-			CSVUtils.writeLine(classesCsvWriter,
-					Arrays.asList("File", "Number of changes",
-							"Number of authors", "File Creator",
-							"Authors - Total changes made",
-							"Authors Ownership Percentages",
-							"Authors - Line changes made"));
-
-			final FileOwnershipInspection classesOwnershipProblemsInspection = new FileOwnershipInspection(
-					project, classesCsvWriter);
-			classesOwnershipProblemsInspection.createResults();
-			classesOwnershipProblemsInspection.writeFileResults();
-			classesCsvWriter.flush();
-			classesCsvWriter.close();
+			writeClassesOwnershipResult(classesCsvFile);
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+	}
+
+	private void writeClassesOwnershipResult(final File classesCsvFile)
+			throws IOException {
+
+		final FileWriter classesCsvWriter = new FileWriter(classesCsvFile);
+		CSVUtils.writeLine(classesCsvWriter,
+				Arrays.asList("File", "Number of changes", "Number of authors",
+						"File Creator", "Authors - Total changes made",
+						"Authors Ownership Percentages",
+						"Authors - Line changes made"));
+
+		final FileOwnershipInspection classesOwnershipProblemsInspection = new FileOwnershipInspection(
+				project, classesCsvWriter);
+		classesOwnershipProblemsInspection.createResults();
+		classesOwnershipProblemsInspection.writeFileResults();
+
+		classesCsvWriter.flush();
+		classesCsvWriter.close();
+	}
+
+	private void writeMethodsOwnershipResult(final File methodsCsvFile)
+			throws IOException {
+
+		final FileWriter methodsCsvWriter = new FileWriter(methodsCsvFile);
+		CSVUtils.writeLine(methodsCsvWriter, Arrays.asList("Method full path",
+				"Number of changes", "Number of authors", "Method current size",
+				"Authors Ownership Percentages", "Author - Line changes made"));
+
+		final MethodOwnershipInspection methodsOwnershipProblemsInspection = new MethodOwnershipInspection(
+				project, methodsCsvWriter);
+		methodsOwnershipProblemsInspection.createResults();
+		methodsOwnershipProblemsInspection.writeFileResults();
+
+		methodsCsvWriter.flush();
+		methodsCsvWriter.close();
+	}
+
+	private void checkDirectoryExistance(final Path path,
+			final File methodsCsvFile, final File classesCsvFile,
+			boolean directoryExists) throws IOException {
+
+		if (directoryExists) {
+			classesCsvFile.delete();
+			methodsCsvFile.delete();
+		} else {
+			Files.createDirectories(path);
 		}
 	}
 }

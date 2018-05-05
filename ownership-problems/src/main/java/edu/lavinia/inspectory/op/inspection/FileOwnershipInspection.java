@@ -184,6 +184,7 @@ public class FileOwnershipInspection extends GenericOwnershipInspection {
 
 		Integer numberOfChangesAuthorHas = authorsNumberOfChanges
 				.get(historyEntry.getAuthor());
+
 		if (numberOfChangesAuthorHas == null) {
 			authorsNumberOfChanges.put(historyEntry.getAuthor(), 1);
 		} else {

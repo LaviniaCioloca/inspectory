@@ -61,6 +61,7 @@ public class RepoInspect {
 		final long startTime = System.currentTimeMillis();
 
 		final Optional<PersistentProject> project = getProject();
+
 		if (project.isPresent()) {
 			final Commands commands = new Commands(args, project);
 			commands.parse();
@@ -69,11 +70,15 @@ public class RepoInspect {
 					"Error! Project persistency not found: .metanalysis folder! Use metanalysis to generate the model first!");
 		}
 
-		final long endTime = System.currentTimeMillis();
+		showInspectionDuration(startTime);
+	}
 
+	private static void showInspectionDuration(final long startTime) {
 		final NumberFormat formatter = new DecimalFormat("#0.00000");
+
 		System.out.println("Inspectory execution time was: "
-				+ formatter.format((endTime - startTime) / 1000d)
+				+ formatter.format(
+						(System.currentTimeMillis() - startTime) / 1000d)
 				+ " seconds.\n");
 	}
 }
