@@ -45,7 +45,7 @@ public class MethodMetricsTest {
 		final Date start = new SimpleDateFormat(DATE_FORMAT)
 				.parse("2010/01/01");
 		final Date end = new SimpleDateFormat(DATE_FORMAT).parse("2010/01/05");
-		assertTrue(MethodMetrics.getDifferenceInDays(start, end) == 4.0);
+		assertTrue(MethodMetrics.getTimeDifferenceInDays(start, end) == 4.0);
 	}
 
 	@Test

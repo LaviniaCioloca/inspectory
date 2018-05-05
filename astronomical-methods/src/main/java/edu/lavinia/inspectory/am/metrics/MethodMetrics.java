@@ -126,7 +126,7 @@ public abstract class MethodMetrics {
 	 * @return A Long representing the difference in days between {@code start}
 	 *         and {@code end} date.
 	 */
-	protected static Long getDifferenceInDays(Date start, Date end) {
+	protected static Long getTimeDifferenceInDays(Date start, Date end) {
 		final Long startTime = start.getTime();
 		final Long endTime = end.getTime();
 		final Long diffTime = endTime - startTime;
@@ -151,10 +151,11 @@ public abstract class MethodMetrics {
 		commitsIntoTimeFrames.put(commits.get(0), currentTimeFrame);
 
 		for (int i = 1; i < commits.size(); ++i) {
-			if (getDifferenceInDays(commits.get(i - 1).getDate(),
+			if (getTimeDifferenceInDays(commits.get(i - 1).getDate(),
 					commits.get(i).getDate()) > TIME_FRAME) {
 				++currentTimeFrame;
 			}
+
 			commitsIntoTimeFrames.put(commits.get(i), currentTimeFrame);
 		}
 

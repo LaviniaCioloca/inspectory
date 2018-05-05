@@ -44,7 +44,6 @@ public class FileModelInspection {
 	 * model.json file from .metanalysis folder.
 	 */
 	public void getModelFunctionsAnalyze() {
-
 		try {
 			final String logFolderName = ".inspectory_results";
 			final Set<String> filesList = project.listFiles();

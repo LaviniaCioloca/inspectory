@@ -78,12 +78,16 @@ public class EditVisitor extends NodeSetEditVisitor {
 			final List<ListEdit<String>> bodyEdits = ((FunctionTransaction) transaction)
 					.getBodyEdits();
 
-			for (final ListEdit<String> listEdit : bodyEdits) {
-				if (listEdit instanceof ListEdit.Add<?>) {
-					++total;
-				} else if (listEdit instanceof ListEdit.Remove<?>) {
-					--total;
-				}
+			parseEachListEdit(bodyEdits);
+		}
+	}
+
+	private void parseEachListEdit(final List<ListEdit<String>> bodyEdits) {
+		for (final ListEdit<String> listEdit : bodyEdits) {
+			if (listEdit instanceof ListEdit.Add<?>) {
+				++total;
+			} else if (listEdit instanceof ListEdit.Remove<?>) {
+				--total;
 			}
 		}
 	}
