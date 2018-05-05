@@ -52,7 +52,7 @@ public class FileHistoryInspectTest {
 
 	private static final File FILE = new File(
 			"./src/test/resources/testFile.csv");
-	private static Optional<PersistentProject> PROJECT;
+	private static Optional<PersistentProject> project;
 	private static final String DATE_FORMAT = "yyyy/MM/dd";
 	private static final String CLASS_NAME = "SimpleClass";
 
@@ -61,7 +61,7 @@ public class FileHistoryInspectTest {
 		FILE.getParentFile().mkdirs();
 		final FileWriter writer = new FileWriter(FILE);
 		final AstronomicalMethodsInspection astronomicalMethodsInspection = new AstronomicalMethodsInspection(
-				PROJECT, writer, writer, writer);
+				project, writer, writer, writer);
 		astronomicalMethodsInspection.analyzeAstronomicalMethods();
 	}
 
@@ -70,7 +70,7 @@ public class FileHistoryInspectTest {
 		FILE.getParentFile().mkdirs();
 		final FileWriter writer = new FileWriter(FILE);
 		final AstronomicalMethodsInspection astronomicalMethodsInspection = new AstronomicalMethodsInspection(
-				PROJECT, writer, writer, writer);
+				project, writer, writer, writer);
 		final String fileName = "testFileName";
 		final GenericVisitor visitor = new NodeVisitor(fileName);
 
@@ -83,7 +83,7 @@ public class FileHistoryInspectTest {
 		FILE.getParentFile().mkdirs();
 		final FileWriter writer = new FileWriter(FILE);
 		final AstronomicalMethodsInspection astronomicalMethodsInspection = new AstronomicalMethodsInspection(
-				PROJECT, writer, writer, writer);
+				project, writer, writer, writer);
 		final String fileName = "testFileName";
 		final GenericVisitor visitor = new NodeVisitor(fileName);
 		visitor.setIdentifier("abc");
@@ -97,7 +97,7 @@ public class FileHistoryInspectTest {
 		FILE.getParentFile().mkdirs();
 		final FileWriter writer = new FileWriter(FILE);
 		final AstronomicalMethodsInspection astronomicalMethodsInspection = new AstronomicalMethodsInspection(
-				PROJECT, writer, writer, writer);
+				project, writer, writer, writer);
 		final String fileName = "testFileName";
 		final GenericVisitor visitor = new NodeVisitor(fileName);
 		visitor.setIdentifier("abc");
@@ -118,7 +118,7 @@ public class FileHistoryInspectTest {
 		FILE.getParentFile().mkdirs();
 		final FileWriter writer = new FileWriter(FILE);
 		final AstronomicalMethodsInspection astronomicalMethodsInspection = new AstronomicalMethodsInspection(
-				PROJECT, writer, writer, writer);
+				project, writer, writer, writer);
 		final Commit commit = new Commit();
 		final ArrayList<Commit> commits = new ArrayList<>();
 		commits.add(commit);
@@ -133,7 +133,7 @@ public class FileHistoryInspectTest {
 		FILE.getParentFile().mkdirs();
 		final FileWriter writer = new FileWriter(FILE);
 		final AstronomicalMethodsInspection astronomicalMethodsInspection = new AstronomicalMethodsInspection(
-				PROJECT, writer, writer, writer);
+				project, writer, writer, writer);
 		ArrayList<Commit> commits = new ArrayList<>();
 		final Commit commit1 = new Commit();
 		commit1.setDate(new SimpleDateFormat(DATE_FORMAT).parse("2016/08/30"));
@@ -163,7 +163,7 @@ public class FileHistoryInspectTest {
 		FILE.getParentFile().mkdirs();
 		final FileWriter writer = new FileWriter(FILE);
 		final AstronomicalMethodsInspection astronomicalMethodsInspection = new AstronomicalMethodsInspection(
-				PROJECT, writer, writer, writer);
+				project, writer, writer, writer);
 		final ArrayList<Commit> commits = new ArrayList<>();
 		final Commit commit1 = new Commit();
 		commit1.setDate(new SimpleDateFormat(DATE_FORMAT).parse("2016/08/10"));
@@ -199,7 +199,7 @@ public class FileHistoryInspectTest {
 		FILE.getParentFile().mkdirs();
 		final FileWriter writer = new FileWriter(FILE);
 		final AstronomicalMethodsInspection astronomicalMethodsInspection = new AstronomicalMethodsInspection(
-				PROJECT, writer, writer, writer);
+				project, writer, writer, writer);
 		final ArrayList<Commit> commits = new ArrayList<>();
 		final Commit commit1 = new Commit();
 		commit1.setDate(new SimpleDateFormat(DATE_FORMAT).parse("2016/08/10"));
@@ -244,7 +244,7 @@ public class FileHistoryInspectTest {
 		FILE.getParentFile().mkdirs();
 		final FileWriter writer = new FileWriter(FILE);
 		final AstronomicalMethodsInspection astronomicalMethodsInspection = new AstronomicalMethodsInspection(
-				PROJECT, writer, writer, writer);
+				project, writer, writer, writer);
 		final MethodChangesInformation methodChangesInformation = new MethodChangesInformation();
 		methodChangesInformation.setFileName("\"test\"");
 		methodChangesInformation.setClassName("\"test\"");
@@ -264,7 +264,7 @@ public class FileHistoryInspectTest {
 		FILE.getParentFile().mkdirs();
 		final FileWriter writer = new FileWriter(FILE);
 		final AstronomicalMethodsInspection astronomicalMethodsInspection = new AstronomicalMethodsInspection(
-				PROJECT, writer, writer, writer);
+				project, writer, writer, writer);
 		astronomicalMethodsInspection
 				.setResult(new HashMap<String, MethodChangesInformation>());
 		astronomicalMethodsInspection.getResult();

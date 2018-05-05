@@ -33,7 +33,7 @@ public class GenericOwnershipInspectionTest {
 
 	private static final File FILE = new File(
 			"./src/test/resources/testFile.csv");
-	private static Optional<PersistentProject> PROJECT;
+	private static Optional<PersistentProject> project;
 
 	private static FileWriter csvWriter;
 	private static GenericOwnershipInspection genericOwnershipInspection;
@@ -41,7 +41,7 @@ public class GenericOwnershipInspectionTest {
 	public GenericOwnershipInspectionTest() {
 		try {
 			csvWriter = new FileWriter(FILE);
-			genericOwnershipInspection = new FileOwnershipInspection(PROJECT,
+			genericOwnershipInspection = new FileOwnershipInspection(project,
 					csvWriter);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
