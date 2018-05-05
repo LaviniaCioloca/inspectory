@@ -49,28 +49,31 @@ public class MethodDynamicsUtilsTest {
 
 	@Test
 	public void testAddSupernovaMethodDynamics() {
-		fileMethodDynamics.setSupernovaMethods(1);
-		fileMethodDynamics.setSupernovaSeverity(10);
+		fileMethodDynamics.setNumberOfSupernovaMethods(1);
+		fileMethodDynamics.setSupernovaMethodsSeverityPoints(10);
 		methodDynamicUtils.addSupernovaMethodDynamics(FILE_NAME_QUOTES, 10);
-		assertEquals(fileMethodDynamics, methodDynamicUtils.getProjectMethodDynamics().get(FILE_NAME));
+		assertEquals(fileMethodDynamics,
+				methodDynamicUtils.getProjectMethodDynamics().get(FILE_NAME));
 	}
 
 	@Test
 	public void testAddPulsarMethodDynamics() {
-		fileMethodDynamics.setPulsarMethods(1);
-		fileMethodDynamics.setPulsarSeverity(10);
+		fileMethodDynamics.setNumberOfPulsarMethods(1);
+		fileMethodDynamics.setPulsarMethodsSeverityPoints(10);
 		methodDynamicUtils.addPulsarMethodDynamics(FILE_NAME_QUOTES, 10);
-		assertEquals(fileMethodDynamics, methodDynamicUtils.getProjectMethodDynamics().get(FILE_NAME));
+		assertEquals(fileMethodDynamics,
+				methodDynamicUtils.getProjectMethodDynamics().get(FILE_NAME));
 	}
 
 	@Test
 	public void testAddDefaultMethodDynamics() {
-		fileMethodDynamics.setPulsarMethods(0);
-		fileMethodDynamics.setPulsarSeverity(0);
-		fileMethodDynamics.setSupernovaMethods(0);
-		fileMethodDynamics.setSupernovaSeverity(0);
+		fileMethodDynamics.setNumberOfPulsarMethods(0);
+		fileMethodDynamics.setPulsarMethodsSeverityPoints(0);
+		fileMethodDynamics.setNumberOfSupernovaMethods(0);
+		fileMethodDynamics.setSupernovaMethodsSeverityPoints(0);
 		methodDynamicUtils.addDefaultMethodDynamics(FILE_NAME_QUOTES);
-		assertEquals(fileMethodDynamics, methodDynamicUtils.getProjectMethodDynamics().get(FILE_NAME));
+		assertEquals(fileMethodDynamics,
+				methodDynamicUtils.getProjectMethodDynamics().get(FILE_NAME));
 	}
 
 }

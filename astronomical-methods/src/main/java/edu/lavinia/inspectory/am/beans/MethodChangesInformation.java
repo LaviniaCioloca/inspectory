@@ -194,17 +194,33 @@ public class MethodChangesInformation {
 	public ArrayList<String> getMethodInformationLine() {
 		final ArrayList<String> methodInformationLine = new ArrayList<>();
 
-		// General information
-		methodInformationLine.add(this.getFileName());
-		methodInformationLine.add(this.getClassName());
-		methodInformationLine.add(this.getMethodName());
-		methodInformationLine.add(this.getInitialSize().toString());
-		methodInformationLine.add(this.getActualSize().toString());
-		methodInformationLine.add(this.getNumberOfChanges().toString());
-		methodInformationLine.add(this.getMethodDeleted().toString());
-		methodInformationLine.add(this.getChangesList().toString());
+		addGeneralInformation(methodInformationLine);
 
-		// Supernova information
+		addSupernovaInformation(methodInformationLine);
+
+		addPulsarInformation(methodInformationLine);
+
+		return methodInformationLine;
+	}
+
+	private void addPulsarInformation(
+			final ArrayList<String> methodInformationLine) {
+
+		methodInformationLine.add(this.isPulsar.toString());
+		methodInformationLine.add(this.getPulsarSeverity().toString());
+		methodInformationLine
+				.add(pulsarCriteria.getRecentCyclesPoints().toString());
+		methodInformationLine
+				.add(pulsarCriteria.getAverageSizeIncreasePoints().toString());
+		methodInformationLine
+				.add(pulsarCriteria.getMethodSizePoints().toString());
+		methodInformationLine
+				.add(pulsarCriteria.getActivityStatePoints().toString());
+	}
+
+	private void addSupernovaInformation(
+			final ArrayList<String> methodInformationLine) {
+
 		methodInformationLine.add(this.isSupernova.toString());
 		methodInformationLine.add(this.getSupernovaSeverity().toString());
 		methodInformationLine
@@ -217,19 +233,19 @@ public class MethodChangesInformation {
 				.add(supernovaCriteria.getMethodSizePoints().toString());
 		methodInformationLine
 				.add(supernovaCriteria.getActivityStatePoints().toString());
+	}
 
-		// Pulsar information
-		methodInformationLine.add(this.isPulsar.toString());
-		methodInformationLine.add(this.getPulsarSeverity().toString());
-		methodInformationLine
-				.add(pulsarCriteria.getRecentCyclesPoints().toString());
-		methodInformationLine
-				.add(pulsarCriteria.getAverageSizeIncreasePoints().toString());
-		methodInformationLine
-				.add(pulsarCriteria.getMethodSizePoints().toString());
-		methodInformationLine
-				.add(pulsarCriteria.getActivityStatePoints().toString());
-		return methodInformationLine;
+	private void addGeneralInformation(
+			final ArrayList<String> methodInformationLine) {
+
+		methodInformationLine.add(this.getFileName());
+		methodInformationLine.add(this.getClassName());
+		methodInformationLine.add(this.getMethodName());
+		methodInformationLine.add(this.getInitialSize().toString());
+		methodInformationLine.add(this.getActualSize().toString());
+		methodInformationLine.add(this.getNumberOfChanges().toString());
+		methodInformationLine.add(this.getMethodDeleted().toString());
+		methodInformationLine.add(this.getChangesList().toString());
 	}
 
 	@Override

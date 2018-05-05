@@ -50,13 +50,13 @@ public class MethodDynamicsUtils {
 		final FileMethodDynamics fileMethodDynamics = projectMethodDynamics
 				.get(fileName);
 		Integer currentNumberOfSupernovaMethods = fileMethodDynamics
-				.getSupernovaMethods();
+				.getNumberOfSupernovaMethods();
 		final Integer currentSupernovaSeverityPoints = fileMethodDynamics
-				.getSupernovaSeverity();
+				.getSupernovaMethodsSeverityPoints();
 
 		fileMethodDynamics
-				.setSupernovaMethods(++currentNumberOfSupernovaMethods);
-		fileMethodDynamics.setSupernovaSeverity(
+				.setNumberOfSupernovaMethods(++currentNumberOfSupernovaMethods);
+		fileMethodDynamics.setSupernovaMethodsSeverityPoints(
 				currentSupernovaSeverityPoints + supernovaSeverity);
 	}
 
@@ -73,12 +73,13 @@ public class MethodDynamicsUtils {
 		final FileMethodDynamics fileMethodDynamics = projectMethodDynamics
 				.get(fileName);
 		Integer currentNumberOfPulsarMethods = fileMethodDynamics
-				.getPulsarMethods();
+				.getNumberOfPulsarMethods();
 		final Integer currentPulsarSeverityPoints = fileMethodDynamics
-				.getPulsarSeverity();
+				.getPulsarMethodsSeverityPoints();
 
-		fileMethodDynamics.setPulsarMethods(++currentNumberOfPulsarMethods);
-		fileMethodDynamics.setPulsarSeverity(
+		fileMethodDynamics
+				.setNumberOfPulsarMethods(++currentNumberOfPulsarMethods);
+		fileMethodDynamics.setPulsarMethodsSeverityPoints(
 				currentPulsarSeverityPoints + pulsarSeverity);
 	}
 
@@ -89,10 +90,10 @@ public class MethodDynamicsUtils {
 	 */
 	public void addDefaultMethodDynamics(String fileName) {
 		final FileMethodDynamics fileMethodDynamics = new FileMethodDynamics();
-		fileMethodDynamics.setPulsarMethods(0);
-		fileMethodDynamics.setPulsarSeverity(0);
-		fileMethodDynamics.setSupernovaMethods(0);
-		fileMethodDynamics.setSupernovaSeverity(0);
+		fileMethodDynamics.setNumberOfPulsarMethods(0);
+		fileMethodDynamics.setPulsarMethodsSeverityPoints(0);
+		fileMethodDynamics.setNumberOfSupernovaMethods(0);
+		fileMethodDynamics.setSupernovaMethodsSeverityPoints(0);
 		projectMethodDynamics.put(fileName, fileMethodDynamics);
 	}
 

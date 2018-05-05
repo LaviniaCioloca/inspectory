@@ -24,43 +24,30 @@ package edu.lavinia.inspectory.utils;
 import com.google.gson.JsonObject;
 
 public class JSONUtils {
-	public JsonObject getSupernovaMethodsJSON(String fileName,
-			Integer supernovaMethods) {
-		final JsonObject jsonArrayElement = new JsonObject();
-		jsonArrayElement.addProperty("file", fileName);
-		jsonArrayElement.addProperty("name", "Supernova Methods");
-		jsonArrayElement.addProperty("category", "Method Dynamics");
-		jsonArrayElement.addProperty("value", supernovaMethods);
-		return jsonArrayElement;
-	}
+	public JsonObject getAstronomicalPropertyJSON(String fileName,
+			Integer propertyValue, String propertyName) {
 
-	public JsonObject getPulsarMethodsJSON(String fileName,
-			Integer pulsarMethods) {
 		final JsonObject jsonArrayElement = new JsonObject();
 		jsonArrayElement.addProperty("file", fileName);
-		jsonArrayElement.addProperty("name", "Pulsar Methods");
-		jsonArrayElement.addProperty("category", "Method Dynamics");
-		jsonArrayElement.addProperty("value", pulsarMethods);
-		return jsonArrayElement;
-	}
 
-	public JsonObject getSupernovaSeverityJSON(String fileName,
-			Integer supernovaSeverity) {
-		final JsonObject jsonArrayElement = new JsonObject();
-		jsonArrayElement.addProperty("file", fileName);
-		jsonArrayElement.addProperty("name", "Supernova Severity");
-		jsonArrayElement.addProperty("category", "Method Dynamics");
-		jsonArrayElement.addProperty("value", supernovaSeverity);
-		return jsonArrayElement;
-	}
+		switch (propertyName) {
+		case "Supernova Methods":
+			jsonArrayElement.addProperty("name", "Supernova Methods");
+			break;
+		case "Pulsar Methods":
+			jsonArrayElement.addProperty("name", "Pulsar Methods");
+			break;
+		case "Supernova Severity":
+			jsonArrayElement.addProperty("name", "Supernova Severity");
+			break;
+		case "Pulsar Severity":
+			jsonArrayElement.addProperty("name", "Pulsar Severity");
+			break;
+		}
 
-	public JsonObject getPulsarSeverityJSON(String fileName,
-			Integer pulsarSeverity) {
-		final JsonObject jsonArrayElement = new JsonObject();
-		jsonArrayElement.addProperty("file", fileName);
-		jsonArrayElement.addProperty("name", "Pulsar Severity");
 		jsonArrayElement.addProperty("category", "Method Dynamics");
-		jsonArrayElement.addProperty("value", pulsarSeverity);
+		jsonArrayElement.addProperty("value", propertyValue);
+
 		return jsonArrayElement;
 	}
 }

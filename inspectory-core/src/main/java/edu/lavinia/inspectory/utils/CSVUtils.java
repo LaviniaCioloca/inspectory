@@ -32,14 +32,17 @@ public class CSVUtils {
 
 	public static void writeLine(Writer writer, List<String> values)
 			throws IOException {
+
 		writeLine(writer, values, DEFAULT_SEPARATOR, ' ');
 	}
 
 	public static String followCVSformat(final String value) {
 		String result = value;
+
 		if (result.contains("\"")) {
 			result = result.replace("\"", "\"\"");
 		}
+
 		return result;
 	}
 
@@ -58,12 +61,25 @@ public class CSVUtils {
 	 */
 	public static void writeLine(final Writer writer, final List<String> values,
 			char separator, char customQuote) throws IOException {
-		boolean first = true;
+
 		if (separator == SPACE) {
 			separator = DEFAULT_SEPARATOR;
 		}
 
 		final StringBuilder stringBuilder = new StringBuilder();
+
+		parseEachValue(values, separator, customQuote, stringBuilder);
+
+		stringBuilder.append('\n');
+		writer.append(stringBuilder.toString());
+	}
+
+	private static void parseEachValue(final List<String> values,
+			char separator, char customQuote,
+			final StringBuilder stringBuilder) {
+
+		boolean first = true;
+
 		for (final String value : values) {
 			if (!first) {
 				stringBuilder.append(separator);
@@ -78,7 +94,5 @@ public class CSVUtils {
 
 			first = false;
 		}
-		stringBuilder.append('\n');
-		writer.append(stringBuilder.toString());
 	}
 }

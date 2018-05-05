@@ -40,48 +40,52 @@ import java.util.Objects;
  */
 public class FileMethodDynamics {
 
-	private Integer supernovaMethods;
-	private Integer pulsarMethods;
-	private Integer supernovaSeverity;
-	private Integer pulsarSeverity;
+	private Integer numberOfSupernovaMethods;
+	private Integer numberOfPulsarMethods;
+	private Integer supernovaMethodsSeverityPoints;
+	private Integer pulsarMethodsSeverityPoints;
 
-	public Integer getSupernovaMethods() {
-		return supernovaMethods;
+	public Integer getNumberOfSupernovaMethods() {
+		return numberOfSupernovaMethods;
 	}
 
-	public void setSupernovaMethods(Integer supernovaMethods) {
-		this.supernovaMethods = supernovaMethods;
+	public void setNumberOfSupernovaMethods(Integer numberOfSupernovaMethods) {
+		this.numberOfSupernovaMethods = numberOfSupernovaMethods;
 	}
 
-	public Integer getPulsarMethods() {
-		return pulsarMethods;
+	public Integer getNumberOfPulsarMethods() {
+		return numberOfPulsarMethods;
 	}
 
-	public void setPulsarMethods(Integer pulsarMethods) {
-		this.pulsarMethods = pulsarMethods;
+	public void setNumberOfPulsarMethods(Integer numberOfPulsarMethods) {
+		this.numberOfPulsarMethods = numberOfPulsarMethods;
 	}
 
-	public Integer getSupernovaSeverity() {
-		return supernovaSeverity;
+	public Integer getSupernovaMethodsSeverityPoints() {
+		return supernovaMethodsSeverityPoints;
 	}
 
-	public void setSupernovaSeverity(Integer supernovaSeverity) {
-		this.supernovaSeverity = supernovaSeverity;
+	public void setSupernovaMethodsSeverityPoints(
+			Integer supernovaMethodsSeverityPoints) {
+		this.supernovaMethodsSeverityPoints = supernovaMethodsSeverityPoints;
 	}
 
-	public Integer getPulsarSeverity() {
-		return pulsarSeverity;
+	public Integer getPulsarMethodsSeverityPoints() {
+		return pulsarMethodsSeverityPoints;
 	}
 
-	public void setPulsarSeverity(Integer pulsarSeverity) {
-		this.pulsarSeverity = pulsarSeverity;
+	public void setPulsarMethodsSeverityPoints(
+			Integer pulsarMethodsSeverityPoints) {
+		this.pulsarMethodsSeverityPoints = pulsarMethodsSeverityPoints;
 	}
 
 	@Override
 	public String toString() {
-		return "FileMethodDynamics [supernovaMethods=" + supernovaMethods
-				+ ", pulsarMethods=" + pulsarMethods + ", supernovaSeverity="
-				+ supernovaSeverity + ", pulsarSeverity=" + pulsarSeverity
+		return "FileMethodDynamics [numberOfSupernovaMethods="
+				+ numberOfSupernovaMethods + ", numberOfPulsarMethods="
+				+ numberOfPulsarMethods + ", supernovaMethodsSeverityPoints="
+				+ supernovaMethodsSeverityPoints
+				+ ", pulsarMethodsSeverityPoints=" + pulsarMethodsSeverityPoints
 				+ "]";
 	}
 
@@ -96,16 +100,16 @@ public class FileMethodDynamics {
 		}
 
 		final FileMethodDynamics fileMethodDynamics = (FileMethodDynamics) obj;
-		return supernovaMethods == fileMethodDynamics.supernovaMethods
-				&& pulsarMethods == fileMethodDynamics.pulsarMethods
-				&& supernovaSeverity == fileMethodDynamics.supernovaSeverity
-				&& pulsarSeverity == fileMethodDynamics.pulsarSeverity;
+		return numberOfSupernovaMethods == fileMethodDynamics.numberOfSupernovaMethods
+				&& numberOfPulsarMethods == fileMethodDynamics.numberOfPulsarMethods
+				&& supernovaMethodsSeverityPoints == fileMethodDynamics.supernovaMethodsSeverityPoints
+				&& pulsarMethodsSeverityPoints == fileMethodDynamics.pulsarMethodsSeverityPoints;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(supernovaMethods, pulsarMethods, supernovaSeverity,
-				pulsarSeverity);
+		return Objects.hash(numberOfSupernovaMethods, numberOfPulsarMethods,
+				supernovaMethodsSeverityPoints, pulsarMethodsSeverityPoints);
 	}
 
 }

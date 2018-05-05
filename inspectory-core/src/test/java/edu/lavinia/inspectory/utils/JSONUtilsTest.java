@@ -38,7 +38,9 @@ public class JSONUtilsTest {
 		expectedJSONObject.addProperty("name", "Supernova Methods");
 		expectedJSONObject.addProperty("category", "Method Dynamics");
 		expectedJSONObject.addProperty("value", 0);
-		assertEquals(expectedJSONObject, jsonUtils.getSupernovaMethodsJSON("testFileName", 0));
+
+		assertEquals(expectedJSONObject, jsonUtils.getAstronomicalPropertyJSON(
+				"testFileName", 0, "Supernova Methods"));
 	}
 
 	@Test
@@ -48,7 +50,9 @@ public class JSONUtilsTest {
 		expectedJSONObject.addProperty("name", "Pulsar Methods");
 		expectedJSONObject.addProperty("category", "Method Dynamics");
 		expectedJSONObject.addProperty("value", 0);
-		assertEquals(expectedJSONObject, jsonUtils.getPulsarMethodsJSON("testFileName", 0));
+
+		assertEquals(expectedJSONObject, jsonUtils.getAstronomicalPropertyJSON(
+				"testFileName", 0, "Pulsar Methods"));
 	}
 
 	@Test
@@ -58,7 +62,9 @@ public class JSONUtilsTest {
 		expectedJSONObject.addProperty("name", "Supernova Severity");
 		expectedJSONObject.addProperty("category", "Method Dynamics");
 		expectedJSONObject.addProperty("value", 0);
-		assertEquals(expectedJSONObject, jsonUtils.getSupernovaSeverityJSON("testFileName", 0));
+
+		assertEquals(expectedJSONObject, jsonUtils.getAstronomicalPropertyJSON(
+				"testFileName", 0, "Supernova Severity"));
 	}
 
 	@Test
@@ -68,7 +74,9 @@ public class JSONUtilsTest {
 		expectedJSONObject.addProperty("name", "Pulsar Severity");
 		expectedJSONObject.addProperty("category", "Method Dynamics");
 		expectedJSONObject.addProperty("value", 0);
-		assertEquals(expectedJSONObject, jsonUtils.getPulsarSeverityJSON("testFileName", 0));
+
+		assertEquals(expectedJSONObject, jsonUtils.getAstronomicalPropertyJSON(
+				"testFileName", 0, "Pulsar Severity"));
 	}
 
 }
