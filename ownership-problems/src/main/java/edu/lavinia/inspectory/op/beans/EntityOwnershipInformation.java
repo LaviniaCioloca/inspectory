@@ -21,6 +21,7 @@
  *******************************************************************************/
 package edu.lavinia.inspectory.op.beans;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Objects;
@@ -31,6 +32,7 @@ public class EntityOwnershipInformation {
 	private LinkedHashMap<String, Integer> authorsNumberOfChanges;
 	private LinkedHashMap<String, List<Integer>> authorsNumberOfAddedAndDeletedLines;
 	private LinkedHashMap<String, Double> ownershipPercentages;
+	private ArrayList<String> distinctOwners;
 
 	public Integer getNumberOfChanges() {
 		return totalNumberOfChanges;
@@ -83,13 +85,23 @@ public class EntityOwnershipInformation {
 		this.ownershipPercentages = ownershipPercentages;
 	}
 
+	public ArrayList<String> getDistinctOwners() {
+		return distinctOwners;
+	}
+
+	public void setDistinctOwners(ArrayList<String> distinctOwners) {
+		this.distinctOwners = distinctOwners;
+	}
+
 	@Override
 	public String toString() {
-		return "EntityOwnershipInformation [numberOfChanges="
-				+ totalNumberOfChanges + ", fileCreator=" + entityCreator
-				+ ", authorsChanges=" + authorsNumberOfChanges
-				+ ", authorsLineChanges=" + authorsNumberOfAddedAndDeletedLines
-				+ ", ownershipPercentages=" + ownershipPercentages + "]";
+		return "EntityOwnershipInformation [totalNumberOfChanges="
+				+ totalNumberOfChanges + ", entityCreator=" + entityCreator
+				+ ", authorsNumberOfChanges=" + authorsNumberOfChanges
+				+ ", authorsNumberOfAddedAndDeletedLines="
+				+ authorsNumberOfAddedAndDeletedLines
+				+ ", ownershipPercentages=" + ownershipPercentages
+				+ ", distinctOwners=" + distinctOwners + "]";
 	}
 
 	@Override
@@ -102,22 +114,24 @@ public class EntityOwnershipInformation {
 			return false;
 		}
 
-		final EntityOwnershipInformation fileOwnershipInformation = (EntityOwnershipInformation) obj;
-		return totalNumberOfChanges == fileOwnershipInformation.totalNumberOfChanges
+		final EntityOwnershipInformation entityOwnershipInformation = (EntityOwnershipInformation) obj;
+		return totalNumberOfChanges == entityOwnershipInformation.totalNumberOfChanges
 				&& Objects.equals(entityCreator,
-						fileOwnershipInformation.entityCreator)
+						entityOwnershipInformation.entityCreator)
 				&& Objects.equals(authorsNumberOfChanges,
-						fileOwnershipInformation.authorsNumberOfChanges)
+						entityOwnershipInformation.authorsNumberOfChanges)
 				&& Objects.equals(authorsNumberOfAddedAndDeletedLines,
-						fileOwnershipInformation.authorsNumberOfAddedAndDeletedLines)
+						entityOwnershipInformation.authorsNumberOfAddedAndDeletedLines)
 				&& Objects.equals(ownershipPercentages,
-						fileOwnershipInformation.ownershipPercentages);
+						entityOwnershipInformation.ownershipPercentages)
+				&& Objects.equals(distinctOwners,
+						entityOwnershipInformation.distinctOwners);
 	}
 
 	@Override
 	public int hashCode() {
 		return Objects.hash(totalNumberOfChanges, entityCreator,
 				authorsNumberOfChanges, authorsNumberOfAddedAndDeletedLines,
-				ownershipPercentages);
+				ownershipPercentages, distinctOwners);
 	}
 }

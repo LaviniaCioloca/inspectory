@@ -24,11 +24,13 @@ package edu.lavinia.inspectory.op.inspection;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.metanalysis.core.delta.NodeSetEdit;
 import org.metanalysis.core.delta.SourceFileTransaction;
@@ -61,7 +63,8 @@ public class FileOwnershipInspection extends GenericOwnershipInspection {
 			String fileCreator,
 			LinkedHashMap<String, Integer> authorsNumberOfChanges,
 			LinkedHashMap<String, List<Integer>> authorsAddedAndDeletedLines,
-			LinkedHashMap<String, Double> ownershipPercentages) {
+			LinkedHashMap<String, Double> ownershipPercentages,
+			ArrayList<String> distinctListOfOwners) {
 
 		final EntityOwnershipInformation fileOwnershipInformation = new EntityOwnershipInformation();
 		fileOwnershipInformation.setNumberOfChanges(numberOfChanges);
@@ -71,6 +74,7 @@ public class FileOwnershipInspection extends GenericOwnershipInspection {
 		fileOwnershipInformation.setAuthorsNumberOfAddedAndDeletedLines(
 				authorsAddedAndDeletedLines);
 		fileOwnershipInformation.setOwnershipPercentages(ownershipPercentages);
+		fileOwnershipInformation.setDistinctOwners(distinctListOfOwners);
 
 		entityOwnershipResult.put(fileName, fileOwnershipInformation);
 	}
@@ -94,6 +98,8 @@ public class FileOwnershipInspection extends GenericOwnershipInspection {
 					.getFileHistory(fileName);
 
 			final GenericVisitor visitor = new EditVisitor(fileName);
+
+			entityCurrentSize = 0;
 
 			treatEachHistoryEntry(fileName, fileHistory, visitor);
 		} catch (IOException e) {
@@ -125,26 +131,80 @@ public class FileOwnershipInspection extends GenericOwnershipInspection {
 				updateAuthorNumberOfChanges(authorsNumberOfChanges,
 						historyEntry);
 
-				final SourceFileTransaction sourceFileTransaction = historyEntry
-						.getTransaction();
-				final List<NodeSetEdit> nodeEditList = sourceFileTransaction
-						.getNodeEdits();
+				authorsAddedAndDeletedLines = checkIfHistoryEditHasTransaction(
+						fileName, visitor, authorsAddedAndDeletedLines,
+						historyEntry);
 
-				authorsAddedAndDeletedLines = treatEachNodeSetEdit(visitor,
-						authorsAddedAndDeletedLines, historyEntry,
-						nodeEditList);
+				setFileOwnerAfterCommit(fileName, authorsAddedAndDeletedLines);
 			} catch (Exception e) {
 				continue;
 			}
 		}
 
+		setFileOwnershipValues(fileName, numberOfChanges, fileCreator,
+				authorsNumberOfChanges, authorsAddedAndDeletedLines);
+	}
+
+	private void setFileOwnershipValues(String fileName, int numberOfChanges,
+			String fileCreator,
+			final LinkedHashMap<String, Integer> authorsNumberOfChanges,
+			LinkedHashMap<String, List<Integer>> authorsAddedAndDeletedLines) {
+
 		LinkedHashMap<String, Double> ownershipPercentages = calculateEntityOwnership(
 				authorsAddedAndDeletedLines);
 		ownershipPercentages = sortPercentagesMap(ownershipPercentages);
 
+		final List<String> listOfAllOwners = entityOwners.get(fileName);
+		final List<String> distinctListOfOwners = listOfAllOwners.stream()
+				.distinct().collect(Collectors.toList());
+		final ArrayList<String> distinctOwners = new ArrayList<>(
+				distinctListOfOwners);
+
 		addFileInformation(fileName, numberOfChanges, fileCreator,
 				authorsNumberOfChanges, authorsAddedAndDeletedLines,
-				ownershipPercentages);
+				ownershipPercentages, distinctOwners);
+	}
+
+	private LinkedHashMap<String, List<Integer>> checkIfHistoryEditHasTransaction(
+			String fileName, final GenericVisitor visitor,
+			LinkedHashMap<String, List<Integer>> authorsAddedAndDeletedLines,
+			final HistoryEntry historyEntry) {
+
+		final SourceFileTransaction sourceFileTransaction = historyEntry
+				.getTransaction();
+
+		if (sourceFileTransaction == null) {
+			authorsAddedAndDeletedLines.put(historyEntry.getAuthor(),
+					new ArrayList<>(Arrays.asList(0, 0)));
+
+		} else {
+			final List<NodeSetEdit> nodeEditList = sourceFileTransaction
+					.getNodeEdits();
+
+			authorsAddedAndDeletedLines = treatEachNodeSetEdit(visitor,
+					authorsAddedAndDeletedLines, historyEntry, nodeEditList);
+		}
+
+		return authorsAddedAndDeletedLines;
+	}
+
+	private void setFileOwnerAfterCommit(final String fileName,
+			final LinkedHashMap<String, List<Integer>> authorsAddedAndDeletedLines) {
+
+		LinkedHashMap<String, Double> ownershipPercentages = calculateEntityOwnership(
+				authorsAddedAndDeletedLines);
+		ownershipPercentages = sortPercentagesMap(ownershipPercentages);
+
+		final String fileOwnerAfterThisCommit = ownershipPercentages.entrySet()
+				.iterator().next().getKey();
+		List<String> listOfPreviousOwners = entityOwners.get(fileName);
+
+		if (listOfPreviousOwners == null) {
+			listOfPreviousOwners = new ArrayList<>();
+			entityOwners.put(fileName, listOfPreviousOwners);
+		}
+
+		listOfPreviousOwners.add(fileOwnerAfterThisCommit);
 	}
 
 	private LinkedHashMap<String, List<Integer>> treatEachNodeSetEdit(
@@ -158,6 +218,9 @@ public class FileOwnershipInspection extends GenericOwnershipInspection {
 
 			final ArrayList<Integer> changedLines = (ArrayList<Integer>) authorsAddedAndDeletedLines
 					.get(historyEntry.getAuthor());
+
+			entityCurrentSize += ((EditVisitor) visitor).getAddedLines();
+			entityCurrentSize -= ((EditVisitor) visitor).getDeletedLines();
 
 			authorsAddedAndDeletedLines = checkChangedLinesInMap(changedLines,
 					authorsAddedAndDeletedLines, historyEntry.getAuthor(),
@@ -238,6 +301,10 @@ public class FileOwnershipInspection extends GenericOwnershipInspection {
 				.add(fileOwnershipInformation.getEntityCreator());
 		fileOwnershipInformationLine.add(fileOwnershipInformation
 				.getAuthorsNumberOfChanges().toString());
+		fileOwnershipInformationLine.add(String
+				.valueOf(fileOwnershipInformation.getDistinctOwners().size()));
+		fileOwnershipInformationLine
+				.add(fileOwnershipInformation.getDistinctOwners().toString());
 		fileOwnershipInformationLine.add(
 				fileOwnershipInformation.getOwnershipPercentages().toString());
 		fileOwnershipInformationLine.add(fileOwnershipInformation

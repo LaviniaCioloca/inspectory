@@ -121,11 +121,29 @@ public class Commands {
 			} else if (cmd.hasOption("c")) {
 				clean();
 			} else if (cmd.hasOption("all")) {
+				System.out.println("Starting to inspect the repository.....\n");
+
 				allMetrics();
+
+				System.out.println("Inspection successful!\n");
+				System.out.println(
+						"Check results in .inspectory folder in the current repository.\n");
 			} else if (cmd.hasOption("amm")) {
+				System.out.println("Starting to inspect the repository.....\n");
+
 				astronomicalMethodsMetric();
+
+				System.out.println("Inspection successful!\n");
+				System.out.println(
+						"Check results in .inspectory folder in the current repository.\n");
 			} else if (cmd.hasOption("opm")) {
+				System.out.println("Starting to inspect the repository.....\n");
+
 				ownershipProblemsMetric();
+
+				System.out.println("Inspection successful!\n");
+				System.out.println(
+						"Check results in .inspectory folder in the current repository.\n");
 			} else {
 				System.out.println("Missing valid option");
 				help();
@@ -163,14 +181,8 @@ public class Commands {
 	}
 
 	private void allMetrics() {
-		System.out.println("Starting to inspect the repository.....\n");
-
 		astronomicalMethodsMetric();
 		ownershipProblemsMetric();
-
-		System.out.println("Inspection successful!\n");
-		System.out.println(
-				"Check results in .inspectory folder in the current repository.\n");
 	}
 
 	private void astronomicalMethodsMetric() {
@@ -268,6 +280,7 @@ public class Commands {
 		CSVUtils.writeLine(classesCsvWriter,
 				Arrays.asList("File", "Number of changes", "Number of authors",
 						"File Creator", "Authors - Total changes made",
+						"Number of owners", "File owners",
 						"Authors Ownership Percentages",
 						"Authors - Line changes made"));
 
