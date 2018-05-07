@@ -24,7 +24,6 @@ package edu.lavinia.inspectory.op.inspection;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -99,7 +98,7 @@ public class FileOwnershipInspection extends GenericOwnershipInspection {
 
 			final GenericVisitor visitor = new EditVisitor(fileName);
 
-			entityCurrentSize = 0;
+			entityAddedAndDeletedLines = 0;
 
 			treatEachHistoryEntry(fileName, fileHistory, visitor);
 		} catch (IOException e) {
@@ -174,9 +173,15 @@ public class FileOwnershipInspection extends GenericOwnershipInspection {
 				.getTransaction();
 
 		if (sourceFileTransaction == null) {
-			authorsAddedAndDeletedLines.put(historyEntry.getAuthor(),
-					new ArrayList<>(Arrays.asList(0, 0)));
+			final ArrayList<Integer> changedLines = (ArrayList<Integer>) authorsAddedAndDeletedLines
+					.get(historyEntry.getAuthor());
 
+			authorsAddedAndDeletedLines = checkChangedLinesInMap(changedLines,
+					authorsAddedAndDeletedLines, historyEntry.getAuthor(), 0,
+					0);
+
+			System.out.println(
+					"\nFile: " + fileName + "; has sourceFileTransaction null");
 		} else {
 			final List<NodeSetEdit> nodeEditList = sourceFileTransaction
 					.getNodeEdits();
@@ -184,6 +189,10 @@ public class FileOwnershipInspection extends GenericOwnershipInspection {
 			authorsAddedAndDeletedLines = treatEachNodeSetEdit(visitor,
 					authorsAddedAndDeletedLines, historyEntry, nodeEditList);
 		}
+
+		System.out
+				.println("File: " + fileName + "; author's added and deleted: "
+						+ authorsAddedAndDeletedLines);
 
 		return authorsAddedAndDeletedLines;
 	}
@@ -219,8 +228,11 @@ public class FileOwnershipInspection extends GenericOwnershipInspection {
 			final ArrayList<Integer> changedLines = (ArrayList<Integer>) authorsAddedAndDeletedLines
 					.get(historyEntry.getAuthor());
 
-			entityCurrentSize += ((EditVisitor) visitor).getAddedLines();
-			entityCurrentSize -= ((EditVisitor) visitor).getDeletedLines();
+			entityAddedAndDeletedLines += ((EditVisitor) visitor)
+					.getAddedLines()
+					+ ((EditVisitor) visitor).getDeletedLines();
+			entityCurrentSize += ((EditVisitor) visitor).getAddedLines()
+					- ((EditVisitor) visitor).getDeletedLines();
 
 			authorsAddedAndDeletedLines = checkChangedLinesInMap(changedLines,
 					authorsAddedAndDeletedLines, historyEntry.getAuthor(),

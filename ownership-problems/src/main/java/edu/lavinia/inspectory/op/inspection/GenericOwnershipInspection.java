@@ -43,6 +43,7 @@ public abstract class GenericOwnershipInspection {
 	protected final FileWriter csvWriter;
 	protected Map<String, EntityOwnershipInformation> entityOwnershipResult = new HashMap<>();
 	protected Map<String, List<String>> entityOwners = new HashMap<>();
+	protected Integer entityAddedAndDeletedLines = 0;
 	protected Integer entityCurrentSize = 0;
 
 	/**
@@ -104,8 +105,7 @@ public abstract class GenericOwnershipInspection {
 			authorLineChanges = (addedAndDeletedLines.get(0)
 					+ addedAndDeletedLines.get(1));
 
-			authorPercentage = getAuthorOwnershipPercentage(authorLineChanges,
-					entityCurrentSize);
+			authorPercentage = getAuthorOwnershipPercentage(authorLineChanges);
 
 			ownershipPercentages.put(entry.getKey(), authorPercentage);
 		}
@@ -113,8 +113,7 @@ public abstract class GenericOwnershipInspection {
 		return ownershipPercentages;
 	}
 
-	private Double getAuthorOwnershipPercentage(Integer authorLineChanges,
-			final Integer entityTotalLineChanges) {
+	private Double getAuthorOwnershipPercentage(Integer authorLineChanges) {
 
 		final DecimalFormat twoDecimalsFormat = new DecimalFormat(".##");
 		Double authorPercentage;
@@ -122,33 +121,16 @@ public abstract class GenericOwnershipInspection {
 		 * (x / 100) * entityTotalLineChanges = authorLineChanges => x = (100 *
 		 * authorLineChanges) / entityTotalLineChanges
 		 */
-		if (entityTotalLineChanges == 0) {
+		if (entityAddedAndDeletedLines == 0) {
 			authorPercentage = 0.0;
 		} else {
 			authorPercentage = (100 * (double) authorLineChanges)
-					/ (double) entityTotalLineChanges;
+					/ (double) entityAddedAndDeletedLines;
 			authorPercentage = Double
 					.parseDouble(twoDecimalsFormat.format(authorPercentage));
 		}
 
 		return authorPercentage;
-	}
-
-	private Integer getEntityCurrentSize(
-			LinkedHashMap<String, List<Integer>> authorsLineChanges) {
-
-		Integer fileCurrentSize = 0;
-
-		for (final Map.Entry<String, List<Integer>> entry : authorsLineChanges
-				.entrySet()) {
-			final ArrayList<Integer> addedAndDeletedLines = (ArrayList<Integer>) entry
-					.getValue();
-
-			fileCurrentSize += addedAndDeletedLines.get(0);
-			fileCurrentSize += addedAndDeletedLines.get(1);
-		}
-
-		return fileCurrentSize;
 	}
 
 	public LinkedHashMap<String, Double> sortPercentagesMap(
