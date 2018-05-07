@@ -76,14 +76,11 @@ public class MethodOwnershipInspectionTest {
 		final Map<String, Integer> methodNumberOfChanges = new HashMap<>();
 		methodNumberOfChanges.put("testMethod", 5);
 
-		final Map<String, Integer> methodSize = new HashMap<>();
-		methodSize.put("testMethod", 10);
-
 		methodOwnershipInspection
 				.setMethodsAuthorsChanges(methodsAuthorsChanges);
 		methodOwnershipInspection
 				.setMethodNumberOfChanges(methodNumberOfChanges);
-		methodOwnershipInspection.setMethodSize(methodSize);
+		methodOwnershipInspection.entityCurrentSize.put("testMethod", 10);
 
 		final Map<String, EntityOwnershipInformation> entityOwnershipResult = new HashMap<>();
 		final EntityOwnershipInformation entityOwnershipInformation = new EntityOwnershipInformation();

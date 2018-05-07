@@ -43,8 +43,8 @@ public abstract class GenericOwnershipInspection {
 	protected final FileWriter csvWriter;
 	protected Map<String, EntityOwnershipInformation> entityOwnershipResult = new HashMap<>();
 	protected Map<String, List<String>> entityOwners = new HashMap<>();
-	protected Integer entityAddedAndDeletedLines = 0;
-	protected Integer entityCurrentSize = 0;
+	protected Map<String, Integer> entityAddedAndDeletedLines = new HashMap<>();
+	protected Map<String, Integer> entityCurrentSize = new HashMap<>();
 
 	/**
 	 * GenericOwnershipInspection Constructor that receives the persistent
@@ -87,15 +87,13 @@ public abstract class GenericOwnershipInspection {
 	}
 
 	public LinkedHashMap<String, Double> calculateEntityOwnership(
-			LinkedHashMap<String, List<Integer>> authorsLineChanges) {
+			final Map<String, List<Integer>> authorsLineChanges,
+			final String entityName) {
 
 		final LinkedHashMap<String, Double> ownershipPercentages = new LinkedHashMap<>();
 
 		Integer authorLineChanges;
 		Double authorPercentage;
-
-		// final Integer entityCurrentSize =
-		// getEntityCurrentSize(authorsLineChanges);
 
 		for (final Entry<String, List<Integer>> entry : authorsLineChanges
 				.entrySet()) {
@@ -105,7 +103,8 @@ public abstract class GenericOwnershipInspection {
 			authorLineChanges = (addedAndDeletedLines.get(0)
 					+ addedAndDeletedLines.get(1));
 
-			authorPercentage = getAuthorOwnershipPercentage(authorLineChanges);
+			authorPercentage = getAuthorOwnershipPercentage(authorLineChanges,
+					entityName);
 
 			ownershipPercentages.put(entry.getKey(), authorPercentage);
 		}
@@ -113,7 +112,8 @@ public abstract class GenericOwnershipInspection {
 		return ownershipPercentages;
 	}
 
-	private Double getAuthorOwnershipPercentage(Integer authorLineChanges) {
+	private Double getAuthorOwnershipPercentage(final Integer authorLineChanges,
+			final String entityName) {
 
 		final DecimalFormat twoDecimalsFormat = new DecimalFormat(".##");
 		Double authorPercentage;
@@ -121,11 +121,11 @@ public abstract class GenericOwnershipInspection {
 		 * (x / 100) * entityTotalLineChanges = authorLineChanges => x = (100 *
 		 * authorLineChanges) / entityTotalLineChanges
 		 */
-		if (entityAddedAndDeletedLines == 0) {
+		if (entityAddedAndDeletedLines.get(entityName) == 0) {
 			authorPercentage = 0.0;
 		} else {
 			authorPercentage = (100 * (double) authorLineChanges)
-					/ (double) entityAddedAndDeletedLines;
+					/ (double) entityAddedAndDeletedLines.get(entityName);
 			authorPercentage = Double
 					.parseDouble(twoDecimalsFormat.format(authorPercentage));
 		}
@@ -134,7 +134,7 @@ public abstract class GenericOwnershipInspection {
 	}
 
 	public LinkedHashMap<String, Double> sortPercentagesMap(
-			LinkedHashMap<String, Double> ownershipPercentages) {
+			Map<String, Double> ownershipPercentages) {
 
 		return ownershipPercentages.entrySet().stream()
 				.sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))

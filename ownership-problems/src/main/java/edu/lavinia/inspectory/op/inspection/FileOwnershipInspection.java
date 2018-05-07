@@ -98,7 +98,7 @@ public class FileOwnershipInspection extends GenericOwnershipInspection {
 
 			final GenericVisitor visitor = new EditVisitor(fileName);
 
-			entityAddedAndDeletedLines = 0;
+			initEntityLinesMap(fileName);
 
 			treatEachHistoryEntry(fileName, fileHistory, visitor);
 		} catch (IOException e) {
@@ -108,6 +108,13 @@ public class FileOwnershipInspection extends GenericOwnershipInspection {
 			 * IOException
 			 */
 		}
+	}
+
+	private void initEntityLinesMap(String fileName) {
+		entityAddedAndDeletedLines = new HashMap<>();
+		entityAddedAndDeletedLines.put(fileName, 0);
+		entityCurrentSize = new HashMap<>();
+		entityCurrentSize.put(fileName, 0);
 	}
 
 	private void treatEachHistoryEntry(String fileName,
@@ -150,7 +157,7 @@ public class FileOwnershipInspection extends GenericOwnershipInspection {
 			LinkedHashMap<String, List<Integer>> authorsAddedAndDeletedLines) {
 
 		LinkedHashMap<String, Double> ownershipPercentages = calculateEntityOwnership(
-				authorsAddedAndDeletedLines);
+				authorsAddedAndDeletedLines, fileName);
 		ownershipPercentages = sortPercentagesMap(ownershipPercentages);
 
 		final List<String> listOfAllOwners = entityOwners.get(fileName);
@@ -179,20 +186,14 @@ public class FileOwnershipInspection extends GenericOwnershipInspection {
 			authorsAddedAndDeletedLines = checkChangedLinesInMap(changedLines,
 					authorsAddedAndDeletedLines, historyEntry.getAuthor(), 0,
 					0);
-
-			System.out.println(
-					"\nFile: " + fileName + "; has sourceFileTransaction null");
 		} else {
 			final List<NodeSetEdit> nodeEditList = sourceFileTransaction
 					.getNodeEdits();
 
 			authorsAddedAndDeletedLines = treatEachNodeSetEdit(visitor,
-					authorsAddedAndDeletedLines, historyEntry, nodeEditList);
+					authorsAddedAndDeletedLines, historyEntry, nodeEditList,
+					fileName);
 		}
-
-		System.out
-				.println("File: " + fileName + "; author's added and deleted: "
-						+ authorsAddedAndDeletedLines);
 
 		return authorsAddedAndDeletedLines;
 	}
@@ -201,7 +202,7 @@ public class FileOwnershipInspection extends GenericOwnershipInspection {
 			final LinkedHashMap<String, List<Integer>> authorsAddedAndDeletedLines) {
 
 		LinkedHashMap<String, Double> ownershipPercentages = calculateEntityOwnership(
-				authorsAddedAndDeletedLines);
+				authorsAddedAndDeletedLines, fileName);
 		ownershipPercentages = sortPercentagesMap(ownershipPercentages);
 
 		final String fileOwnerAfterThisCommit = ownershipPercentages.entrySet()
@@ -220,7 +221,7 @@ public class FileOwnershipInspection extends GenericOwnershipInspection {
 			final GenericVisitor visitor,
 			LinkedHashMap<String, List<Integer>> authorsAddedAndDeletedLines,
 			final HistoryEntry historyEntry,
-			final List<NodeSetEdit> nodeEditList) {
+			final List<NodeSetEdit> nodeEditList, final String fileName) {
 
 		for (final NodeSetEdit edit : nodeEditList) {
 			((EditVisitor) visitor).visit(edit);
@@ -228,11 +229,7 @@ public class FileOwnershipInspection extends GenericOwnershipInspection {
 			final ArrayList<Integer> changedLines = (ArrayList<Integer>) authorsAddedAndDeletedLines
 					.get(historyEntry.getAuthor());
 
-			entityAddedAndDeletedLines += ((EditVisitor) visitor)
-					.getAddedLines()
-					+ ((EditVisitor) visitor).getDeletedLines();
-			entityCurrentSize += ((EditVisitor) visitor).getAddedLines()
-					- ((EditVisitor) visitor).getDeletedLines();
+			updateEntitySizeValues(visitor, fileName);
 
 			authorsAddedAndDeletedLines = checkChangedLinesInMap(changedLines,
 					authorsAddedAndDeletedLines, historyEntry.getAuthor(),
@@ -241,6 +238,23 @@ public class FileOwnershipInspection extends GenericOwnershipInspection {
 		}
 
 		return authorsAddedAndDeletedLines;
+	}
+
+	private void updateEntitySizeValues(final GenericVisitor visitor,
+			final String fileName) {
+
+		Integer currentAddedAndDeletedLines = entityAddedAndDeletedLines
+				.get(fileName);
+		currentAddedAndDeletedLines += ((EditVisitor) visitor).getAddedLines()
+				+ ((EditVisitor) visitor).getDeletedLines();
+
+		entityAddedAndDeletedLines.put(fileName, currentAddedAndDeletedLines);
+
+		Integer currentEntitySize = entityCurrentSize.get(fileName);
+		currentEntitySize += ((EditVisitor) visitor).getAddedLines()
+				- ((EditVisitor) visitor).getDeletedLines();
+
+		entityCurrentSize.put(fileName, currentEntitySize);
 	}
 
 	private String setFileCreator(String fileCreator,

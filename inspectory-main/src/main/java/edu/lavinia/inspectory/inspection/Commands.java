@@ -280,8 +280,8 @@ public class Commands {
 		CSVUtils.writeLine(classesCsvWriter,
 				Arrays.asList("File", "Number of changes", "Number of authors",
 						"File Creator", "Authors - Total changes made",
-						"Number of owners", "File owners",
-						"Authors Ownership Percentages",
+						"Number of owners", "File owners [chronological order]",
+						"Authors Ownership Percentages [current ownership values]",
 						"Authors - Line changes made"));
 
 		final FileOwnershipInspection classesOwnershipProblemsInspection = new FileOwnershipInspection(
@@ -299,7 +299,9 @@ public class Commands {
 		final FileWriter methodsCsvWriter = new FileWriter(methodsCsvFile);
 		CSVUtils.writeLine(methodsCsvWriter, Arrays.asList("Method full path",
 				"Number of changes", "Number of authors", "Method current size",
-				"Authors Ownership Percentages", "Author - Line changes made"));
+				"Number of owners", "Method owners [chronological order]",
+				"Authors Ownership Percentages [current ownership values]",
+				"Author - Line changes made"));
 
 		final MethodOwnershipInspection methodsOwnershipProblemsInspection = new MethodOwnershipInspection(
 				project, methodsCsvWriter);
