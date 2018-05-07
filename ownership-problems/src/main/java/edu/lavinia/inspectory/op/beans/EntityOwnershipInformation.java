@@ -42,7 +42,7 @@ public class EntityOwnershipInformation {
 		return totalNumberOfChanges;
 	}
 
-	public void setTotalNumberOfChanges(Integer totalNumberOfChanges) {
+	public void setTotalNumberOfChanges(final Integer totalNumberOfChanges) {
 		this.totalNumberOfChanges = totalNumberOfChanges;
 	}
 
@@ -51,11 +51,11 @@ public class EntityOwnershipInformation {
 	}
 
 	public void setAuthorsNumberOfAddedAndDeletedLines(
-			LinkedHashMap<String, List<Integer>> authorsNumberOfAddedAndDeletedLines) {
+			final LinkedHashMap<String, List<Integer>> authorsNumberOfAddedAndDeletedLines) {
 		this.authorsNumberOfAddedAndDeletedLines = authorsNumberOfAddedAndDeletedLines;
 	}
 
-	public void setNumberOfChanges(Integer numberOfChanges) {
+	public void setNumberOfChanges(final Integer numberOfChanges) {
 		this.totalNumberOfChanges = numberOfChanges;
 	}
 
@@ -63,7 +63,7 @@ public class EntityOwnershipInformation {
 		return entityCreator;
 	}
 
-	public void setEntityCreator(String entityCreator) {
+	public void setEntityCreator(final String entityCreator) {
 		this.entityCreator = entityCreator;
 	}
 
@@ -72,7 +72,7 @@ public class EntityOwnershipInformation {
 	}
 
 	public void setAuthorsNumberOfChanges(
-			LinkedHashMap<String, Integer> authorsNumberOfChanges) {
+			final LinkedHashMap<String, Integer> authorsNumberOfChanges) {
 		this.authorsNumberOfChanges = authorsNumberOfChanges;
 	}
 
@@ -81,7 +81,7 @@ public class EntityOwnershipInformation {
 	}
 
 	public void setOwnershipPercentages(
-			LinkedHashMap<String, Double> ownershipPercentages) {
+			final LinkedHashMap<String, Double> ownershipPercentages) {
 		this.ownershipPercentages = ownershipPercentages;
 	}
 
@@ -89,7 +89,7 @@ public class EntityOwnershipInformation {
 		return distinctOwners;
 	}
 
-	public void setDistinctOwners(ArrayList<String> distinctOwners) {
+	public void setDistinctOwners(final ArrayList<String> distinctOwners) {
 		this.distinctOwners = distinctOwners;
 	}
 
@@ -105,7 +105,7 @@ public class EntityOwnershipInformation {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		if (obj == this) {
 			return true;
 		}

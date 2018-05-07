@@ -86,6 +86,25 @@ public abstract class GenericOwnershipInspection {
 		return authorsLineChanges;
 	}
 
+	public void setEntityOwnerAfterCommit(final String entityName,
+			final Map<String, List<Integer>> authorsAddedAndDeletedLines) {
+
+		LinkedHashMap<String, Double> ownershipPercentages = calculateEntityOwnership(
+				authorsAddedAndDeletedLines, entityName);
+		ownershipPercentages = sortPercentagesMap(ownershipPercentages);
+
+		final String entityOwnerAfterThisCommit = ownershipPercentages
+				.entrySet().iterator().next().getKey();
+		List<String> listOfPreviousOwners = entityOwners.get(entityName);
+
+		if (listOfPreviousOwners == null) {
+			listOfPreviousOwners = new ArrayList<>();
+			entityOwners.put(entityName, listOfPreviousOwners);
+		}
+
+		listOfPreviousOwners.add(entityOwnerAfterThisCommit);
+	}
+
 	public LinkedHashMap<String, Double> calculateEntityOwnership(
 			final Map<String, List<Integer>> authorsLineChanges,
 			final String entityName) {

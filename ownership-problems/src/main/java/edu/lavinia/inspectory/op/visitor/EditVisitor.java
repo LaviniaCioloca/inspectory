@@ -51,7 +51,7 @@ public class EditVisitor extends NodeSetEditVisitor {
 		this.fileName = fileName;
 	}
 
-	private void visitTypeMemberNode(Node typeMemberNode) {
+	private void visitTypeMemberNode(final Node typeMemberNode) {
 		if (typeMemberNode instanceof Node.Variable) {
 			++addedLines;
 		} else if (typeMemberNode instanceof Node.Function) {
@@ -60,7 +60,7 @@ public class EditVisitor extends NodeSetEditVisitor {
 	}
 
 	@Override
-	public void visit(Add add) {
+	public void visit(final Add add) {
 		final Node node = add.getNode();
 		if (node instanceof Node.Type) {
 			++addedLines; // for the identifier, supertype and modifiers
@@ -100,6 +100,7 @@ public class EditVisitor extends NodeSetEditVisitor {
 
 		methodSize.put(((Node.Function) memberNode).getSignature(),
 				body.size());
+
 	}
 
 	private void treatMemberNodeType(final Node memberNode) {
@@ -111,7 +112,7 @@ public class EditVisitor extends NodeSetEditVisitor {
 	}
 
 	@Override
-	public void visit(Remove remove) {
+	public void visit(final Remove remove) {
 		if (remove.getNodeType().getQualifiedName()
 				.equals(Node.Function.class.getCanonicalName())) {
 			identifier = remove.getIdentifier();
@@ -124,7 +125,7 @@ public class EditVisitor extends NodeSetEditVisitor {
 	}
 
 	@Override
-	public void visit(Change<?> change) {
+	public void visit(final Change<?> change) {
 		identifier = ((NodeSetEdit.Change<?>) change).getIdentifier();
 		final Transaction<?> transaction = ((NodeSetEdit.Change<?>) change)
 				.getTransaction();
@@ -183,7 +184,7 @@ public class EditVisitor extends NodeSetEditVisitor {
 		return addedLines;
 	}
 
-	public void setAddedLines(Integer addedLines) {
+	public void setAddedLines(final Integer addedLines) {
 		this.addedLines = addedLines;
 	}
 
@@ -191,7 +192,7 @@ public class EditVisitor extends NodeSetEditVisitor {
 		return deletedLines;
 	}
 
-	public void setDeletedLines(Integer deletedLines) {
+	public void setDeletedLines(final Integer deletedLines) {
 		this.deletedLines = deletedLines;
 	}
 
