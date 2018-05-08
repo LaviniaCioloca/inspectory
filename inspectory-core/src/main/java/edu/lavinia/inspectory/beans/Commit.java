@@ -32,7 +32,7 @@ public class Commit {
 		return revision;
 	}
 
-	public void setRevision(String revision) {
+	public void setRevision(final String revision) {
 		this.revision = revision;
 	}
 
@@ -40,7 +40,7 @@ public class Commit {
 		return date;
 	}
 
-	public void setDate(Date date) {
+	public void setDate(final Date date) {
 		this.date = date;
 	}
 
@@ -48,7 +48,7 @@ public class Commit {
 		return author;
 	}
 
-	public void setAuthor(String author) {
+	public void setAuthor(final String author) {
 		this.author = author;
 	}
 

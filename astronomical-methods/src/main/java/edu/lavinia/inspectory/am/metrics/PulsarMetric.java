@@ -32,7 +32,7 @@ import edu.lavinia.inspectory.beans.Commit;
 /**
  * Implementation of {@link edu.lavinia.inspectory.am.metrics.MethodMetrics
  * MethodMetrics} class for Pulsar methods identification.
- * 
+ *
  * @author Lavinia Cioloca
  * @see {@link edu.lavinia.inspectory.am.metrics.SupernovaMetric
  *      SupernovaMetric}
@@ -56,7 +56,9 @@ public class PulsarMetric extends MethodMetrics {
 	 * @return An Integer between 0 and 3 representing the points from the
 	 *         {@code recentPulsarCycles}.
 	 */
-	public Integer getRecentCyclesPoints(Integer countRecentPulsarCycles) {
+	public Integer getRecentCyclesPoints(
+			final Integer countRecentPulsarCycles) {
+
 		if (countRecentPulsarCycles >= 6) {
 			return 3;
 		} else if (countRecentPulsarCycles >= 3
@@ -75,7 +77,7 @@ public class PulsarMetric extends MethodMetrics {
 	 * @return An Integer between 0 and 3 representing the points of the Pulsar
 	 *         method's {@code averageSizeIncrease}.
 	 */
-	public Integer getAverageSizeIncrease(Double averageSizeIncrease) {
+	public Integer getAverageSizeIncrease(final Double averageSizeIncrease) {
 		if (averageSizeIncrease >= 0.0
 				&& averageSizeIncrease < (1.0 / 3.0) * MAJOR_SIZE_CHANGE) {
 			return 3;
@@ -91,7 +93,7 @@ public class PulsarMetric extends MethodMetrics {
 	}
 
 	@Override
-	public Integer getMethodSizePoints(Integer methodSize) {
+	public Integer getMethodSizePoints(final Integer methodSize) {
 		if (methodSize >= EXTREMELY_LARGE_METHOD) {
 			return 2;
 		} else if (methodSize >= VERY_LARGE_METHOD) {
@@ -104,12 +106,12 @@ public class PulsarMetric extends MethodMetrics {
 	/**
 	 * If a method has been actively changed over the last LONG_TIMESPAN
 	 * time-frames then it is an Actively Changed method.
-	 * 
+	 *
 	 * @param methodChangesInformation
 	 * @return A Boolean: true if the method is actively changed.
 	 */
 	public Boolean isMethodActivelyChanged(
-			MethodChangesInformation methodChangesInformation) {
+			final MethodChangesInformation methodChangesInformation) {
 
 		final ArrayList<Commit> commits = methodChangesInformation.getCommits();
 		final ArrayList<Commit> latestCommits = new ArrayList<>();
@@ -166,7 +168,8 @@ public class PulsarMetric extends MethodMetrics {
 	 */
 	public Integer countPulsarSeverityPoints(
 			final Integer countRecentPulsarCycles,
-			final Double averageSizeIncrease, Integer fileSize, Commit commit) {
+			final Double averageSizeIncrease, final Integer fileSize,
+			final Commit commit) {
 
 		recentCyclesPoints = getRecentCyclesPoints(countRecentPulsarCycles);
 		averageSizeIncreasePoints = getAverageSizeIncrease(averageSizeIncrease);
@@ -197,14 +200,14 @@ public class PulsarMetric extends MethodMetrics {
 
 	/**
 	 * Calculates the overall Pulsar severity points of a method.
-	 * 
+	 *
 	 * @param methodChangesInformation
 	 *            The information of the current method
 	 * @return An Integer that represents the Pulsar severity of the given
 	 *         method.
 	 */
 	public Integer getPulsarSeverity(
-			MethodChangesInformation methodChangesInformation) {
+			final MethodChangesInformation methodChangesInformation) {
 
 		final ArrayList<Commit> commits = methodChangesInformation.getCommits();
 		final Map<String, Object> pulsarCriterionValues = getPulsarCriterionValues(
@@ -222,7 +225,7 @@ public class PulsarMetric extends MethodMetrics {
 	/**
 	 * A PulsarCycle is considered recent if it was detected very recently, i.e.
 	 * in the last MEDIUM_TIMESPAN time-frames of the project.
-	 * 
+	 *
 	 * @param commitDate
 	 * @return An Integer: 1 if Pulsar cycle is recent and 0 if false.
 	 */
@@ -235,7 +238,7 @@ public class PulsarMetric extends MethodMetrics {
 	/**
 	 * A PulsarCycle is considered recent if it was detected very recently, i.e.
 	 * in the last MEDIUM_TIMESPAN time-frames of the project.
-	 * 
+	 *
 	 * @param commitDate
 	 * @return An Integer: 1 if Pulsar cycle is recent and 0 if false.
 	 */
@@ -262,7 +265,7 @@ public class PulsarMetric extends MethodMetrics {
 	 *         isPulsar.
 	 */
 	public Map<String, Object> getPulsarCriterionValues(
-			MethodChangesInformation methodChangesInformation) {
+			final MethodChangesInformation methodChangesInformation) {
 
 		final ArrayList<Commit> commits = methodChangesInformation.getCommits();
 		final Map<String, Object> pulsarCriterionValues = new HashMap<>();
@@ -320,7 +323,7 @@ public class PulsarMetric extends MethodMetrics {
 
 	private void treatMethodWithManyPulsarCycles(
 			final Map<String, Object> pulsarCriterionValues,
-			Integer countPulsarCycles) {
+			final Integer countPulsarCycles) {
 
 		if (countPulsarCycles >= MANY_PULSAR_CYCLES
 				&& !pulsarCriterionValues.get("isPulsar").equals(true)) {
@@ -330,8 +333,9 @@ public class PulsarMetric extends MethodMetrics {
 
 	private void putPulsarCriterionValues(
 			final Map<String, Object> pulsarCriterionValues,
-			Double averageSizeIncrease, Integer countRecentPulsarCycles,
-			Integer countPulsarCycles) {
+			final Double averageSizeIncrease,
+			final Integer countRecentPulsarCycles,
+			final Integer countPulsarCycles) {
 
 		pulsarCriterionValues.put("averageSizeIncrease", averageSizeIncrease);
 		pulsarCriterionValues.put("countPulsarCycles", countPulsarCycles);
@@ -351,7 +355,7 @@ public class PulsarMetric extends MethodMetrics {
 	 * SMALL_SIZE_CHANGE} lines. A Pulsar needs to have at least
 	 * {@link edu.lavinia.inspectory.am.metrics.MethodMetrics.MANY_PULSAR_CYCLES
 	 * MANY_PULSAR_CYCLES}.
-	 * 
+	 *
 	 * @param methodChangesInformation
 	 *            The information of the current method
 	 * @return {@code True} if the method is Pulsar, {@code false} otherwise.

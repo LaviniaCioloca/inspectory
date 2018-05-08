@@ -273,7 +273,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>edu.lavinia.inspectory.inspection.RepoInspect</mainClass>
+                            <mainClass>edu.lavinia.inspectory.inspection.RepositoryInspect</mainClass>
                         </manifest>
                     </archive>
                     <!-- <outputDirectory>/home/lavinia/Licenta/kotlin</outputDirectory> -->

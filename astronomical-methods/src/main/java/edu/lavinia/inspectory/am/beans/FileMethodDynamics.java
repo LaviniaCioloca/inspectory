@@ -25,7 +25,7 @@ import java.util.Objects;
 
 /**
  * Bean class having method dynamics values of each file in repository.
- * 
+ *
  * <p>
  * {@code supernovaMethods}: Number of Supernova Methods existent in file.
  * <br />
@@ -34,7 +34,7 @@ import java.util.Objects;
  * <br />
  * {@code pulsarSeverity}: Total severity value of Pulsar methods in file.
  * </p>
- * 
+ *
  * @author Lavinia Cioloca
  *
  */
@@ -49,7 +49,8 @@ public class FileMethodDynamics {
 		return numberOfSupernovaMethods;
 	}
 
-	public void setNumberOfSupernovaMethods(Integer numberOfSupernovaMethods) {
+	public void setNumberOfSupernovaMethods(
+			final Integer numberOfSupernovaMethods) {
 		this.numberOfSupernovaMethods = numberOfSupernovaMethods;
 	}
 
@@ -57,7 +58,7 @@ public class FileMethodDynamics {
 		return numberOfPulsarMethods;
 	}
 
-	public void setNumberOfPulsarMethods(Integer numberOfPulsarMethods) {
+	public void setNumberOfPulsarMethods(final Integer numberOfPulsarMethods) {
 		this.numberOfPulsarMethods = numberOfPulsarMethods;
 	}
 
@@ -66,7 +67,7 @@ public class FileMethodDynamics {
 	}
 
 	public void setSupernovaMethodsSeverityPoints(
-			Integer supernovaMethodsSeverityPoints) {
+			final Integer supernovaMethodsSeverityPoints) {
 		this.supernovaMethodsSeverityPoints = supernovaMethodsSeverityPoints;
 	}
 
@@ -75,7 +76,7 @@ public class FileMethodDynamics {
 	}
 
 	public void setPulsarMethodsSeverityPoints(
-			Integer pulsarMethodsSeverityPoints) {
+			final Integer pulsarMethodsSeverityPoints) {
 		this.pulsarMethodsSeverityPoints = pulsarMethodsSeverityPoints;
 	}
 
@@ -90,7 +91,7 @@ public class FileMethodDynamics {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		if (obj == this) {
 			return true;
 		}

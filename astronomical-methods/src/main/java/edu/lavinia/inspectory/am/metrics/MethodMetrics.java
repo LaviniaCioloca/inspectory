@@ -31,7 +31,7 @@ import edu.lavinia.inspectory.beans.Commit;
 /**
  * Abstract class having general threshold values for Astronomical Methods
  * Metric, as well as general methods.
- * 
+ *
  * @author Lavinia Cioloca
  *
  */
@@ -53,7 +53,7 @@ public abstract class MethodMetrics {
 	 * A method is considered to have a <b>significant</b> size if it has 30
 	 * lines or above.
 	 */
-	protected final static Integer SIGNIFICANT_METHOD_SIZE = 30;
+	protected final static Integer SIGNIFICANT_METHOD_SIZE = 20;
 
 	/**
 	 * A method is considered <b>very large method </b> if it has twice the
@@ -72,7 +72,7 @@ public abstract class MethodMetrics {
 	/**
 	 * A time frame is made of 28 days.
 	 */
-	protected final static Integer TIME_FRAME = 28;
+	protected final static Integer TIME_FRAME = 21;
 
 	/**
 	 * A <b>short timespan<b/> is made of 1
@@ -126,7 +126,8 @@ public abstract class MethodMetrics {
 	 * @return A Long representing the difference in days between {@code start}
 	 *         and {@code end} date.
 	 */
-	protected static Long getTimeDifferenceInDays(Date start, Date end) {
+	protected static Long getTimeDifferenceInDays(final Date start,
+			final Date end) {
 		final Long startTime = start.getTime();
 		final Long endTime = end.getTime();
 		final Long diffTime = endTime - startTime;
@@ -144,7 +145,7 @@ public abstract class MethodMetrics {
 	 *         number of the time-frame in which it is.
 	 */
 	protected static HashMap<Commit, Integer> splitCommitsIntoTimeFrames(
-			ArrayList<Commit> commits) {
+			final ArrayList<Commit> commits) {
 
 		final HashMap<Commit, Integer> commitsIntoTimeFrames = new HashMap<>();
 		Integer currentTimeFrame = 0;
@@ -166,7 +167,7 @@ public abstract class MethodMetrics {
 	/**
 	 * Categorizes commits into 3 possible types (refactor, refine and develop)
 	 * and return that list.
-	 * 
+	 *
 	 * @param changesList
 	 *            ArrayList with number of lines the method suffered during the
 	 *            commits
@@ -174,9 +175,9 @@ public abstract class MethodMetrics {
 	 *         refactor/refine/develop commits.
 	 */
 	protected ArrayList<String> getCommitsTypes(
-			ArrayList<Integer> changesList) {
+			final ArrayList<Integer> changesList) {
 
-		final ArrayList<String> commitsTypes = new ArrayList<String>();
+		final ArrayList<String> commitsTypes = new ArrayList<>();
 
 		for (int i = 0; i < changesList.size(); ++i) {
 			if (changesList.get(i) < MIN_REFINE_LINES) {
@@ -195,13 +196,13 @@ public abstract class MethodMetrics {
 	/**
 	 * Returns the points for the method if its {@code size} is bigger than
 	 * EXTREMELY_LARGE_METHOD.
-	 * 
+	 *
 	 * @param methodSize
 	 *            The actual method size at the current time
 	 * @return An Integer: 0 or 1 representing the points of
 	 *         {@code method's size} in metrics.
 	 */
-	public Integer getMethodSizePoints(Integer methodSize) {
+	public Integer getMethodSizePoints(final Integer methodSize) {
 		if (methodSize >= EXTREMELY_LARGE_METHOD) {
 			return 1;
 		}
@@ -212,13 +213,13 @@ public abstract class MethodMetrics {
 	/**
 	 * If the method is active: the latest activity of the method has occurred
 	 * in of the most recent MEDIUM_TIMESPAN time-frames, returns 1 point.
-	 * 
+	 *
 	 * @param lastCommit
 	 *            Latest commit in list
 	 * @return An Integer: 0 or 1 representing the points of method's activity
 	 *         in metrics.
 	 */
-	public Integer getActiveMethodPoints(Commit lastCommit) {
+	public Integer getActiveMethodPoints(final Commit lastCommit) {
 		for (final HashMap.Entry<Commit, Integer> currentEntry : allCommitsIntoTimeFrames
 				.entrySet()) {
 			if ((currentEntry.getValue() >= maximumTimeFrameNumber
@@ -231,7 +232,7 @@ public abstract class MethodMetrics {
 		return 0;
 	}
 
-	public static void setAllCommits(ArrayList<Commit> allCommits) {
+	public static void setAllCommits(final ArrayList<Commit> allCommits) {
 		MethodMetrics.allCommits = allCommits;
 	}
 
@@ -240,7 +241,7 @@ public abstract class MethodMetrics {
 				allCommits);
 	}
 
-	public static void setNow(Date now) {
+	public static void setNow(final Date now) {
 		MethodMetrics.now = now;
 	}
 

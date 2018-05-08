@@ -32,7 +32,7 @@ public abstract class GenericVisitor {
 		return identifier;
 	}
 
-	public void setIdentifier(String identifier) {
+	public void setIdentifier(final String identifier) {
 		this.identifier = identifier;
 	}
 
@@ -40,7 +40,7 @@ public abstract class GenericVisitor {
 		return total;
 	}
 
-	public void setTotal(Integer total) {
+	public void setTotal(final Integer total) {
 		this.total = total;
 	}
 
@@ -48,7 +48,7 @@ public abstract class GenericVisitor {
 		return lastMethodSize;
 	}
 
-	public void setLastMethodSize(Integer lastMethodSize) {
+	public void setLastMethodSize(final Integer lastMethodSize) {
 		this.lastMethodSize = lastMethodSize;
 	}
 
@@ -56,7 +56,7 @@ public abstract class GenericVisitor {
 		return methodDeleted;
 	}
 
-	public void setMethodDeleted(Boolean methodDeleted) {
+	public void setMethodDeleted(final Boolean methodDeleted) {
 		this.methodDeleted = methodDeleted;
 	}
 
@@ -64,7 +64,7 @@ public abstract class GenericVisitor {
 		return fileName;
 	}
 
-	public void setFileName(String fileName) {
+	public void setFileName(final String fileName) {
 		this.fileName = fileName;
 	}
 

@@ -21,7 +21,10 @@
  *******************************************************************************/
 package edu.lavinia.inspectory.am.metrics;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -52,9 +55,8 @@ public class SupernovaMetricTest {
 	@Test
 	public void testIsSupernovaTrue() throws ParseException {
 		final MethodChangesInformation methodInformation = new MethodChangesInformation();
-		final ArrayList<Integer> changesList = new ArrayList<Integer>(
-				Arrays.asList(210, 110, 50, -250, -40, 25, -10, 15, -10, 5, -15,
-						50, 15));
+		final ArrayList<Integer> changesList = new ArrayList<>(Arrays.asList(
+				210, 110, 50, -250, -40, 25, -10, 15, -10, 5, -15, 50, 15));
 		final ArrayList<Commit> commits = new ArrayList<>();
 		Commit commit = new Commit();
 		commit.setDate(new SimpleDateFormat(DATE_FORMAT).parse("2010/01/01"));
@@ -116,7 +118,7 @@ public class SupernovaMetricTest {
 	@Test
 	public void testIsSupernovaFalse() throws ParseException {
 		final MethodChangesInformation methodInformation = new MethodChangesInformation();
-		final ArrayList<Integer> changesList = new ArrayList<Integer>(
+		final ArrayList<Integer> changesList = new ArrayList<>(
 				Arrays.asList(200, -10, 50, 250, -40));
 		final ArrayList<Commit> commits = new ArrayList<>();
 		Commit commit = new Commit();
@@ -151,7 +153,7 @@ public class SupernovaMetricTest {
 
 	@Test
 	public void testGetLeapsSizePointsOne() {
-		assertSame(supernovaMetric.getLeapsSizePoints(100), 1);
+		assertSame(supernovaMetric.getLeapsSizePoints(40), 1);
 	}
 
 	@Test
@@ -166,12 +168,12 @@ public class SupernovaMetricTest {
 
 	@Test
 	public void testGetRecentLeapsSizePointsTwo() {
-		assertSame(supernovaMetric.getRecentLeapsSizePoints(90), 2);
+		assertSame(supernovaMetric.getRecentLeapsSizePoints(60), 2);
 	}
 
 	@Test
 	public void testGetRecentLeapsSizePointsOne() {
-		assertSame(supernovaMetric.getRecentLeapsSizePoints(60), 1);
+		assertSame(supernovaMetric.getRecentLeapsSizePoints(40), 1);
 	}
 
 	@Test
@@ -181,12 +183,12 @@ public class SupernovaMetricTest {
 
 	@Test
 	public void testGetSubsequentRefactoringPointsTwo() {
-		assertSame(supernovaMetric.getSubsequentRefactoringPoints(10.0), 2);
+		assertSame(supernovaMetric.getSubsequentRefactoringPoints(7.0), 2);
 	}
 
 	@Test
 	public void testGetSubsequentRefactoringPointsOne() {
-		assertSame(supernovaMetric.getSubsequentRefactoringPoints(25.0), 1);
+		assertSame(supernovaMetric.getSubsequentRefactoringPoints(15.0), 1);
 	}
 
 	@Test
@@ -243,11 +245,11 @@ public class SupernovaMetricTest {
 	@Test
 	public void testCountSupernovaSeverityPointsMax() throws ParseException {
 		final Commit commit = new Commit();
-		commit.setDate(new SimpleDateFormat(DATE_FORMAT).parse("2017/09/01"));
+		commit.setDate(new SimpleDateFormat(DATE_FORMAT).parse("2017/08/01"));
 		MethodMetrics.setAllCommits(new ArrayList<>(Arrays.asList(commit)));
 		MethodMetrics.setAllCommitsIntoTimeFrames();
-		assertSame(supernovaMetric.countSupernovaSeverityPoints(200, 200, 10.0,
-				150, commit), 10);
+		assertSame(supernovaMetric.countSupernovaSeverityPoints(300, 300, 9.0,
+				250, commit), 10);
 	}
 
 	@Test
@@ -383,7 +385,7 @@ public class SupernovaMetricTest {
 		final Map<String, Object> supernovaCriterionValues = new HashMap<>();
 		supernovaCriterionValues.put("isSupernova", false);
 		supernovaCriterionValues.put("sumOfAllLeaps", -31);
-		supernovaCriterionValues.put("sumRecentLeaps", 5);
+		supernovaCriterionValues.put("sumRecentLeaps", -5);
 		supernovaCriterionValues.put("averageSubsequentCommits",
 				(double) 22 / (double) 3);
 		assertEquals(

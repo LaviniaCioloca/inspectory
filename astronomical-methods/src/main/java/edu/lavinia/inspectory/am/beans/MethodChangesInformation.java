@@ -28,7 +28,7 @@ import edu.lavinia.inspectory.beans.Commit;
 /**
  * Bean class having the entire result information after applying Astronomical
  * Methods Metric onto methods.
- * 
+ *
  * @author Lavinia Cioloca
  *
  */
@@ -53,7 +53,7 @@ public class MethodChangesInformation {
 		return commits;
 	}
 
-	public void setCommits(ArrayList<Commit> commits) {
+	public void setCommits(final ArrayList<Commit> commits) {
 		this.commits = commits;
 	}
 
@@ -61,7 +61,7 @@ public class MethodChangesInformation {
 		return fileName;
 	}
 
-	public void setFileName(String fileName) {
+	public void setFileName(final String fileName) {
 		this.fileName = fileName;
 	}
 
@@ -69,7 +69,7 @@ public class MethodChangesInformation {
 		return className;
 	}
 
-	public void setClassName(String className) {
+	public void setClassName(final String className) {
 		this.className = className;
 	}
 
@@ -77,7 +77,7 @@ public class MethodChangesInformation {
 		return methodName;
 	}
 
-	public void setMethodName(String methodName) {
+	public void setMethodName(final String methodName) {
 		this.methodName = methodName;
 	}
 
@@ -85,7 +85,7 @@ public class MethodChangesInformation {
 		return actualSize;
 	}
 
-	public void setActualSize(Integer actualSize) {
+	public void setActualSize(final Integer actualSize) {
 		this.actualSize = actualSize;
 	}
 
@@ -93,7 +93,7 @@ public class MethodChangesInformation {
 		return initialSize;
 	}
 
-	public void setInitialSize(Integer initialSize) {
+	public void setInitialSize(final Integer initialSize) {
 		this.initialSize = initialSize;
 	}
 
@@ -101,7 +101,7 @@ public class MethodChangesInformation {
 		return numberOfChanges;
 	}
 
-	public void setNumberOfChanges(Integer numberOfChanges) {
+	public void setNumberOfChanges(final Integer numberOfChanges) {
 		this.numberOfChanges = numberOfChanges;
 	}
 
@@ -109,7 +109,7 @@ public class MethodChangesInformation {
 		return methodDeleted;
 	}
 
-	public void setMethodDeleted(Boolean methodDeleted) {
+	public void setMethodDeleted(final Boolean methodDeleted) {
 		this.methodDeleted = methodDeleted;
 	}
 
@@ -117,7 +117,7 @@ public class MethodChangesInformation {
 		return changesList;
 	}
 
-	public void setChangesList(ArrayList<Integer> changesList) {
+	public void setChangesList(final ArrayList<Integer> changesList) {
 		this.changesList = changesList;
 	}
 
@@ -125,7 +125,7 @@ public class MethodChangesInformation {
 		return isPulsar;
 	}
 
-	public void setPulsar(Boolean isPulsar) {
+	public void setPulsar(final Boolean isPulsar) {
 		this.isPulsar = isPulsar;
 	}
 
@@ -133,7 +133,7 @@ public class MethodChangesInformation {
 		return isSupernova;
 	}
 
-	public void setSupernova(Boolean isSupernova) {
+	public void setSupernova(final Boolean isSupernova) {
 		this.isSupernova = isSupernova;
 	}
 
@@ -141,7 +141,7 @@ public class MethodChangesInformation {
 		return isPulsar;
 	}
 
-	public void setIsPulsar(Boolean isPulsar) {
+	public void setIsPulsar(final Boolean isPulsar) {
 		this.isPulsar = isPulsar;
 	}
 
@@ -149,7 +149,7 @@ public class MethodChangesInformation {
 		return isSupernova;
 	}
 
-	public void setIsSupernova(Boolean isSupernova) {
+	public void setIsSupernova(final Boolean isSupernova) {
 		this.isSupernova = isSupernova;
 	}
 
@@ -157,7 +157,7 @@ public class MethodChangesInformation {
 		return pulsarSeverity;
 	}
 
-	public void setPulsarSeverity(Integer pulsarSeverity) {
+	public void setPulsarSeverity(final Integer pulsarSeverity) {
 		this.pulsarSeverity = pulsarSeverity;
 	}
 
@@ -165,7 +165,7 @@ public class MethodChangesInformation {
 		return supernovaSeverity;
 	}
 
-	public void setSupernovaSeverity(Integer supernovaSeverity) {
+	public void setSupernovaSeverity(final Integer supernovaSeverity) {
 		this.supernovaSeverity = supernovaSeverity;
 	}
 
@@ -173,7 +173,7 @@ public class MethodChangesInformation {
 		return pulsarCriteria;
 	}
 
-	public void setPulsarCriteria(PulsarCriteria pulsarCriteria) {
+	public void setPulsarCriteria(final PulsarCriteria pulsarCriteria) {
 		this.pulsarCriteria = pulsarCriteria;
 	}
 
@@ -181,14 +181,15 @@ public class MethodChangesInformation {
 		return supernovaCriteria;
 	}
 
-	public void setSupernovaCriteria(SupernovaCriteria supernovaCriteria) {
+	public void setSupernovaCriteria(
+			final SupernovaCriteria supernovaCriteria) {
 		this.supernovaCriteria = supernovaCriteria;
 	}
 
 	/**
 	 * Retrieve the method's entire information line to be written in the CSV
 	 * file.
-	 * 
+	 *
 	 * @return An ArrayList of Strings data type.
 	 */
 	public ArrayList<String> getMethodInformationLine() {

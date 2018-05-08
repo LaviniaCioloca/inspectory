@@ -33,9 +33,9 @@ import org.metanalysis.core.project.PersistentProject;
 import edu.lavinia.inspectory.am.visitor.NodeVisitor;
 
 public class FileModelInspection {
-	private PersistentProject project;
+	private final PersistentProject project;
 
-	public FileModelInspection(PersistentProject project) {
+	public FileModelInspection(final PersistentProject project) {
 		this.project = project;
 	}
 
@@ -47,6 +47,7 @@ public class FileModelInspection {
 		try {
 			final String logFolderName = ".inspectory_results";
 			final Set<String> filesList = project.listFiles();
+
 			for (final String file : filesList) {
 				if (file.startsWith(".") || !file.endsWith(".java")) {
 					continue;
@@ -70,12 +71,12 @@ public class FileModelInspection {
 
 				/*
 				 * final Map<String, Integer> map = visitor.getFunctionSize();
-				 * 
+				 *
 				 * for (final Map.Entry<String, Integer> entry : map.entrySet())
 				 * { logger.info(entry.getKey() + " - " + entry.getValue()); }
 				 */
 			}
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			/*
 			 * Need to have a NOP here because of the files that do not have a
 			 * model -> they have static initializers and getModel(file) throws

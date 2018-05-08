@@ -23,7 +23,7 @@ package edu.lavinia.inspectory.am.beans;
 
 /**
  * Bean class having values of Pulsar metric.
- * 
+ *
  * @author Lavinia Cioloca
  *
  */
@@ -37,7 +37,7 @@ public class PulsarCriteria {
 		return recentCyclesPoints;
 	}
 
-	public void setRecentCyclesPoints(Integer recentCyclesPoints) {
+	public void setRecentCyclesPoints(final Integer recentCyclesPoints) {
 		this.recentCyclesPoints = recentCyclesPoints;
 	}
 
@@ -46,7 +46,7 @@ public class PulsarCriteria {
 	}
 
 	public void setAverageSizeIncreasePoints(
-			Integer averageSizeIncreasePoints) {
+			final Integer averageSizeIncreasePoints) {
 		this.averageSizeIncreasePoints = averageSizeIncreasePoints;
 	}
 
@@ -54,7 +54,7 @@ public class PulsarCriteria {
 		return methodSizePoints;
 	}
 
-	public void setMethodSizePoints(Integer methodSizePoints) {
+	public void setMethodSizePoints(final Integer methodSizePoints) {
 		this.methodSizePoints = methodSizePoints;
 	}
 
@@ -62,7 +62,7 @@ public class PulsarCriteria {
 		return activityStatePoints;
 	}
 
-	public void setActivityStatePoints(Integer activityStatePoints) {
+	public void setActivityStatePoints(final Integer activityStatePoints) {
 		this.activityStatePoints = activityStatePoints;
 	}
 

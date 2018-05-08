@@ -23,6 +23,8 @@ package edu.lavinia.inspectory.am.inspection;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -62,8 +64,8 @@ import edu.lavinia.inspectory.visitor.GenericVisitor;
 
 public class AstronomicalMethodsInspection {
 	private Optional<PersistentProject> project;
-	private Map<String, MethodChangesInformation> allMethodsResult = new HashMap<String, MethodChangesInformation>();;
-	private ArrayList<String> deletedNodes = new ArrayList<String>();
+	private Map<String, MethodChangesInformation> allMethodsResult = new HashMap<>();
+	private ArrayList<String> deletedNodes = new ArrayList<>();
 	private final FileWriter csvWriter;
 	private final FileWriter csvMethodDynamicsWriter;
 	private final FileWriter jsonWriter;
@@ -74,15 +76,17 @@ public class AstronomicalMethodsInspection {
 	/**
 	 * AstronomicalMethodsInspection Constructor that initializes the result map
 	 * and CSV writer to file.
-	 * 
+	 *
 	 * @param project
 	 *            The project of the repository to inspect.
 	 * @param csvWriter
 	 *            The writer of result CSV file.
 	 */
-	public AstronomicalMethodsInspection(Optional<PersistentProject> project,
-			FileWriter csvWriter, FileWriter csvMethodDynamicsWriter,
-			FileWriter jsonWriter) {
+	public AstronomicalMethodsInspection(
+			final Optional<PersistentProject> project,
+			final FileWriter csvWriter,
+			final FileWriter csvMethodDynamicsWriter,
+			final FileWriter jsonWriter) {
 
 		this.project = project;
 		this.csvWriter = csvWriter;
@@ -93,7 +97,7 @@ public class AstronomicalMethodsInspection {
 	/**
 	 * Checking if the method exists in resultSet in order to add values to
 	 * changes list or to create a new one.
-	 * 
+	 *
 	 * @param visitor
 	 *            The visitor
 	 * @param className
@@ -104,8 +108,8 @@ public class AstronomicalMethodsInspection {
 	 * @return A boolean: false if the method's identifier is null or if it
 	 *         already exists in result set and true otherwise.
 	 */
-	public boolean checkEntryInResultSet(GenericVisitor visitor,
-			String className, Commit commit) {
+	public boolean checkEntryInResultSet(final GenericVisitor visitor,
+			final String className, final Commit commit) {
 
 		if (visitor.getIdentifier() == null) {
 			return false;
@@ -123,10 +127,10 @@ public class AstronomicalMethodsInspection {
 		}
 	}
 
-	private void treatNewMethodInResultSet(GenericVisitor visitor,
-			String className, Commit commit) {
+	private void treatNewMethodInResultSet(final GenericVisitor visitor,
+			final String className, final Commit commit) {
 
-		final ArrayList<Integer> changesList = new ArrayList<Integer>();
+		final ArrayList<Integer> changesList = new ArrayList<>();
 		changesList.add(visitor.getTotal());
 		final ArrayList<Commit> commits = new ArrayList<>();
 		commits.add(commit);
@@ -143,7 +147,7 @@ public class AstronomicalMethodsInspection {
 	}
 
 	private MethodChangesInformation addMehodChangesInformation(
-			GenericVisitor visitor, String className,
+			final GenericVisitor visitor, final String className,
 			final ArrayList<Integer> changesList,
 			final ArrayList<Commit> commits) {
 
@@ -156,8 +160,8 @@ public class AstronomicalMethodsInspection {
 		return methodChangesInformation;
 	}
 
-	private void treatExistentMethodInResultSet(GenericVisitor visitor,
-			String className, Commit commit) {
+	private void treatExistentMethodInResultSet(final GenericVisitor visitor,
+			final String className, final Commit commit) {
 
 		final MethodChangesInformation methodChangesInformation = allMethodsResult
 				.get(visitor.getFileName() + ":" + className + ": "
@@ -173,10 +177,10 @@ public class AstronomicalMethodsInspection {
 	/**
 	 * Adds to the list with all commits the ArrayList of commits for every
 	 * method.
-	 * 
+	 *
 	 * @param commits
 	 */
-	public void addToAllCommits(List<Commit> commits) {
+	public void addToAllCommits(final List<Commit> commits) {
 		for (final Commit commit : commits) {
 			allCommits.add(commit);
 		}
@@ -189,7 +193,7 @@ public class AstronomicalMethodsInspection {
 	public void sortAllCommits() {
 		Collections.sort(allCommits, new Comparator<Commit>() {
 			@Override
-			public int compare(Commit commit1, Commit commit2) {
+			public int compare(final Commit commit1, final Commit commit2) {
 				return commit1.getDate().compareTo(commit2.getDate());
 			}
 		});
@@ -199,7 +203,7 @@ public class AstronomicalMethodsInspection {
 	 * Takes all the commits from the methodInformationList that will be written
 	 * in the CSV file and add them to the allCommits ArrayList. After that,
 	 * sorts the ArrayList chronological.
-	 * 
+	 *
 	 * @param methodInformationList
 	 */
 	public void createAndSortAllCommits() {
@@ -226,8 +230,8 @@ public class AstronomicalMethodsInspection {
 	 */
 	public MethodChangesInformation setMethodInformation(
 			MethodChangesInformation methodChangesInformation,
-			Boolean wasDeleted, ArrayList<Integer> changesList,
-			ArrayList<Commit> commits, Integer actualSize) {
+			final Boolean wasDeleted, final ArrayList<Integer> changesList,
+			final ArrayList<Commit> commits, final Integer actualSize) {
 
 		methodChangesInformation = setGeneralInformationValues(
 				methodChangesInformation, wasDeleted, changesList, commits,
@@ -245,7 +249,7 @@ public class AstronomicalMethodsInspection {
 	}
 
 	private void checkIfSupernovaOrPulsar(
-			MethodChangesInformation methodChangesInformation) {
+			final MethodChangesInformation methodChangesInformation) {
 
 		if (methodChangesInformation.isSupernova()) {
 			methodDynamics.addSupernovaMethodDynamics(
@@ -291,9 +295,9 @@ public class AstronomicalMethodsInspection {
 	}
 
 	private MethodChangesInformation setGeneralInformationValues(
-			MethodChangesInformation methodChangesInformation,
-			Boolean wasDeleted, ArrayList<Integer> changesList,
-			ArrayList<Commit> commits, Integer actualSize) {
+			final MethodChangesInformation methodChangesInformation,
+			final Boolean wasDeleted, final ArrayList<Integer> changesList,
+			final ArrayList<Commit> commits, final Integer actualSize) {
 
 		methodChangesInformation.setInitialSize(changesList.get(0));
 		methodChangesInformation.setNumberOfChanges(changesList.size());
@@ -306,8 +310,8 @@ public class AstronomicalMethodsInspection {
 	}
 
 	private MethodChangesInformation setSupernovaCriteriaValues(
-			MethodChangesInformation methodChangesInformation,
-			SupernovaMetric supernovaMetric) {
+			final MethodChangesInformation methodChangesInformation,
+			final SupernovaMetric supernovaMetric) {
 
 		final SupernovaCriteria supernovaCriteria = new SupernovaCriteria();
 		supernovaCriteria
@@ -326,8 +330,8 @@ public class AstronomicalMethodsInspection {
 	}
 
 	private MethodChangesInformation setPulsarCriteriaValues(
-			MethodChangesInformation methodChangesInformation,
-			PulsarMetric pulsarMetric) {
+			final MethodChangesInformation methodChangesInformation,
+			final PulsarMetric pulsarMetric) {
 
 		final PulsarCriteria pulsarCriteria = new PulsarCriteria();
 		pulsarCriteria
@@ -344,15 +348,35 @@ public class AstronomicalMethodsInspection {
 
 	/**
 	 * Writes the CSV lines in the inspectory result CSV file.
-	 * 
+	 *
 	 * @param methodInformationList
 	 *            List with every {@code methodInformation} line, of every
 	 *            method, to be written in the inspectory result CSV file.
 	 */
 	public void writeCSVFileData() {
+		final NumberFormat formatter = new DecimalFormat("#0.00000");
+		long startTime = System.currentTimeMillis();
+
 		createAndSortAllCommits();
 
+		System.out.println("createAndSortAllCommits() execution time was: "
+				+ formatter.format(
+						(System.currentTimeMillis() - startTime) / 1000d)
+				+ " seconds.\n");
+
+		//
+		startTime = System.currentTimeMillis();
+
 		setMethodMetricsCommitsInformation();
+
+		System.out.println(
+				"setMethodMetricsCommitsInformation() execution time was: "
+						+ formatter
+								.format((System.currentTimeMillis() - startTime)
+										/ 1000d)
+						+ " seconds.\n");
+
+		System.out.println("List size: " + methodInformationList.size());
 
 		for (MethodChangesInformation methodChangesInformation : methodInformationList) {
 			try {
@@ -372,14 +396,14 @@ public class AstronomicalMethodsInspection {
 				CSVUtils.writeLine(csvWriter,
 						methodChangesInformation.getMethodInformationLine(),
 						',', '"');
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				e.printStackTrace();
 			}
 		}
 	}
 
 	private Boolean checkIfMethodWasDeleted(
-			MethodChangesInformation methodChangesInformation) {
+			final MethodChangesInformation methodChangesInformation) {
 
 		final Boolean wasDeleted = allMethodsResult
 				.get(methodChangesInformation.getFileName() + ":"
@@ -391,7 +415,7 @@ public class AstronomicalMethodsInspection {
 	}
 
 	private ArrayList<Commit> getCommitsFromResult(
-			MethodChangesInformation methodChangesInformation) {
+			final MethodChangesInformation methodChangesInformation) {
 
 		final ArrayList<Commit> commits = allMethodsResult
 				.get(methodChangesInformation.getFileName() + ":"
@@ -403,7 +427,7 @@ public class AstronomicalMethodsInspection {
 	}
 
 	private ArrayList<Integer> getChangesListFromResult(
-			MethodChangesInformation methodChangesInformation) {
+			final MethodChangesInformation methodChangesInformation) {
 
 		final ArrayList<Integer> changesList = allMethodsResult
 				.get(methodChangesInformation.getFileName() + ":"
@@ -436,16 +460,16 @@ public class AstronomicalMethodsInspection {
 	/**
 	 * Checks for every Change MemberEdit of the current NodeSetEdit if there is
 	 * in the result set in order to add it to the CSV line.
-	 * 
+	 *
 	 * @param edit
 	 * @param visitor
 	 * @param fileName
 	 * @param commit
 	 * @param lineChanges
 	 */
-	public void handleNodeSetEditChange(NodeSetEdit edit,
-			GenericVisitor visitor, String fileName, Commit commit,
-			ArrayList<Integer> lineChanges) {
+	public void handleNodeSetEditChange(final NodeSetEdit edit,
+			final GenericVisitor visitor, final String fileName,
+			final Commit commit, final ArrayList<Integer> lineChanges) {
 
 		final String className = ((NodeSetEdit.Change<?>) edit).getIdentifier();
 		final Transaction<?> transaction = ((NodeSetEdit.Change<?>) edit)
@@ -456,13 +480,13 @@ public class AstronomicalMethodsInspection {
 		treatEachNodeSetEdit(fileName, commit, className, memberEdits);
 	}
 
-	private void treatEachNodeSetEdit(String fileName, Commit commit,
-			final String className, final List<NodeSetEdit> memberEdits) {
+	private void treatEachNodeSetEdit(final String fileName,
+			final Commit commit, final String className,
+			final List<NodeSetEdit> memberEdits) {
 
-		GenericVisitor visitor;
 		for (final NodeSetEdit memberEdit : memberEdits) {
 			try {
-				visitor = new EditVisitor(fileName);
+				final GenericVisitor visitor = new EditVisitor(fileName);
 
 				if (memberEdit instanceof NodeSetEdit.Remove) {
 					treatNodeSetEditRemove(fileName, className, visitor,
@@ -475,14 +499,15 @@ public class AstronomicalMethodsInspection {
 					addDataInMethodInformationList(fileName, className,
 							visitor.getIdentifier());
 				}
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				continue;
 			}
 		}
 	}
 
-	private void treatNodeSetEditRemove(String fileName, final String className,
-			GenericVisitor visitor, final NodeSetEdit memberEdit) {
+	private void treatNodeSetEditRemove(final String fileName,
+			final String className, final GenericVisitor visitor,
+			final NodeSetEdit memberEdit) {
 
 		Integer lastMethodSize = 0;
 		final ArrayList<Integer> changesList = allMethodsResult
@@ -500,15 +525,16 @@ public class AstronomicalMethodsInspection {
 	/**
 	 * Checks for every Add NodeSetEdit if there is in the result set in order
 	 * to add it to the CSV line.
-	 * 
+	 *
 	 * @param edit
 	 * @param visitor
 	 * @param fileName
 	 * @param commit
 	 * @param lineChanges
 	 */
-	public void handleNodeSetEditAdd(NodeSetEdit edit, GenericVisitor visitor,
-			String fileName, Commit commit, ArrayList<Integer> lineChanges) {
+	public void handleNodeSetEditAdd(final NodeSetEdit edit,
+			final GenericVisitor visitor, final String fileName,
+			final Commit commit, final ArrayList<Integer> lineChanges) {
 
 		final Node node = ((NodeSetEdit.Add) edit).getNode();
 
@@ -517,8 +543,8 @@ public class AstronomicalMethodsInspection {
 		}
 	}
 
-	private void treatGeneralNodeType(String fileName, Commit commit,
-			final Node node) {
+	private void treatGeneralNodeType(final String fileName,
+			final Commit commit, final Node node) {
 
 		final GenericVisitor visitor = new NodeVisitor(fileName);
 		final Set<Node> members = ((Node.Type) node).getMembers();
@@ -528,7 +554,7 @@ public class AstronomicalMethodsInspection {
 		}
 	}
 
-	private void treatEachMemberNode(String fileName, Commit commit,
+	private void treatEachMemberNode(final String fileName, final Commit commit,
 			final Node node, final GenericVisitor visitor, final Node member) {
 
 		try {
@@ -537,12 +563,12 @@ public class AstronomicalMethodsInspection {
 			} else if (member instanceof Node.Function) {
 				treatNodeFunction(fileName, commit, node, visitor, member);
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			return;
 		}
 	}
 
-	private void treatNodeFunction(String fileName, Commit commit,
+	private void treatNodeFunction(final String fileName, final Commit commit,
 			final Node node, final GenericVisitor visitor, final Node member) {
 
 		final String className = ((Node.Type) node).getName();
@@ -554,7 +580,7 @@ public class AstronomicalMethodsInspection {
 		}
 	}
 
-	private void treatNodeType(String fileName, Commit commit,
+	private void treatNodeType(final String fileName, final Commit commit,
 			final GenericVisitor visitor, final Node member) {
 
 		final String className = ((Node.Type) member).getName();
@@ -565,7 +591,7 @@ public class AstronomicalMethodsInspection {
 		}
 	}
 
-	private void treatTypeMember(String fileName, Commit commit,
+	private void treatTypeMember(final String fileName, final Commit commit,
 			final GenericVisitor visitor, final String className,
 			final Node typeMember) {
 
@@ -582,13 +608,13 @@ public class AstronomicalMethodsInspection {
 	/**
 	 * Adds in methodInformationList values for a method: file name, class name
 	 * and method's name.
-	 * 
+	 *
 	 * @param fileName
 	 * @param className
 	 * @param methodName
 	 */
-	public void addDataInMethodInformationList(String fileName,
-			String className, String methodName) {
+	public void addDataInMethodInformationList(final String fileName,
+			final String className, final String methodName) {
 
 		final MethodChangesInformation methodChangesInformation = new MethodChangesInformation();
 		methodChangesInformation.setFileName(fileName);
@@ -605,11 +631,12 @@ public class AstronomicalMethodsInspection {
 	public void createMethodsResults() {
 		try {
 			final Set<String> filesList = project.get().listFiles();
-			methodInformationList = new ArrayList<MethodChangesInformation>();
+			methodInformationList = new ArrayList<>();
+
 			for (final String fileName : filesList) {
 				parseEachHistoryFile(fileName);
 			}
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			/*
 			 * Need to have a NOP here because of the files that do not have a
 			 * model -> they have static initializers and getModel(file) throws
@@ -649,7 +676,7 @@ public class AstronomicalMethodsInspection {
 				treatEachNodeSetEdit(fileName, commit, lineChanges, visitor,
 						edit);
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			return;
 		}
 	}
@@ -709,7 +736,7 @@ public class AstronomicalMethodsInspection {
 			final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 			jsonWriter.write(gson.toJson(jsonArray));
 			// jsonWriter.write(gson.toJson(entireJson));
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
 		}
 	}
@@ -774,10 +801,46 @@ public class AstronomicalMethodsInspection {
 	 * Method used to create the results and write the CSV and JSON files.
 	 */
 	public void analyzeAstronomicalMethods() {
+		//
+		final NumberFormat formatter = new DecimalFormat("#0.00000");
+		long startTime = System.currentTimeMillis();
+
 		createMethodsResults();
+
+		System.out.println("createMethodsResults() execution time was: "
+				+ formatter.format(
+						(System.currentTimeMillis() - startTime) / 1000d)
+				+ " seconds.\n");
+
+		//
+		startTime = System.currentTimeMillis();
+
 		createDefaultMethodInformation();
+
+		System.out
+				.println("createDefaultMethodInformation() execution time was: "
+						+ formatter
+								.format((System.currentTimeMillis() - startTime)
+										/ 1000d)
+						+ " seconds.\n");
+		//
+		startTime = System.currentTimeMillis();
+
 		writeCSVFileData();
+
+		System.out.println("writeCSVFileData() execution time was: "
+				+ formatter.format(
+						(System.currentTimeMillis() - startTime) / 1000d)
+				+ " seconds.\n");
+		//
+		startTime = System.currentTimeMillis();
+
 		writeJSONMethodDynamicsData();
+
+		System.out.println("writeJSONMethodDynamicsData() execution time was: "
+				+ formatter.format(
+						(System.currentTimeMillis() - startTime) / 1000d)
+				+ " seconds.\n");
 	}
 
 	// Getters and setters
@@ -785,7 +848,7 @@ public class AstronomicalMethodsInspection {
 		return allMethodsResult;
 	}
 
-	public void setResult(Map<String, MethodChangesInformation> result) {
+	public void setResult(final Map<String, MethodChangesInformation> result) {
 		this.allMethodsResult = result;
 	}
 
@@ -798,7 +861,7 @@ public class AstronomicalMethodsInspection {
 	}
 
 	public void setMethodInformationList(
-			ArrayList<MethodChangesInformation> methodInformationList) {
+			final ArrayList<MethodChangesInformation> methodInformationList) {
 		this.methodInformationList = methodInformationList;
 	}
 
@@ -806,7 +869,7 @@ public class AstronomicalMethodsInspection {
 		return project;
 	}
 
-	public void setProject(Optional<PersistentProject> project) {
+	public void setProject(final Optional<PersistentProject> project) {
 		this.project = project;
 	}
 
@@ -814,7 +877,7 @@ public class AstronomicalMethodsInspection {
 		return deletedNodes;
 	}
 
-	public void setDeletedNodes(ArrayList<String> deletedNodes) {
+	public void setDeletedNodes(final ArrayList<String> deletedNodes) {
 		this.deletedNodes = deletedNodes;
 	}
 

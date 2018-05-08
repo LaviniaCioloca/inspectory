@@ -26,11 +26,10 @@ import java.io.Writer;
 import java.util.List;
 
 public class CSVUtils {
-
 	private static final char DEFAULT_SEPARATOR = ',';
 	private static final char SPACE = ' ';
 
-	public static void writeLine(Writer writer, List<String> values)
+	public static void writeLine(final Writer writer, final List<String> values)
 			throws IOException {
 
 		writeLine(writer, values, DEFAULT_SEPARATOR, ' ');
@@ -48,7 +47,7 @@ public class CSVUtils {
 
 	/**
 	 * Writes String values separated using a separator in a CSV format file.
-	 * 
+	 *
 	 * @param writer
 	 *            The writer of the CSV file.
 	 * @param values
@@ -60,7 +59,7 @@ public class CSVUtils {
 	 * @throws IOException
 	 */
 	public static void writeLine(final Writer writer, final List<String> values,
-			char separator, char customQuote) throws IOException {
+			char separator, final char customQuote) throws IOException {
 
 		if (separator == SPACE) {
 			separator = DEFAULT_SEPARATOR;
@@ -75,7 +74,7 @@ public class CSVUtils {
 	}
 
 	private static void parseEachValue(final List<String> values,
-			char separator, char customQuote,
+			final char separator, final char customQuote,
 			final StringBuilder stringBuilder) {
 
 		boolean first = true;

@@ -24,8 +24,9 @@ package edu.lavinia.inspectory.utils;
 import com.google.gson.JsonObject;
 
 public class JSONUtils {
-	public JsonObject getAstronomicalPropertyJSON(String fileName,
-			Integer propertyValue, String propertyName) {
+
+	public JsonObject getAstronomicalPropertyJSON(final String fileName,
+			final Integer propertyValue, final String propertyName) {
 
 		final JsonObject jsonArrayElement = new JsonObject();
 		jsonArrayElement.addProperty("file", fileName);

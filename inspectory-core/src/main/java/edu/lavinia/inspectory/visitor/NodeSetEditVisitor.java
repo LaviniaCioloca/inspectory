@@ -31,7 +31,7 @@ public abstract class NodeSetEditVisitor extends GenericVisitor {
 
 	public abstract void visit(NodeSetEdit.Change<?> change);
 
-	public final void visit(NodeSetEdit nodeSetEdit) {
+	public final void visit(final NodeSetEdit nodeSetEdit) {
 		// safe to use 'instanceof' because the class hierarchy is sealed
 		if (nodeSetEdit instanceof NodeSetEdit.Add) {
 			visit((NodeSetEdit.Add) nodeSetEdit);

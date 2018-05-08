@@ -23,7 +23,7 @@ package edu.lavinia.inspectory.am.beans;
 
 /**
  * Bean class having values of Supernova metric.
- * 
+ *
  * @author Lavinia Cioloca
  *
  */
@@ -38,7 +38,7 @@ public class SupernovaCriteria {
 		return leapsSizePoints;
 	}
 
-	public void setLeapsSizePoints(Integer leapsSizePoints) {
+	public void setLeapsSizePoints(final Integer leapsSizePoints) {
 		this.leapsSizePoints = leapsSizePoints;
 	}
 
@@ -46,7 +46,7 @@ public class SupernovaCriteria {
 		return recentLeapsSizePoints;
 	}
 
-	public void setRecentLeapsSizePoints(Integer recentLeapsSizePoints) {
+	public void setRecentLeapsSizePoints(final Integer recentLeapsSizePoints) {
 		this.recentLeapsSizePoints = recentLeapsSizePoints;
 	}
 
@@ -55,7 +55,7 @@ public class SupernovaCriteria {
 	}
 
 	public void setSubsequentRefactoringPoints(
-			Integer subsequentRefactoringPoints) {
+			final Integer subsequentRefactoringPoints) {
 		this.subsequentRefactoringPoints = subsequentRefactoringPoints;
 	}
 
@@ -63,7 +63,7 @@ public class SupernovaCriteria {
 		return methodSizePoints;
 	}
 
-	public void setMethodSizePoints(Integer methodSizePoints) {
+	public void setMethodSizePoints(final Integer methodSizePoints) {
 		this.methodSizePoints = methodSizePoints;
 	}
 
@@ -71,7 +71,7 @@ public class SupernovaCriteria {
 		return activityStatePoints;
 	}
 
-	public void setActivityStatePoints(Integer activityStatePoints) {
+	public void setActivityStatePoints(final Integer activityStatePoints) {
 		this.activityStatePoints = activityStatePoints;
 	}
 

@@ -30,12 +30,12 @@ import edu.lavinia.inspectory.am.beans.FileMethodDynamics;
  * Utility class for Method Dynamics that has the entire
  * {@code projectMethodDynamics} map and utility functions for Astronomical
  * Method Metrics.
- * 
+ *
  * @author Lavinia Cioloca
  *
  */
 public class MethodDynamicsUtils {
-	private Map<String, FileMethodDynamics> projectMethodDynamics = new HashMap<String, FileMethodDynamics>();
+	private Map<String, FileMethodDynamics> projectMethodDynamics = new HashMap<>();
 
 	/**
 	 * @param fileName
@@ -44,8 +44,8 @@ public class MethodDynamicsUtils {
 	 *            The Integer value of Supernova severity that can added to 0 or
 	 *            to the already existent points
 	 */
-	public void addSupernovaMethodDynamics(String fileName,
-			Integer supernovaSeverity) {
+	public void addSupernovaMethodDynamics(final String fileName,
+			final Integer supernovaSeverity) {
 
 		final FileMethodDynamics fileMethodDynamics = projectMethodDynamics
 				.get(fileName);
@@ -67,8 +67,8 @@ public class MethodDynamicsUtils {
 	 *            The Integer value of Pulsar severity that can added to 0 or to
 	 *            the already existent points
 	 */
-	public void addPulsarMethodDynamics(String fileName,
-			Integer pulsarSeverity) {
+	public void addPulsarMethodDynamics(final String fileName,
+			final Integer pulsarSeverity) {
 
 		final FileMethodDynamics fileMethodDynamics = projectMethodDynamics
 				.get(fileName);
@@ -85,10 +85,10 @@ public class MethodDynamicsUtils {
 
 	/**
 	 * Initially, every file in repository has Method Dynamics values 0.
-	 * 
+	 *
 	 * @param fileName
 	 */
-	public void addDefaultMethodDynamics(String fileName) {
+	public void addDefaultMethodDynamics(final String fileName) {
 		final FileMethodDynamics fileMethodDynamics = new FileMethodDynamics();
 		fileMethodDynamics.setNumberOfPulsarMethods(0);
 		fileMethodDynamics.setPulsarMethodsSeverityPoints(0);
@@ -98,7 +98,7 @@ public class MethodDynamicsUtils {
 	}
 
 	public void setProjectMethodDynamics(
-			Map<String, FileMethodDynamics> projectMethodDynamics) {
+			final Map<String, FileMethodDynamics> projectMethodDynamics) {
 		this.projectMethodDynamics = projectMethodDynamics;
 	}
 

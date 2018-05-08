@@ -38,23 +38,23 @@ import edu.lavinia.inspectory.visitor.CodeVisitor;
 /**
  * Implementation of {@link edu.lavinia.inspectory.visitor.CodeVisitor
  * CodeVisitor} for visiting nodes of types: Type and Function.
- * 
+ *
  * @author Lavinia Cioloca
  *
  */
 public class NodeVisitor extends CodeVisitor {
-	private Map<String, Integer> functionSize = new HashMap<String, Integer>();
+	private Map<String, Integer> functionSize = new HashMap<>();
 
-	public NodeVisitor(String fileName) {
+	public NodeVisitor(final String fileName) {
 		this.fileName = fileName;
 	}
 
 	@Override
-	public void visit(SourceFile sourceFile) {
+	public void visit(final SourceFile sourceFile) {
 	}
 
 	@Override
-	public void visit(Type type) {
+	public void visit(final Type type) {
 		final Set<Node> members = type.getMembers();
 
 		for (final Node node : members) {
@@ -63,11 +63,11 @@ public class NodeVisitor extends CodeVisitor {
 	}
 
 	@Override
-	public void visit(Variable variable) {
+	public void visit(final Variable variable) {
 	}
 
 	@Override
-	public void visit(Function function) {
+	public void visit(final Function function) {
 		total = 0;
 		final List<String> body = function.getBody();
 		functionSize.put(function.getIdentifier(), body.size());
@@ -79,7 +79,7 @@ public class NodeVisitor extends CodeVisitor {
 		return functionSize;
 	}
 
-	public void setFunctionSize(Map<String, Integer> functionSize) {
+	public void setFunctionSize(final Map<String, Integer> functionSize) {
 		this.functionSize = functionSize;
 	}
 

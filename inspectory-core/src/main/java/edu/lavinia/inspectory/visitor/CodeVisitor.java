@@ -27,7 +27,7 @@ import org.metanalysis.core.model.SourceFile;
 public abstract class CodeVisitor extends GenericVisitor {
 	/**
 	 * Method not implemented (<b>NOP</b>).
-	 * 
+	 *
 	 * @param sourceFile
 	 */
 	public abstract void visit(SourceFile sourceFile);
@@ -36,14 +36,14 @@ public abstract class CodeVisitor extends GenericVisitor {
 
 	/**
 	 * Method not implemented (<b>NOP</b>).
-	 * 
+	 *
 	 * @param variable
 	 */
 	public abstract void visit(Node.Variable variable);
 
 	public abstract void visit(Node.Function function);
 
-	public final void visit(Node node) {
+	public final void visit(final Node node) {
 		// safe to use 'instanceof' because the class hierarchy is sealed
 		if (node instanceof Node.Type) {
 			visit((Node.Type) node);

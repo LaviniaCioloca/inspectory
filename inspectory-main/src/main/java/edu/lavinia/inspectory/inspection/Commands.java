@@ -53,7 +53,7 @@ public class Commands {
 	private final String[] args;
 	private final Options options = new Options();
 
-	private Optional<PersistentProject> project;
+	private final Optional<PersistentProject> project;
 
 	private final static String ASTRONOMICAL_METHODS_CSV_FILE_NAME = "astronomical-methods-result.csv";
 	private final static String ASTRONOMICAL_METHODS_JSON_FILE_NAME = "astronomical-methods-result.json";
@@ -148,7 +148,7 @@ public class Commands {
 				System.out.println("Missing valid option");
 				help();
 			}
-		} catch (ParseException e) {
+		} catch (final ParseException e) {
 			help();
 		}
 	}
@@ -173,7 +173,7 @@ public class Commands {
 			FileUtils.deleteDirectory(file);
 			System.out.println("Directory " + directoryPath
 					+ " has been deleted recursively!");
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			System.out.println("Problem occurs when deleting the directory : "
 					+ directoryPath);
 			e.printStackTrace();
@@ -212,7 +212,7 @@ public class Commands {
 
 			flushAndCloseWriters(csvWriter, jsonWriter,
 					csvMethodDynamicsWriter);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
 		}
 	}
@@ -259,7 +259,7 @@ public class Commands {
 				+ File.separator + OWNERSHIP_PROBLEMS_CLASSES_CSV_FILE_NAME;
 		final File classesCsvFile = new File(classesFilePath);
 
-		boolean directoryExists = Files.exists(path);
+		final boolean directoryExists = Files.exists(path);
 
 		try {
 			checkDirectoryExistance(path, methodsCsvFile, classesCsvFile,
@@ -268,7 +268,7 @@ public class Commands {
 			writeMethodsOwnershipResult(methodsCsvFile);
 
 			writeClassesOwnershipResult(classesCsvFile);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
 		}
 	}
@@ -314,7 +314,7 @@ public class Commands {
 
 	private void checkDirectoryExistance(final Path path,
 			final File methodsCsvFile, final File classesCsvFile,
-			boolean directoryExists) throws IOException {
+			final boolean directoryExists) throws IOException {
 
 		if (directoryExists) {
 			classesCsvFile.delete();

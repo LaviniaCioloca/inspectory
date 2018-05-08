@@ -37,7 +37,7 @@ import edu.lavinia.inspectory.visitor.NodeSetEditVisitor;
 /**
  * Implementation of {@link edu.lavinia.inspectory.visitor.NodeSetEditVisitor
  * NodeSetEditVisitor} for visiting edits of types: Add, Remove and Change.
- * 
+ *
  * @author Lavinia Cioloca
  *
  */
@@ -48,7 +48,7 @@ public class EditVisitor extends NodeSetEditVisitor {
 	}
 
 	@Override
-	public void visit(Add add) {
+	public void visit(final Add add) {
 		final Node node = add.getNode();
 
 		if (node instanceof Node.Function) {
@@ -59,7 +59,7 @@ public class EditVisitor extends NodeSetEditVisitor {
 	}
 
 	@Override
-	public void visit(Remove remove) {
+	public void visit(final Remove remove) {
 		if (remove.getNodeType().getQualifiedName()
 				.equals(Node.Function.class.getCanonicalName())) {
 			identifier = remove.getIdentifier();
@@ -69,7 +69,7 @@ public class EditVisitor extends NodeSetEditVisitor {
 	}
 
 	@Override
-	public void visit(Change<?> change) {
+	public void visit(final Change<?> change) {
 		if (change.getNodeType().getQualifiedName()
 				.equals(Node.Function.class.getCanonicalName())) {
 			identifier = ((NodeSetEdit.Change<?>) change).getIdentifier();
