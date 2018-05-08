@@ -55,7 +55,7 @@ public class MethodOwnershipInspectionTest {
 			csvWriter = new FileWriter(FILE);
 			methodOwnershipInspection = new MethodOwnershipInspection(project,
 					csvWriter);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -71,7 +71,7 @@ public class MethodOwnershipInspectionTest {
 		final Table<String, String, List<Integer>> methodsAuthorsChanges = HashBasedTable
 				.create();
 		methodsAuthorsChanges.put("testMethod", "testAuthor",
-				new ArrayList<Integer>(Arrays.asList(10, 5)));
+				new ArrayList<>(Arrays.asList(10, 5)));
 
 		final Map<String, Integer> methodNumberOfChanges = new HashMap<>();
 		methodNumberOfChanges.put("testMethod", 5);
@@ -92,6 +92,12 @@ public class MethodOwnershipInspectionTest {
 
 		methodOwnershipInspection
 				.setEntityOwnershipResult(entityOwnershipResult);
+
+		methodOwnershipInspection.entityOwners.put("testMethod",
+				new ArrayList<>(Arrays.asList("testAuthor")));
+
+		methodOwnershipInspection.entityAddedAndDeletedLines.put("testMethod",
+				30);
 
 		methodOwnershipInspection.writeFileResults();
 	}
