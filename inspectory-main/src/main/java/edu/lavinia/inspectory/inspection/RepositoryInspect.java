@@ -29,21 +29,21 @@ import java.util.Optional;
 import org.apache.log4j.Logger;
 import org.metanalysis.core.project.PersistentProject;
 
-public class RepoInspect {
+public class RepositoryInspect {
 
 	public final static Logger LOGGER = Logger
-			.getLogger(RepoInspect.class.getName());
+			.getLogger(RepositoryInspect.class.getName());
 
 	/**
 	 * Static method that loads the .metanalysis persistent project for the
 	 * current repository to be analyzed.
-	 * 
+	 *
 	 * @return A PersistentProject instance of the current repository.
 	 */
 	public static Optional<PersistentProject> getProject() {
 		try {
 			return Optional.of(PersistentProject.load());
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
 		}
 
@@ -52,12 +52,12 @@ public class RepoInspect {
 
 	/**
 	 * Main method of inspectory project.
-	 * 
+	 *
 	 * @param args
 	 *            The argument needed for inspectory to run is the csv file name
 	 *            to store the results.
 	 */
-	public static void main(String[] args) {
+	public static void main(final String[] args) {
 		final long startTime = System.currentTimeMillis();
 
 		final Optional<PersistentProject> project = getProject();
@@ -73,7 +73,7 @@ public class RepoInspect {
 		showInspectionDuration(startTime);
 	}
 
-	private static void showInspectionDuration(final long startTime) {
+	public static void showInspectionDuration(final long startTime) {
 		final NumberFormat formatter = new DecimalFormat("#0.00000");
 
 		System.out.println("Inspectory execution time was: "

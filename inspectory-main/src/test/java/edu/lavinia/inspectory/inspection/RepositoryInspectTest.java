@@ -23,17 +23,22 @@ package edu.lavinia.inspectory.inspection;
 
 import org.junit.Test;
 
-public class RepoInspectTest {
+public class RepositoryInspectTest {
 
 	@Test(expected = NullPointerException.class)
 	public void testGetProject() {
-		RepoInspect.getProject();
+		RepositoryInspect.getProject();
 	}
 
 	@Test(expected = NullPointerException.class)
 	public void testMain() {
 		final String args[] = new String[1];
-		RepoInspect.main(args);
+		RepositoryInspect.main(args);
+	}
+
+	@Test
+	public void testShowInspectionDuration() {
+		RepositoryInspect.showInspectionDuration(System.currentTimeMillis());
 	}
 
 }
