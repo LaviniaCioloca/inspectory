@@ -41,3 +41,7 @@ hs_err_pid*
 # backup files - both Windows and *n*x
 *.bak
 ~*
+
+# Hidden folders
+*/.*
+.*

@@ -39,13 +39,13 @@ import java.util.Optional;
 import org.junit.Test;
 import org.metanalysis.core.project.PersistentProject;
 
-import edu.lavinia.inspectory.am.beans.MethodChangesInformation;
+import edu.lavinia.inspectory.am.beans.AstronomicalMethodChangesInformation;
 import edu.lavinia.inspectory.am.beans.PulsarCriteria;
 import edu.lavinia.inspectory.am.beans.SupernovaCriteria;
 import edu.lavinia.inspectory.am.inspection.AstronomicalMethodsInspection;
-import edu.lavinia.inspectory.am.metrics.MethodMetrics;
 import edu.lavinia.inspectory.am.visitor.NodeVisitor;
 import edu.lavinia.inspectory.beans.Commit;
+import edu.lavinia.inspectory.metrics.AbstractCommonMetric;
 import edu.lavinia.inspectory.visitor.GenericVisitor;
 
 public class FileHistoryInspectTest {
@@ -101,8 +101,8 @@ public class FileHistoryInspectTest {
 		final String fileName = "testFileName";
 		final GenericVisitor visitor = new NodeVisitor(fileName);
 		visitor.setIdentifier("abc");
-		final Map<String, MethodChangesInformation> result = new HashMap<String, MethodChangesInformation>();
-		final MethodChangesInformation methodChangesInformation = new MethodChangesInformation();
+		final Map<String, AstronomicalMethodChangesInformation> result = new HashMap<>();
+		final AstronomicalMethodChangesInformation methodChangesInformation = new AstronomicalMethodChangesInformation();
 		methodChangesInformation.setChangesList(new ArrayList<Integer>());
 		methodChangesInformation.setCommits(new ArrayList<Commit>());
 		result.put(fileName + ":" + CLASS_NAME + ": " + visitor.getIdentifier(),
@@ -177,15 +177,15 @@ public class FileHistoryInspectTest {
 		commit3.setDate(new SimpleDateFormat(DATE_FORMAT).parse("2017/10/01"));
 		commits.add(commit3);
 
-		final Map<String, MethodChangesInformation> result = new HashMap<String, MethodChangesInformation>();
-		final MethodChangesInformation methodChangesInformation = new MethodChangesInformation();
+		final Map<String, AstronomicalMethodChangesInformation> result = new HashMap<>();
+		final AstronomicalMethodChangesInformation methodChangesInformation = new AstronomicalMethodChangesInformation();
 		methodChangesInformation.setFileName("test");
 		methodChangesInformation.setClassName("test");
 		methodChangesInformation.setMethodName("test");
 		result.put("test:test: test", methodChangesInformation);
 		methodChangesInformation.setCommits(commits);
 		astronomicalMethodsInspection.setResult(result);
-		final ArrayList<MethodChangesInformation> methodInformationList = new ArrayList<>();
+		final ArrayList<AstronomicalMethodChangesInformation> methodInformationList = new ArrayList<>();
 		methodInformationList.add(methodChangesInformation);
 
 		astronomicalMethodsInspection
@@ -213,10 +213,10 @@ public class FileHistoryInspectTest {
 		commit3.setDate(new SimpleDateFormat(DATE_FORMAT).parse("2017/10/01"));
 		commits.add(commit3);
 
-		final Map<String, MethodChangesInformation> result = new HashMap<String, MethodChangesInformation>();
-		final ArrayList<Integer> changesList = new ArrayList<Integer>(
+		final Map<String, AstronomicalMethodChangesInformation> result = new HashMap<>();
+		final ArrayList<Integer> changesList = new ArrayList<>(
 				Arrays.asList(210, -10, 50));
-		final MethodChangesInformation methodChangesInformation = new MethodChangesInformation();
+		final AstronomicalMethodChangesInformation methodChangesInformation = new AstronomicalMethodChangesInformation();
 		methodChangesInformation.setChangesList(changesList);
 		methodChangesInformation.setFileName("test");
 		methodChangesInformation.setClassName("test");
@@ -228,11 +228,11 @@ public class FileHistoryInspectTest {
 		methodChangesInformation.setSupernovaCriteria(supernovaCriteria);
 		methodChangesInformation.setPulsarCriteria(pulsarCriteria);
 		astronomicalMethodsInspection.setResult(result);
-		final ArrayList<MethodChangesInformation> methodInformationList = new ArrayList<>();
+		final ArrayList<AstronomicalMethodChangesInformation> methodInformationList = new ArrayList<>();
 		methodInformationList.add(methodChangesInformation);
-		MethodMetrics.setAllCommits(commits);
-		MethodMetrics.setAllCommitsIntoTimeFrames();
-		MethodMetrics.setNow(commit3.getDate());
+		AbstractCommonMetric.setAllCommits(commits);
+		AbstractCommonMetric.setAllCommitsIntoTimeFrames();
+		AbstractCommonMetric.setNow(commit3.getDate());
 
 		astronomicalMethodsInspection
 				.setMethodInformationList(methodInformationList);
@@ -245,11 +245,11 @@ public class FileHistoryInspectTest {
 		final FileWriter writer = new FileWriter(FILE);
 		final AstronomicalMethodsInspection astronomicalMethodsInspection = new AstronomicalMethodsInspection(
 				project, writer, writer, writer);
-		final MethodChangesInformation methodChangesInformation = new MethodChangesInformation();
+		final AstronomicalMethodChangesInformation methodChangesInformation = new AstronomicalMethodChangesInformation();
 		methodChangesInformation.setFileName("\"test\"");
 		methodChangesInformation.setClassName("\"test\"");
 		methodChangesInformation.setMethodName("\"test\"");
-		final ArrayList<MethodChangesInformation> methodInformationList = astronomicalMethodsInspection
+		final ArrayList<AstronomicalMethodChangesInformation> methodInformationList = astronomicalMethodsInspection
 				.getMethodInformationList();
 		methodInformationList.add(methodChangesInformation);
 		astronomicalMethodsInspection.addDataInMethodInformationList("test",
@@ -266,7 +266,7 @@ public class FileHistoryInspectTest {
 		final AstronomicalMethodsInspection astronomicalMethodsInspection = new AstronomicalMethodsInspection(
 				project, writer, writer, writer);
 		astronomicalMethodsInspection
-				.setResult(new HashMap<String, MethodChangesInformation>());
+				.setResult(new HashMap<String, AstronomicalMethodChangesInformation>());
 		astronomicalMethodsInspection.getResult();
 		astronomicalMethodsInspection.getAllCommits();
 		astronomicalMethodsInspection.getMethodInformationList();

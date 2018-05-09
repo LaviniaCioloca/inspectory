@@ -26,8 +26,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import edu.lavinia.inspectory.am.beans.MethodChangesInformation;
+import edu.lavinia.inspectory.am.beans.AstronomicalMethodChangesInformation;
 import edu.lavinia.inspectory.beans.Commit;
+import edu.lavinia.inspectory.metrics.AbstractCommonMetric;
 
 /**
  * Implementation of {@link edu.lavinia.inspectory.am.metrics.MethodMetrics
@@ -38,7 +39,7 @@ import edu.lavinia.inspectory.beans.Commit;
  *      SupernovaMetric}
  *
  */
-public class PulsarMetric extends MethodMetrics {
+public class PulsarMetric extends AbstractCommonMetric {
 
 	/**
 	 * It is considered for a method to have <b>many pulsar cycles</b> if it has
@@ -111,7 +112,7 @@ public class PulsarMetric extends MethodMetrics {
 	 * @return A Boolean: true if the method is actively changed.
 	 */
 	public Boolean isMethodActivelyChanged(
-			final MethodChangesInformation methodChangesInformation) {
+			final AstronomicalMethodChangesInformation methodChangesInformation) {
 
 		final ArrayList<Commit> commits = methodChangesInformation.getCommits();
 		final ArrayList<Commit> latestCommits = new ArrayList<>();
@@ -207,7 +208,7 @@ public class PulsarMetric extends MethodMetrics {
 	 *         method.
 	 */
 	public Integer getPulsarSeverity(
-			final MethodChangesInformation methodChangesInformation) {
+			final AstronomicalMethodChangesInformation methodChangesInformation) {
 
 		final ArrayList<Commit> commits = methodChangesInformation.getCommits();
 		final Map<String, Object> pulsarCriterionValues = getPulsarCriterionValues(
@@ -265,7 +266,7 @@ public class PulsarMetric extends MethodMetrics {
 	 *         isPulsar.
 	 */
 	public Map<String, Object> getPulsarCriterionValues(
-			final MethodChangesInformation methodChangesInformation) {
+			final AstronomicalMethodChangesInformation methodChangesInformation) {
 
 		final ArrayList<Commit> commits = methodChangesInformation.getCommits();
 		final Map<String, Object> pulsarCriterionValues = new HashMap<>();
@@ -361,7 +362,7 @@ public class PulsarMetric extends MethodMetrics {
 	 * @return {@code True} if the method is Pulsar, {@code false} otherwise.
 	 */
 	public Boolean isPulsar(
-			final MethodChangesInformation methodChangesInformation) {
+			final AstronomicalMethodChangesInformation methodChangesInformation) {
 
 		return (Boolean) getPulsarCriterionValues(methodChangesInformation)
 				.get("isPulsar");

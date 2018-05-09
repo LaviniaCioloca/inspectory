@@ -1,5 +1,7 @@
 package edu.lavinia.inspectory.op.metrics;
 
-public class OwnershipProblemsMetric {
+import edu.lavinia.inspectory.metrics.AbstractCommonMetric;
+
+public class OwnershipProblemsMetric extends AbstractCommonMetric {
 
 }

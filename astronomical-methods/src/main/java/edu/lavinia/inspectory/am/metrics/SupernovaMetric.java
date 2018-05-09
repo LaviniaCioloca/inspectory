@@ -29,8 +29,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
-import edu.lavinia.inspectory.am.beans.MethodChangesInformation;
+import edu.lavinia.inspectory.am.beans.AstronomicalMethodChangesInformation;
 import edu.lavinia.inspectory.beans.Commit;
+import edu.lavinia.inspectory.metrics.AbstractCommonMetric;
 
 /**
  * Implementation of {@link edu.lavinia.inspectory.am.metrics.MethodMetrics
@@ -40,7 +41,7 @@ import edu.lavinia.inspectory.beans.Commit;
  * @see {@link edu.lavinia.inspectory.am.metrics.PulsarMetric PulsarMetric}
  *
  */
-public class SupernovaMetric extends MethodMetrics {
+public class SupernovaMetric extends AbstractCommonMetric {
 	private Integer maximumTimeInterval = 0;
 	private Integer leapsSizePoints = 0;
 	private Integer recentLeapsSizePoints = 0;
@@ -198,7 +199,7 @@ public class SupernovaMetric extends MethodMetrics {
 	 *         and their associated interval number.
 	 */
 	public HashMap<Commit, Integer> divideLifetimeInIntervals(
-			final MethodChangesInformation methodChangesInformation) {
+			final AstronomicalMethodChangesInformation methodChangesInformation) {
 
 		final ArrayList<Commit> commits = methodChangesInformation.getCommits();
 		final HashMap<Commit, Integer> commitsIntoTimeFrames = splitCommitsIntoTimeFrames(
@@ -270,7 +271,7 @@ public class SupernovaMetric extends MethodMetrics {
 	 *         isSupernova.
 	 */
 	public Map<String, Object> getSupernovaCriterionValues(
-			final MethodChangesInformation methodChangesInformation) {
+			final AstronomicalMethodChangesInformation methodChangesInformation) {
 
 		final Map<String, Object> supernovaCriterionValues = new HashMap<>();
 		supernovaCriterionValues.put("isSupernova", false);
@@ -417,7 +418,7 @@ public class SupernovaMetric extends MethodMetrics {
 	 *         method.
 	 */
 	public Integer getSupernovaSeverity(
-			final MethodChangesInformation methodChangesInformation) {
+			final AstronomicalMethodChangesInformation methodChangesInformation) {
 
 		final ArrayList<Commit> commits = methodChangesInformation.getCommits();
 		final Map<String, Object> supernovaCriterionValues = getSupernovaCriterionValues(
@@ -449,7 +450,7 @@ public class SupernovaMetric extends MethodMetrics {
 	 * @return {@code True} if the method is Supernova, {@code false} otherwise.
 	 */
 	public Boolean isSupernova(
-			final MethodChangesInformation methodChangesInformation) {
+			final AstronomicalMethodChangesInformation methodChangesInformation) {
 		return (Boolean) getSupernovaCriterionValues(methodChangesInformation)
 				.get("isSupernova");
 	}

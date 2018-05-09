@@ -40,12 +40,12 @@ public class MethodInformationTest {
 	 */
 	@Test
 	public void testBeanProperties() throws IntrospectionException {
-		JavaBeanTester.test(MethodChangesInformation.class);
+		JavaBeanTester.test(AstronomicalMethodChangesInformation.class);
 	}
 
 	@Test
 	public void testGetMethodInformationLine() {
-		final MethodChangesInformation methodChangesInformation = new MethodChangesInformation();
+		final AstronomicalMethodChangesInformation methodChangesInformation = new AstronomicalMethodChangesInformation();
 		final ArrayList<String> expected = new ArrayList<>();
 		methodChangesInformation.setInitialSize(10);
 		methodChangesInformation.setActualSize(100);
