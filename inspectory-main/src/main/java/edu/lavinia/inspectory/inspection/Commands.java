@@ -310,6 +310,16 @@ public class Commands {
 		methodsOwnershipProblemsInspection.createResults();
 		methodsOwnershipProblemsInspection.writeFileResults();
 
+		/*
+		 * final MethodOwnershipProblemsMetric methodOwnershipProblemsMetric =
+		 * new MethodOwnershipProblemsMetric(); for (final HashMap.Entry<String,
+		 * FileChangesData> methodData : methodsOwnershipProblemsInspection
+		 * .getEntityChangesData().entrySet()) {
+		 * System.out.println(methodOwnershipProblemsMetric
+		 * .getOwnershipProblemsCriterionValues(methodData.getValue()) + "\n");
+		 * }
+		 * 
+		 */
 		methodsCsvWriter.flush();
 		methodsCsvWriter.close();
 	}
