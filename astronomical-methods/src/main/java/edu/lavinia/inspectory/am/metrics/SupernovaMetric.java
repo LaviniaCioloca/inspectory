@@ -31,7 +31,7 @@ import java.util.TreeMap;
 
 import edu.lavinia.inspectory.am.beans.AstronomicalMethodChangesInformation;
 import edu.lavinia.inspectory.beans.Commit;
-import edu.lavinia.inspectory.metrics.AbstractCommonMetric;
+import edu.lavinia.inspectory.metrics.AbstractMethodMetric;
 
 /**
  * Implementation of {@link edu.lavinia.inspectory.am.metrics.MethodMetrics
@@ -41,7 +41,7 @@ import edu.lavinia.inspectory.metrics.AbstractCommonMetric;
  * @see {@link edu.lavinia.inspectory.am.metrics.PulsarMetric PulsarMetric}
  *
  */
-public class SupernovaMetric extends AbstractCommonMetric {
+public class SupernovaMetric extends AbstractMethodMetric {
 	private Integer maximumTimeInterval = 0;
 	private Integer leapsSizePoints = 0;
 	private Integer recentLeapsSizePoints = 0;

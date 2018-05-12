@@ -28,7 +28,7 @@ import java.util.Map;
 
 import edu.lavinia.inspectory.am.beans.AstronomicalMethodChangesInformation;
 import edu.lavinia.inspectory.beans.Commit;
-import edu.lavinia.inspectory.metrics.AbstractCommonMetric;
+import edu.lavinia.inspectory.metrics.AbstractMethodMetric;
 
 /**
  * Implementation of {@link edu.lavinia.inspectory.am.metrics.MethodMetrics
@@ -39,7 +39,7 @@ import edu.lavinia.inspectory.metrics.AbstractCommonMetric;
  *      SupernovaMetric}
  *
  */
-public class PulsarMetric extends AbstractCommonMetric {
+public class PulsarMetric extends AbstractMethodMetric {
 
 	/**
 	 * It is considered for a method to have <b>many pulsar cycles</b> if it has

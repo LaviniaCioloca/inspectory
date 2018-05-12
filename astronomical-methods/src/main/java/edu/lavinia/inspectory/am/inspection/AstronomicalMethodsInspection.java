@@ -55,7 +55,7 @@ import edu.lavinia.inspectory.am.utils.MethodDynamicsUtils;
 import edu.lavinia.inspectory.am.visitor.EditVisitor;
 import edu.lavinia.inspectory.am.visitor.NodeVisitor;
 import edu.lavinia.inspectory.beans.Commit;
-import edu.lavinia.inspectory.metrics.AbstractCommonMetric;
+import edu.lavinia.inspectory.metrics.AbstractMethodMetric;
 import edu.lavinia.inspectory.utils.CSVUtils;
 import edu.lavinia.inspectory.utils.JSONUtils;
 import edu.lavinia.inspectory.visitor.GenericVisitor;
@@ -430,9 +430,9 @@ public class AstronomicalMethodsInspection {
 
 	private void setMethodMetricsCommitsInformation() {
 		final Commit latestCommit = allCommits.get(allCommits.size() - 1);
-		AbstractCommonMetric.setAllCommits(allCommits);
-		AbstractCommonMetric.setAllCommitsIntoTimeFrames();
-		AbstractCommonMetric.setNow(latestCommit.getDate());
+		AbstractMethodMetric.setAllCommits(allCommits);
+		AbstractMethodMetric.setAllCommitsIntoTimeFrames();
+		AbstractMethodMetric.setNow(latestCommit.getDate());
 	}
 
 	/**

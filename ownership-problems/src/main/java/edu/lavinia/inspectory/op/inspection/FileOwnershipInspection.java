@@ -37,7 +37,7 @@ import org.metanalysis.core.project.PersistentProject;
 import org.metanalysis.core.project.Project.HistoryEntry;
 
 import edu.lavinia.inspectory.beans.Commit;
-import edu.lavinia.inspectory.op.beans.EntityOwnershipInformation;
+import edu.lavinia.inspectory.op.beans.FileChangesData;
 import edu.lavinia.inspectory.op.visitor.EditVisitor;
 import edu.lavinia.inspectory.utils.CSVUtils;
 import edu.lavinia.inspectory.visitor.GenericVisitor;
@@ -60,17 +60,16 @@ public class FileOwnershipInspection extends GenericOwnershipInspection {
 
 	private void addFileGeneralInformation(
 			final ArrayList<String> fileOwnershipInformationLine,
-			final String fileName,
-			final EntityOwnershipInformation fileOwnershipInformation) {
+			final String fileName) {
 
 		fileOwnershipInformationLine.add(fileName);
+		fileOwnershipInformationLine.add(entityChangesData.get(fileName)
+				.getNumberOfChanges().toString());
+		fileOwnershipInformationLine.add(String.valueOf(entityChangesData
+				.get(fileName).getAuthorsNumberOfChanges().size()));
 		fileOwnershipInformationLine
-				.add(fileOwnershipInformation.getNumberOfChanges().toString());
-		fileOwnershipInformationLine.add(String.valueOf(
-				fileOwnershipInformation.getAuthorsNumberOfChanges().size()));
-		fileOwnershipInformationLine
-				.add(fileOwnershipInformation.getEntityCreator());
-		fileOwnershipInformationLine.add(fileOwnershipInformation
+				.add(entityChangesData.get(fileName).getEntityCreator());
+		fileOwnershipInformationLine.add(entityChangesData.get(fileName)
 				.getAuthorsNumberOfChanges().toString());
 	}
 
@@ -81,22 +80,21 @@ public class FileOwnershipInspection extends GenericOwnershipInspection {
 			final LinkedHashMap<String, Double> ownershipPercentages,
 			final ArrayList<String> distinctListOfOwners) {
 
-		final EntityOwnershipInformation fileOwnershipInformation = new EntityOwnershipInformation();
+		final FileChangesData fileOwnershipInformation = entityChangesData
+				.get(fileName);
 		fileOwnershipInformation.setNumberOfChanges(numberOfChanges);
 		fileOwnershipInformation.setEntityCreator(fileCreator);
 		fileOwnershipInformation
 				.setAuthorsNumberOfChanges(authorsNumberOfChanges);
-		fileOwnershipInformation.setAuthorsNumberOfAddedAndDeletedLines(
-				authorsAddedAndDeletedLines);
+		fileOwnershipInformation
+				.setAuthorsAddedAndDeletedLines(authorsAddedAndDeletedLines);
 		fileOwnershipInformation.setOwnershipPercentages(ownershipPercentages);
 		fileOwnershipInformation.setDistinctOwners(distinctListOfOwners);
-
-		entityOwnershipResult.put(fileName, fileOwnershipInformation);
 	}
 
 	private void addFileOwnershipInformation(
 			final ArrayList<String> fileOwnershipInformationLine,
-			final EntityOwnershipInformation fileOwnershipInformation) {
+			final FileChangesData fileOwnershipInformation) {
 
 		fileOwnershipInformationLine.add(String
 				.valueOf(fileOwnershipInformation.getDistinctOwners().size()));
@@ -107,21 +105,19 @@ public class FileOwnershipInspection extends GenericOwnershipInspection {
 	}
 
 	private ArrayList<String> addOwnershipResultLine(
-			final HashMap.Entry<String, EntityOwnershipInformation> entry) {
+			final HashMap.Entry<String, FileChangesData> entry) {
 
 		final ArrayList<String> fileOwnershipInformationLine = new ArrayList<>();
 		final String fileName = entry.getKey();
-		final EntityOwnershipInformation fileOwnershipInformation = entry
-				.getValue();
+		final FileChangesData fileOwnershipInformation = entry.getValue();
 
-		addFileGeneralInformation(fileOwnershipInformationLine, fileName,
-				fileOwnershipInformation);
+		addFileGeneralInformation(fileOwnershipInformationLine, fileName);
 
 		addFileOwnershipInformation(fileOwnershipInformationLine,
 				fileOwnershipInformation);
 
 		fileOwnershipInformationLine.add(fileOwnershipInformation
-				.getAuthorsNumberOfAddedAndDeletedLines().toString());
+				.getAuthorsAddedAndDeletedLines().toString());
 
 		return fileOwnershipInformationLine;
 	}
@@ -186,10 +182,14 @@ public class FileOwnershipInspection extends GenericOwnershipInspection {
 	}
 
 	private void initEntityLinesMap(final String fileName) {
-		entityAddedAndDeletedLines = new HashMap<>();
-		entityAddedAndDeletedLines.put(fileName, 0);
-		entityCurrentSize = new HashMap<>();
-		entityCurrentSize.put(fileName, 0);
+		final FileChangesData fileChangesData = new FileChangesData();
+		fileChangesData.setAuthorsNumberOfChanges(new LinkedHashMap<>());
+		fileChangesData.setAuthorsAddedAndDeletedLines(new LinkedHashMap<>());
+		fileChangesData.setOwnershipPercentages(new LinkedHashMap<>());
+		fileChangesData.setAllOwners(new ArrayList<>());
+		fileChangesData.setDistinctOwners(new ArrayList<>());
+
+		entityChangesData.put(fileName, fileChangesData);
 	}
 
 	private void initVisitorAddedAndDeletedLines(final GenericVisitor visitor) {
@@ -221,10 +221,11 @@ public class FileOwnershipInspection extends GenericOwnershipInspection {
 			final LinkedHashMap<String, List<Integer>> authorsAddedAndDeletedLines) {
 
 		LinkedHashMap<String, Double> ownershipPercentages = calculateEntityOwnership(
-				authorsAddedAndDeletedLines, fileName);
+				fileName);
 		ownershipPercentages = sortPercentagesMap(ownershipPercentages);
 
-		final List<String> listOfAllOwners = entityOwners.get(fileName);
+		final List<String> listOfAllOwners = entityChangesData.get(fileName)
+				.getAllOwners();
 		final List<String> distinctListOfOwners = listOfAllOwners.stream()
 				.distinct().collect(Collectors.toList());
 		final ArrayList<String> distinctOwners = new ArrayList<>(
@@ -259,8 +260,9 @@ public class FileOwnershipInspection extends GenericOwnershipInspection {
 						fileName, visitor, authorsAddedAndDeletedLines,
 						historyEntry);
 
-				setEntityOwnerAfterCommit(fileName,
+				entityChangesData.get(fileName).setAuthorsAddedAndDeletedLines(
 						authorsAddedAndDeletedLines);
+				setEntityOwnerAfterCommit(fileName);
 			} catch (final Exception e) {
 				continue;
 			}
@@ -311,24 +313,26 @@ public class FileOwnershipInspection extends GenericOwnershipInspection {
 	private void updateEntitySizeValues(final GenericVisitor visitor,
 			final String fileName) {
 
-		Integer currentAddedAndDeletedLines = entityAddedAndDeletedLines
-				.get(fileName);
+		Integer currentAddedAndDeletedLines = entityChangesData.get(fileName)
+				.getAddedAndDeletedLinesSum();
 		currentAddedAndDeletedLines += ((EditVisitor) visitor).getAddedLines()
 				+ ((EditVisitor) visitor).getDeletedLines();
 
-		entityAddedAndDeletedLines.put(fileName, currentAddedAndDeletedLines);
+		entityChangesData.get(fileName)
+				.setAddedAndDeletedLinesSum(currentAddedAndDeletedLines);
 
-		Integer currentEntitySize = entityCurrentSize.get(fileName);
+		Integer currentEntitySize = entityChangesData.get(fileName)
+				.getActualSize();
 		currentEntitySize += ((EditVisitor) visitor).getAddedLines()
 				- ((EditVisitor) visitor).getDeletedLines();
 
-		entityCurrentSize.put(fileName, currentEntitySize);
+		entityChangesData.get(fileName).setActualSize(currentEntitySize);
 	}
 
 	@Override
 	public void writeFileResults() {
 		try {
-			for (final HashMap.Entry<String, EntityOwnershipInformation> entry : entityOwnershipResult
+			for (final HashMap.Entry<String, FileChangesData> entry : entityChangesData
 					.entrySet()) {
 				final ArrayList<String> fileOwnershipInformationLine = addOwnershipResultLine(
 						entry);

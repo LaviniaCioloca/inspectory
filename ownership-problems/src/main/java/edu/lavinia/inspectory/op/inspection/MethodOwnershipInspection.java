@@ -43,17 +43,13 @@ import org.metanalysis.core.model.Node;
 import org.metanalysis.core.project.PersistentProject;
 import org.metanalysis.core.project.Project.HistoryEntry;
 
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Table;
-
 import edu.lavinia.inspectory.beans.Commit;
+import edu.lavinia.inspectory.op.beans.FileChangesData;
+import edu.lavinia.inspectory.op.beans.MethodChangesData;
 import edu.lavinia.inspectory.utils.CSVUtils;
 
 public class MethodOwnershipInspection extends GenericOwnershipInspection {
 	private final ArrayList<String> deletedNodes = new ArrayList<>();
-	private Map<String, Integer> methodNumberOfChanges = new HashMap<>();
-	private Table<String, String, List<Integer>> methodsAuthorsChanges = HashBasedTable
-			.create();
 
 	/**
 	 * MethodOwnershipInspection Constructor that receives the persistent
@@ -70,21 +66,25 @@ public class MethodOwnershipInspection extends GenericOwnershipInspection {
 	}
 
 	private ArrayList<String> addMethodOwnershipInformation(
-			final Map<String, Map<String, List<Integer>>> methodsAuthorsChangesMap,
 			final String methodFullPath) {
 
 		final ArrayList<String> methodOwnershipInformationLine = new ArrayList<>();
-		final Map<String, List<Integer>> authorChanges = methodsAuthorsChangesMap
+		final MethodChangesData methodChangesData = (MethodChangesData) entityChangesData
 				.get(methodFullPath);
-		methodOwnershipInformationLine.add(methodFullPath);
+		final Map<String, List<Integer>> authorChanges = methodChangesData
+				.getAuthorsAddedAndDeletedLines();
+
+		methodOwnershipInformationLine.add(methodChangesData.getFileName());
+		methodOwnershipInformationLine.add(methodChangesData.getClassName());
+		methodOwnershipInformationLine.add(methodChangesData.getMethodName());
 		methodOwnershipInformationLine
-				.add(methodNumberOfChanges.get(methodFullPath).toString());
+				.add(methodChangesData.getNumberOfChanges().toString());
 		methodOwnershipInformationLine
 				.add(String.valueOf(authorChanges.size()));
 		methodOwnershipInformationLine
-				.add(entityCurrentSize.get(methodFullPath).toString());
+				.add(methodChangesData.getActualSize().toString());
 
-		final List<String> listOfAllOwners = entityOwners.get(methodFullPath);
+		final List<String> listOfAllOwners = methodChangesData.getAllOwners();
 		final List<String> distinctListOfOwners = listOfAllOwners.stream()
 				.distinct().collect(Collectors.toList());
 		final ArrayList<String> distinctOwners = new ArrayList<>(
@@ -98,7 +98,7 @@ public class MethodOwnershipInspection extends GenericOwnershipInspection {
 				authorChanges);
 
 		LinkedHashMap<String, Double> ownershipPercentages = calculateEntityOwnership(
-				methodLineChangesByAuthor, methodFullPath);
+				methodFullPath);
 		ownershipPercentages = sortPercentagesMap(ownershipPercentages);
 
 		methodOwnershipInformationLine.add(ownershipPercentages.toString());
@@ -120,19 +120,22 @@ public class MethodOwnershipInspection extends GenericOwnershipInspection {
 		final Integer methodTotalSize = methodBodySize + 1;
 		final List<Integer> authorsLineAdded = new ArrayList<>(
 				Arrays.asList(methodTotalSize, 0));
+		final LinkedHashMap<String, List<Integer>> authorsAddedAndDeletedLines = new LinkedHashMap<>();
+		authorsAddedAndDeletedLines.put(commit.getAuthor(), authorsLineAdded);
 
-		methodsAuthorsChanges.put(methodFullPath, commit.getAuthor(),
-				authorsLineAdded);
-		methodNumberOfChanges.put(methodFullPath, 1);
+		final MethodChangesData fileChangesData = new MethodChangesData();
+		fileChangesData.setActualSize(methodTotalSize);
+		fileChangesData.setAddedAndDeletedLinesSum(methodTotalSize);
+		fileChangesData.setNumberOfChanges(1);
+		fileChangesData
+				.setAuthorsAddedAndDeletedLines(authorsAddedAndDeletedLines);
+		fileChangesData.setFileName(fileName);
+		fileChangesData.setClassName(className);
+		fileChangesData.setMethodName(methodSignature);
 
-		entityCurrentSize.put(methodFullPath, methodTotalSize);
-		entityAddedAndDeletedLines.put(methodFullPath, methodTotalSize);
+		entityChangesData.put(methodFullPath, fileChangesData);
 
-		final Map<String, Map<String, List<Integer>>> tableToMapRepresentation = methodsAuthorsChanges
-				.rowMap();
-
-		setEntityOwnerAfterCommit(methodFullPath,
-				tableToMapRepresentation.get(methodFullPath));
+		setEntityOwnerAfterCommit(methodFullPath);
 	}
 
 	public List<Integer> countAddedAndDeletedLines(
@@ -220,14 +223,6 @@ public class MethodOwnershipInspection extends GenericOwnershipInspection {
 		return methodLineChangesByAuthor;
 	}
 
-	public Map<String, Integer> getMethodNumberOfChanges() {
-		return methodNumberOfChanges;
-	}
-
-	public Table<String, String, List<Integer>> getMethodsAuthorsChanges() {
-		return methodsAuthorsChanges;
-	}
-
 	public void handleNodeSetEditAdd(final NodeSetEdit edit,
 			final String fileName, final Commit commit) {
 
@@ -294,16 +289,6 @@ public class MethodOwnershipInspection extends GenericOwnershipInspection {
 		}
 
 		return currentDeletedLines;
-	}
-
-	public void setMethodNumberOfChanges(
-			final Map<String, Integer> methodNumberOfChanges) {
-		this.methodNumberOfChanges = methodNumberOfChanges;
-	}
-
-	public void setMethodsAuthorsChanges(
-			final Table<String, String, List<Integer>> methodsAuthorsChanges) {
-		this.methodsAuthorsChanges = methodsAuthorsChanges;
 	}
 
 	private void treatEachNodeSetEdit(final String fileName,
@@ -415,7 +400,8 @@ public class MethodOwnershipInspection extends GenericOwnershipInspection {
 					.getIdentifier();
 			final String methodFullPath = fileName + " -> " + className + " -> "
 					+ methodSignature;
-			final Integer deletedLines = entityCurrentSize.get(methodFullPath);
+			final Integer deletedLines = entityChangesData.get(methodFullPath)
+					.getActualSize();
 			final List<Integer> authorsNewChanges = new ArrayList<>(
 					Arrays.asList(0, deletedLines));
 
@@ -461,27 +447,30 @@ public class MethodOwnershipInspection extends GenericOwnershipInspection {
 	private void updateEntitySizeValues(final String methodFullPath,
 			final List<Integer> authorsNewChanges) {
 
-		final Integer currentMethodSize = entityCurrentSize.get(methodFullPath);
+		final Integer currentMethodSize = entityChangesData.get(methodFullPath)
+				.getActualSize();
 		final Integer newMethodSize = currentMethodSize
 				+ (authorsNewChanges.get(0) - authorsNewChanges.get(1));
 
-		entityCurrentSize.put(methodFullPath, newMethodSize);
+		entityChangesData.get(methodFullPath).setActualSize(newMethodSize);
 
-		final Integer currentAddedAndDeletedLines = entityAddedAndDeletedLines
-				.get(methodFullPath);
+		final Integer currentAddedAndDeletedLines = entityChangesData
+				.get(methodFullPath).getAddedAndDeletedLinesSum();
 		final Integer newAddedAndDeletedLines = currentAddedAndDeletedLines
 				+ (authorsNewChanges.get(0) + authorsNewChanges.get(1));
 
-		entityAddedAndDeletedLines.put(methodFullPath, newAddedAndDeletedLines);
+		entityChangesData.get(methodFullPath)
+				.setAddedAndDeletedLinesSum(newAddedAndDeletedLines);
 	}
 
 	private void updateMethodsAuthorsChanges(final String methodFullPath,
 			final String author, final List<Integer> authorsNewChanges) {
 
-		final List<Integer> currentAuthorsChanges = methodsAuthorsChanges
-				.get(methodFullPath, author);
-		final Integer increasedMethodChanges = methodNumberOfChanges
-				.get(methodFullPath) + 1;
+		final List<Integer> currentAuthorsChanges = entityChangesData
+				.get(methodFullPath).getAuthorsAddedAndDeletedLines()
+				.get(author);
+		final Integer increasedMethodChanges = entityChangesData
+				.get(methodFullPath).getNumberOfChanges() + 1;
 		final Integer currentAddedLines = setCurrentAddedLines(
 				authorsNewChanges, currentAuthorsChanges);
 		final Integer currentDeletedLines = setCurrentDeletedLines(
@@ -489,28 +478,24 @@ public class MethodOwnershipInspection extends GenericOwnershipInspection {
 		final List<Integer> newMethodsChanges = new ArrayList<>(
 				Arrays.asList(currentAddedLines, currentDeletedLines));
 
-		methodsAuthorsChanges.put(methodFullPath, author, newMethodsChanges);
-		methodNumberOfChanges.put(methodFullPath, increasedMethodChanges);
+		entityChangesData.get(methodFullPath).getAuthorsAddedAndDeletedLines()
+				.put(author, newMethodsChanges);
+		entityChangesData.get(methodFullPath)
+				.setNumberOfChanges(increasedMethodChanges);
 
 		updateEntitySizeValues(methodFullPath, authorsNewChanges);
 
-		final Map<String, Map<String, List<Integer>>> tableToMapRepresentation = methodsAuthorsChanges
-				.rowMap();
-
-		setEntityOwnerAfterCommit(methodFullPath,
-				tableToMapRepresentation.get(methodFullPath));
+		setEntityOwnerAfterCommit(methodFullPath);
 	}
 
 	@Override
 	public void writeFileResults() {
 		try {
-			final Map<String, Map<String, List<Integer>>> methodsAuthorsChangesMap = methodsAuthorsChanges
-					.rowMap();
 
-			for (final String methodFullPath : methodsAuthorsChangesMap
-					.keySet()) {
+			for (final HashMap.Entry<String, FileChangesData> entry : entityChangesData
+					.entrySet()) {
 				final ArrayList<String> methodOwnershipInformationLine = addMethodOwnershipInformation(
-						methodsAuthorsChangesMap, methodFullPath);
+						entry.getKey());
 
 				CSVUtils.writeLine(csvWriter, methodOwnershipInformationLine,
 						',', '"');

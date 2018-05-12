@@ -297,11 +297,13 @@ public class Commands {
 			throws IOException {
 
 		final FileWriter methodsCsvWriter = new FileWriter(methodsCsvFile);
-		CSVUtils.writeLine(methodsCsvWriter, Arrays.asList("Method full path",
-				"Number of changes", "Number of authors", "Method current size",
-				"Number of owners", "Method owners [chronological order]",
-				"Authors Ownership Percentages [current ownership values]",
-				"Author - Line changes made"));
+		CSVUtils.writeLine(methodsCsvWriter,
+				Arrays.asList("File", "Class", "Method", "Number of changes",
+						"Number of authors", "Method current size",
+						"Number of owners",
+						"Method owners [chronological order]",
+						"Authors Ownership Percentages [current ownership values]",
+						"Author - Line changes made"));
 
 		final MethodOwnershipInspection methodsOwnershipProblemsInspection = new MethodOwnershipInspection(
 				project, methodsCsvWriter);

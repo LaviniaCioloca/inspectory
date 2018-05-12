@@ -36,7 +36,7 @@ import java.util.Optional;
 import org.junit.Test;
 import org.metanalysis.core.project.PersistentProject;
 
-import edu.lavinia.inspectory.op.beans.EntityOwnershipInformation;
+import edu.lavinia.inspectory.op.beans.FileChangesData;
 
 public class FileOwnershipInspectionTest {
 
@@ -52,7 +52,7 @@ public class FileOwnershipInspectionTest {
 			csvWriter = new FileWriter(FILE);
 			fileOwnershipInspection = new FileOwnershipInspection(project,
 					csvWriter);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -65,8 +65,8 @@ public class FileOwnershipInspectionTest {
 
 	@Test
 	public void testWriteFileResults() {
-		final HashMap<String, EntityOwnershipInformation> entityOwnershipResult = new HashMap<>();
-		final EntityOwnershipInformation fileOwnershipInformation = new EntityOwnershipInformation();
+		final HashMap<String, FileChangesData> entityOwnershipResult = new HashMap<>();
+		final FileChangesData fileOwnershipInformation = new FileChangesData();
 		fileOwnershipInformation.setNumberOfChanges(10);
 		fileOwnershipInformation.setEntityCreator("test");
 
@@ -79,8 +79,8 @@ public class FileOwnershipInspectionTest {
 		final ArrayList<Integer> lineChanges = new ArrayList<>(
 				Arrays.asList(10, 5));
 		authorsAddedAndDeletedLines.put("test", lineChanges);
-		fileOwnershipInformation.setAuthorsNumberOfAddedAndDeletedLines(
-				authorsAddedAndDeletedLines);
+		fileOwnershipInformation
+				.setAuthorsAddedAndDeletedLines(authorsAddedAndDeletedLines);
 
 		final LinkedHashMap<String, Double> ownershipPercentages = new LinkedHashMap<>();
 		ownershipPercentages.put("test", 50.0);
@@ -89,15 +89,15 @@ public class FileOwnershipInspectionTest {
 
 		entityOwnershipResult.put("test", fileOwnershipInformation);
 
-		fileOwnershipInspection.setEntityOwnershipResult(entityOwnershipResult);
+		fileOwnershipInspection.entityChangesData = entityOwnershipResult;
 
 		fileOwnershipInspection.writeFileResults();
 	}
 
 	@Test
 	public void testAddFileInformation() {
-		final HashMap<String, EntityOwnershipInformation> expectedFileOwnershipResult = new HashMap<>();
-		final EntityOwnershipInformation fileOwnershipInformation = new EntityOwnershipInformation();
+		final HashMap<String, FileChangesData> expectedFileOwnershipResult = new HashMap<>();
+		final FileChangesData fileOwnershipInformation = new FileChangesData();
 		final LinkedHashMap<String, Integer> authorsNumberOfChanges = new LinkedHashMap<>();
 		final LinkedHashMap<String, List<Integer>> authorsAddedAndDeletedLines = new LinkedHashMap<>();
 		final LinkedHashMap<String, Double> ownershipPercentages = new LinkedHashMap<>();
@@ -108,18 +108,20 @@ public class FileOwnershipInspectionTest {
 		fileOwnershipInformation.setEntityCreator("test");
 		fileOwnershipInformation
 				.setAuthorsNumberOfChanges(authorsNumberOfChanges);
-		fileOwnershipInformation.setAuthorsNumberOfAddedAndDeletedLines(
-				authorsAddedAndDeletedLines);
+		fileOwnershipInformation
+				.setAuthorsAddedAndDeletedLines(authorsAddedAndDeletedLines);
 		fileOwnershipInformation.setOwnershipPercentages(ownershipPercentages);
 		fileOwnershipInformation.setDistinctOwners(distinctOwners);
 		expectedFileOwnershipResult.put("testFileName",
 				fileOwnershipInformation);
 
+		fileOwnershipInspection.entityChangesData = expectedFileOwnershipResult;
 		fileOwnershipInspection.addFileInformation("testFileName", 1, "test",
 				authorsNumberOfChanges, authorsAddedAndDeletedLines,
 				ownershipPercentages, distinctOwners);
 
 		assertEquals(expectedFileOwnershipResult,
-				fileOwnershipInspection.getEntityOwnershipResult());
+				fileOwnershipInspection.getEntityChangesData());
 	}
+
 }

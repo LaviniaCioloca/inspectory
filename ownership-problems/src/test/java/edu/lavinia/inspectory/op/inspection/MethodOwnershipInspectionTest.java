@@ -35,11 +35,9 @@ import java.util.Optional;
 import org.junit.Test;
 import org.metanalysis.core.project.PersistentProject;
 
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Table;
-
 import edu.lavinia.inspectory.beans.Commit;
-import edu.lavinia.inspectory.op.beans.EntityOwnershipInformation;
+import edu.lavinia.inspectory.op.beans.FileChangesData;
+import edu.lavinia.inspectory.op.beans.MethodChangesData;
 
 public class MethodOwnershipInspectionTest {
 
@@ -68,51 +66,35 @@ public class MethodOwnershipInspectionTest {
 
 	@Test
 	public void testWriteFileResults() {
-		final Table<String, String, List<Integer>> methodsAuthorsChanges = HashBasedTable
-				.create();
-		methodsAuthorsChanges.put("testMethod", "testAuthor",
+		final LinkedHashMap<String, List<Integer>> methodsAuthorsChanges = new LinkedHashMap<>();
+		methodsAuthorsChanges.put("testAuthor",
 				new ArrayList<>(Arrays.asList(10, 5)));
 
 		final Map<String, Integer> methodNumberOfChanges = new HashMap<>();
 		methodNumberOfChanges.put("testMethod", 5);
 
-		methodOwnershipInspection
-				.setMethodsAuthorsChanges(methodsAuthorsChanges);
-		methodOwnershipInspection
-				.setMethodNumberOfChanges(methodNumberOfChanges);
-		methodOwnershipInspection.entityCurrentSize.put("testMethod", 10);
-
-		final Map<String, EntityOwnershipInformation> entityOwnershipResult = new HashMap<>();
-		final EntityOwnershipInformation entityOwnershipInformation = new EntityOwnershipInformation();
+		final Map<String, FileChangesData> entityOwnershipResult = new HashMap<>();
+		final MethodChangesData entityOwnershipInformation = new MethodChangesData();
 		final LinkedHashMap<String, Double> ownershipPercentage = new LinkedHashMap<>();
 		ownershipPercentage.put("testAuthor", 100.0);
 
 		entityOwnershipInformation.setOwnershipPercentages(ownershipPercentage);
 		entityOwnershipResult.put("testMethod", entityOwnershipInformation);
 
-		methodOwnershipInspection
-				.setEntityOwnershipResult(entityOwnershipResult);
-
-		methodOwnershipInspection.entityOwners.put("testMethod",
-				new ArrayList<>(Arrays.asList("testAuthor")));
-
-		methodOwnershipInspection.entityAddedAndDeletedLines.put("testMethod",
-				30);
-
 		methodOwnershipInspection.writeFileResults();
 	}
 
 	@Test
 	public void testAddMethodsAuthorsChanges() {
-		final Table<String, String, List<Integer>> methodsAuthorsChanges = HashBasedTable
-				.create();
-		methodOwnershipInspection
-				.setMethodsAuthorsChanges(methodsAuthorsChanges);
-
 		final Commit commit = new Commit();
 		commit.setAuthor("testAuthor");
 
+		final FileChangesData fileChangesData = new FileChangesData();
+		fileChangesData.setAuthorsAddedAndDeletedLines(new LinkedHashMap<>());
+		methodOwnershipInspection.entityChangesData.put("test -> test -> test",
+				fileChangesData);
 		methodOwnershipInspection.addMethodsAuthorsChanges(10, "test", "test",
 				"test", commit);
 	}
+
 }

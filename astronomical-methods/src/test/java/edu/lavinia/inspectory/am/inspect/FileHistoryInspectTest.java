@@ -45,7 +45,7 @@ import edu.lavinia.inspectory.am.beans.SupernovaCriteria;
 import edu.lavinia.inspectory.am.inspection.AstronomicalMethodsInspection;
 import edu.lavinia.inspectory.am.visitor.NodeVisitor;
 import edu.lavinia.inspectory.beans.Commit;
-import edu.lavinia.inspectory.metrics.AbstractCommonMetric;
+import edu.lavinia.inspectory.metrics.AbstractMethodMetric;
 import edu.lavinia.inspectory.visitor.GenericVisitor;
 
 public class FileHistoryInspectTest {
@@ -230,9 +230,9 @@ public class FileHistoryInspectTest {
 		astronomicalMethodsInspection.setResult(result);
 		final ArrayList<AstronomicalMethodChangesInformation> methodInformationList = new ArrayList<>();
 		methodInformationList.add(methodChangesInformation);
-		AbstractCommonMetric.setAllCommits(commits);
-		AbstractCommonMetric.setAllCommitsIntoTimeFrames();
-		AbstractCommonMetric.setNow(commit3.getDate());
+		AbstractMethodMetric.setAllCommits(commits);
+		AbstractMethodMetric.setAllCommitsIntoTimeFrames();
+		AbstractMethodMetric.setNow(commit3.getDate());
 
 		astronomicalMethodsInspection
 				.setMethodInformationList(methodInformationList);

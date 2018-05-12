@@ -36,36 +36,33 @@ import java.util.stream.Collectors;
 
 import org.metanalysis.core.project.PersistentProject;
 
-import edu.lavinia.inspectory.op.beans.EntityOwnershipInformation;
+import edu.lavinia.inspectory.op.beans.FileChangesData;
 
 public abstract class GenericOwnershipInspection {
 	protected final Optional<PersistentProject> project;
 	protected final FileWriter csvWriter;
-	protected Map<String, EntityOwnershipInformation> entityOwnershipResult = new HashMap<>();
-	protected Map<String, List<String>> entityOwners = new HashMap<>();
-	protected Map<String, Integer> entityAddedAndDeletedLines = new HashMap<>();
-	protected Map<String, Integer> entityCurrentSize = new HashMap<>();
+	protected Map<String, FileChangesData> entityChangesData = new HashMap<>();
 
 	/**
 	 * GenericOwnershipInspection Constructor that receives the persistent
 	 * project and the CSV file to write in from {@code inspectory-main}.
-	 * 
+	 *
 	 * @param project
 	 *            The project of the repository to inspect.
 	 * @param csvWriter
 	 *            The writer of result CSV file.
 	 */
-	public GenericOwnershipInspection(Optional<PersistentProject> project,
-			FileWriter csvWriter) {
+	public GenericOwnershipInspection(final Optional<PersistentProject> project,
+			final FileWriter csvWriter) {
 		this.project = project;
 		this.csvWriter = csvWriter;
 	}
 
 	public LinkedHashMap<String, List<Integer>> checkChangedLinesInMap(
-			ArrayList<Integer> changedLines,
-			LinkedHashMap<String, List<Integer>> authorsLineChanges,
-			String author, Integer visitorAddedLines,
-			Integer visitorDeletedLines) {
+			final ArrayList<Integer> changedLines,
+			final LinkedHashMap<String, List<Integer>> authorsLineChanges,
+			final String author, final Integer visitorAddedLines,
+			final Integer visitorDeletedLines) {
 
 		final ArrayList<Integer> newChangedLines;
 
@@ -86,30 +83,31 @@ public abstract class GenericOwnershipInspection {
 		return authorsLineChanges;
 	}
 
-	public void setEntityOwnerAfterCommit(final String entityName,
-			final Map<String, List<Integer>> authorsAddedAndDeletedLines) {
-
+	public final void setEntityOwnerAfterCommit(final String entityName) {
 		LinkedHashMap<String, Double> ownershipPercentages = calculateEntityOwnership(
-				authorsAddedAndDeletedLines, entityName);
+				entityName);
 		ownershipPercentages = sortPercentagesMap(ownershipPercentages);
 
 		final String entityOwnerAfterThisCommit = ownershipPercentages
 				.entrySet().iterator().next().getKey();
-		List<String> listOfPreviousOwners = entityOwners.get(entityName);
+		ArrayList<String> listOfPreviousOwners = entityChangesData
+				.get(entityName).getAllOwners();
 
 		if (listOfPreviousOwners == null) {
 			listOfPreviousOwners = new ArrayList<>();
-			entityOwners.put(entityName, listOfPreviousOwners);
+			entityChangesData.get(entityName)
+					.setAllOwners(listOfPreviousOwners);
 		}
 
 		listOfPreviousOwners.add(entityOwnerAfterThisCommit);
 	}
 
-	public LinkedHashMap<String, Double> calculateEntityOwnership(
-			final Map<String, List<Integer>> authorsLineChanges,
+	public final LinkedHashMap<String, Double> calculateEntityOwnership(
 			final String entityName) {
 
 		final LinkedHashMap<String, Double> ownershipPercentages = new LinkedHashMap<>();
+		final Map<String, List<Integer>> authorsLineChanges = entityChangesData
+				.get(entityName).getAuthorsAddedAndDeletedLines();
 
 		Integer authorLineChanges;
 		Double authorPercentage;
@@ -131,8 +129,8 @@ public abstract class GenericOwnershipInspection {
 		return ownershipPercentages;
 	}
 
-	private Double getAuthorOwnershipPercentage(final Integer authorLineChanges,
-			final String entityName) {
+	private final Double getAuthorOwnershipPercentage(
+			final Integer authorLineChanges, final String entityName) {
 
 		final DecimalFormat twoDecimalsFormat = new DecimalFormat(".##");
 		Double authorPercentage;
@@ -140,11 +138,13 @@ public abstract class GenericOwnershipInspection {
 		 * (x / 100) * entityTotalLineChanges = authorLineChanges => x = (100 *
 		 * authorLineChanges) / entityTotalLineChanges
 		 */
-		if (entityAddedAndDeletedLines.get(entityName) == 0) {
+		if (entityChangesData.get(entityName)
+				.getAddedAndDeletedLinesSum() == 0) {
 			authorPercentage = 0.0;
 		} else {
 			authorPercentage = (100 * (double) authorLineChanges)
-					/ (double) entityAddedAndDeletedLines.get(entityName);
+					/ (double) entityChangesData.get(entityName)
+							.getAddedAndDeletedLinesSum();
 			authorPercentage = Double
 					.parseDouble(twoDecimalsFormat.format(authorPercentage));
 		}
@@ -152,8 +152,8 @@ public abstract class GenericOwnershipInspection {
 		return authorPercentage;
 	}
 
-	public LinkedHashMap<String, Double> sortPercentagesMap(
-			Map<String, Double> ownershipPercentages) {
+	public final LinkedHashMap<String, Double> sortPercentagesMap(
+			final Map<String, Double> ownershipPercentages) {
 
 		return ownershipPercentages.entrySet().stream()
 				.sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
@@ -167,18 +167,13 @@ public abstract class GenericOwnershipInspection {
 
 	public abstract void createResults();
 
-	public Map<String, EntityOwnershipInformation> getEntityOwnershipResult() {
-		return entityOwnershipResult;
+	public Map<String, FileChangesData> getEntityChangesData() {
+		return entityChangesData;
 	}
 
-	public void setEntityOwnershipResult(
-			Map<String, EntityOwnershipInformation> entityOwnershipResult) {
-		this.entityOwnershipResult = entityOwnershipResult;
-	}
-
-	public void setEntityOwnershipResult(
-			HashMap<String, EntityOwnershipInformation> entityOwnershipResult) {
-		this.entityOwnershipResult = entityOwnershipResult;
+	public void setEntityChangesData(
+			final Map<String, FileChangesData> entityChangesData) {
+		this.entityChangesData = entityChangesData;
 	}
 
 }

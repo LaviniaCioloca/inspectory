@@ -40,7 +40,7 @@ import org.junit.Test;
 
 import edu.lavinia.inspectory.am.beans.AstronomicalMethodChangesInformation;
 import edu.lavinia.inspectory.beans.Commit;
-import edu.lavinia.inspectory.metrics.AbstractCommonMetric;
+import edu.lavinia.inspectory.metrics.AbstractMethodMetric;
 
 public class PulsarMetricTest {
 
@@ -51,9 +51,9 @@ public class PulsarMetricTest {
 		final Commit commit = new Commit();
 		final ArrayList<Commit> commits = new ArrayList<>();
 		commits.add(commit);
-		AbstractCommonMetric.setAllCommits(commits);
-		AbstractCommonMetric.setAllCommitsIntoTimeFrames();
-		AbstractCommonMetric.setNow(new Date());
+		AbstractMethodMetric.setAllCommits(commits);
+		AbstractMethodMetric.setAllCommitsIntoTimeFrames();
+		AbstractMethodMetric.setNow(new Date());
 	}
 
 	@After
@@ -61,9 +61,9 @@ public class PulsarMetricTest {
 		final Commit commit = new Commit();
 		final ArrayList<Commit> commits = new ArrayList<>();
 		commits.add(commit);
-		AbstractCommonMetric.setAllCommits(commits);
-		AbstractCommonMetric.setAllCommitsIntoTimeFrames();
-		AbstractCommonMetric.setNow(new Date());
+		AbstractMethodMetric.setAllCommits(commits);
+		AbstractMethodMetric.setAllCommitsIntoTimeFrames();
+		AbstractMethodMetric.setNow(new Date());
 	}
 
 	@Test
@@ -107,8 +107,8 @@ public class PulsarMetricTest {
 		methodInformation.setChangesList(changesList);
 		methodInformation.setCommits(commits);
 		methodInformation.setActualSize(520);
-		AbstractCommonMetric.setAllCommits(commits);
-		AbstractCommonMetric.setAllCommitsIntoTimeFrames();
+		AbstractMethodMetric.setAllCommits(commits);
+		AbstractMethodMetric.setAllCommitsIntoTimeFrames();
 
 		assertTrue(pulsarMetric.isPulsar(methodInformation));
 	}
@@ -141,8 +141,8 @@ public class PulsarMetricTest {
 		methodInformation.setChangesList(changesList);
 		methodInformation.setCommits(commits);
 		methodInformation.setActualSize(500);
-		AbstractCommonMetric.setAllCommits(commits);
-		AbstractCommonMetric.setAllCommitsIntoTimeFrames();
+		AbstractMethodMetric.setAllCommits(commits);
+		AbstractMethodMetric.setAllCommitsIntoTimeFrames();
 
 		assertTrue(pulsarMetric.isPulsar(methodInformation));
 	}
@@ -252,8 +252,8 @@ public class PulsarMetricTest {
 		commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/09/15"));
 		commits.add(commit);
-		AbstractCommonMetric.setAllCommits(commits);
-		AbstractCommonMetric.setAllCommitsIntoTimeFrames();
+		AbstractMethodMetric.setAllCommits(commits);
+		AbstractMethodMetric.setAllCommitsIntoTimeFrames();
 
 		assertSame(pulsarMetric.getActiveMethodPoints(commit), 1);
 	}
@@ -272,10 +272,10 @@ public class PulsarMetricTest {
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/09/01"));
 		final Date dateNow = new SimpleDateFormat("yyyy/MM/dd")
 				.parse("2017/09/06");
-		AbstractCommonMetric
+		AbstractMethodMetric
 				.setAllCommits(new ArrayList<>(Arrays.asList(commit)));
-		AbstractCommonMetric.setAllCommitsIntoTimeFrames();
-		AbstractCommonMetric.setNow(dateNow);
+		AbstractMethodMetric.setAllCommitsIntoTimeFrames();
+		AbstractMethodMetric.setNow(dateNow);
 
 		assertSame(pulsarMetric.countPulsarSeverityPoints(6, 0.0, 150, commit),
 				10);
@@ -319,9 +319,9 @@ public class PulsarMetricTest {
 		methodInformation.setChangesList(changesList);
 		final Date dateNow = new SimpleDateFormat("yyyy/MM/dd")
 				.parse("2017/09/06");
-		AbstractCommonMetric.setAllCommits(commits);
-		AbstractCommonMetric.setAllCommitsIntoTimeFrames();
-		AbstractCommonMetric.setNow(dateNow);
+		AbstractMethodMetric.setAllCommits(commits);
+		AbstractMethodMetric.setAllCommitsIntoTimeFrames();
+		AbstractMethodMetric.setNow(dateNow);
 
 		assertSame(pulsarMetric.getPulsarSeverity(methodInformation), 7);
 	}
@@ -372,8 +372,8 @@ public class PulsarMetricTest {
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/08/30"));
 		commits.add(commit);
 		methodInformation.setCommits(commits);
-		AbstractCommonMetric.setAllCommits(commits);
-		AbstractCommonMetric.setAllCommitsIntoTimeFrames();
+		AbstractMethodMetric.setAllCommits(commits);
+		AbstractMethodMetric.setAllCommitsIntoTimeFrames();
 
 		assertTrue(pulsarMetric.isMethodActivelyChanged(methodInformation));
 	}
@@ -392,9 +392,9 @@ public class PulsarMetricTest {
 	public void testCheckIfRecentPulsarCycleZero() throws ParseException {
 		final Commit commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/08/01"));
-		AbstractCommonMetric
+		AbstractMethodMetric
 				.setAllCommits(new ArrayList<>(Arrays.asList(commit)));
-		AbstractCommonMetric.setAllCommitsIntoTimeFrames();
+		AbstractMethodMetric.setAllCommitsIntoTimeFrames();
 		final Date date = new SimpleDateFormat("yyyy/MM/dd")
 				.parse("2010/01/01");
 
@@ -407,9 +407,9 @@ public class PulsarMetricTest {
 				.parse("2017/09/10");
 		final Commit commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/08/01"));
-		AbstractCommonMetric
+		AbstractMethodMetric
 				.setAllCommits(new ArrayList<>(Arrays.asList(commit)));
-		AbstractCommonMetric.setAllCommitsIntoTimeFrames();
+		AbstractMethodMetric.setAllCommitsIntoTimeFrames();
 
 		assertSame(pulsarMetric.checkIfRecentPulsarCycle(date), 1);
 	}
@@ -469,9 +469,9 @@ public class PulsarMetricTest {
 		expectedPulsarCriterionValues.put("averageSizeIncrease", 20.0 / 3.0);
 		expectedPulsarCriterionValues.put("countPulsarCycles", 3);
 		expectedPulsarCriterionValues.put("countRecentPulsarCycles", 1);
-		AbstractCommonMetric.setAllCommits(commits);
-		AbstractCommonMetric.setAllCommitsIntoTimeFrames();
-		AbstractCommonMetric.setNow(dateNow);
+		AbstractMethodMetric.setAllCommits(commits);
+		AbstractMethodMetric.setAllCommitsIntoTimeFrames();
+		AbstractMethodMetric.setNow(dateNow);
 
 		assertEquals(expectedPulsarCriterionValues,
 				pulsarMetric.getPulsarCriterionValues(methodInformation));
@@ -514,9 +514,9 @@ public class PulsarMetricTest {
 		commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/09/04"));
 		allCommits.add(commit);
-		AbstractCommonMetric.setAllCommits(allCommits);
-		AbstractCommonMetric.setAllCommitsIntoTimeFrames();
-		AbstractCommonMetric.setNow(dateNow);
+		AbstractMethodMetric.setAllCommits(allCommits);
+		AbstractMethodMetric.setAllCommitsIntoTimeFrames();
+		AbstractMethodMetric.setNow(dateNow);
 		final PulsarMetric pulsarMetric = new PulsarMetric();
 		final ArrayList<Commit> commits = new ArrayList<>();
 		commits.add(commit1);
@@ -579,9 +579,9 @@ public class PulsarMetricTest {
 		commit = new Commit();
 		commit.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/12/30"));
 		allCommits.add(commit);
-		AbstractCommonMetric.setAllCommits(allCommits);
-		AbstractCommonMetric.setAllCommitsIntoTimeFrames();
-		AbstractCommonMetric.setNow(dateNow);
+		AbstractMethodMetric.setAllCommits(allCommits);
+		AbstractMethodMetric.setAllCommitsIntoTimeFrames();
+		AbstractMethodMetric.setNow(dateNow);
 		final PulsarMetric pulsarMetric = new PulsarMetric();
 		final ArrayList<Commit> commits = new ArrayList<>();
 		commits.add(commit1);

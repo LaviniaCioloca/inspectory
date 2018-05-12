@@ -39,7 +39,7 @@ import org.junit.Test;
 
 import edu.lavinia.inspectory.am.beans.AstronomicalMethodChangesInformation;
 import edu.lavinia.inspectory.beans.Commit;
-import edu.lavinia.inspectory.metrics.AbstractCommonMetric;
+import edu.lavinia.inspectory.metrics.AbstractMethodMetric;
 
 public class SupernovaMetricTest {
 
@@ -49,8 +49,8 @@ public class SupernovaMetricTest {
 
 	@After
 	public void tearDown() {
-		AbstractCommonMetric.setAllCommits(new ArrayList<Commit>());
-		AbstractCommonMetric.setNow(new Date());
+		AbstractMethodMetric.setAllCommits(new ArrayList<Commit>());
+		AbstractMethodMetric.setNow(new Date());
 	}
 
 	@Test
@@ -211,9 +211,9 @@ public class SupernovaMetricTest {
 	public void testGetActiveFilePointsOne() throws ParseException {
 		final Commit commit = new Commit();
 		commit.setDate(new SimpleDateFormat(DATE_FORMAT).parse("2017/09/01"));
-		AbstractCommonMetric
+		AbstractMethodMetric
 				.setAllCommits(new ArrayList<>(Arrays.asList(commit)));
-		AbstractCommonMetric.setAllCommitsIntoTimeFrames();
+		AbstractMethodMetric.setAllCommitsIntoTimeFrames();
 		assertSame(supernovaMetric.getActiveMethodPoints(commit), 1);
 	}
 
@@ -239,8 +239,8 @@ public class SupernovaMetricTest {
 		commit2 = new Commit();
 		commit2.setDate(new SimpleDateFormat(DATE_FORMAT).parse("2017/08/01"));
 		commits.add(commit2);
-		AbstractCommonMetric.setAllCommits(commits);
-		AbstractCommonMetric.setAllCommitsIntoTimeFrames();
+		AbstractMethodMetric.setAllCommits(commits);
+		AbstractMethodMetric.setAllCommitsIntoTimeFrames();
 		assertTrue(supernovaMetric.getActiveMethodPoints(commit1) == 0);
 	}
 
@@ -248,9 +248,9 @@ public class SupernovaMetricTest {
 	public void testCountSupernovaSeverityPointsMax() throws ParseException {
 		final Commit commit = new Commit();
 		commit.setDate(new SimpleDateFormat(DATE_FORMAT).parse("2017/08/01"));
-		AbstractCommonMetric
+		AbstractMethodMetric
 				.setAllCommits(new ArrayList<>(Arrays.asList(commit)));
-		AbstractCommonMetric.setAllCommitsIntoTimeFrames();
+		AbstractMethodMetric.setAllCommitsIntoTimeFrames();
 		assertSame(supernovaMetric.countSupernovaSeverityPoints(300, 300, 9.0,
 				250, commit), 10);
 	}
@@ -303,8 +303,8 @@ public class SupernovaMetricTest {
 		methodInformation.setActualSize(120);
 		methodInformation.setChangesList(changesList);
 		methodInformation.setCommits(commits);
-		AbstractCommonMetric.setAllCommits(commits);
-		AbstractCommonMetric.setAllCommitsIntoTimeFrames();
+		AbstractMethodMetric.setAllCommits(commits);
+		AbstractMethodMetric.setAllCommitsIntoTimeFrames();
 		assertSame(supernovaMetric.getSupernovaSeverity(methodInformation), 10);
 	}
 

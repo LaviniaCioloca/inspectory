@@ -34,10 +34,10 @@ import org.junit.Test;
 
 import edu.lavinia.inspectory.am.beans.AstronomicalMethodChangesInformation;
 import edu.lavinia.inspectory.beans.Commit;
-import edu.lavinia.inspectory.metrics.AbstractCommonMetric;
+import edu.lavinia.inspectory.metrics.AbstractMethodMetric;
 
-public class AbstractCommonMetricTest {
-	private final AbstractCommonMetric methodMetric = new PulsarMetric();
+public class AbstractMethodMetricTest {
+	private final AbstractMethodMetric methodMetric = new PulsarMetric();
 
 	private static final String DATE_FORMAT = "yyyy/MM/dd";
 
@@ -47,7 +47,7 @@ public class AbstractCommonMetricTest {
 				.parse("2010/01/01");
 		final Date end = new SimpleDateFormat(DATE_FORMAT).parse("2010/01/05");
 
-		assertTrue(AbstractCommonMetric.getTimeDifferenceInDays(start,
+		assertTrue(AbstractMethodMetric.getTimeDifferenceInDays(start,
 				end) == 4.0);
 	}
 
@@ -112,7 +112,7 @@ public class AbstractCommonMetricTest {
 		expected.put(commits.get(7), 2);
 
 		assertEquals(expected,
-				AbstractCommonMetric.splitCommitsIntoTimeFrames(commits));
+				AbstractMethodMetric.splitCommitsIntoTimeFrames(commits));
 	}
 	/*
 	 * @Test public void getActiveTimeFrameMethodPointsOne() throws

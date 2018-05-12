@@ -7,7 +7,7 @@ import java.util.Map;
 
 import edu.lavinia.inspectory.beans.Commit;
 
-public abstract class AbstractCommonMetric {
+public abstract class AbstractMethodMetric {
 	/**
 	 * The MIN value of <b>refinement</b> threshold is considered -3 lines.
 	 * Below is considered <b>refactor</b>.
@@ -206,16 +206,16 @@ public abstract class AbstractCommonMetric {
 	}
 
 	public static void setAllCommits(final ArrayList<Commit> allCommits) {
-		AbstractCommonMetric.allCommits = allCommits;
+		AbstractMethodMetric.allCommits = allCommits;
 	}
 
 	public static void setAllCommitsIntoTimeFrames() {
-		AbstractCommonMetric.allCommitsIntoTimeFrames = splitCommitsIntoTimeFrames(
+		AbstractMethodMetric.allCommitsIntoTimeFrames = splitCommitsIntoTimeFrames(
 				allCommits);
 	}
 
 	public static void setNow(final Date now) {
-		AbstractCommonMetric.now = now;
+		AbstractMethodMetric.now = now;
 	}
 
 }
