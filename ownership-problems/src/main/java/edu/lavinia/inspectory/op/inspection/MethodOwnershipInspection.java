@@ -49,7 +49,6 @@ import edu.lavinia.inspectory.op.beans.MethodChangesData;
 import edu.lavinia.inspectory.utils.CSVUtils;
 
 public class MethodOwnershipInspection extends GenericOwnershipInspection {
-	private final ArrayList<String> deletedNodes = new ArrayList<>();
 
 	/**
 	 * MethodOwnershipInspection Constructor that receives the persistent
@@ -74,6 +73,20 @@ public class MethodOwnershipInspection extends GenericOwnershipInspection {
 		final Map<String, List<Integer>> authorChanges = methodChangesData
 				.getAuthorsAddedAndDeletedLines();
 
+		addGeneralMethodInformation(methodOwnershipInformationLine,
+				methodChangesData, authorChanges);
+
+		addOwnershipInformation(methodFullPath, methodOwnershipInformationLine,
+				methodChangesData, authorChanges);
+
+		return methodOwnershipInformationLine;
+	}
+
+	private void addGeneralMethodInformation(
+			final ArrayList<String> methodOwnershipInformationLine,
+			final MethodChangesData methodChangesData,
+			final Map<String, List<Integer>> authorChanges) {
+
 		methodOwnershipInformationLine.add(methodChangesData.getFileName());
 		methodOwnershipInformationLine.add(methodChangesData.getClassName());
 		methodOwnershipInformationLine.add(methodChangesData.getMethodName());
@@ -83,6 +96,12 @@ public class MethodOwnershipInspection extends GenericOwnershipInspection {
 				.add(String.valueOf(authorChanges.size()));
 		methodOwnershipInformationLine
 				.add(methodChangesData.getActualSize().toString());
+	}
+
+	private void addOwnershipInformation(final String methodFullPath,
+			final ArrayList<String> methodOwnershipInformationLine,
+			final MethodChangesData methodChangesData,
+			final Map<String, List<Integer>> authorChanges) {
 
 		final List<String> listOfAllOwners = methodChangesData.getAllOwners();
 		final List<String> distinctListOfOwners = listOfAllOwners.stream()
@@ -90,23 +109,21 @@ public class MethodOwnershipInspection extends GenericOwnershipInspection {
 		final ArrayList<String> distinctOwners = new ArrayList<>(
 				distinctListOfOwners);
 
+		entityChangesData.get(methodFullPath).setDistinctOwners(distinctOwners);
+
 		methodOwnershipInformationLine
 				.add(String.valueOf(distinctListOfOwners.size()));
 		methodOwnershipInformationLine.add(distinctOwners.toString());
 
-		final LinkedHashMap<String, List<Integer>> methodLineChangesByAuthor = getMethodLineChangesByAuthor(
-				authorChanges);
-
 		LinkedHashMap<String, Double> ownershipPercentages = calculateEntityOwnership(
 				methodFullPath);
 		ownershipPercentages = sortPercentagesMap(ownershipPercentages);
-
 		methodOwnershipInformationLine.add(ownershipPercentages.toString());
 
+		final LinkedHashMap<String, List<Integer>> methodLineChangesByAuthor = getMethodLineChangesByAuthor(
+				authorChanges);
 		methodOwnershipInformationLine
 				.add(methodLineChangesByAuthor.toString());
-
-		return methodOwnershipInformationLine;
 	}
 
 	public void addMethodsAuthorsChanges(final Integer methodBodySize,
@@ -123,6 +140,22 @@ public class MethodOwnershipInspection extends GenericOwnershipInspection {
 		final LinkedHashMap<String, List<Integer>> authorsAddedAndDeletedLines = new LinkedHashMap<>();
 		authorsAddedAndDeletedLines.put(commit.getAuthor(), authorsLineAdded);
 
+		final MethodChangesData methosChangesData = addMethodChangesData(
+				methodSignature, fileName, className, methodTotalSize,
+				authorsAddedAndDeletedLines);
+
+		entityChangesData.put(methodFullPath, methosChangesData);
+
+		addCommitToList(methodFullPath, commit);
+
+		setEntityOwnerAfterCommit(methodFullPath);
+	}
+
+	private MethodChangesData addMethodChangesData(final String methodSignature,
+			final String fileName, final String className,
+			final Integer methodTotalSize,
+			final LinkedHashMap<String, List<Integer>> authorsAddedAndDeletedLines) {
+
 		final MethodChangesData fileChangesData = new MethodChangesData();
 		fileChangesData.setActualSize(methodTotalSize);
 		fileChangesData.setAddedAndDeletedLinesSum(methodTotalSize);
@@ -133,9 +166,7 @@ public class MethodOwnershipInspection extends GenericOwnershipInspection {
 		fileChangesData.setClassName(className);
 		fileChangesData.setMethodName(methodSignature);
 
-		entityChangesData.put(methodFullPath, fileChangesData);
-
-		setEntityOwnerAfterCommit(methodFullPath);
+		return fileChangesData;
 	}
 
 	public List<Integer> countAddedAndDeletedLines(
@@ -300,7 +331,7 @@ public class MethodOwnershipInspection extends GenericOwnershipInspection {
 			} else if (edit instanceof NodeSetEdit.Add) {
 				handleNodeSetEditAdd(edit, fileName, commit);
 			} else {
-				deletedNodes.add(fileName);
+				entityChangesData.get(fileName).setEntityWasDeleted(true);
 			}
 		}
 	}
@@ -386,7 +417,22 @@ public class MethodOwnershipInspection extends GenericOwnershipInspection {
 
 			updateMethodsAuthorsChanges(methodFullPath, commit.getAuthor(),
 					authorsNewChanges);
+
+			addCommitToList(methodFullPath, commit);
 		}
+	}
+
+	private void addCommitToList(final String methodFullPath,
+			final Commit commit) {
+		ArrayList<Commit> fileCommits = entityChangesData.get(methodFullPath)
+				.getCommits();
+
+		if (fileCommits == null) {
+			fileCommits = new ArrayList<>();
+			entityChangesData.get(methodFullPath).setCommits(fileCommits);
+		}
+
+		fileCommits.add(commit);
 	}
 
 	private void treatNodeSetEditRemove(final String fileName,
@@ -407,6 +453,8 @@ public class MethodOwnershipInspection extends GenericOwnershipInspection {
 
 			updateMethodsAuthorsChanges(methodFullPath, commit.getAuthor(),
 					authorsNewChanges);
+
+			addCommitToList(methodFullPath, commit);
 		}
 	}
 

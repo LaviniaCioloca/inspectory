@@ -30,28 +30,22 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.junit.After;
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Test;
 
 import edu.lavinia.inspectory.am.beans.AstronomicalMethodChangesInformation;
 import edu.lavinia.inspectory.beans.Commit;
-import edu.lavinia.inspectory.metrics.AbstractMethodMetric;
+import edu.lavinia.inspectory.metrics.MethodThresholdsMeasure;
 
 public class SupernovaMetricTest {
 
 	private final SupernovaMetric supernovaMetric = new SupernovaMetric();
 
 	private static final String DATE_FORMAT = "yyyy/MM/dd";
-
-	@After
-	public void tearDown() {
-		AbstractMethodMetric.setAllCommits(new ArrayList<Commit>());
-		AbstractMethodMetric.setNow(new Date());
-	}
 
 	@Test
 	public void testIsSupernovaTrue() throws ParseException {
@@ -199,22 +193,38 @@ public class SupernovaMetricTest {
 
 	@Test
 	public void testGetFileSizePointsOne() {
-		assertSame(supernovaMetric.getMethodSizePoints(150), 1);
+		assertSame(MethodThresholdsMeasure.getMethodSizePoints(150), 1);
 	}
 
 	@Test
 	public void testGetFileSizePointsZero() {
-		assertSame(supernovaMetric.getMethodSizePoints(10), 0);
+		assertSame(MethodThresholdsMeasure.getMethodSizePoints(10), 0);
+	}
+
+	private void setCommitsForSupernovaMetric(final ArrayList<Commit> commits) {
+		final Pair<Integer, LinkedHashMap<Commit, Integer>> maximumTimeFrameCommits = MethodThresholdsMeasure
+				.splitCommitsIntoTimeFrames(commits);
+
+		final Integer maximumTimeFrameNumber = maximumTimeFrameCommits
+				.getLeft();
+		final LinkedHashMap<Commit, Integer> allCommitsIntoTimeFrames = maximumTimeFrameCommits
+				.getRight();
+
+		supernovaMetric.setAllCommits(commits);
+		supernovaMetric.setAllCommitsIntoTimeFrames(allCommitsIntoTimeFrames);
+		supernovaMetric.setMaximumTimeFrameNumber(maximumTimeFrameNumber);
 	}
 
 	@Test
 	public void testGetActiveFilePointsOne() throws ParseException {
 		final Commit commit = new Commit();
 		commit.setDate(new SimpleDateFormat(DATE_FORMAT).parse("2017/09/01"));
-		AbstractMethodMetric
-				.setAllCommits(new ArrayList<>(Arrays.asList(commit)));
-		AbstractMethodMetric.setAllCommitsIntoTimeFrames();
-		assertSame(supernovaMetric.getActiveMethodPoints(commit), 1);
+
+		setCommitsForSupernovaMetric(new ArrayList<>(Arrays.asList(commit)));
+
+		assertSame(
+				MethodThresholdsMeasure.getActiveMethodPoints(commit, commit),
+				1);
 	}
 
 	@Test
@@ -239,26 +249,37 @@ public class SupernovaMetricTest {
 		commit2 = new Commit();
 		commit2.setDate(new SimpleDateFormat(DATE_FORMAT).parse("2017/08/01"));
 		commits.add(commit2);
-		AbstractMethodMetric.setAllCommits(commits);
-		AbstractMethodMetric.setAllCommitsIntoTimeFrames();
-		assertTrue(supernovaMetric.getActiveMethodPoints(commit1) == 0);
+
+		setCommitsForSupernovaMetric(commits);
+
+		assertTrue(MethodThresholdsMeasure.getActiveMethodPoints(commit1,
+				commit2) == 0);
 	}
 
 	@Test
 	public void testCountSupernovaSeverityPointsMax() throws ParseException {
 		final Commit commit = new Commit();
 		commit.setDate(new SimpleDateFormat(DATE_FORMAT).parse("2017/08/01"));
-		AbstractMethodMetric
-				.setAllCommits(new ArrayList<>(Arrays.asList(commit)));
-		AbstractMethodMetric.setAllCommitsIntoTimeFrames();
+
+		setCommitsForSupernovaMetric(new ArrayList<>(Arrays.asList(commit)));
+
 		assertSame(supernovaMetric.countSupernovaSeverityPoints(300, 300, 9.0,
 				250, commit), 10);
 	}
 
 	@Test
 	public void testCountSupernovaSeverityPointsMin() throws ParseException {
+		final ArrayList<Commit> commits = new ArrayList<>();
 		final Commit commit = new Commit();
 		commit.setDate(new SimpleDateFormat(DATE_FORMAT).parse("2010/09/01"));
+		commits.add(commit);
+
+		final Commit commit1 = new Commit();
+		commit1.setDate(new SimpleDateFormat(DATE_FORMAT).parse("2017/09/01"));
+		commits.add(commit1);
+
+		setCommitsForSupernovaMetric(commits);
+
 		assertSame(supernovaMetric.countSupernovaSeverityPoints(20, 20, 200.0,
 				10, commit), 1);
 	}
@@ -303,8 +324,9 @@ public class SupernovaMetricTest {
 		methodInformation.setActualSize(120);
 		methodInformation.setChangesList(changesList);
 		methodInformation.setCommits(commits);
-		AbstractMethodMetric.setAllCommits(commits);
-		AbstractMethodMetric.setAllCommitsIntoTimeFrames();
+
+		setCommitsForSupernovaMetric(commits);
+
 		assertSame(supernovaMetric.getSupernovaSeverity(methodInformation), 10);
 	}
 

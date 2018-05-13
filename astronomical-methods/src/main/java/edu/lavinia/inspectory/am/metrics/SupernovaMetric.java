@@ -12,7 +12,7 @@
  * copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MethodThresholdsMeasure.MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
@@ -26,12 +26,15 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import edu.lavinia.inspectory.am.beans.AstronomicalMethodChangesInformation;
 import edu.lavinia.inspectory.beans.Commit;
-import edu.lavinia.inspectory.metrics.AbstractMethodMetric;
+import edu.lavinia.inspectory.metrics.MethodThresholdsMeasure;
 
 /**
  * Implementation of {@link edu.lavinia.inspectory.am.metrics.MethodMetrics
@@ -41,7 +44,7 @@ import edu.lavinia.inspectory.metrics.AbstractMethodMetric;
  * @see {@link edu.lavinia.inspectory.am.metrics.PulsarMetric PulsarMetric}
  *
  */
-public class SupernovaMetric extends AbstractMethodMetric {
+public class SupernovaMetric {
 	private Integer maximumTimeInterval = 0;
 	private Integer leapsSizePoints = 0;
 	private Integer recentLeapsSizePoints = 0;
@@ -49,15 +52,21 @@ public class SupernovaMetric extends AbstractMethodMetric {
 	private Integer methodSizePoints = 0;
 	private Integer activityStatePoints = 0;
 
+	private ArrayList<Commit> allCommits;
+	private HashMap<Commit, Integer> allCommitsIntoTimeFrames;
+	private Integer maximumTimeFrameNumber;
+
 	/**
 	 * @param sumOfAllLeaps
 	 * @return An Integer between 0 and 2 representing the points of leaps size.
 	 */
 	public Integer getLeapsSizePoints(final Integer sumOfAllLeaps) {
-		if (sumOfAllLeaps >= 4 * MAJOR_SIZE_CHANGE) {
+		if (sumOfAllLeaps >= 4 * MethodThresholdsMeasure.MAJOR_SIZE_CHANGE) {
 			return 2;
-		} else if (sumOfAllLeaps >= 2 * MAJOR_SIZE_CHANGE
-				&& sumOfAllLeaps < 4 * MAJOR_SIZE_CHANGE) {
+		} else if (sumOfAllLeaps >= 2
+				* MethodThresholdsMeasure.MAJOR_SIZE_CHANGE
+				&& sumOfAllLeaps < 4
+						* MethodThresholdsMeasure.MAJOR_SIZE_CHANGE) {
 			return 1;
 		}
 
@@ -70,13 +79,17 @@ public class SupernovaMetric extends AbstractMethodMetric {
 	 *         leaps size.
 	 */
 	public Integer getRecentLeapsSizePoints(final Integer sumRecentLeaps) {
-		if (sumRecentLeaps >= 4 * MAJOR_SIZE_CHANGE) {
+		if (sumRecentLeaps >= 4 * MethodThresholdsMeasure.MAJOR_SIZE_CHANGE) {
 			return 3;
-		} else if (sumRecentLeaps >= 2.5 * MAJOR_SIZE_CHANGE
-				&& sumRecentLeaps < 4 * MAJOR_SIZE_CHANGE) {
+		} else if (sumRecentLeaps >= 2.5
+				* MethodThresholdsMeasure.MAJOR_SIZE_CHANGE
+				&& sumRecentLeaps < 4
+						* MethodThresholdsMeasure.MAJOR_SIZE_CHANGE) {
 			return 2;
-		} else if (sumRecentLeaps >= 1.5 * MAJOR_SIZE_CHANGE
-				&& sumRecentLeaps < 2.5 * MAJOR_SIZE_CHANGE) {
+		} else if (sumRecentLeaps >= 1.5
+				* MethodThresholdsMeasure.MAJOR_SIZE_CHANGE
+				&& sumRecentLeaps < 2.5
+						* MethodThresholdsMeasure.MAJOR_SIZE_CHANGE) {
 			return 1;
 		}
 
@@ -91,11 +104,15 @@ public class SupernovaMetric extends AbstractMethodMetric {
 	public Integer getSubsequentRefactoringPoints(
 			final Double averageSubsequentCommits) {
 
-		if (averageSubsequentCommits >= 0 * MAJOR_SIZE_CHANGE
-				&& averageSubsequentCommits < 0.5 * MAJOR_SIZE_CHANGE) {
+		if (averageSubsequentCommits >= 0
+				* MethodThresholdsMeasure.MAJOR_SIZE_CHANGE
+				&& averageSubsequentCommits < 0.5
+						* MethodThresholdsMeasure.MAJOR_SIZE_CHANGE) {
 			return 2;
-		} else if (averageSubsequentCommits >= 0.5 * MAJOR_SIZE_CHANGE
-				&& averageSubsequentCommits < 1 * MAJOR_SIZE_CHANGE) {
+		} else if (averageSubsequentCommits >= 0.5
+				* MethodThresholdsMeasure.MAJOR_SIZE_CHANGE
+				&& averageSubsequentCommits < 1
+						* MethodThresholdsMeasure.MAJOR_SIZE_CHANGE) {
 			return 1;
 		}
 
@@ -107,19 +124,21 @@ public class SupernovaMetric extends AbstractMethodMetric {
 	 * @param sumRecentLeaps
 	 * @param averageSubsequentCommits
 	 * @param fileSize
-	 * @param commit
+	 * @param lastMethodCommit
 	 * @return An Integer representing the total points of Supernova severity.
 	 */
 	public Integer countSupernovaSeverityPoints(final Integer sumOfAllLeaps,
 			final Integer sumRecentLeaps, final Double averageSubsequentCommits,
-			final Integer fileSize, final Commit commit) {
+			final Integer fileSize, final Commit lastMethodCommit) {
 
 		leapsSizePoints = getLeapsSizePoints(sumOfAllLeaps);
 		recentLeapsSizePoints = getRecentLeapsSizePoints(sumRecentLeaps);
 		subsequentRefactoringPoints = getSubsequentRefactoringPoints(
 				averageSubsequentCommits);
-		methodSizePoints = getMethodSizePoints(fileSize);
-		activityStatePoints = getActiveMethodPoints(commit);
+		methodSizePoints = MethodThresholdsMeasure
+				.getMethodSizePoints(fileSize);
+		activityStatePoints = MethodThresholdsMeasure.getActiveMethodPoints(
+				lastMethodCommit, allCommits.get(allCommits.size() - 1));
 
 		return 1 + leapsSizePoints + recentLeapsSizePoints
 				+ subsequentRefactoringPoints + methodSizePoints
@@ -129,7 +148,7 @@ public class SupernovaMetric extends AbstractMethodMetric {
 	/**
 	 * @param commitsIntoTimeFrames
 	 * @return ArrayList with the commits encountered after the
-	 *         {@code MEDIUM_TIMESPAN}.
+	 *         {@code MethodThresholdsMeasure.MEDIUM_TIMESPAN}.
 	 */
 	public ArrayList<Commit> getCommitsAfterMediumTimespan(
 			final HashMap<Commit, Integer> commitsIntoTimeFrames) {
@@ -141,7 +160,8 @@ public class SupernovaMetric extends AbstractMethodMetric {
 		while (entries.hasNext()) {
 			final Map.Entry<Commit, Integer> currentEntry = entries.next();
 
-			if (currentEntry.getValue() >= MEDIUM_TIMESPAN) {
+			if (currentEntry
+					.getValue() >= MethodThresholdsMeasure.MEDIUM_TIMESPAN) {
 				commitsAfterMediumTimespan.add(currentEntry.getKey());
 			}
 		}
@@ -161,8 +181,11 @@ public class SupernovaMetric extends AbstractMethodMetric {
 		commitsIntoTimeIntervals.put(commits.get(0), currentTimeInterval);
 
 		for (int i = 1; i < commits.size(); ++i) {
-			if (getTimeDifferenceInDays(commits.get(i - 1).getDate(),
-					commits.get(i).getDate()) > SHORT_TIMESPAN * TIME_FRAME) {
+			if (MethodThresholdsMeasure.getTimeDifferenceInDays(
+					commits.get(i - 1).getDate(),
+					commits.get(i)
+							.getDate()) > MethodThresholdsMeasure.SHORT_TIMESPAN
+									* MethodThresholdsMeasure.TIME_FRAME) {
 				++currentTimeInterval;
 			}
 
@@ -178,7 +201,7 @@ public class SupernovaMetric extends AbstractMethodMetric {
 	 * @param commitsAfterMediumTimespan
 	 * @return Sorted ArrayList of commits after the
 	 *         {@link edu.lavinia.inspectory.am.metrics.MethodMetrics.MEDIUM_TIMESPAN
-	 *         MEDIUM_TIMESPAN}.
+	 *         MethodThresholdsMeasure.MEDIUM_TIMESPAN}.
 	 */
 	public ArrayList<Commit> sortAllCommitsAfterMediumTimespan(
 			final ArrayList<Commit> commitsAfterMediumTimespan) {
@@ -202,8 +225,12 @@ public class SupernovaMetric extends AbstractMethodMetric {
 			final AstronomicalMethodChangesInformation methodChangesInformation) {
 
 		final ArrayList<Commit> commits = methodChangesInformation.getCommits();
-		final HashMap<Commit, Integer> commitsIntoTimeFrames = splitCommitsIntoTimeFrames(
-				commits);
+		final Pair<Integer, LinkedHashMap<Commit, Integer>> maximumTimeFrameCommits = MethodThresholdsMeasure
+				.splitCommitsIntoTimeFrames(commits);
+
+		final HashMap<Commit, Integer> commitsIntoTimeFrames = maximumTimeFrameCommits
+				.getRight();
+
 		ArrayList<Commit> commitsAfterMediumTimespan = getCommitsAfterMediumTimespan(
 				commitsIntoTimeFrames);
 		commitsAfterMediumTimespan = sortAllCommitsAfterMediumTimespan(
@@ -342,7 +369,7 @@ public class SupernovaMetric extends AbstractMethodMetric {
 			final Integer methodGrowthInInterval = getMethodGrowthInInterval(
 					intervalsCommitsMap, timeInterval, commitsAndTheirChanges);
 
-			if (methodGrowthInInterval >= MAJOR_SIZE_CHANGE
+			if (methodGrowthInInterval >= MethodThresholdsMeasure.MAJOR_SIZE_CHANGE
 					&& !supernovaCriterionValues.get("isSupernova")
 							.equals(true)) {
 				supernovaCriterionValues.put("isSupernova", true);
@@ -356,9 +383,11 @@ public class SupernovaMetric extends AbstractMethodMetric {
 			final HashMap<Commit, Integer> commitsAndTheirChanges,
 			final HashMap.Entry<Commit, Integer> entry) {
 
-		if (getTimeDifferenceInDays(entry.getKey().getDate(),
-				commits.get(commits.size() - 1).getDate()) <= MEDIUM_TIMESPAN
-						* TIME_FRAME) {
+		if (MethodThresholdsMeasure.getTimeDifferenceInDays(
+				entry.getKey().getDate(),
+				commits.get(commits.size() - 1)
+						.getDate()) <= MethodThresholdsMeasure.MEDIUM_TIMESPAN
+								* MethodThresholdsMeasure.TIME_FRAME) {
 			sumRecentLeaps += commitsAndTheirChanges.get(entry.getKey());
 		}
 
@@ -374,13 +403,14 @@ public class SupernovaMetric extends AbstractMethodMetric {
 		Integer numberOfSubsequentRefactoring = 0;
 
 		for (int timeInterval = 0; timeInterval < maximumTimeInterval
-				- MEDIUM_TIMESPAN; ++timeInterval) {
+				- MethodThresholdsMeasure.MEDIUM_TIMESPAN; ++timeInterval) {
 			for (int nextTimeInterval = timeInterval
 					+ 1; nextTimeInterval <= timeInterval
-							+ MEDIUM_TIMESPAN; ++nextTimeInterval) {
+							+ MethodThresholdsMeasure.MEDIUM_TIMESPAN; ++nextTimeInterval) {
 				for (final Commit commit : intervalsCommitsMap
 						.get(nextTimeInterval)) {
-					if (commitsAndTheirChanges.get(commit) < MIN_REFINE_LINES) {
+					if (commitsAndTheirChanges.get(
+							commit) < MethodThresholdsMeasure.MIN_REFINE_LINES) {
 						deletedRefactoringLines += commitsAndTheirChanges
 								.get(commit);
 						++numberOfSubsequentRefactoring;
@@ -443,7 +473,8 @@ public class SupernovaMetric extends AbstractMethodMetric {
 	 * method's size during that period. If there is at least one time interval
 	 * during which the file size has grown significantly, i.e. with at least
 	 * {@link edu.lavinia.inspectory.am.metrics.MethodMetrics.MAJOR_SIZE_CHANGE
-	 * MAJOR_SIZE_CHANGE} lines the files is classified as Supernova.
+	 * MethodThresholdsMeasure.MAJOR_SIZE_CHANGE} lines the files is classified
+	 * as Supernova.
 	 *
 	 * @param methodChangesInformation
 	 *            The information of the current method
@@ -477,6 +508,32 @@ public class SupernovaMetric extends AbstractMethodMetric {
 
 	public Integer getActivityStatePoints() {
 		return activityStatePoints;
+	}
+
+	public ArrayList<Commit> getAllCommits() {
+		return allCommits;
+	}
+
+	public void setAllCommits(final ArrayList<Commit> allCommits) {
+		this.allCommits = allCommits;
+	}
+
+	public HashMap<Commit, Integer> getAllCommitsIntoTimeFrames() {
+		return allCommitsIntoTimeFrames;
+	}
+
+	public void setAllCommitsIntoTimeFrames(
+			final HashMap<Commit, Integer> allCommitsIntoTimeFrames) {
+		this.allCommitsIntoTimeFrames = allCommitsIntoTimeFrames;
+	}
+
+	public Integer getMaximumTimeFrameNumber() {
+		return maximumTimeFrameNumber;
+	}
+
+	public void setMaximumTimeFrameNumber(
+			final Integer maximumTimeFrameNumber) {
+		this.maximumTimeFrameNumber = maximumTimeFrameNumber;
 	}
 
 }

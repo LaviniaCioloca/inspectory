@@ -42,6 +42,7 @@ import org.apache.log4j.Logger;
 import org.metanalysis.core.project.PersistentProject;
 
 import edu.lavinia.inspectory.am.inspection.AstronomicalMethodsInspection;
+import edu.lavinia.inspectory.beans.Commit;
 import edu.lavinia.inspectory.op.inspection.FileOwnershipInspection;
 import edu.lavinia.inspectory.op.inspection.MethodOwnershipInspection;
 import edu.lavinia.inspectory.utils.CSVUtils;
@@ -265,15 +266,16 @@ public class Commands {
 			checkDirectoryExistance(path, methodsCsvFile, classesCsvFile,
 					directoryExists);
 
-			writeMethodsOwnershipResult(methodsCsvFile);
+			final Commit lastRepositoryCommit = writeClassesOwnershipResult(
+					classesCsvFile);
 
-			writeClassesOwnershipResult(classesCsvFile);
+			writeMethodsOwnershipResult(methodsCsvFile, lastRepositoryCommit);
 		} catch (final IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	private void writeClassesOwnershipResult(final File classesCsvFile)
+	private Commit writeClassesOwnershipResult(final File classesCsvFile)
 			throws IOException {
 
 		final FileWriter classesCsvWriter = new FileWriter(classesCsvFile);
@@ -291,10 +293,12 @@ public class Commands {
 
 		classesCsvWriter.flush();
 		classesCsvWriter.close();
+
+		return classesOwnershipProblemsInspection.getLastRepositoryCommit();
 	}
 
-	private void writeMethodsOwnershipResult(final File methodsCsvFile)
-			throws IOException {
+	private void writeMethodsOwnershipResult(final File methodsCsvFile,
+			final Commit lastRepositoryCommit) throws IOException {
 
 		final FileWriter methodsCsvWriter = new FileWriter(methodsCsvFile);
 		CSVUtils.writeLine(methodsCsvWriter,
@@ -314,12 +318,15 @@ public class Commands {
 		 * final MethodOwnershipProblemsMetric methodOwnershipProblemsMetric =
 		 * new MethodOwnershipProblemsMetric(); for (final HashMap.Entry<String,
 		 * FileChangesData> methodData : methodsOwnershipProblemsInspection
-		 * .getEntityChangesData().entrySet()) {
-		 * System.out.println(methodOwnershipProblemsMetric
-		 * .getOwnershipProblemsCriterionValues(methodData.getValue()) + "\n");
-		 * }
+		 * .getEntityChangesData().entrySet()) { final Map<String, Object>
+		 * result = methodOwnershipProblemsMetric
+		 * .getOwnershipProblemsCriterionValues(methodData.getValue(),
+		 * lastRepositoryCommit);
 		 * 
+		 * if (!result.isEmpty()) { System.out.println(methodData.getKey() +
+		 * " - " + result + "\n"); } }
 		 */
+
 		methodsCsvWriter.flush();
 		methodsCsvWriter.close();
 	}

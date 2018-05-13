@@ -8,13 +8,13 @@ import edu.lavinia.inspectory.beans.Commit;
 
 public class FileChangesData {
 	protected ArrayList<Commit> commits;
-	protected String fileName = null;
+	protected String fileName;
 	protected Integer initialSize = 0;
 	protected Integer actualSize = 0;
 	protected Integer addedAndDeletedLinesSum = 0;
 	protected Boolean entityWasDeleted = false;
 	protected Integer numberOfChanges = 0;
-	protected String entityCreator = null;
+	protected String entityCreator;
 	protected LinkedHashMap<String, Integer> authorsNumberOfChanges;
 	protected LinkedHashMap<String, List<Integer>> authorsAddedAndDeletedLines;
 	protected LinkedHashMap<String, Double> ownershipPercentages;

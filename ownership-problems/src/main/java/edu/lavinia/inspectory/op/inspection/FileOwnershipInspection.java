@@ -24,6 +24,8 @@ package edu.lavinia.inspectory.op.inspection;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -43,6 +45,11 @@ import edu.lavinia.inspectory.utils.CSVUtils;
 import edu.lavinia.inspectory.visitor.GenericVisitor;
 
 public class FileOwnershipInspection extends GenericOwnershipInspection {
+
+	private final ArrayList<Commit> allCommits = new ArrayList<>();
+
+	private Commit firstRepositoryCommit;
+	private Commit lastRepositoryCommit;
 
 	/**
 	 * FileOwnershipInspection Constructor that receives the persistent project
@@ -159,6 +166,11 @@ public class FileOwnershipInspection extends GenericOwnershipInspection {
 			initEntityLinesMap(fileName);
 
 			treatEachHistoryEntry(fileName, fileHistory, visitor);
+
+			sortAllCommits();
+
+			firstRepositoryCommit = allCommits.get(0);
+			lastRepositoryCommit = allCommits.get(allCommits.size() - 1);
 		} catch (final IOException e) {
 			/*
 			 * Need to have a NOP here because of the files that do not have a
@@ -166,6 +178,15 @@ public class FileOwnershipInspection extends GenericOwnershipInspection {
 			 * IOException
 			 */
 		}
+	}
+
+	public void sortAllCommits() {
+		Collections.sort(allCommits, new Comparator<Commit>() {
+			@Override
+			public int compare(final Commit commit1, final Commit commit2) {
+				return commit1.getDate().compareTo(commit2.getDate());
+			}
+		});
 	}
 
 	@Override
@@ -263,6 +284,10 @@ public class FileOwnershipInspection extends GenericOwnershipInspection {
 				entityChangesData.get(fileName).setAuthorsAddedAndDeletedLines(
 						authorsAddedAndDeletedLines);
 				setEntityOwnerAfterCommit(fileName);
+
+				addCommitToList(fileName, commit);
+
+				allCommits.add(commit);
 			} catch (final Exception e) {
 				continue;
 			}
@@ -270,6 +295,18 @@ public class FileOwnershipInspection extends GenericOwnershipInspection {
 
 		setFileOwnershipValues(fileName, numberOfChanges, fileCreator,
 				authorsNumberOfChanges, authorsAddedAndDeletedLines);
+	}
+
+	private void addCommitToList(final String fileName, final Commit commit) {
+		ArrayList<Commit> fileCommits = entityChangesData.get(fileName)
+				.getCommits();
+
+		if (fileCommits == null) {
+			fileCommits = new ArrayList<>();
+			entityChangesData.get(fileName).setCommits(fileCommits);
+		}
+
+		fileCommits.add(commit);
 	}
 
 	private LinkedHashMap<String, List<Integer>> treatEachNodeSetEdit(
@@ -313,20 +350,19 @@ public class FileOwnershipInspection extends GenericOwnershipInspection {
 	private void updateEntitySizeValues(final GenericVisitor visitor,
 			final String fileName) {
 
-		Integer currentAddedAndDeletedLines = entityChangesData.get(fileName)
+		final FileChangesData fileChangesData = entityChangesData.get(fileName);
+		Integer currentAddedAndDeletedLines = fileChangesData
 				.getAddedAndDeletedLinesSum();
 		currentAddedAndDeletedLines += ((EditVisitor) visitor).getAddedLines()
 				+ ((EditVisitor) visitor).getDeletedLines();
 
-		entityChangesData.get(fileName)
-				.setAddedAndDeletedLinesSum(currentAddedAndDeletedLines);
+		fileChangesData.setAddedAndDeletedLinesSum(currentAddedAndDeletedLines);
 
-		Integer currentEntitySize = entityChangesData.get(fileName)
-				.getActualSize();
+		Integer currentEntitySize = fileChangesData.getActualSize();
 		currentEntitySize += ((EditVisitor) visitor).getAddedLines()
 				- ((EditVisitor) visitor).getDeletedLines();
 
-		entityChangesData.get(fileName).setActualSize(currentEntitySize);
+		fileChangesData.setActualSize(currentEntitySize);
 	}
 
 	@Override
@@ -344,4 +380,13 @@ public class FileOwnershipInspection extends GenericOwnershipInspection {
 			e.printStackTrace();
 		}
 	}
+
+	public Commit getFirstRepositoryCommit() {
+		return firstRepositoryCommit;
+	}
+
+	public Commit getLastRepositoryCommit() {
+		return lastRepositoryCommit;
+	}
+
 }

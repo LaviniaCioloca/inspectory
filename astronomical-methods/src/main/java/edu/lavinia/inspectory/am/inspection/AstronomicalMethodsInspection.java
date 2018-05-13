@@ -28,11 +28,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.metanalysis.core.delta.NodeSetEdit;
 import org.metanalysis.core.delta.SourceFileTransaction;
 import org.metanalysis.core.delta.Transaction;
@@ -45,8 +47,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 
-import edu.lavinia.inspectory.am.beans.FileMethodDynamics;
 import edu.lavinia.inspectory.am.beans.AstronomicalMethodChangesInformation;
+import edu.lavinia.inspectory.am.beans.FileMethodDynamics;
 import edu.lavinia.inspectory.am.beans.PulsarCriteria;
 import edu.lavinia.inspectory.am.beans.SupernovaCriteria;
 import edu.lavinia.inspectory.am.metrics.PulsarMetric;
@@ -55,7 +57,7 @@ import edu.lavinia.inspectory.am.utils.MethodDynamicsUtils;
 import edu.lavinia.inspectory.am.visitor.EditVisitor;
 import edu.lavinia.inspectory.am.visitor.NodeVisitor;
 import edu.lavinia.inspectory.beans.Commit;
-import edu.lavinia.inspectory.metrics.AbstractMethodMetric;
+import edu.lavinia.inspectory.metrics.MethodThresholdsMeasure;
 import edu.lavinia.inspectory.utils.CSVUtils;
 import edu.lavinia.inspectory.utils.JSONUtils;
 import edu.lavinia.inspectory.visitor.GenericVisitor;
@@ -68,7 +70,11 @@ public class AstronomicalMethodsInspection {
 	private final FileWriter csvMethodDynamicsWriter;
 	private final FileWriter jsonWriter;
 	private ArrayList<AstronomicalMethodChangesInformation> methodInformationList = new ArrayList<>();
+
 	private final ArrayList<Commit> allCommits = new ArrayList<>();
+	private LinkedHashMap<Commit, Integer> allCommitsIntoTimeFrames;
+	private Integer maximumTimeFrameNumber;
+
 	private final MethodDynamicsUtils methodDynamics = new MethodDynamicsUtils();
 
 	/**
@@ -266,6 +272,10 @@ public class AstronomicalMethodsInspection {
 			AstronomicalMethodChangesInformation methodChangesInformation) {
 
 		final PulsarMetric pulsarMetric = new PulsarMetric();
+		pulsarMetric.setAllCommits(allCommits);
+		pulsarMetric.setAllCommitsIntoTimeFrames(allCommitsIntoTimeFrames);
+		pulsarMetric.setMaximumTimeFrameNumber(maximumTimeFrameNumber);
+
 		methodChangesInformation
 				.setPulsar(pulsarMetric.isPulsar(methodChangesInformation));
 		methodChangesInformation.setPulsarSeverity(
@@ -281,6 +291,10 @@ public class AstronomicalMethodsInspection {
 			AstronomicalMethodChangesInformation methodChangesInformation) {
 
 		final SupernovaMetric supernovaMetric = new SupernovaMetric();
+		supernovaMetric.setAllCommits(allCommits);
+		supernovaMetric.setAllCommitsIntoTimeFrames(allCommitsIntoTimeFrames);
+		supernovaMetric.setMaximumTimeFrameNumber(maximumTimeFrameNumber);
+
 		methodChangesInformation.setSupernova(
 				supernovaMetric.isSupernova(methodChangesInformation));
 		methodChangesInformation.setSupernovaSeverity(
@@ -344,6 +358,14 @@ public class AstronomicalMethodsInspection {
 		return methodChangesInformation;
 	}
 
+	private void getAllCommitsIntoTimeFrames() {
+		final Pair<Integer, LinkedHashMap<Commit, Integer>> maximumTimeFrameCommits = MethodThresholdsMeasure
+				.splitCommitsIntoTimeFrames(allCommits);
+
+		maximumTimeFrameNumber = maximumTimeFrameCommits.getLeft();
+		allCommitsIntoTimeFrames = maximumTimeFrameCommits.getRight();
+	}
+
 	/**
 	 * Writes the CSV lines in the inspectory result CSV file.
 	 *
@@ -354,7 +376,7 @@ public class AstronomicalMethodsInspection {
 	public void writeCSVFileData() {
 		createAndSortAllCommits();
 
-		setMethodMetricsCommitsInformation();
+		getAllCommitsIntoTimeFrames();
 
 		for (AstronomicalMethodChangesInformation methodChangesInformation : methodInformationList) {
 			try {
@@ -426,13 +448,6 @@ public class AstronomicalMethodsInspection {
 		}
 
 		return actualSize;
-	}
-
-	private void setMethodMetricsCommitsInformation() {
-		final Commit latestCommit = allCommits.get(allCommits.size() - 1);
-		AbstractMethodMetric.setAllCommits(allCommits);
-		AbstractMethodMetric.setAllCommitsIntoTimeFrames();
-		AbstractMethodMetric.setNow(latestCommit.getDate());
 	}
 
 	/**
@@ -790,7 +805,8 @@ public class AstronomicalMethodsInspection {
 		return allMethodsResult;
 	}
 
-	public void setResult(final Map<String, AstronomicalMethodChangesInformation> result) {
+	public void setResult(
+			final Map<String, AstronomicalMethodChangesInformation> result) {
 		this.allMethodsResult = result;
 	}
 

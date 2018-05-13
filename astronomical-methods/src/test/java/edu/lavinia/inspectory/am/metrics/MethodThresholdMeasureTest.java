@@ -28,16 +28,16 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Test;
 
 import edu.lavinia.inspectory.am.beans.AstronomicalMethodChangesInformation;
 import edu.lavinia.inspectory.beans.Commit;
-import edu.lavinia.inspectory.metrics.AbstractMethodMetric;
+import edu.lavinia.inspectory.metrics.MethodThresholdsMeasure;
 
-public class AbstractMethodMetricTest {
-	private final AbstractMethodMetric methodMetric = new PulsarMetric();
+public class MethodThresholdMeasureTest {
 
 	private static final String DATE_FORMAT = "yyyy/MM/dd";
 
@@ -47,7 +47,7 @@ public class AbstractMethodMetricTest {
 				.parse("2010/01/01");
 		final Date end = new SimpleDateFormat(DATE_FORMAT).parse("2010/01/05");
 
-		assertTrue(AbstractMethodMetric.getTimeDifferenceInDays(start,
+		assertTrue(MethodThresholdsMeasure.getTimeDifferenceInDays(start,
 				end) == 4.0);
 	}
 
@@ -61,7 +61,7 @@ public class AbstractMethodMetricTest {
 		expectedResultList.add("refactor");
 		expectedResultList.add("refine");
 		expectedResultList.add("develop");
-		assertEquals(methodMetric.getCommitsTypes(changesList),
+		assertEquals(MethodThresholdsMeasure.getCommitsTypes(changesList),
 				expectedResultList);
 	}
 
@@ -101,7 +101,7 @@ public class AbstractMethodMetricTest {
 		commit.setDate(new SimpleDateFormat(DATE_FORMAT).parse("2017/11/08"));
 		commits.add(commit);
 		methodChangesInformation.setCommits(commits);
-		final HashMap<Commit, Integer> expected = new HashMap<>();
+		final LinkedHashMap<Commit, Integer> expected = new LinkedHashMap<>();
 		expected.put(commits.get(0), 0);
 		expected.put(commits.get(1), 0);
 		expected.put(commits.get(2), 1);
@@ -111,8 +111,11 @@ public class AbstractMethodMetricTest {
 		expected.put(commits.get(6), 2);
 		expected.put(commits.get(7), 2);
 
-		assertEquals(expected,
-				AbstractMethodMetric.splitCommitsIntoTimeFrames(commits));
+		final Pair<Integer, LinkedHashMap<Commit, Integer>> expectedPair = Pair
+				.of(2, expected);
+
+		assertEquals(expectedPair,
+				MethodThresholdsMeasure.splitCommitsIntoTimeFrames(commits));
 	}
 	/*
 	 * @Test public void getActiveTimeFrameMethodPointsOne() throws

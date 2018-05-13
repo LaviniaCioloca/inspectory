@@ -12,7 +12,7 @@
  * copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MethodThresholdsMeasure.MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
@@ -28,18 +28,19 @@ import java.util.Map;
 
 import edu.lavinia.inspectory.am.beans.AstronomicalMethodChangesInformation;
 import edu.lavinia.inspectory.beans.Commit;
-import edu.lavinia.inspectory.metrics.AbstractMethodMetric;
+import edu.lavinia.inspectory.metrics.MethodThresholdsMeasure;
 
 /**
  * Implementation of {@link edu.lavinia.inspectory.am.metrics.MethodMetrics
- * MethodMetrics} class for Pulsar methods identification.
+ * MethodThresholdsMeasure.MethodMetrics} class for Pulsar methods
+ * identification.
  *
  * @author Lavinia Cioloca
  * @see {@link edu.lavinia.inspectory.am.metrics.SupernovaMetric
  *      SupernovaMetric}
  *
  */
-public class PulsarMetric extends AbstractMethodMetric {
+public class PulsarMetric {
 
 	/**
 	 * It is considered for a method to have <b>many pulsar cycles</b> if it has
@@ -51,6 +52,10 @@ public class PulsarMetric extends AbstractMethodMetric {
 	private Integer averageSizeIncreasePoints = 0;
 	private Integer methodSizePoints = 0;
 	private Integer activityStatePoints = 0;
+
+	private Integer maximumTimeFrameNumber;
+	private ArrayList<Commit> allCommits;
+	private Map<Commit, Integer> allCommitsIntoTimeFrames;
 
 	/**
 	 * @param countRecentPulsarCycles
@@ -79,25 +84,27 @@ public class PulsarMetric extends AbstractMethodMetric {
 	 *         method's {@code averageSizeIncrease}.
 	 */
 	public Integer getAverageSizeIncrease(final Double averageSizeIncrease) {
-		if (averageSizeIncrease >= 0.0
-				&& averageSizeIncrease < (1.0 / 3.0) * MAJOR_SIZE_CHANGE) {
+		if (averageSizeIncrease >= 0.0 && averageSizeIncrease < (1.0 / 3.0)
+				* MethodThresholdsMeasure.MAJOR_SIZE_CHANGE) {
 			return 3;
-		} else if (averageSizeIncrease >= (1.0 / 3.0) * MAJOR_SIZE_CHANGE
-				&& averageSizeIncrease < (2.0 / 3.0) * MAJOR_SIZE_CHANGE) {
+		} else if (averageSizeIncrease >= (1.0 / 3.0)
+				* MethodThresholdsMeasure.MAJOR_SIZE_CHANGE
+				&& averageSizeIncrease < (2.0 / 3.0)
+						* MethodThresholdsMeasure.MAJOR_SIZE_CHANGE) {
 			return 2;
-		} else if (averageSizeIncrease >= (2.0 / 3.0) * MAJOR_SIZE_CHANGE
-				&& averageSizeIncrease < MAJOR_SIZE_CHANGE) {
+		} else if (averageSizeIncrease >= (2.0 / 3.0)
+				* MethodThresholdsMeasure.MAJOR_SIZE_CHANGE
+				&& averageSizeIncrease < MethodThresholdsMeasure.MAJOR_SIZE_CHANGE) {
 			return 1;
 		}
 
 		return 0;
 	}
 
-	@Override
 	public Integer getMethodSizePoints(final Integer methodSize) {
-		if (methodSize >= EXTREMELY_LARGE_METHOD) {
+		if (methodSize >= MethodThresholdsMeasure.EXTREMELY_LARGE_METHOD) {
 			return 2;
-		} else if (methodSize >= VERY_LARGE_METHOD) {
+		} else if (methodSize >= MethodThresholdsMeasure.VERY_LARGE_METHOD) {
 			return 1;
 		}
 
@@ -117,7 +124,7 @@ public class PulsarMetric extends AbstractMethodMetric {
 		final ArrayList<Commit> commits = methodChangesInformation.getCommits();
 		final ArrayList<Commit> latestCommits = new ArrayList<>();
 
-		if (commits.size() < ACTIVELY_CHANGED) {
+		if (commits.size() < MethodThresholdsMeasure.ACTIVELY_CHANGED) {
 			return false;
 		}
 
@@ -126,7 +133,7 @@ public class PulsarMetric extends AbstractMethodMetric {
 		final Integer countActiveChanges = checkIfActivityIsInLongTimespan(
 				latestCommits);
 
-		return countActiveChanges >= ACTIVELY_CHANGED;
+		return countActiveChanges >= MethodThresholdsMeasure.ACTIVELY_CHANGED;
 	}
 
 	private Integer checkIfActivityIsInLongTimespan(
@@ -137,7 +144,7 @@ public class PulsarMetric extends AbstractMethodMetric {
 		for (int i = allCommits.size() - 1; i >= 0; --i) {
 			if ((allCommitsIntoTimeFrames
 					.get(allCommits.get(i)) >= maximumTimeFrameNumber
-							- LONG_TIMESPAN)) {
+							- MethodThresholdsMeasure.LONG_TIMESPAN)) {
 				for (int j = 0; j < latestCommits.size(); ++j) {
 					if (allCommits.get(i).equals(latestCommits.get(j))) {
 						++countActiveChanges;
@@ -155,7 +162,7 @@ public class PulsarMetric extends AbstractMethodMetric {
 			final ArrayList<Commit> latestCommits) {
 
 		for (int i = commits.size() - 1; i > commits.size() - 1
-				- ACTIVELY_CHANGED; --i) {
+				- MethodThresholdsMeasure.ACTIVELY_CHANGED; --i) {
 			latestCommits.add(commits.get(i));
 		}
 	}
@@ -164,18 +171,19 @@ public class PulsarMetric extends AbstractMethodMetric {
 	 * @param countRecentPulsarCycles
 	 * @param averageSizeIncrease
 	 * @param fileSize
-	 * @param commit
+	 * @param lastCommit
 	 * @return An Integer representing the total points of Pulsar severity.
 	 */
 	public Integer countPulsarSeverityPoints(
 			final Integer countRecentPulsarCycles,
 			final Double averageSizeIncrease, final Integer fileSize,
-			final Commit commit) {
+			final Commit lastCommit) {
 
 		recentCyclesPoints = getRecentCyclesPoints(countRecentPulsarCycles);
 		averageSizeIncreasePoints = getAverageSizeIncrease(averageSizeIncrease);
 		methodSizePoints = getMethodSizePoints(fileSize);
-		activityStatePoints = getActiveMethodPoints(commit);
+		activityStatePoints = MethodThresholdsMeasure.getActiveMethodPoints(
+				lastCommit, allCommits.get(allCommits.size() - 1));
 
 		return 1 + recentCyclesPoints + averageSizeIncreasePoints
 				+ methodSizePoints + activityStatePoints;
@@ -225,20 +233,22 @@ public class PulsarMetric extends AbstractMethodMetric {
 
 	/**
 	 * A PulsarCycle is considered recent if it was detected very recently, i.e.
-	 * in the last MEDIUM_TIMESPAN time-frames of the project.
+	 * in the last MethodThresholdsMeasure.MEDIUM_TIMESPAN time-frames of the
+	 * project.
 	 *
 	 * @param commitDate
 	 * @return An Integer: 1 if Pulsar cycle is recent and 0 if false.
 	 */
 	/*
 	 * public Integer checkIfRecentPulsarCycle(Date commitDate) { if
-	 * (getDifferenceInDays(commitDate, now) <= MEDIUM_TIMESPAN) { return 1; }
-	 * return 0; }
+	 * (getDifferenceInDays(commitDate, now) <=
+	 * MethodThresholdsMeasure.MEDIUM_TIMESPAN) { return 1; } return 0; }
 	 */
 
 	/**
 	 * A PulsarCycle is considered recent if it was detected very recently, i.e.
-	 * in the last MEDIUM_TIMESPAN time-frames of the project.
+	 * in the last MethodThresholdsMeasure.MEDIUM_TIMESPAN time-frames of the
+	 * project.
 	 *
 	 * @param commitDate
 	 * @return An Integer: 1 if Pulsar cycle is recent and 0 if false.
@@ -247,7 +257,7 @@ public class PulsarMetric extends AbstractMethodMetric {
 		for (int i = allCommits.size() - 1; i >= 0; --i) {
 			if ((allCommitsIntoTimeFrames
 					.get(allCommits.get(i)) >= maximumTimeFrameNumber
-							- MEDIUM_TIMESPAN)) {
+							- MethodThresholdsMeasure.MEDIUM_TIMESPAN)) {
 				if (allCommits.get(i).getDate().compareTo(commitDate) <= 0) {
 					return 1;
 				} else {
@@ -261,9 +271,9 @@ public class PulsarMetric extends AbstractMethodMetric {
 
 	/**
 	 * @param methodChangesInformation
-	 * @return A Map with the values for the following Pulsar criteria:
-	 *         averageSizeIncrease; countPulsarCycles; countRecentPulsarCycles;
-	 *         isPulsar.
+	 * @return A MethodThresholdsMeasure.Map with the values for the following
+	 *         Pulsar criteria: averageSizeIncrease; countPulsarCycles;
+	 *         countRecentPulsarCycles; isPulsar.
 	 */
 	public Map<String, Object> getPulsarCriterionValues(
 			final AstronomicalMethodChangesInformation methodChangesInformation) {
@@ -278,11 +288,13 @@ public class PulsarMetric extends AbstractMethodMetric {
 		Integer countPulsarCycles = 0;
 		Integer methodGrowth = 0;
 
-		if (methodChangesInformation.getActualSize() >= SIGNIFICANT_METHOD_SIZE
+		if (methodChangesInformation
+				.getActualSize() >= MethodThresholdsMeasure.SIGNIFICANT_METHOD_SIZE
 				&& isMethodActivelyChanged(methodChangesInformation)) {
 			final ArrayList<Integer> changesList = methodChangesInformation
 					.getChangesList();
-			final ArrayList<String> commitsTypes = getCommitsTypes(changesList);
+			final ArrayList<String> commitsTypes = MethodThresholdsMeasure
+					.getCommitsTypes(changesList);
 
 			for (int i = 0; i < commitsTypes.size() - 1; ++i) {
 				if (commitsTypes.get(i).equals("refactor")
@@ -294,7 +306,7 @@ public class PulsarMetric extends AbstractMethodMetric {
 
 				if (commitsTypes.get(i).equals("refine")) {
 					methodGrowth += changesList.get(i);
-					if (methodGrowth >= SMALL_SIZE_CHANGE) {
+					if (methodGrowth >= MethodThresholdsMeasure.SMALL_SIZE_CHANGE) {
 						++countPulsarCycles;
 						countRecentPulsarCycles += checkIfRecentPulsarCycle(
 								commits.get(i).getDate());
@@ -355,7 +367,7 @@ public class PulsarMetric extends AbstractMethodMetric {
 	 * {@link edu.lavinia.inspectory.am.metrics.MethodMetrics.SMALL_SIZE_CHANGE
 	 * SMALL_SIZE_CHANGE} lines. A Pulsar needs to have at least
 	 * {@link edu.lavinia.inspectory.am.metrics.MethodMetrics.MANY_PULSAR_CYCLES
-	 * MANY_PULSAR_CYCLES}.
+	 * MethodThresholdsMeasure.MANY_PULSAR_CYCLES}.
 	 *
 	 * @param methodChangesInformation
 	 *            The information of the current method
@@ -382,6 +394,32 @@ public class PulsarMetric extends AbstractMethodMetric {
 
 	public Integer getActivityStatePoints() {
 		return activityStatePoints;
+	}
+
+	public ArrayList<Commit> getAllCommits() {
+		return allCommits;
+	}
+
+	public void setAllCommits(final ArrayList<Commit> allCommits) {
+		this.allCommits = allCommits;
+	}
+
+	public Map<Commit, Integer> getAllCommitsIntoTimeFrames() {
+		return allCommitsIntoTimeFrames;
+	}
+
+	public void setAllCommitsIntoTimeFrames(
+			final Map<Commit, Integer> allCommitsIntoTimeFrames) {
+		this.allCommitsIntoTimeFrames = allCommitsIntoTimeFrames;
+	}
+
+	public Integer getMaximumTimeFrameNumber() {
+		return maximumTimeFrameNumber;
+	}
+
+	public void setMaximumTimeFrameNumber(
+			final Integer maximumTimeFrameNumber) {
+		this.maximumTimeFrameNumber = maximumTimeFrameNumber;
 	}
 
 }
