@@ -165,9 +165,9 @@ public interface MethodThresholdsMeasure extends TimeThresholdsMeasure {
 	 *         in metrics.
 	 */
 	public static Integer getActiveMethodPoints(final Commit lastMethodCommit,
-			final Commit lastCommit) {
+			final Commit lastRepositoryCommit) {
 		if (getTimeDifferenceInDays(lastMethodCommit.getDate(),
-				lastCommit.getDate()) <= MEDIUM_TIMESPAN * TIME_FRAME) {
+				lastRepositoryCommit.getDate()) <= MEDIUM_TIMESPAN * TIME_FRAME) {
 			return 1;
 		}
 

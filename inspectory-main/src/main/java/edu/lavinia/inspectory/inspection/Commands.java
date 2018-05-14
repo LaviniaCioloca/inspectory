@@ -28,6 +28,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import org.apache.commons.cli.CommandLine;
@@ -43,8 +45,10 @@ import org.metanalysis.core.project.PersistentProject;
 
 import edu.lavinia.inspectory.am.inspection.AstronomicalMethodsInspection;
 import edu.lavinia.inspectory.beans.Commit;
+import edu.lavinia.inspectory.op.beans.FileChangesData;
 import edu.lavinia.inspectory.op.inspection.FileOwnershipInspection;
 import edu.lavinia.inspectory.op.inspection.MethodOwnershipInspection;
+import edu.lavinia.inspectory.op.metrics.MethodOwnershipProblemsMetric;
 import edu.lavinia.inspectory.utils.CSVUtils;
 
 public class Commands {
@@ -314,18 +318,17 @@ public class Commands {
 		methodsOwnershipProblemsInspection.createResults();
 		methodsOwnershipProblemsInspection.writeFileResults();
 
-		/*
-		 * final MethodOwnershipProblemsMetric methodOwnershipProblemsMetric =
-		 * new MethodOwnershipProblemsMetric(); for (final HashMap.Entry<String,
-		 * FileChangesData> methodData : methodsOwnershipProblemsInspection
-		 * .getEntityChangesData().entrySet()) { final Map<String, Object>
-		 * result = methodOwnershipProblemsMetric
-		 * .getOwnershipProblemsCriterionValues(methodData.getValue(),
-		 * lastRepositoryCommit);
-		 * 
-		 * if (!result.isEmpty()) { System.out.println(methodData.getKey() +
-		 * " - " + result + "\n"); } }
-		 */
+		final MethodOwnershipProblemsMetric methodOwnershipProblemsMetric = new MethodOwnershipProblemsMetric();
+		for (final HashMap.Entry<String, FileChangesData> methodData : methodsOwnershipProblemsInspection
+				.getEntityChangesData().entrySet()) {
+			final Map<String, Object> result = methodOwnershipProblemsMetric
+					.getOwnershipProblemsCriterionValues(methodData.getValue(),
+							lastRepositoryCommit);
+
+			if (!result.isEmpty()) {
+				System.out.println(methodData.getKey() + " - " + result + "\n");
+			}
+		}
 
 		methodsCsvWriter.flush();
 		methodsCsvWriter.close();

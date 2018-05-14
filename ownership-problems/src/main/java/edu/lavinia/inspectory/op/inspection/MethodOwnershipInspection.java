@@ -539,7 +539,6 @@ public class MethodOwnershipInspection extends GenericOwnershipInspection {
 	@Override
 	public void writeFileResults() {
 		try {
-
 			for (final HashMap.Entry<String, FileChangesData> entry : entityChangesData
 					.entrySet()) {
 				final ArrayList<String> methodOwnershipInformationLine = addMethodOwnershipInformation(
