@@ -45,13 +45,14 @@ public class FileOwnershipInspectionTest {
 	private static Optional<PersistentProject> project;
 
 	private static FileWriter csvWriter;
+	private static FileWriter jsonWriter;
 	private static FileOwnershipInspection fileOwnershipInspection;
 
 	public FileOwnershipInspectionTest() {
 		try {
 			csvWriter = new FileWriter(FILE);
 			fileOwnershipInspection = new FileOwnershipInspection(project,
-					csvWriter);
+					csvWriter, jsonWriter);
 		} catch (final IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

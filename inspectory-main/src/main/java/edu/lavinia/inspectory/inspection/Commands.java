@@ -28,8 +28,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 import org.apache.commons.cli.CommandLine;
@@ -45,10 +43,8 @@ import org.metanalysis.core.project.PersistentProject;
 
 import edu.lavinia.inspectory.am.inspection.AstronomicalMethodsInspection;
 import edu.lavinia.inspectory.beans.Commit;
-import edu.lavinia.inspectory.op.beans.FileChangesData;
 import edu.lavinia.inspectory.op.inspection.FileOwnershipInspection;
 import edu.lavinia.inspectory.op.inspection.MethodOwnershipInspection;
-import edu.lavinia.inspectory.op.metrics.MethodOwnershipProblemsMetric;
 import edu.lavinia.inspectory.utils.CSVUtils;
 
 public class Commands {
@@ -66,6 +62,8 @@ public class Commands {
 
 	private final static String OWNERSHIP_PROBLEMS_CLASSES_CSV_FILE_NAME = "ownership-problems-classes-result.csv";
 	private final static String OWNERSHIP_PROBLEMS_METHODS_CSV_FILE_NAME = "ownership-problems-methods-result.csv";
+	private final static String OWNERSHIP_PROBLEMS_CLASSES_JSON_FILE_NAME = "ownership-problems-classes-result.json";
+	private final static String OWNERSHIP_PROBLEMS_METHODS_JSON_FILE_NAME = "ownership-problems-methods-result.json";
 
 	public Commands(final String[] args,
 			final Optional<PersistentProject> project) {
@@ -256,13 +254,22 @@ public class Commands {
 		final String home = System.getProperty("user.dir");
 		final Path path = Paths.get(home, ".inspectory");
 
-		final String methodsFilePath = home + File.separator + ".inspectory"
+		final String methodsCSVFilePath = home + File.separator + ".inspectory"
 				+ File.separator + OWNERSHIP_PROBLEMS_METHODS_CSV_FILE_NAME;
-		final File methodsCsvFile = new File(methodsFilePath);
+		final File methodsCsvFile = new File(methodsCSVFilePath);
 
-		final String classesFilePath = home + File.separator + ".inspectory"
+		final String methodsJsonFilePath = home + File.separator + ".inspectory"
+				+ File.separator + OWNERSHIP_PROBLEMS_METHODS_JSON_FILE_NAME;
+		final File methodsJsonFile = new File(methodsJsonFilePath);
+
+		final String classesCSVFilePath = home + File.separator + ".inspectory"
 				+ File.separator + OWNERSHIP_PROBLEMS_CLASSES_CSV_FILE_NAME;
-		final File classesCsvFile = new File(classesFilePath);
+		final File classesCsvFile = new File(classesCSVFilePath);
+
+		final String classesJsonFilePath = home + File.separator + ".inspectory"
+				+ File.separator + OWNERSHIP_PROBLEMS_CLASSES_JSON_FILE_NAME;
+		// final File classesJsonFile = new File(classesJsonFilePath);
+		final File classesJsonFile = null;
 
 		final boolean directoryExists = Files.exists(path);
 
@@ -271,16 +278,17 @@ public class Commands {
 					directoryExists);
 
 			final Commit lastRepositoryCommit = writeClassesOwnershipResult(
-					classesCsvFile);
+					classesCsvFile, classesJsonFile);
 
-			writeMethodsOwnershipResult(methodsCsvFile, lastRepositoryCommit);
+			writeMethodsOwnershipResult(methodsCsvFile, methodsJsonFile,
+					lastRepositoryCommit);
 		} catch (final IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	private Commit writeClassesOwnershipResult(final File classesCsvFile)
-			throws IOException {
+	private Commit writeClassesOwnershipResult(final File classesCsvFile,
+			final File classesJsonFile) throws IOException {
 
 		final FileWriter classesCsvWriter = new FileWriter(classesCsvFile);
 		CSVUtils.writeLine(classesCsvWriter,
@@ -290,8 +298,11 @@ public class Commands {
 						"Authors Ownership Percentages [current ownership values]",
 						"Authors - Line changes made"));
 
+		// final FileWriter methodsJsonWriter = new FileWriter(classesJsonFile);
+		final FileWriter classesJsonWriter = null;
+
 		final FileOwnershipInspection classesOwnershipProblemsInspection = new FileOwnershipInspection(
-				project, classesCsvWriter);
+				project, classesCsvWriter, classesJsonWriter);
 		classesOwnershipProblemsInspection.createResults();
 		classesOwnershipProblemsInspection.writeFileResults();
 
@@ -302,36 +313,31 @@ public class Commands {
 	}
 
 	private void writeMethodsOwnershipResult(final File methodsCsvFile,
-			final Commit lastRepositoryCommit) throws IOException {
+			final File methodsJsonFile, final Commit lastRepositoryCommit)
+			throws IOException {
 
 		final FileWriter methodsCsvWriter = new FileWriter(methodsCsvFile);
-		CSVUtils.writeLine(methodsCsvWriter,
-				Arrays.asList("File", "Class", "Method", "Number of changes",
-						"Number of authors", "Method current size",
-						"Number of owners",
-						"Method owners [chronological order]",
-						"Authors Ownership Percentages [current ownership values]",
-						"Author - Line changes made"));
+		CSVUtils.writeLine(methodsCsvWriter, Arrays.asList("File", "Class",
+				"Method", "Number of changes", "Number of authors",
+				"Method current size", "Number of owners",
+				"Method owners [chronological order]",
+				"Authors Ownership Percentages [current ownership values]",
+				"Author - Line changes made", "Ownership Problems Severity",
+				"Method has Ownership Problems"));
+
+		final FileWriter methodsJsonWriter = new FileWriter(methodsJsonFile);
 
 		final MethodOwnershipInspection methodsOwnershipProblemsInspection = new MethodOwnershipInspection(
-				project, methodsCsvWriter);
+				project, methodsCsvWriter, methodsJsonWriter,
+				lastRepositoryCommit);
 		methodsOwnershipProblemsInspection.createResults();
 		methodsOwnershipProblemsInspection.writeFileResults();
-
-		final MethodOwnershipProblemsMetric methodOwnershipProblemsMetric = new MethodOwnershipProblemsMetric();
-		for (final HashMap.Entry<String, FileChangesData> methodData : methodsOwnershipProblemsInspection
-				.getEntityChangesData().entrySet()) {
-			final Map<String, Object> result = methodOwnershipProblemsMetric
-					.getOwnershipProblemsCriterionValues(methodData.getValue(),
-							lastRepositoryCommit);
-
-			if (!result.isEmpty()) {
-				System.out.println(methodData.getKey() + " - " + result + "\n");
-			}
-		}
+		methodsOwnershipProblemsInspection.writeJSONMethodDynamicsData();
 
 		methodsCsvWriter.flush();
 		methodsCsvWriter.close();
+		methodsJsonWriter.flush();
+		methodsJsonWriter.close();
 	}
 
 	private void checkDirectoryExistance(final Path path,

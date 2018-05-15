@@ -46,13 +46,14 @@ public class MethodOwnershipInspectionTest {
 	private static Optional<PersistentProject> project;
 
 	private static FileWriter csvWriter;
+	private static FileWriter jsonWriter;
 	private static MethodOwnershipInspection methodOwnershipInspection;
 
 	public MethodOwnershipInspectionTest() {
 		try {
 			csvWriter = new FileWriter(FILE);
 			methodOwnershipInspection = new MethodOwnershipInspection(project,
-					csvWriter);
+					csvWriter, jsonWriter, new Commit());
 		} catch (final IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -36,14 +36,15 @@ public class GenericOwnershipInspectionTest {
 	private static Optional<PersistentProject> project;
 
 	private static FileWriter csvWriter;
+	private static FileWriter jsonWriter;
 	private static GenericOwnershipInspection genericOwnershipInspection;
 
 	public GenericOwnershipInspectionTest() {
 		try {
 			csvWriter = new FileWriter(FILE);
 			genericOwnershipInspection = new FileOwnershipInspection(project,
-					csvWriter);
-		} catch (IOException e) {
+					csvWriter, jsonWriter);
+		} catch (final IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

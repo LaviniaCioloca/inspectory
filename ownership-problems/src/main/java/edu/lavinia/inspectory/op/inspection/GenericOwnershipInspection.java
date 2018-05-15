@@ -41,6 +41,7 @@ import edu.lavinia.inspectory.op.beans.FileChangesData;
 public abstract class GenericOwnershipInspection {
 	protected final Optional<PersistentProject> project;
 	protected final FileWriter csvWriter;
+	protected final FileWriter jsonWriter;
 	protected Map<String, FileChangesData> entityChangesData = new HashMap<>();
 
 	/**
@@ -53,9 +54,10 @@ public abstract class GenericOwnershipInspection {
 	 *            The writer of result CSV file.
 	 */
 	public GenericOwnershipInspection(final Optional<PersistentProject> project,
-			final FileWriter csvWriter) {
+			final FileWriter csvWriter, final FileWriter jsonWriter) {
 		this.project = project;
 		this.csvWriter = csvWriter;
+		this.jsonWriter = jsonWriter;
 	}
 
 	public LinkedHashMap<String, List<Integer>> checkChangedLinesInMap(

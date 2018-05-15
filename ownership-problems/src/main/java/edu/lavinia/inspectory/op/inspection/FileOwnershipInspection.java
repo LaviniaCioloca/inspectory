@@ -61,8 +61,8 @@ public class FileOwnershipInspection extends GenericOwnershipInspection {
 	 *            The writer of result CSV file.
 	 */
 	public FileOwnershipInspection(final Optional<PersistentProject> project,
-			final FileWriter csvWriter) {
-		super(project, csvWriter);
+			final FileWriter csvWriter, final FileWriter jsonWriter) {
+		super(project, csvWriter, jsonWriter);
 	}
 
 	private void addFileGeneralInformation(

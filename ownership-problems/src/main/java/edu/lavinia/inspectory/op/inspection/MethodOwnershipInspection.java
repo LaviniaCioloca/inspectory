@@ -43,12 +43,23 @@ import org.metanalysis.core.model.Node;
 import org.metanalysis.core.project.PersistentProject;
 import org.metanalysis.core.project.Project.HistoryEntry;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+
 import edu.lavinia.inspectory.beans.Commit;
 import edu.lavinia.inspectory.op.beans.FileChangesData;
 import edu.lavinia.inspectory.op.beans.MethodChangesData;
+import edu.lavinia.inspectory.op.beans.MethodsInFileAffectedByOwnershipProblems;
+import edu.lavinia.inspectory.op.metrics.MethodOwnershipProblemsMetric;
 import edu.lavinia.inspectory.utils.CSVUtils;
+import edu.lavinia.inspectory.utils.JSONUtils;
 
 public class MethodOwnershipInspection extends GenericOwnershipInspection {
+
+	private final Commit lastRepositoryCommit;
+	private final Map<String, MethodsInFileAffectedByOwnershipProblems> filesAffectedAndTheirSeverity = new HashMap<>();
+	private final MethodOwnershipProblemsMetric methodOwnershipProblemsMetric = new MethodOwnershipProblemsMetric();
 
 	/**
 	 * MethodOwnershipInspection Constructor that receives the persistent
@@ -60,8 +71,10 @@ public class MethodOwnershipInspection extends GenericOwnershipInspection {
 	 *            The writer of result CSV file.
 	 */
 	public MethodOwnershipInspection(final Optional<PersistentProject> project,
-			final FileWriter csvWriter) {
-		super(project, csvWriter);
+			final FileWriter csvWriter, final FileWriter jsonWriter,
+			final Commit lastRepositoryCommit) {
+		super(project, csvWriter, jsonWriter);
+		this.lastRepositoryCommit = lastRepositoryCommit;
 	}
 
 	private ArrayList<String> addMethodOwnershipInformation(
@@ -539,10 +552,12 @@ public class MethodOwnershipInspection extends GenericOwnershipInspection {
 	@Override
 	public void writeFileResults() {
 		try {
-			for (final HashMap.Entry<String, FileChangesData> entry : entityChangesData
+			for (final HashMap.Entry<String, FileChangesData> methodData : entityChangesData
 					.entrySet()) {
 				final ArrayList<String> methodOwnershipInformationLine = addMethodOwnershipInformation(
-						entry.getKey());
+						methodData.getKey());
+
+				addSeverityResults(methodData, methodOwnershipInformationLine);
 
 				CSVUtils.writeLine(csvWriter, methodOwnershipInformationLine,
 						',', '"');
@@ -550,6 +565,109 @@ public class MethodOwnershipInspection extends GenericOwnershipInspection {
 		} catch (final IOException e) {
 			e.printStackTrace();
 
+		}
+	}
+
+	private void addSeverityResults(
+			final HashMap.Entry<String, FileChangesData> methodData,
+			final ArrayList<String> methodOwnershipInformationLine) {
+		final String methodName = ((MethodChangesData) methodData
+				.getValue()).getMethodName();
+
+		final Map<String, Object> result = methodOwnershipProblemsMetric
+				.getOwnershipProblemsCriterionValues(
+						methodData.getValue(), lastRepositoryCommit);
+
+		final Integer ownershipProblemsSeverity = Integer.decode(String
+				.valueOf(result.get("ownershipProblemsSeverity")));
+		methodOwnershipInformationLine
+				.add(String.valueOf(ownershipProblemsSeverity));
+
+		final Boolean hasOwnershipProblems = Boolean.valueOf(
+				String.valueOf(result.get("hasOwnershipProblems")));
+		methodOwnershipInformationLine
+				.add(String.valueOf(hasOwnershipProblems));
+
+		treatMethodsAffectedByOwnershipProblems(methodData, methodName,
+				ownershipProblemsSeverity, hasOwnershipProblems);
+	}
+
+	private void treatMethodsAffectedByOwnershipProblems(
+			final HashMap.Entry<String, FileChangesData> methodData,
+			final String methodName, final Integer ownershipProblemsSeverity,
+			final Boolean hasOwnershipProblems) {
+
+		if (ownershipProblemsSeverity >= 6
+				&& hasOwnershipProblems.equals(true)) {
+
+			MethodsInFileAffectedByOwnershipProblems methodsAffectedInFile = filesAffectedAndTheirSeverity
+					.get(methodData.getValue().getFileName());
+
+			if (methodsAffectedInFile == null) {
+				methodsAffectedInFile = addNewMethodInAffectedMap(methodName,
+						ownershipProblemsSeverity);
+			} else {
+				updateMethodInAffectedMap(methodName, ownershipProblemsSeverity,
+						methodsAffectedInFile);
+			}
+
+			filesAffectedAndTheirSeverity.put(
+					methodData.getValue().getFileName(), methodsAffectedInFile);
+		}
+	}
+
+	private void updateMethodInAffectedMap(final String methodName,
+			final Integer ownershipProblemsSeverity,
+			final MethodsInFileAffectedByOwnershipProblems methodsAffectedInFile) {
+
+		final ArrayList<String> currentAffectedMethods = methodsAffectedInFile
+				.getMethodsName();
+		currentAffectedMethods.add(methodName);
+
+		Integer currentNumberOfAffectedMethods = methodsAffectedInFile
+				.getNumberOfMethodsAffected();
+		methodsAffectedInFile
+				.setNumberOfMethodsAffected(++currentNumberOfAffectedMethods);
+
+		Integer currentSeverityOfAffectedMethods = methodsAffectedInFile
+				.getSumOfMethodsSeverity();
+		currentSeverityOfAffectedMethods += ownershipProblemsSeverity;
+		methodsAffectedInFile
+				.setSumOfMethodsSeverity(currentSeverityOfAffectedMethods);
+	}
+
+	private MethodsInFileAffectedByOwnershipProblems addNewMethodInAffectedMap(
+			final String methodName, final Integer ownershipProblemsSeverity) {
+
+		final MethodsInFileAffectedByOwnershipProblems methodsAffectedInFile = new MethodsInFileAffectedByOwnershipProblems();
+		methodsAffectedInFile
+				.setMethodsName(new ArrayList<>(Arrays.asList(methodName)));
+		methodsAffectedInFile.setNumberOfMethodsAffected(1);
+		methodsAffectedInFile
+				.setSumOfMethodsSeverity(ownershipProblemsSeverity);
+
+		return methodsAffectedInFile;
+	}
+
+	public void writeJSONMethodDynamicsData() {
+		final JSONUtils jsonUtils = new JSONUtils();
+		try {
+			final JsonArray jsonArray = new JsonArray();
+
+			for (final HashMap.Entry<String, MethodsInFileAffectedByOwnershipProblems> entry : filesAffectedAndTheirSeverity
+					.entrySet()) {
+				jsonArray.add(jsonUtils.getOwnershipPropertyJSON(entry.getKey(),
+						entry.getValue().getNumberOfMethodsAffected(),
+						"Ownership Problems Methods"));
+				jsonArray.add(jsonUtils.getOwnershipPropertyJSON(entry.getKey(),
+						entry.getValue().getSumOfMethodsSeverity(),
+						"Ownership Problems Severity"));
+			}
+
+			final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+			jsonWriter.write(gson.toJson(jsonArray));
+		} catch (final IOException e) {
+			e.printStackTrace();
 		}
 	}
 }

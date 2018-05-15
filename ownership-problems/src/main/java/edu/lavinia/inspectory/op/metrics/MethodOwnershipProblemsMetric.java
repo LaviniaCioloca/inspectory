@@ -1,8 +1,8 @@
 package edu.lavinia.inspectory.op.metrics;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import edu.lavinia.inspectory.beans.Commit;
@@ -11,7 +11,7 @@ import edu.lavinia.inspectory.op.beans.FileChangesData;
 
 public class MethodOwnershipProblemsMetric {
 
-	private final static Integer MANY_FILE_OWNERS = 2;
+	private final static Integer MANY_METHOD_OWNERS = 2;
 
 	public Integer getMethodSizePoints(final Integer methodSize) {
 		if (methodSize >= MethodThresholdsMeasure.EXTREMELY_LARGE_METHOD) {
@@ -25,6 +25,7 @@ public class MethodOwnershipProblemsMetric {
 
 	public boolean checkIfMethodOlderThanMediumTimespan(
 			final Commit firstMethodCommit, final Commit lastRepositoryCommit) {
+
 		if (MethodThresholdsMeasure.getTimeDifferenceInDays(
 				firstMethodCommit.getDate(),
 				lastRepositoryCommit
@@ -38,6 +39,7 @@ public class MethodOwnershipProblemsMetric {
 
 	public Integer getNumberOfDisruptiveMethodOwners(
 			final FileChangesData methodChangesData) {
+
 		Integer numberOfDisruptiveMethodOwners = 0;
 		final ArrayList<String> previousOwners = new ArrayList<>();
 
@@ -86,12 +88,10 @@ public class MethodOwnershipProblemsMetric {
 
 	public Integer getDisruptiveOwnersPoints(
 			final Integer numberOfDisruptiveMethodOwners) {
-		if (numberOfDisruptiveMethodOwners >= 3) {
+		if (numberOfDisruptiveMethodOwners >= MANY_METHOD_OWNERS) {
 			return 3;
-		} else if (numberOfDisruptiveMethodOwners == 2) {
-			return 2;
 		} else if (numberOfDisruptiveMethodOwners == 1) {
-			return 1;
+			return 2;
 		}
 
 		return 0;
@@ -124,9 +124,10 @@ public class MethodOwnershipProblemsMetric {
 
 		final String[] ownersArray = owners.toArray(new String[owners.size()]);
 
-		if (longestSequenceOfDistinctOwners(ownersArray) >= 3) {
+		if (longestSequenceOfDistinctOwners(
+				ownersArray) >= MANY_METHOD_OWNERS) {
 			return 2;
-		} else if (longestSequenceOfDistinctOwners(ownersArray) > 0) {
+		} else if (longestSequenceOfDistinctOwners(ownersArray) == 1) {
 			return 1;
 		}
 
@@ -135,6 +136,7 @@ public class MethodOwnershipProblemsMetric {
 
 	public static Integer getActiveMethodPoints(final Commit lastMethodCommit,
 			final Commit lastRepositoryCommit) {
+
 		if (MethodThresholdsMeasure.getTimeDifferenceInDays(
 				lastMethodCommit.getDate(),
 				lastRepositoryCommit
@@ -149,7 +151,8 @@ public class MethodOwnershipProblemsMetric {
 	public Map<String, Object> getOwnershipProblemsCriterionValues(
 			final FileChangesData methodChangesData,
 			final Commit lastRepositoryCommit) {
-		final Map<String, Object> ownershipProblemsCritetionValues = new HashMap<>();
+
+		final Map<String, Object> ownershipProblemsCritetionValues = new LinkedHashMap<>();
 
 		final Integer methodSize = methodChangesData.getActualSize();
 
@@ -158,34 +161,74 @@ public class MethodOwnershipProblemsMetric {
 		final Commit lastMethodCommit = methodCommits
 				.get(methodCommits.size() - 1);
 
+		Integer methodSizePoints = 0;
+		Integer disruptiveOwnersPoints = 0;
+		Integer distinctOwnersSequencePoints = 0;
+		Integer methodActivityPoints = 0;
+
 		if (methodSize >= MethodThresholdsMeasure.SIGNIFICANT_METHOD_SIZE
 				&& !methodChangesData.getEntityWasDeleted()
 				&& checkIfMethodOlderThanMediumTimespan(firstMethodCommit,
 						lastRepositoryCommit)) {
-			ownershipProblemsCritetionValues.put("fileSize",
-					getMethodSizePoints(methodSize));
 
+			methodSizePoints = getMethodSizePoints(methodSize);
+			ownershipProblemsCritetionValues.put("methodSize",
+					methodSizePoints);
+
+			disruptiveOwnersPoints = getDisruptiveOwnersPoints(
+					getNumberOfDisruptiveMethodOwners(methodChangesData));
 			ownershipProblemsCritetionValues.put(
-					"numberOfDisruptiveMethodOwners",
-					getDisruptiveOwnersPoints(getNumberOfDisruptiveMethodOwners(
-							methodChangesData)));
+					"numberOfDisruptiveMethodOwners", disruptiveOwnersPoints);
 
+			distinctOwnersSequencePoints = getSequenceDistinctOwnersPoints(
+					methodChangesData.getAllOwners());
 			ownershipProblemsCritetionValues.put(
 					"sequenceOfDistinctMethodOwners",
-					getSequenceDistinctOwnersPoints(
-							methodChangesData.getAllOwners()));
+					distinctOwnersSequencePoints);
 
+			methodActivityPoints = getActiveMethodPoints(lastMethodCommit,
+					lastRepositoryCommit);
 			ownershipProblemsCritetionValues.put("methodActivityPoints",
-					getActiveMethodPoints(lastMethodCommit,
-							lastRepositoryCommit));
-
-			if (methodChangesData.getDistinctOwners()
-					.size() >= MANY_FILE_OWNERS) {
-				ownershipProblemsCritetionValues.put("hasOwnershipProblems",
-						true);
-			}
+					methodActivityPoints);
 		}
 
+		putOwnershipProblemsSeverity(ownershipProblemsCritetionValues,
+				methodSizePoints, disruptiveOwnersPoints,
+				distinctOwnersSequencePoints, methodActivityPoints);
+
+		checkIfMethodHasManyOwners(methodChangesData,
+				ownershipProblemsCritetionValues);
+
 		return ownershipProblemsCritetionValues;
+	}
+
+	private void checkIfMethodHasManyOwners(
+			final FileChangesData methodChangesData,
+			final Map<String, Object> ownershipProblemsCritetionValues) {
+
+		if (methodChangesData.getDistinctOwners()
+				.size() >= MANY_METHOD_OWNERS) {
+			ownershipProblemsCritetionValues.put("hasOwnershipProblems", true);
+		} else {
+			ownershipProblemsCritetionValues.put("hasOwnershipProblems", false);
+		}
+	}
+
+	private void putOwnershipProblemsSeverity(
+			final Map<String, Object> ownershipProblemsCritetionValues,
+			final Integer methodSizePoints,
+			final Integer disruptiveOwnersPoints,
+			final Integer distinctOwnersSequencePoints,
+			final Integer methodActivityPoints) {
+
+		if (ownershipProblemsCritetionValues.size() == 0) {
+			ownershipProblemsCritetionValues.put("ownershipProblemsSeverity",
+					0);
+		} else {
+			ownershipProblemsCritetionValues.put("ownershipProblemsSeverity",
+					methodSizePoints + disruptiveOwnersPoints
+							+ distinctOwnersSequencePoints
+							+ methodActivityPoints);
+		}
 	}
 }

@@ -51,4 +51,25 @@ public class JSONUtils {
 
 		return jsonArrayElement;
 	}
+
+	public JsonObject getOwnershipPropertyJSON(final String fileName,
+			final Integer propertyValue, final String propertyName) {
+
+		final JsonObject jsonArrayElement = new JsonObject();
+		jsonArrayElement.addProperty("file", fileName);
+
+		switch (propertyName) {
+		case "Ownership Problems Methods":
+			jsonArrayElement.addProperty("name", "Ownership Problems Methods");
+			break;
+		case "Ownership Problems Severity":
+			jsonArrayElement.addProperty("name", "Ownership Problems Severity");
+			break;
+		}
+
+		jsonArrayElement.addProperty("category", "Method Dynamics");
+		jsonArrayElement.addProperty("value", propertyValue);
+
+		return jsonArrayElement;
+	}
 }
