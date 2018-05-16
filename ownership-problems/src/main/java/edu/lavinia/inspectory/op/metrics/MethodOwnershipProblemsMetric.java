@@ -48,13 +48,10 @@ public class MethodOwnershipProblemsMetric {
 		previousOwners.add(allOwners.get(0));
 
 		for (int i = 1; i < allOwners.size(); ++i) {
-			final String currentOwner = allOwners.get(i);
-			final boolean isCurrentOwnerDisruptive = true;
-
 			// check only for new owners
 			numberOfDisruptiveMethodOwners = checkPreviousOwnersInFutureCommits(
 					numberOfDisruptiveMethodOwners, previousOwners, allOwners,
-					allCommits, i, currentOwner, isCurrentOwnerDisruptive);
+					allCommits, i);
 		}
 
 		return numberOfDisruptiveMethodOwners;
@@ -64,8 +61,9 @@ public class MethodOwnershipProblemsMetric {
 			Integer numberOfDisruptiveMethodOwners,
 			final ArrayList<String> previousOwners,
 			final ArrayList<String> allOwners,
-			final ArrayList<Commit> allCommits, final int i,
-			final String currentOwner, boolean isCurrentOwnerDisruptive) {
+			final ArrayList<Commit> allCommits, final int i) {
+		final String currentOwner = allOwners.get(i);
+		boolean isCurrentOwnerDisruptive = true;
 
 		if (!previousOwners.contains(currentOwner)) {
 			for (int j = i + 1; j < allOwners.size(); ++j) {
@@ -88,18 +86,22 @@ public class MethodOwnershipProblemsMetric {
 
 	public Integer getDisruptiveOwnersPoints(
 			final Integer numberOfDisruptiveMethodOwners) {
-		if (numberOfDisruptiveMethodOwners >= MANY_METHOD_OWNERS) {
+		if (numberOfDisruptiveMethodOwners >= MANY_METHOD_OWNERS + 1) {
 			return 3;
-		} else if (numberOfDisruptiveMethodOwners == 1) {
+		} else if (numberOfDisruptiveMethodOwners == MANY_METHOD_OWNERS) {
 			return 2;
+		} else if (numberOfDisruptiveMethodOwners == 1) {
+			return 1;
 		}
 
 		return 0;
 	}
 
 	public int longestSequenceOfDistinctOwners(final String[] ownersArray) {
-		int firstIndex = 0, secondIndex = 1, maximumSequence = 0,
-				currentLength = 1;
+		int firstIndex = 0;
+		int secondIndex = 1;
+		int maximumSequence = 0;
+		int currentLength = 1;
 		final HashSet<String> ownersSet = new HashSet<>();
 		ownersSet.add(ownersArray[0]);
 
