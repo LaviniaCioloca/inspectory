@@ -25,8 +25,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -58,7 +61,7 @@ import edu.lavinia.inspectory.utils.JSONUtils;
 public class MethodOwnershipInspection extends GenericOwnershipInspection {
 
 	private final Commit lastRepositoryCommit;
-	private final Map<String, MethodsInFileAffectedByOwnershipProblems> filesAffectedAndTheirSeverity = new HashMap<>();
+	private Map<String, MethodsInFileAffectedByOwnershipProblems> filesAffectedAndTheirSeverity = new HashMap<>();
 	private final MethodOwnershipProblemsMetric methodOwnershipProblemsMetric = new MethodOwnershipProblemsMetric();
 
 	/**
@@ -654,12 +657,40 @@ public class MethodOwnershipInspection extends GenericOwnershipInspection {
 		return methodsAffectedInFile;
 	}
 
+	public Map<String, MethodsInFileAffectedByOwnershipProblems> sortFilesAffectedByNumberOfMethods() {
+		final List<Map.Entry<String, MethodsInFileAffectedByOwnershipProblems>> listToSort = new LinkedList<>(
+				filesAffectedAndTheirSeverity.entrySet());
+
+		Collections.sort(listToSort,
+				new Comparator<Map.Entry<String, MethodsInFileAffectedByOwnershipProblems>>() {
+					@Override
+					public int compare(
+							final Map.Entry<String, MethodsInFileAffectedByOwnershipProblems> file1,
+							final Map.Entry<String, MethodsInFileAffectedByOwnershipProblems> file2) {
+						return file1.getValue().getNumberOfMethodsAffected()
+								.compareTo(file2.getValue()
+										.getNumberOfMethodsAffected());
+					}
+				});
+
+		Collections.reverse(listToSort);
+
+		final Map<String, MethodsInFileAffectedByOwnershipProblems> sortedMap = new LinkedHashMap<>();
+		for (final Map.Entry<String, MethodsInFileAffectedByOwnershipProblems> entry : listToSort) {
+			sortedMap.put(entry.getKey(), entry.getValue());
+		}
+
+		return sortedMap;
+	}
+
 	public void writeJSONMethodDynamicsData() {
 		final JSONUtils jsonUtils = new JSONUtils();
 		try {
 			final JsonArray jsonArray = new JsonArray();
 
-			for (final HashMap.Entry<String, MethodsInFileAffectedByOwnershipProblems> entry : filesAffectedAndTheirSeverity
+			final Map<String, MethodsInFileAffectedByOwnershipProblems> sortedMetricResultMap = sortFilesAffectedByNumberOfMethods();
+
+			for (final HashMap.Entry<String, MethodsInFileAffectedByOwnershipProblems> entry : sortedMetricResultMap
 					.entrySet()) {
 				jsonArray.add(jsonUtils.getOwnershipPropertyJSON(entry.getKey(),
 						entry.getValue().getNumberOfMethodsAffected(),
@@ -675,4 +706,14 @@ public class MethodOwnershipInspection extends GenericOwnershipInspection {
 			e.printStackTrace();
 		}
 	}
+
+	public Map<String, MethodsInFileAffectedByOwnershipProblems> getFilesAffectedAndTheirSeverity() {
+		return filesAffectedAndTheirSeverity;
+	}
+
+	public void setFilesAffectedAndTheirSeverity(
+			final Map<String, MethodsInFileAffectedByOwnershipProblems> filesAffectedAndTheirSeverity) {
+		this.filesAffectedAndTheirSeverity = filesAffectedAndTheirSeverity;
+	}
+
 }

@@ -21,6 +21,8 @@
  *******************************************************************************/
 package edu.lavinia.inspectory.op.inspection;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -38,6 +40,7 @@ import org.metanalysis.core.project.PersistentProject;
 import edu.lavinia.inspectory.beans.Commit;
 import edu.lavinia.inspectory.op.beans.FileChangesData;
 import edu.lavinia.inspectory.op.beans.MethodChangesData;
+import edu.lavinia.inspectory.op.beans.MethodsInFileAffectedByOwnershipProblems;
 
 public class MethodOwnershipInspectionTest {
 
@@ -97,4 +100,40 @@ public class MethodOwnershipInspectionTest {
 				"test", commit);
 	}
 
+	@Test
+	public void testSortFilesAffectedByNumberOfMethods() {
+		final Map<String, MethodsInFileAffectedByOwnershipProblems> filesAffectedAndTheirSeverity = new HashMap<>();
+
+		final MethodsInFileAffectedByOwnershipProblems methodsForTestFile1 = new MethodsInFileAffectedByOwnershipProblems();
+		methodsForTestFile1.setNumberOfMethodsAffected(3);
+		methodsForTestFile1.setSumOfMethodsSeverity(20);
+
+		final MethodsInFileAffectedByOwnershipProblems methodsForTestFile2 = new MethodsInFileAffectedByOwnershipProblems();
+		methodsForTestFile2.setNumberOfMethodsAffected(5);
+		methodsForTestFile2.setSumOfMethodsSeverity(30);
+
+		final MethodsInFileAffectedByOwnershipProblems methodsForTestFile3 = new MethodsInFileAffectedByOwnershipProblems();
+		methodsForTestFile3.setNumberOfMethodsAffected(1);
+		methodsForTestFile3.setSumOfMethodsSeverity(7);
+
+		filesAffectedAndTheirSeverity.put("testFile1", methodsForTestFile1);
+		filesAffectedAndTheirSeverity.put("testFile2", methodsForTestFile2);
+		filesAffectedAndTheirSeverity.put("testFile3", methodsForTestFile3);
+
+		methodOwnershipInspection.setFilesAffectedAndTheirSeverity(
+				filesAffectedAndTheirSeverity);
+
+		final Map<String, MethodsInFileAffectedByOwnershipProblems> expectedFilesAffectedAndTheirSeverity = new LinkedHashMap<>();
+
+		expectedFilesAffectedAndTheirSeverity.put("testFile2",
+				methodsForTestFile2);
+		expectedFilesAffectedAndTheirSeverity.put("testFile1",
+				methodsForTestFile1);
+		expectedFilesAffectedAndTheirSeverity.put("testFile3",
+				methodsForTestFile3);
+
+		assertEquals(expectedFilesAffectedAndTheirSeverity,
+				methodOwnershipInspection.sortFilesAffectedByNumberOfMethods());
+
+	}
 }
