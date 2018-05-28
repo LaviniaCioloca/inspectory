@@ -129,4 +129,18 @@ public class FileChangesData {
 		this.allOwners = allOwners;
 	}
 
+	@Override
+	public String toString() {
+		return "FileChangesData [commits=" + commits + ", fileName=" + fileName
+				+ ", initialSize=" + initialSize + ", actualSize=" + actualSize
+				+ ", addedAndDeletedLinesSum=" + addedAndDeletedLinesSum
+				+ ", entityWasDeleted=" + entityWasDeleted
+				+ ", numberOfChanges=" + numberOfChanges + ", entityCreator="
+				+ entityCreator + ", authorsNumberOfChanges="
+				+ authorsNumberOfChanges + ", authorsAddedAndDeletedLines="
+				+ authorsAddedAndDeletedLines + ", ownershipPercentages="
+				+ ownershipPercentages + ", allOwners=" + allOwners
+				+ ", distinctOwners=" + distinctOwners + "]";
+	}
+
 }

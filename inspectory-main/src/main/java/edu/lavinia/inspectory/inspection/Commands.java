@@ -124,19 +124,19 @@ public class Commands {
 			} else if (cmd.hasOption("c")) {
 				clean();
 			} else if (cmd.hasOption("all")) {
-				System.out.println("Starting to inspect the repository.....\n");
+				System.out.println(
+						"Starting to inspect the repository..... This may take a few seconds...\n");
 
 				allMetrics();
 
-				System.out.println("Inspection successful!\n");
 				System.out.println(
 						"Check results in .inspectory folder in the current repository.\n");
 			} else if (cmd.hasOption("amm")) {
-				System.out.println("Starting to inspect the repository.....\n");
+				System.out.println(
+						"Starting to inspect the repository..... This may take a few seconds...\n");
 
 				astronomicalMethodsMetric();
 
-				System.out.println("Inspection successful!\n");
 				System.out.println(
 						"Check results in .inspectory folder in the current repository.\n");
 			} else if (cmd.hasOption("opm")) {
@@ -144,11 +144,10 @@ public class Commands {
 
 				ownershipProblemsMetric();
 
-				System.out.println("Inspection successful!\n");
 				System.out.println(
 						"Check results in .inspectory folder in the current repository.\n");
 			} else {
-				System.out.println("Missing valid option");
+				System.out.println("Missing valid option!");
 				help();
 			}
 		} catch (final ParseException e) {
@@ -215,6 +214,12 @@ public class Commands {
 
 			flushAndCloseWriters(csvWriter, jsonWriter,
 					csvMethodDynamicsWriter);
+
+			System.out.println(
+					"Astronomical Methods Metric was applied successfully! All "
+							+ AstronomicalMethodsInspection
+									.getNumberOfJavaSourcesCount()
+							+ " Java sources were analyzed!\n");
 		} catch (final IOException e) {
 			e.printStackTrace();
 		}
@@ -282,6 +287,12 @@ public class Commands {
 
 			writeMethodsOwnershipResult(methodsCsvFile, methodsJsonFile,
 					lastRepositoryCommit);
+
+			System.out.println(
+					"Ownership Problems Metric was applied successfully! All "
+							+ MethodOwnershipInspection
+									.getNumberOfJavaSourcesCount()
+							+ " Java sources were analyzed!\n");
 		} catch (final IOException e) {
 			e.printStackTrace();
 		}

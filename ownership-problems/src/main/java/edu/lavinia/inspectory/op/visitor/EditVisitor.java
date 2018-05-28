@@ -82,7 +82,7 @@ public class EditVisitor extends NodeSetEditVisitor {
 
 	private void visitEachMemberNode() {
 		for (final Node memberNode : members) {
-			// @TODO check if Type of Type exist
+			// TODO check if Type of Type exist
 			if (memberNode instanceof Node.Type) {
 				treatMemberNodeType(memberNode);
 			} else if (memberNode instanceof Node.Function) {

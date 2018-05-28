@@ -45,7 +45,6 @@ public class GenericOwnershipInspectionTest {
 			genericOwnershipInspection = new FileOwnershipInspection(project,
 					csvWriter, jsonWriter);
 		} catch (final IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

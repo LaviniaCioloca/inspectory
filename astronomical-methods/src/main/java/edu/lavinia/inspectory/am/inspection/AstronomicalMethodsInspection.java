@@ -75,6 +75,7 @@ public class AstronomicalMethodsInspection {
 	private LinkedHashMap<Commit, Integer> allCommitsIntoTimeFrames;
 	private Integer maximumTimeFrameNumber;
 
+	private static Integer numberOfJavaSourcesCount = 0;
 	private final MethodDynamicsUtils methodDynamics = new MethodDynamicsUtils();
 
 	/**
@@ -645,6 +646,8 @@ public class AstronomicalMethodsInspection {
 			return;
 		}
 
+		++numberOfJavaSourcesCount;
+
 		final List<HistoryEntry> fileHistory = project.get()
 				.getFileHistory(fileName);
 
@@ -837,6 +840,10 @@ public class AstronomicalMethodsInspection {
 
 	public void setDeletedNodes(final ArrayList<String> deletedNodes) {
 		this.deletedNodes = deletedNodes;
+	}
+
+	public static Integer getNumberOfJavaSourcesCount() {
+		return numberOfJavaSourcesCount;
 	}
 
 }

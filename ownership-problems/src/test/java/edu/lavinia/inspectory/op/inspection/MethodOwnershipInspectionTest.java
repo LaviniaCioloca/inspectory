@@ -55,7 +55,6 @@ public class MethodOwnershipInspectionTest {
 			methodOwnershipInspection = new MethodOwnershipInspection(project,
 					csvWriter, jsonWriter, new Commit());
 		} catch (final IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

@@ -44,6 +44,8 @@ public abstract class GenericOwnershipInspection {
 	protected final FileWriter jsonWriter;
 	protected Map<String, FileChangesData> entityChangesData = new HashMap<>();
 
+	protected static Integer numberOfJavaSourcesCount = 0;
+
 	/**
 	 * GenericOwnershipInspection Constructor that receives the persistent
 	 * project and the CSV file to write in from {@code inspectory-main}.
@@ -176,6 +178,10 @@ public abstract class GenericOwnershipInspection {
 	public void setEntityChangesData(
 			final Map<String, FileChangesData> entityChangesData) {
 		this.entityChangesData = entityChangesData;
+	}
+
+	public static Integer getNumberOfJavaSourcesCount() {
+		return numberOfJavaSourcesCount;
 	}
 
 }

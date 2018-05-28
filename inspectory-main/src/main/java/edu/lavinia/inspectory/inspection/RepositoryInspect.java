@@ -76,7 +76,7 @@ public class RepositoryInspect {
 	public static void showInspectionDuration(final long startTime) {
 		final NumberFormat formatter = new DecimalFormat("#0.00000");
 
-		System.out.println("Inspectory execution time was: "
+		System.out.println("Inspectory's execution time was: "
 				+ formatter.format(
 						(System.currentTimeMillis() - startTime) / 1000d)
 				+ " seconds.\n");

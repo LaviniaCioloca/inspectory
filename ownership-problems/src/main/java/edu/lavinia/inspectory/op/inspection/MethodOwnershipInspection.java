@@ -249,6 +249,8 @@ public class MethodOwnershipInspection extends GenericOwnershipInspection {
 				continue;
 			}
 
+			++numberOfJavaSourcesCount;
+
 			createResultForEachMethod(fileName);
 		}
 	}
@@ -343,9 +345,11 @@ public class MethodOwnershipInspection extends GenericOwnershipInspection {
 				handleNodeSetEditChange(edit, fileName, commit);
 			} else if (edit instanceof NodeSetEdit.Add) {
 				handleNodeSetEditAdd(edit, fileName, commit);
-			} else {
-				entityChangesData.get(fileName).setEntityWasDeleted(true);
 			}
+			/*
+			 * else { entityChangesData.get(fileName).setEntityWasDeleted(true);
+			 * }
+			 */
 		}
 	}
 
@@ -459,6 +463,7 @@ public class MethodOwnershipInspection extends GenericOwnershipInspection {
 					.getIdentifier();
 			final String methodFullPath = fileName + " -> " + className + " -> "
 					+ methodSignature;
+
 			final Integer deletedLines = entityChangesData.get(methodFullPath)
 					.getActualSize();
 			final List<Integer> authorsNewChanges = new ArrayList<>(
@@ -571,20 +576,20 @@ public class MethodOwnershipInspection extends GenericOwnershipInspection {
 	private void addSeverityResults(
 			final HashMap.Entry<String, FileChangesData> methodData,
 			final ArrayList<String> methodOwnershipInformationLine) {
-		final String methodName = ((MethodChangesData) methodData
-				.getValue()).getMethodName();
+		final String methodName = ((MethodChangesData) methodData.getValue())
+				.getMethodName();
 
 		final Map<String, Object> result = methodOwnershipProblemsMetric
-				.getOwnershipProblemsCriterionValues(
-						methodData.getValue(), lastRepositoryCommit);
+				.getOwnershipProblemsCriterionValues(methodData.getValue(),
+						lastRepositoryCommit);
 
-		final Integer ownershipProblemsSeverity = Integer.decode(String
-				.valueOf(result.get("ownershipProblemsSeverity")));
+		final Integer ownershipProblemsSeverity = Integer.decode(
+				String.valueOf(result.get("ownershipProblemsSeverity")));
 		methodOwnershipInformationLine
 				.add(String.valueOf(ownershipProblemsSeverity));
 
-		final Boolean hasOwnershipProblems = Boolean.valueOf(
-				String.valueOf(result.get("hasOwnershipProblems")));
+		final Boolean hasOwnershipProblems = Boolean
+				.valueOf(String.valueOf(result.get("hasOwnershipProblems")));
 		methodOwnershipInformationLine
 				.add(String.valueOf(hasOwnershipProblems));
 
