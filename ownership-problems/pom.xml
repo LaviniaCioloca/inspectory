@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>org.lavinia.inspectory</groupId>
 		<artifactId>inspectory</artifactId>
-		<version>0.2.2</version>
+		<version>0.2.3</version>
 	</parent>
 
 	<artifactId>ownership-problems</artifactId>
