@@ -353,6 +353,11 @@ public class Commands {
 		methodsCsvWriter.close();
 		methodsJsonWriter.flush();
 		methodsJsonWriter.close();
+
+		final MetricsCorrelation metricsCorrelation = new MetricsCorrelation(
+				methodsOwnershipProblemsInspection);
+		metricsCorrelation.getFilesWithDecapsulationProblemsNames();
+		metricsCorrelation.countCorrelationsOfFiles();
 	}
 
 	private void checkDirectoryExistance(final Path path,
