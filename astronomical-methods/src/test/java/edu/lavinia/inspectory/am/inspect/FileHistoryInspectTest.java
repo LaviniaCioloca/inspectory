@@ -33,6 +33,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -40,9 +41,11 @@ import org.junit.Test;
 import org.metanalysis.core.project.PersistentProject;
 
 import edu.lavinia.inspectory.am.beans.AstronomicalMethodChangesInformation;
+import edu.lavinia.inspectory.am.beans.FileMethodDynamics;
 import edu.lavinia.inspectory.am.beans.PulsarCriteria;
 import edu.lavinia.inspectory.am.beans.SupernovaCriteria;
 import edu.lavinia.inspectory.am.inspection.AstronomicalMethodsInspection;
+import edu.lavinia.inspectory.am.utils.MethodDynamicsUtils;
 import edu.lavinia.inspectory.am.visitor.NodeVisitor;
 import edu.lavinia.inspectory.beans.Commit;
 import edu.lavinia.inspectory.visitor.GenericVisitor;
@@ -266,5 +269,47 @@ public class FileHistoryInspectTest {
 		astronomicalMethodsInspection.getResult();
 		astronomicalMethodsInspection.getAllCommits();
 		astronomicalMethodsInspection.getMethodInformationList();
+	}
+
+	@Test
+	public void testSortFilesAffectedByNumberOfSupernovaMethods()
+			throws IOException {
+		final Map<String, FileMethodDynamics> filesAffectedAndTheirSeverity = new HashMap<>();
+
+		final FileMethodDynamics methodsForTestFile1 = new FileMethodDynamics();
+		methodsForTestFile1.setNumberOfSupernovaMethods(3);
+
+		final FileMethodDynamics methodsForTestFile2 = new FileMethodDynamics();
+		methodsForTestFile2.setNumberOfSupernovaMethods(5);
+
+		final FileMethodDynamics methodsForTestFile3 = new FileMethodDynamics();
+		methodsForTestFile3.setNumberOfSupernovaMethods(1);
+
+		filesAffectedAndTheirSeverity.put("testFile1", methodsForTestFile1);
+		filesAffectedAndTheirSeverity.put("testFile2", methodsForTestFile2);
+		filesAffectedAndTheirSeverity.put("testFile3", methodsForTestFile3);
+
+		final FileWriter writer = new FileWriter(FILE);
+		final AstronomicalMethodsInspection astronomicalMethodsInspection = new AstronomicalMethodsInspection(
+				project, writer, writer, writer);
+
+		final MethodDynamicsUtils methodDynamics = new MethodDynamicsUtils();
+		methodDynamics.setProjectMethodDynamics(filesAffectedAndTheirSeverity);
+
+		astronomicalMethodsInspection.setMethodDynamics(methodDynamics);
+
+		final Map<String, FileMethodDynamics> expectedFilesAffectedAndTheirSeverity = new LinkedHashMap<>();
+
+		expectedFilesAffectedAndTheirSeverity.put("testFile2",
+				methodsForTestFile2);
+		expectedFilesAffectedAndTheirSeverity.put("testFile1",
+				methodsForTestFile1);
+		expectedFilesAffectedAndTheirSeverity.put("testFile3",
+				methodsForTestFile3);
+
+		assertEquals(expectedFilesAffectedAndTheirSeverity,
+				astronomicalMethodsInspection
+						.sortFilesAffectedByNumberOfSupernovaMethods());
+
 	}
 }

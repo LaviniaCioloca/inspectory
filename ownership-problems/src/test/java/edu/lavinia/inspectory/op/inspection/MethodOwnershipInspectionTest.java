@@ -134,6 +134,5 @@ public class MethodOwnershipInspectionTest {
 
 		assertEquals(expectedFilesAffectedAndTheirSeverity,
 				methodOwnershipInspection.sortFilesAffectedByNumberOfMethods());
-
 	}
 }

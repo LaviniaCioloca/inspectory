@@ -29,6 +29,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -76,7 +77,7 @@ public class AstronomicalMethodsInspection {
 	private Integer maximumTimeFrameNumber;
 
 	private static Integer numberOfJavaSourcesCount = 0;
-	private final MethodDynamicsUtils methodDynamics = new MethodDynamicsUtils();
+	private MethodDynamicsUtils methodDynamics = new MethodDynamicsUtils();
 
 	/**
 	 * AstronomicalMethodsInspection Constructor that initializes the result map
@@ -716,6 +717,37 @@ public class AstronomicalMethodsInspection {
 		}
 	}
 
+	public Map<String, FileMethodDynamics> sortFilesAffectedByNumberOfSupernovaMethods() {
+		final List<Map.Entry<String, FileMethodDynamics>> listToSort = new LinkedList<>(
+				methodDynamics.getProjectMethodDynamics().entrySet());
+
+		sortCollectionInReverseOrder(listToSort);
+
+		final Map<String, FileMethodDynamics> sortedMap = new LinkedHashMap<>();
+		for (final Map.Entry<String, FileMethodDynamics> entry : listToSort) {
+			sortedMap.put(entry.getKey(), entry.getValue());
+		}
+
+		return sortedMap;
+	}
+
+	private void sortCollectionInReverseOrder(
+			final List<Map.Entry<String, FileMethodDynamics>> listToSort) {
+		Collections.sort(listToSort,
+				new Comparator<Map.Entry<String, FileMethodDynamics>>() {
+					@Override
+					public int compare(
+							final Map.Entry<String, FileMethodDynamics> file1,
+							final Map.Entry<String, FileMethodDynamics> file2) {
+						return file1.getValue().getNumberOfSupernovaMethods()
+								.compareTo(file2.getValue()
+										.getNumberOfSupernovaMethods());
+					}
+				});
+
+		Collections.reverse(listToSort);
+	}
+
 	/**
 	 * Writes data from method dynamics analysis into a JSON and a CSV file.
 	 */
@@ -723,8 +755,11 @@ public class AstronomicalMethodsInspection {
 		final JSONUtils jsonUtils = new JSONUtils();
 		try {
 			final JsonArray jsonArray = new JsonArray();
-			for (final HashMap.Entry<String, FileMethodDynamics> entry : methodDynamics
-					.getProjectMethodDynamics().entrySet()) {
+
+			final Map<String, FileMethodDynamics> sortedMetricResultMap = sortFilesAffectedByNumberOfSupernovaMethods();
+
+			for (final HashMap.Entry<String, FileMethodDynamics> entry : sortedMetricResultMap
+					.entrySet()) {
 				parseMethodDynamicsSet(jsonUtils, jsonArray, entry);
 			}
 
@@ -844,6 +879,14 @@ public class AstronomicalMethodsInspection {
 
 	public static Integer getNumberOfJavaSourcesCount() {
 		return numberOfJavaSourcesCount;
+	}
+
+	public MethodDynamicsUtils getMethodDynamics() {
+		return methodDynamics;
+	}
+
+	public void setMethodDynamics(final MethodDynamicsUtils methodDynamics) {
+		this.methodDynamics = methodDynamics;
 	}
 
 }

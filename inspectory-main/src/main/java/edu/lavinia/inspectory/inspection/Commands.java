@@ -62,7 +62,8 @@ public class Commands {
 
 	private final static String OWNERSHIP_PROBLEMS_CLASSES_CSV_FILE_NAME = "ownership-problems-classes-result.csv";
 	private final static String OWNERSHIP_PROBLEMS_METHODS_CSV_FILE_NAME = "ownership-problems-methods-result.csv";
-	private final static String OWNERSHIP_PROBLEMS_CLASSES_JSON_FILE_NAME = "ownership-problems-classes-result.json";
+	// private final static String OWNERSHIP_PROBLEMS_CLASSES_JSON_FILE_NAME =
+	// "ownership-problems-classes-result.json";
 	private final static String OWNERSHIP_PROBLEMS_METHODS_JSON_FILE_NAME = "ownership-problems-methods-result.json";
 
 	public Commands(final String[] args,
@@ -271,8 +272,11 @@ public class Commands {
 				+ File.separator + OWNERSHIP_PROBLEMS_CLASSES_CSV_FILE_NAME;
 		final File classesCsvFile = new File(classesCSVFilePath);
 
-		final String classesJsonFilePath = home + File.separator + ".inspectory"
-				+ File.separator + OWNERSHIP_PROBLEMS_CLASSES_JSON_FILE_NAME;
+		/*
+		 * final String classesJsonFilePath = home + File.separator +
+		 * ".inspectory" + File.separator +
+		 * OWNERSHIP_PROBLEMS_CLASSES_JSON_FILE_NAME;
+		 */
 		// final File classesJsonFile = new File(classesJsonFilePath);
 		final File classesJsonFile = null;
 

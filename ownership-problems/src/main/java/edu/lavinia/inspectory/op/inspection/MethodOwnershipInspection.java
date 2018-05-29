@@ -661,6 +661,18 @@ public class MethodOwnershipInspection extends GenericOwnershipInspection {
 		final List<Map.Entry<String, MethodsInFileAffectedByOwnershipProblems>> listToSort = new LinkedList<>(
 				filesAffectedAndTheirSeverity.entrySet());
 
+		sortCollectionInReverseOrder(listToSort);
+
+		final Map<String, MethodsInFileAffectedByOwnershipProblems> sortedMap = new LinkedHashMap<>();
+		for (final Map.Entry<String, MethodsInFileAffectedByOwnershipProblems> entry : listToSort) {
+			sortedMap.put(entry.getKey(), entry.getValue());
+		}
+
+		return sortedMap;
+	}
+
+	private void sortCollectionInReverseOrder(
+			final List<Map.Entry<String, MethodsInFileAffectedByOwnershipProblems>> listToSort) {
 		Collections.sort(listToSort,
 				new Comparator<Map.Entry<String, MethodsInFileAffectedByOwnershipProblems>>() {
 					@Override
@@ -674,13 +686,6 @@ public class MethodOwnershipInspection extends GenericOwnershipInspection {
 				});
 
 		Collections.reverse(listToSort);
-
-		final Map<String, MethodsInFileAffectedByOwnershipProblems> sortedMap = new LinkedHashMap<>();
-		for (final Map.Entry<String, MethodsInFileAffectedByOwnershipProblems> entry : listToSort) {
-			sortedMap.put(entry.getKey(), entry.getValue());
-		}
-
-		return sortedMap;
 	}
 
 	public void writeJSONMethodDynamicsData() {
