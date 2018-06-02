@@ -50,6 +50,7 @@ import com.google.gson.JsonArray;
 
 import edu.lavinia.inspectory.am.beans.AstronomicalMethodChangesInformation;
 import edu.lavinia.inspectory.am.beans.FileMethodDynamics;
+import edu.lavinia.inspectory.am.beans.FileWithAstronomicalMethods;
 import edu.lavinia.inspectory.am.beans.PulsarCriteria;
 import edu.lavinia.inspectory.am.beans.SupernovaCriteria;
 import edu.lavinia.inspectory.am.metrics.PulsarMetric;
@@ -78,6 +79,9 @@ public class AstronomicalMethodsInspection {
 
 	private static Integer numberOfJavaSourcesCount = 0;
 	private MethodDynamicsUtils methodDynamics = new MethodDynamicsUtils();
+
+	private final Map<String, FileWithAstronomicalMethods> filesWithSupernovaMethods = new HashMap<>();
+	private final Map<String, FileWithAstronomicalMethods> filesWithPulsarMethods = new HashMap<>();
 
 	/**
 	 * AstronomicalMethodsInspection Constructor that initializes the result map
@@ -216,10 +220,8 @@ public class AstronomicalMethodsInspection {
 		for (final AstronomicalMethodChangesInformation methodChangesInformation : methodInformationList) {
 			final ArrayList<Commit> commits = allMethodsResult
 					.get(methodChangesInformation.getFileName() + ":"
-							+ methodChangesInformation.getClassName()
-									.replaceAll("\"", "")
-							+ ": " + methodChangesInformation.getMethodName()
-									.replaceAll("\"", ""))
+							+ methodChangesInformation.getClassName() + ": "
+							+ methodChangesInformation.getMethodName())
 					.getCommits();
 			addToAllCommits(commits);
 		}
@@ -809,7 +811,24 @@ public class AstronomicalMethodsInspection {
 					numberOfPulsarMethods, "Pulsar Methods"));
 			jsonArray.add(jsonUtils.getAstronomicalPropertyJSON(entry.getKey(),
 					severityOfPulsarMethods, "Pulsar Severity"));
+
+			setFileWithPulsarMethodsData(entry, numberOfPulsarMethods,
+					severityOfPulsarMethods);
 		}
+	}
+
+	private void setFileWithPulsarMethodsData(
+			final HashMap.Entry<String, FileMethodDynamics> entry,
+			final Integer numberOfPulsarMethods,
+			final Integer severityOfPulsarMethods) {
+		final FileWithAstronomicalMethods fileWithAstronomicalMethods = new FileWithAstronomicalMethods();
+
+		fileWithAstronomicalMethods.setFileName(entry.getKey());
+		fileWithAstronomicalMethods
+				.setNumberOfAstronomicalMethods(numberOfPulsarMethods);
+		fileWithAstronomicalMethods.setSumOfSeverity(severityOfPulsarMethods);
+
+		filesWithPulsarMethods.put(entry.getKey(), fileWithAstronomicalMethods);
 	}
 
 	private void setSupernovaDynamicsValues(final JSONUtils jsonUtils,
@@ -825,7 +844,27 @@ public class AstronomicalMethodsInspection {
 					numberOfSupernovaMethods, "Supernova Methods"));
 			jsonArray.add(jsonUtils.getAstronomicalPropertyJSON(entry.getKey(),
 					severityOfSupernovaMethods, "Supernova Severity"));
+
+			setFileWithSupernovaMethodsData(entry, numberOfSupernovaMethods,
+					severityOfSupernovaMethods);
 		}
+	}
+
+	private void setFileWithSupernovaMethodsData(
+			final HashMap.Entry<String, FileMethodDynamics> entry,
+			final Integer numberOfSupernovaMethods,
+			final Integer severityOfSupernovaMethods) {
+
+		final FileWithAstronomicalMethods fileWithAstronomicalMethods = new FileWithAstronomicalMethods();
+
+		fileWithAstronomicalMethods.setFileName(entry.getKey());
+		fileWithAstronomicalMethods
+				.setNumberOfAstronomicalMethods(numberOfSupernovaMethods);
+		fileWithAstronomicalMethods
+				.setSumOfSeverity(severityOfSupernovaMethods);
+
+		filesWithSupernovaMethods.put(entry.getKey(),
+				fileWithAstronomicalMethods);
 	}
 
 	/**
@@ -887,6 +926,14 @@ public class AstronomicalMethodsInspection {
 
 	public void setMethodDynamics(final MethodDynamicsUtils methodDynamics) {
 		this.methodDynamics = methodDynamics;
+	}
+
+	public Map<String, FileWithAstronomicalMethods> getFilesWithSupernovaMethods() {
+		return filesWithSupernovaMethods;
+	}
+
+	public Map<String, FileWithAstronomicalMethods> getFilesWithPulsarMethods() {
+		return filesWithPulsarMethods;
 	}
 
 }

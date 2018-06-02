@@ -66,6 +66,9 @@ public class Commands {
 	// "ownership-problems-classes-result.json";
 	private final static String OWNERSHIP_PROBLEMS_METHODS_JSON_FILE_NAME = "ownership-problems-methods-result.json";
 
+	private AstronomicalMethodsInspection astronomicalMethodsInspection;
+	private MethodOwnershipInspection methodsOwnershipProblemsInspection;
+
 	public Commands(final String[] args,
 			final Optional<PersistentProject> project) {
 		this.args = args;
@@ -186,6 +189,8 @@ public class Commands {
 	private void allMetrics() {
 		astronomicalMethodsMetric();
 		ownershipProblemsMetric();
+
+		checkAllCorrelationsBetweenMetrics();
 	}
 
 	private void astronomicalMethodsMetric() {
@@ -209,7 +214,7 @@ public class Commands {
 
 			writeCSVFilesHeaderLine(csvWriter, csvMethodDynamicsWriter);
 
-			final AstronomicalMethodsInspection astronomicalMethodsInspection = new AstronomicalMethodsInspection(
+			astronomicalMethodsInspection = new AstronomicalMethodsInspection(
 					project, csvWriter, csvMethodDynamicsWriter, jsonWriter);
 			astronomicalMethodsInspection.analyzeAstronomicalMethods();
 
@@ -342,7 +347,7 @@ public class Commands {
 
 		final FileWriter methodsJsonWriter = new FileWriter(methodsJsonFile);
 
-		final MethodOwnershipInspection methodsOwnershipProblemsInspection = new MethodOwnershipInspection(
+		methodsOwnershipProblemsInspection = new MethodOwnershipInspection(
 				project, methodsCsvWriter, methodsJsonWriter,
 				lastRepositoryCommit);
 		methodsOwnershipProblemsInspection.createResults();
@@ -353,11 +358,15 @@ public class Commands {
 		methodsCsvWriter.close();
 		methodsJsonWriter.flush();
 		methodsJsonWriter.close();
+	}
 
+	public void checkAllCorrelationsBetweenMetrics() {
 		final MetricsCorrelation metricsCorrelation = new MetricsCorrelation(
-				methodsOwnershipProblemsInspection);
-		metricsCorrelation.getFilesWithDecapsulationProblemsNames();
-		metricsCorrelation.countCorrelationsOfFiles();
+				methodsOwnershipProblemsInspection,
+				astronomicalMethodsInspection);
+
+		metricsCorrelation.createAllCorrelationsResults();
+		metricsCorrelation.printCorrelationsResults();
 	}
 
 	private void checkDirectoryExistance(final Path path,
